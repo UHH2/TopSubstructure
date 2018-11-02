@@ -12,12 +12,22 @@
 #include <memory>
 #include <vector>
 
-class TopJetSort: public uhh2::AnalysisModule{
+class TopJetSortDPhi: public uhh2::AnalysisModule{
  public:
-  explicit TopJetSort(uhh2::Context &);
+  explicit TopJetSortDPhi(uhh2::Context &);
   virtual bool process(uhh2::Event &) override;
 
  private:
-  uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
+  uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand_by_dphi;
+
+};
+
+class TopJetSortMass: public uhh2::AnalysisModule{
+ public:
+  explicit TopJetSortMass(uhh2::Context &);
+  virtual bool process(uhh2::Event &) override;
+
+ private:
+  uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand_by_mass;
 
 };

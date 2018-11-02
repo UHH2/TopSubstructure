@@ -145,7 +145,8 @@ TopSubstructureHists::TopSubstructureHists(Context & ctx, const string & dirname
 
 
   // get handles
-  if(sort_by == "dphi") h_topjet_cand = ctx.get_handle<vector<TopJet>>("topjet_cand");
+  if(sort_by == "dphi") h_topjet_cand = ctx.get_handle<vector<TopJet>>("topjet_cand_by_dphi");
+  if(sort_by == "mass") h_topjet_cand = ctx.get_handle<vector<TopJet>>("topjet_cand_by_mass");
   h_ttbargen = ctx.get_handle<TTbarGen>("ttbargen");
   
   // how to save handle to a variable
