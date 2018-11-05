@@ -41,7 +41,7 @@ bool TopJetptSelection::passes(const Event & event){
   std::vector<TopJet> topjets = event.get(h_topjet);
 
   if(topjets.size() <= 0){
-    std::cout << "\n DPhiSelection::passes: There are no topjets in the event. returning 'false'\n" << std::endl; 
+    std::cout << "\n DPhiSelection::passes: There are no topjets in the event. returning 'false'\n" << std::endl;
     return false;
   }
 
@@ -63,7 +63,7 @@ bool TopJetptSelectionold::passes(const Event & event){
   std::vector<TopJet>* topjets = event.topjets;
 
   if(topjets->size() <= 0){
-    std::cout << "\n DPhiSelection::passes: There are no topjets in the event. returning 'false'\n" << std::endl; 
+    std::cout << "\n DPhiSelection::passes: There are no topjets in the event. returning 'false'\n" << std::endl;
     return false;
   }
 
@@ -160,6 +160,28 @@ bool Matching::passes(const uhh2::Event& event){
   return pass;
 }
 
+QuarkMatching::QuarkMatching(uhh2::Context & ctx)h_topjet_cand(ctx.get_handle<std::vector<TopJet>>("topjet_cand")), h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
+bool QuarkMatching::passes(const uhh2::Event& event){
+  bool pass = false;
+
+  if(event.is_valid(h_topjet_cand)){
+    std::vector<TopJet> topjet_cand = event.get(h_topjet_cand);
+    if (topjet_cand.size() > 0) {
+      if(event.is_valid(h_ttbargen)){
+        const auto ttbargen = event.get(h_ttbargen);
+
+        GenParticle tophad;
+        if(ttbargen.IsTopHadronicDecay()){
+          tophad = ttbargen.Top();
+        }
+        else if(ttbargen.IsAntiTopHadronicDecay()){
+          tophad = ttbargen.Antitop();
+        }
+      }
+    }
+  }
+  return pass;
+}
 
 NTopJet::NTopJet(uhh2::Context & ctx, double n_min_, double n_max_):h_topjet_cand(ctx.get_handle<std::vector<TopJet>>("topjet_cand")), n_min(n_min_), n_max(n_max_){}
 bool NTopJet::passes(const Event & event){

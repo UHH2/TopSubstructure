@@ -15,7 +15,7 @@
 
 
 namespace uhh2examples {
-    
+
   /* Select events with at least two jets in which the leading two jets have deltaphi > 2.7 and the third jet pt is
    * below 20% of the average of the leading two jets, where the minimum deltaphi and
    * maximum third jet pt fraction can be changed in the constructor.
@@ -84,6 +84,16 @@ namespace uhh2examples {
   class Matching : public uhh2::Selection{
   public:
     explicit Matching(uhh2::Context &);
+    virtual bool passes(const uhh2::Event &) override;
+
+  private:
+    uhh2::Event::Handle<TTbarGen> h_ttbargen;
+    uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
+  };
+
+  class QuarkMatching : public uhh2::Selection{
+  public:
+    explicit QuarkMatching(uhh2::Context &);
     virtual bool passes(const uhh2::Event &) override;
 
   private:

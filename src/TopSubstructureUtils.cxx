@@ -39,7 +39,7 @@ bool TopJetSortMass::process(uhh2::Event& event){
     }
     for(unsigned int i=1; i < candidates.size(); i++){
       if(candidates.at(0).v4().M() < candidates.at(i).v4().M()){
-	std::swap(candidates.at(0), candidates.at(i));
+        std::swap(candidates.at(0), candidates.at(i));
       }
     }
   }
