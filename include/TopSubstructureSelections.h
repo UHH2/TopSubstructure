@@ -91,14 +91,24 @@ namespace uhh2examples {
     uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
   };
 
-  class QuarkMatching : public uhh2::Selection{
+  class QuarkCandJetMatching : public uhh2::Selection{
   public:
-    explicit QuarkMatching(uhh2::Context &);
+    explicit QuarkCandJetMatching(uhh2::Context &);
     virtual bool passes(const uhh2::Event &) override;
 
   private:
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
     uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
+  };
+
+  class QuarkGenJetMatching : public uhh2::Selection{
+  public:
+    explicit QuarkGenJetMatching(uhh2::Context &);
+    virtual bool passes(const uhh2::Event &) override;
+
+  private:
+    uhh2::Event::Handle<TTbarGen> h_ttbargen;
+    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
   };
 
   class NTopJet : public uhh2::Selection{

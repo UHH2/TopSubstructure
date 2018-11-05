@@ -3,6 +3,7 @@
 #include "UHH2/core/include/fwd.h"
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
+#include "UHH2/core/include/GenTopJet.h"
 
 #include "UHH2/common/include/Utils.h" 
 #include "UHH2/common/include/CommonModules.h"
@@ -18,7 +19,7 @@ class TopJetSortDPhi: public uhh2::AnalysisModule{
   virtual bool process(uhh2::Event &) override;
 
  private:
-  uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand_by_dphi;
+  uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
 
 };
 
@@ -28,6 +29,36 @@ class TopJetSortMass: public uhh2::AnalysisModule{
   virtual bool process(uhh2::Event &) override;
 
  private:
-  uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand_by_mass;
+  uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
 
+};
+
+class GenTopJetSortDPhi: public uhh2::AnalysisModule{
+ public:
+  explicit GenTopJetSortDPhi(uhh2::Context &);
+  virtual bool process(uhh2::Event &) override;
+
+ private:
+  uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
+
+};
+
+class GenTopJetSortMass: public uhh2::AnalysisModule{
+ public:
+  explicit GenTopJetSortMass(uhh2::Context &);
+  virtual bool process(uhh2::Event &) override;
+
+ private:
+  uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
+
+};
+
+class JetSelection: public uhh2::AnalysisModule{
+ public:
+  explicit JetSelection(uhh2::Context &);
+  virtual bool process(uhh2::Event &) override;
+
+ private:
+  uhh2::Event::Handle<std::vector<Jet>> h_jetsel;
+  uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
 };

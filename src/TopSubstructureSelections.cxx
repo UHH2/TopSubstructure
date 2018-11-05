@@ -160,8 +160,8 @@ bool Matching::passes(const uhh2::Event& event){
   return pass;
 }
 
-QuarkMatching::QuarkMatching(uhh2::Context & ctx):h_topjet_cand(ctx.get_handle<std::vector<TopJet>>("topjet_cand")), h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
-bool QuarkMatching::passes(const uhh2::Event& event){
+QuarkCandJetMatching::QuarkCandJetMatching(uhh2::Context & ctx):h_topjet_cand(ctx.get_handle<std::vector<TopJet>>("topjet_cand")), h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
+bool QuarkCandJetMatching::passes(const uhh2::Event& event){
   bool pass = false;
 
   if(event.is_valid(h_topjet_cand)){
@@ -182,6 +182,35 @@ bool QuarkMatching::passes(const uhh2::Event& event){
 	  q1 = ttbargen.WMinusdecay1();
 	  q2 = ttbargen.WMinusdecay2();
 	  if(deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8) pass = true;
+        }
+      }
+    }
+  }
+  return pass;
+}
+
+QuarkGenJetMatching::QuarkGenJetMatching(uhh2::Context & ctx):h_gentopjet_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")), h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
+bool QuarkGenJetMatching::passes(const uhh2::Event& event){
+  bool pass = false;
+
+  if(event.is_valid(h_gentopjet_cand)){
+    std::vector<GenTopJet> gentopjet_cand = event.get(h_gentopjet_cand);
+    if (gentopjet_cand.size() > 0) {
+      if(event.is_valid(h_ttbargen)){
+        const auto ttbargen = event.get(h_ttbargen);
+
+        GenParticle bq, q1, q2;
+        if(ttbargen.IsTopHadronicDecay()){
+	  bq = ttbargen.bTop();
+	  q1 = ttbargen.Wdecay1();
+	  q2 = ttbargen.Wdecay2();
+	  if(deltaR(bq, gentopjet_cand.at(0)) <= 0.8 && deltaR(q1, gentopjet_cand.at(0)) <= 0.8 && deltaR(q2, gentopjet_cand.at(0)) <= 0.8) pass = true;
+        }
+        else if(ttbargen.IsAntiTopHadronicDecay()){
+	  bq = ttbargen.bAntitop();
+	  q1 = ttbargen.WMinusdecay1();
+	  q2 = ttbargen.WMinusdecay2();
+	  if(deltaR(bq, gentopjet_cand.at(0)) <= 0.8 && deltaR(q1, gentopjet_cand.at(0)) <= 0.8 && deltaR(q2, gentopjet_cand.at(0)) <= 0.8) pass = true;
         }
       }
     }

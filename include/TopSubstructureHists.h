@@ -3,6 +3,7 @@
 #include "UHH2/core/include/Hists.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/AnalysisModule.h"
+#include "UHH2/core/include/GenTopJet.h"
 
 #include "UHH2/common/include/JetHists.h"
 #include "UHH2/common/include/NSelections.h"
@@ -32,7 +33,9 @@ namespace uhh2examples {
 
   protected:
     TH2* TwoDCut;
+    uhh2::Event::Handle<std::vector<Jet>> h_jetsel;
     uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
+    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
 
     bool isMC, isTTbar;

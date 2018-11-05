@@ -3,8 +3,9 @@
 
   <!ENTITY NEVT "-1">
 
- <!ENTITY INdir   "/nfs/dust/cms/user/schwarzd/MTopJet/PreSel">
+ <!ENTITY INdir    "/nfs/dust/cms/user/schwarzd/MTopJet/PreSel">
  <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/full_selection_dphi_njets_morehists">
+ <!ENTITY sort     "mass">
 
 
 <!-- =============================================== DATA =========================================================================== -->
@@ -257,6 +258,7 @@
 	<Item Name="pileup_directory_data_down" Value="/nfs/dust/cms/user/skottkej/CMSSW_8_0_24_patch1/src/UHH2/common/data/MyDataPileupHistogram_66017.root" />
 
        <Item Name="AnalysisModule" Value="TopSubstructureModule"/>
+       <Item Name="sort" Value="&sort;"/>
     </UserConfig>
 
   </Cycle>
