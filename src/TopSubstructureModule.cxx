@@ -118,10 +118,6 @@ namespace uhh2examples {
 
 
     JetId Btag_tight;
-
-    // create handles to pass information to Hists.cxx
-    uhh2::Event::Handle<vector<TopJet>> h_topjet_cand;
-    uhh2::Event::Handle<vector<GenTopJet>> h_gentopjet_cand;
   };
 
 
@@ -158,6 +154,8 @@ namespace uhh2examples {
     // the cleaning can also be achieved with less code via CommonModules with:
     // common->set_jet_id(PtEtaCut(30.0, 2.4));
     // before the 'common->init(ctx)' line.
+
+    isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft");
     
     // 2. set up selections
     const std::string ttbar_gen_label("ttbargen");
@@ -165,8 +163,8 @@ namespace uhh2examples {
     ttgenprod.reset(new TTbarGenProducer(ctx, ttbar_gen_label, false));
     if(sort_by == "dphi") topjetsort_by_dphi.reset(new TopJetSortDPhi(ctx));
     if(sort_by == "mass") topjetsort_by_mass.reset(new TopJetSortMass(ctx));
-    if(sort_by == "dphi") gentopjetsort_by_dphi.reset(new GenTopJetSortDPhi(ctx));
-    if(sort_by == "mass") gentopjetsort_by_mass.reset(new GenTopJetSortMass(ctx));
+    if(isTTbar && sort_by == "dphi") gentopjetsort_by_dphi.reset(new GenTopJetSortDPhi(ctx));
+    if(isTTbar && sort_by == "mass") gentopjetsort_by_mass.reset(new GenTopJetSortMass(ctx));
     jetsel.reset(new JetSelection(ctx));
     matching.reset(new QuarkCandJetMatching(ctx));
     genmatching.reset(new QuarkGenJetMatching(ctx));
@@ -451,7 +449,6 @@ namespace uhh2examples {
 
     isMC = (ctx.get("dataset_type") == "MC");
 
-    isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft");
 
   }
 
@@ -509,7 +506,7 @@ namespace uhh2examples {
     h_topjet_nocuts->fill(event);
     h_muon_nocuts->fill(event);
 
-    if(matching->passes(event) && isTTbar){
+    if(isTTbar && matching->passes(event)){
       h_nocuts_matched->fill(event);
       h_njet_nocuts_matched->fill(event);
       h_topjet_nocuts_matched->fill(event);
@@ -521,7 +518,7 @@ namespace uhh2examples {
       h_topjet_nocuts_unmatched->fill(event);
       h_muon_nocuts_unmatched->fill(event);
     }
-    if(genmatching->passes(event) && isTTbar){
+    if(isTTbar && genmatching->passes(event)){
       h_nocuts_genmatched->fill(event);
       h_njet_nocuts_genmatched->fill(event);
       h_topjet_nocuts_genmatched->fill(event);
@@ -535,7 +532,7 @@ namespace uhh2examples {
     h_topjet_MET50->fill(event);
     h_muon_MET50->fill(event);
 
-    if(matching->passes(event) && isTTbar){
+    if(isTTbar && matching->passes(event)){
       h_MET50_matched->fill(event);
       h_njet_MET50_matched->fill(event);
       h_topjet_MET50_matched->fill(event);
@@ -547,7 +544,7 @@ namespace uhh2examples {
       h_topjet_MET50_unmatched->fill(event);
       h_muon_MET50_unmatched->fill(event);
     }
-    if(genmatching->passes(event) && isTTbar){
+    if(isTTbar && genmatching->passes(event)){
       h_MET50_genmatched->fill(event);
       h_njet_MET50_genmatched->fill(event);
       h_topjet_MET50_genmatched->fill(event);
@@ -561,7 +558,7 @@ namespace uhh2examples {
     h_topjet_1mu->fill(event);
     h_muon_1mu->fill(event);
 
-    if(matching->passes(event) && isTTbar){
+    if(isTTbar && matching->passes(event)){
       h_1mu_matched->fill(event);
       h_njet_1mu_matched->fill(event);
       h_topjet_1mu_matched->fill(event);
@@ -573,7 +570,7 @@ namespace uhh2examples {
       h_topjet_1mu_unmatched->fill(event);
       h_muon_1mu_unmatched->fill(event);
     }
-    if(genmatching->passes(event) && isTTbar){
+    if(isTTbar && genmatching->passes(event)){
       h_1mu_genmatched->fill(event);
       h_njet_1mu_genmatched->fill(event);
       h_topjet_1mu_genmatched->fill(event);
@@ -587,7 +584,7 @@ namespace uhh2examples {
     h_topjet_mupt55->fill(event);
     h_muon_mupt55->fill(event);
 
-    if(matching->passes(event) && isTTbar){
+    if(isTTbar && matching->passes(event)){
       h_mupt55_matched->fill(event);
       h_njet_mupt55_matched->fill(event);
       h_topjet_mupt55_matched->fill(event);
@@ -599,7 +596,7 @@ namespace uhh2examples {
       h_topjet_mupt55_unmatched->fill(event);
       h_muon_mupt55_unmatched->fill(event);
     }
-    if(genmatching->passes(event) && isTTbar){
+    if(isTTbar && genmatching->passes(event)){
       h_mupt55_genmatched->fill(event);
       h_njet_mupt55_genmatched->fill(event);
       h_topjet_mupt55_genmatched->fill(event);
@@ -613,11 +610,11 @@ namespace uhh2examples {
     h_topjet_0ele->fill(event);
     h_muon_0ele->fill(event);
 
-    if(matching->passes(event) && isTTbar){
+    if(isTTbar && matching->passes(event)){
       h_0ele_matched->fill(event);
       h_njet_0ele_matched->fill(event);
       h_topjet_0ele_matched->fill(event);
-      h_muon_0ele_matched->fill(event);
+      h_muon_0ele_matched->fill(event);  
     }
     else if(isTTbar){
       h_0ele_unmatched->fill(event);
@@ -625,7 +622,7 @@ namespace uhh2examples {
       h_topjet_0ele_unmatched->fill(event);
       h_muon_0ele_unmatched->fill(event);
     }
-    if(genmatching->passes(event) && isTTbar){
+    if(isTTbar && genmatching->passes(event)){
       h_0ele_genmatched->fill(event);
       h_njet_0ele_genmatched->fill(event);
       h_topjet_0ele_genmatched->fill(event);
@@ -639,7 +636,7 @@ namespace uhh2examples {
     h_topjet_twodcut->fill(event);
     h_muon_twodcut->fill(event);
 
-    if(matching->passes(event) && isTTbar){
+    if(isTTbar && matching->passes(event)){
       h_twodcut_matched->fill(event);
       h_njet_twodcut_matched->fill(event);
       h_topjet_twodcut_matched->fill(event);
@@ -651,7 +648,7 @@ namespace uhh2examples {
       h_topjet_twodcut_unmatched->fill(event);
       h_muon_twodcut_unmatched->fill(event);
     }
-    if(genmatching->passes(event) && isTTbar){
+    if(isTTbar && genmatching->passes(event)){
       h_twodcut_genmatched->fill(event);
       h_njet_twodcut_genmatched->fill(event);
       h_topjet_twodcut_genmatched->fill(event);
@@ -665,7 +662,7 @@ namespace uhh2examples {
     h_topjet_1topjet->fill(event);
     h_muon_1topjet->fill(event);
 
-    if(matching->passes(event) && isTTbar){
+    if(isTTbar && matching->passes(event)){
       h_1topjet_matched->fill(event);
       h_njet_1topjet_matched->fill(event);
       h_topjet_1topjet_matched->fill(event);
@@ -677,7 +674,7 @@ namespace uhh2examples {
       h_topjet_1topjet_unmatched->fill(event);
       h_muon_1topjet_unmatched->fill(event);
     }
-    if(genmatching->passes(event) && isTTbar){
+    if(isTTbar && genmatching->passes(event)){
       h_1topjet_genmatched->fill(event);
       h_njet_1topjet_genmatched->fill(event);
       h_topjet_1topjet_genmatched->fill(event);
@@ -691,7 +688,7 @@ namespace uhh2examples {
     h_topjet_1btagtight->fill(event);
     h_muon_1btagtight->fill(event);
 
-    if(matching->passes(event) && isTTbar){
+    if(isTTbar && matching->passes(event)){
       h_1btagtight_matched->fill(event);
       h_njet_1btagtight_matched->fill(event);
       h_topjet_1btagtight_matched->fill(event);
@@ -703,7 +700,7 @@ namespace uhh2examples {
       h_topjet_1btagtight_unmatched->fill(event);
       h_muon_1btagtight_unmatched->fill(event);
     }
-    if(genmatching->passes(event) && isTTbar){
+    if(isTTbar && genmatching->passes(event)){
       h_1btagtight_genmatched->fill(event);
       h_njet_1btagtight_genmatched->fill(event);
       h_topjet_1btagtight_genmatched->fill(event);
@@ -717,7 +714,7 @@ namespace uhh2examples {
     h_topjet_ntopjet1->fill(event);
     h_muon_ntopjet1->fill(event);
 
-    if(matching->passes(event) && isTTbar){
+    if(isTTbar && matching->passes(event)){
       h_ntopjet1_matched->fill(event);
       h_njet_ntopjet1_matched->fill(event);
       h_topjet_ntopjet1_matched->fill(event);
@@ -729,7 +726,7 @@ namespace uhh2examples {
       h_topjet_ntopjet1_unmatched->fill(event);
       h_muon_ntopjet1_unmatched->fill(event);
     }
-    if(genmatching->passes(event) && isTTbar){
+    if(isTTbar && genmatching->passes(event)){
       h_ntopjet1_genmatched->fill(event);
       h_njet_ntopjet1_genmatched->fill(event);
       h_topjet_ntopjet1_genmatched->fill(event);
@@ -743,7 +740,7 @@ namespace uhh2examples {
     h_topjet_dphi1->fill(event);
     h_muon_dphi1->fill(event);
 
-    if(matching->passes(event) && isTTbar){
+    if(isTTbar && matching->passes(event)){
       h_dphi1_matched->fill(event);
       h_njet_dphi1_matched->fill(event);
       h_topjet_dphi1_matched->fill(event);
@@ -755,7 +752,7 @@ namespace uhh2examples {
       h_topjet_dphi1_unmatched->fill(event);
       h_muon_dphi1_unmatched->fill(event);
     }
-    if(genmatching->passes(event) && isTTbar){
+    if(isTTbar && genmatching->passes(event)){
       h_dphi1_genmatched->fill(event);
       h_njet_dphi1_genmatched->fill(event);
       h_topjet_dphi1_genmatched->fill(event);
@@ -769,7 +766,7 @@ namespace uhh2examples {
     h_topjet_dphi25->fill(event);
     h_muon_dphi25->fill(event);
 
-    if(matching->passes(event) && isTTbar){
+    if(isTTbar && matching->passes(event)){
       h_dphi25_matched->fill(event);
       h_njet_dphi25_matched->fill(event);
       h_topjet_dphi25_matched->fill(event);
@@ -781,7 +778,7 @@ namespace uhh2examples {
       h_topjet_dphi25_unmatched->fill(event);
       h_muon_dphi25_unmatched->fill(event);
     }
-    if(genmatching->passes(event) && isTTbar){
+    if(isTTbar && genmatching->passes(event)){
       h_dphi25_genmatched->fill(event);
       h_njet_dphi25_genmatched->fill(event);
       h_topjet_dphi25_genmatched->fill(event);
@@ -795,7 +792,7 @@ namespace uhh2examples {
     h_topjet_ntopjet2->fill(event);
     h_muon_ntopjet2->fill(event);
 
-    if(matching->passes(event) && isTTbar){
+    if(isTTbar && matching->passes(event)){
       h_ntopjet2_matched->fill(event);
       h_njet_ntopjet2_matched->fill(event);
       h_topjet_ntopjet2_matched->fill(event);
@@ -807,7 +804,7 @@ namespace uhh2examples {
       h_topjet_ntopjet2_unmatched->fill(event);
       h_muon_ntopjet2_unmatched->fill(event);
     }
-    if(genmatching->passes(event) && isTTbar){
+    if(isTTbar && genmatching->passes(event)){
       h_ntopjet2_genmatched->fill(event);
       h_njet_ntopjet2_genmatched->fill(event);
       h_topjet_ntopjet2_genmatched->fill(event);

@@ -259,8 +259,8 @@ TopSubstructureHists::TopSubstructureHists(Context & ctx, const string & dirname
   // get handles
   if(sort_by == "dphi") h_topjet_cand = ctx.get_handle<vector<TopJet>>("topjet_cand");
   if(sort_by == "mass") h_topjet_cand = ctx.get_handle<vector<TopJet>>("topjet_cand");
-  if(sort_by == "dphi") h_gentopjet_cand = ctx.get_handle<vector<GenTopJet>>("gentopjet_cand");
-  if(sort_by == "mass") h_gentopjet_cand = ctx.get_handle<vector<GenTopJet>>("gentopjet_cand");
+  if(isTTbar && sort_by == "dphi") h_gentopjet_cand = ctx.get_handle<vector<GenTopJet>>("gentopjet_cand");
+  if(isTTbar && sort_by == "mass") h_gentopjet_cand = ctx.get_handle<vector<GenTopJet>>("gentopjet_cand");
   h_jetsel = ctx.get_handle<vector<Jet>>("jetsel");
   h_ttbargen = ctx.get_handle<TTbarGen>("ttbargen");
   
@@ -349,6 +349,8 @@ void TopSubstructureHists::fill(const Event & event){
     std::vector<Jet> jet_sel = event.get(h_jetsel);
     hist("N_jets_clean")->Fill(jet_sel.size(), weight);
   }
+
+
   // TopJet
   if(event.is_valid(h_topjet_cand)){
     std::vector<TopJet> topjet_cand = event.get(h_topjet_cand);
@@ -452,7 +454,7 @@ void TopSubstructureHists::fill(const Event & event){
 
   // GenTopJet
   if(isTTbar){
-    if(event.is_valid(h_gentopjet_cand)){
+    if(event.is_valid(h_gentopjet_cand)) {
       std::vector<GenTopJet> gentopjet_cand;
       gentopjet_cand = event.get(h_gentopjet_cand);
 
@@ -532,7 +534,6 @@ void TopSubstructureHists::fill(const Event & event){
 	    // hist("tau21_cand4_ttbar")->Fill(topjet_cand.at(3).tau2()/topjet_cand.at(3).tau1(), weight);
 	    hist("dphi_cand4_ttbar")->Fill(deltaPhi(gentopjet_cand.at(3), muon),weight);
 	  }
-
 	  if(event.is_valid(h_ttbargen)){
 	    const auto & ttbargen = event.get(h_ttbargen);
 
@@ -547,19 +548,20 @@ void TopSubstructureHists::fill(const Event & event){
 	    }
 	  }
 	}
+
+
+	if(event.is_valid(h_gentopjet_cand)){
+	  if(event.is_valid(h_topjet_cand)){
+	    std::vector<GenTopJet> gentopjet_cand1 = event.get(h_gentopjet_cand);
+	    std::vector<TopJet> topjet_cand1 = event.get(h_topjet_cand);
+	    if(gentopjet_cand1.size() > 0 && topjet_cand1.size() > 0){
+	      hist("dR8_topjet_genjet")->Fill(deltaR(topjet_cand1.at(0), gentopjet_cand1.at(0)), weight);
+	    }
+	  }
+	}
       } // closing brackets of gentopjet_cand.size()
 
     } // closing brackets of GenTopJet
-
-    if(event.is_valid(h_gentopjet_cand)){
-      if(event.is_valid(h_topjet_cand)){
-	std::vector<GenTopJet> gentopjet_cand1 = event.get(h_gentopjet_cand);
-	std::vector<TopJet> topjet_cand1 = event.get(h_topjet_cand);
-	if(gentopjet_cand1.size() > 0 && topjet_cand1.size() > 0){
-	  hist("dR8_topjet_genjet")->Fill(deltaR(topjet_cand1.at(0), gentopjet_cand1.at(0)), weight);
-	}
-      }
-    }
   }
 }
 
