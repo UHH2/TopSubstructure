@@ -115,3 +115,25 @@ bool JetSelection::process(uhh2::Event& event){
   event.set(h_jetsel, own_jet);
   return true;
 }
+
+GenJetSelection::GenJetSelection(uhh2::Context & ctx):h_genjetsel(ctx.declare_event_output<std::vector<Particle>>("genjetsel")), h_gentopjet_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")){}
+bool GenJetSelection::process(uhh2::Event& event){
+  std::vector<Particle> own_jet;
+
+  if(event.is_valid(h_gentopjet_cand)){
+    std::vector<GenTopJet> gentopjet_cand = event.get(h_gentopjet_cand);
+    if(event.genjets->size() > 0 && gentopjet_cand.size() > 0){
+      for(unsigned int i=0; i < event.genjets->size(); i++){
+	double dr=9999999;
+	double diff = 0;
+	for(unsigned int j=0; j < gentopjet_cand.size(); j++){
+	  diff = deltaR(event.genjets->at(i), gentopjet_cand.at(j));
+	  if(diff < dr) dr = diff;
+	}
+	if(dr > 0.8) own_jet.push_back(event.genjets->at(i));
+      }
+    }
+  }
+  event.set(h_genjetsel, own_jet);
+  return true;
+}

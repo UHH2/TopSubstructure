@@ -62,3 +62,13 @@ class JetSelection: public uhh2::AnalysisModule{
   uhh2::Event::Handle<std::vector<Jet>> h_jetsel;
   uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
 };
+
+class GenJetSelection: public uhh2::AnalysisModule{
+ public:
+  explicit GenJetSelection(uhh2::Context &);
+  virtual bool process(uhh2::Event &) override;
+
+ private:
+  uhh2::Event::Handle<std::vector<Particle>> h_genjetsel;
+  uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
+};

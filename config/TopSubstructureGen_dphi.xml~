@@ -5,7 +5,7 @@
 
  <!ENTITY INdir   "/nfs/dust/cms/user/schwarzd/MTopJet/PreSel">
  <!ENTITY OUTdir  "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/full_selection_gen">
- <!ENTITY sort    "mass">
+ <!ENTITY sort    "dphi">
 
 <!-- =============================================== ttbar =========================================================================== -->
   <!ENTITY TTbar_Mtt0000to0700    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt0000to0700.root">

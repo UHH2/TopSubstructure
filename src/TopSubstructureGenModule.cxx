@@ -31,9 +31,9 @@ namespace uhh2examples {
    * This AnalysisModule, in turn, is called (via AnalysisModuleRunner) by SFrame.
    */
 
-  class TopSubstructureModule: public AnalysisModule {
+  class TopSubstructureGenModule: public AnalysisModule {
   public:    
-    explicit TopSubstructureModule(Context & ctx);
+    explicit TopSubstructureGenModule(Context & ctx);
     virtual bool process(Event & event) override;
 
   private:    
@@ -79,45 +79,18 @@ namespace uhh2examples {
   };
 
 
-  TopSubstructureModule::TopSubstructureModule(Context & ctx){
-    // In the constructor, the typical tasks are to initialize the
-    // member variables, in particular the AnalysisModules such as
-    // CommonModules or some cleaner module, Selections and Hists.
-    // But you can do more and e.g. access the configuration, as shown below.
- 
-    
-    // 1. setup other modules. CommonModules and the JetCleaner:
-    common.reset(new CommonModules());
-    // TODO: configure common here, e.g. by 
-    // calling common->set_*_id or common->disable_*
-    common->init(ctx);
+  TopSubstructureGenModule::TopSubstructureGenModule(Context & ctx){
 
-    trigger_sel_A = uhh2::make_unique<TriggerSelection>("HLT_Mu50_v*");
-    trigger_sel_B = uhh2::make_unique<TriggerSelection>("HLT_TkMu50_v*");
-   
-
-    // note that the JetCleaner is only kept for the sake of example;
-    // instead of constructing a jetcleaner explicitly,
-    // the cleaning can also be achieved with less code via CommonModules with:
-    // common->set_jet_id(PtEtaCut(30.0, 2.4));
-    // before the 'common->init(ctx)' line.
-    
-    // 2. set up selections
-    const std::string ttbar_gen_label("ttbargen");
-   
-    // decide how you want to sort your candidates
+    // set up selections
+       // decide how you want to sort your candidates
     sort_by = ctx.get("sort");
+    const std::string ttbar_gen_label("ttbargen");
 
     ttgenprod.reset(new TTbarGenProducer(ctx, ttbar_gen_label, false));
-    if(sort_by == "dphi") topjetsort_by_dphi.reset(new TopJetSortDPhi(ctx));
-    if(sort_by == "mass") topjetsort_by_mass.reset(new TopJetSortMass(ctx));
-    if(isTTbar && sort_by == "dphi") gentopjetsort_by_dphi.reset(new GenTopJetSortDPhi(ctx));
-    if(isTTbar && sort_by == "mass") gentopjetsort_by_mass.reset(new GenTopJetSortMass(ctx));
+    if(sort_by == "dphi") gentopjetsort_by_dphi.reset(new GenTopJetSortDPhi(ctx));
+    if(sort_by == "mass") gentopjetsort_by_mass.reset(new GenTopJetSortMass(ctx));
     jetsel.reset(new JetSelection(ctx));
-    matching.reset(new QuarkCandJetMatching(ctx));
     genmatching.reset(new QuarkGenJetMatching(ctx));
-    pv_sel.reset(new NPVSelection(1, -1, PrimaryVertexId(StandardPrimaryVertexId())));
-    PUreweight.reset(new MCPileupReweight(ctx, "central"));
     ntopjetcand_sel1.reset(new NTopJet(ctx,1));
     dphi_sel1.reset(new DPhiSelection(ctx,1));
     dphi_sel2.reset(new DPhiSelection(ctx,2.5));
@@ -232,51 +205,18 @@ namespace uhh2examples {
     h_topjet_ntopjet2_unmatched.reset(new TopJetHists(ctx, "Topjet_ntopjet2_unmatched"));
     h_muon_ntopjet2_unmatched.reset(new MuonHists(ctx, "muon_ntopjet2_unmatched"));
 
-
-
-    isMC = (ctx.get("dataset_type") == "MC");
   }
 
 
-  bool TopSubstructureModule::process(Event & event) {
-    // This is the main procedure, called for each event. Typically,
-    // do some pre-processing by calling the modules' process method
-    // of the modules constructed in the constructor (1).
-    // Then, test whether the event passes some selection and -- if yes --
-    // use it to fill the histograms (2).
-    // Finally, decide whether or not to keep the event in the output (3);
-    // this is controlled by the return value of this method: If it
-    // returns true, the event is kept; if it returns false, the event
-    // is thrown away.
-    
-    cout << "TopSubstructureModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
+  bool TopSubstructureGenModule::process(Event & event) {    
+    cout << "TopSubstructureGenModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
     
     // 1. run all modules other modules.
 
-    common->process(event);
-
-    /* *********** Trigger *********** */
-    // for DATA until run 274954 -> use only Trigger A
-    // for MC and DATA from 274954 -> use "A || B"
-    if(!isMC && event.run < 274954) {
-      if(!trigger_sel_A->passes(event)) return false;
-    }else{
-      if(!(trigger_sel_A->passes(event) || trigger_sel_B->passes(event))) return false;
-    }
-
-    //at least 1 good primary vertex 
-    if(!pv_sel->passes(event)) return false;
-
-    /** PU Reweighting *********************/
-    PUreweight->process(event);
-
     // sort the topjets for our needs
-    if(sort_by == "dphi") topjetsort_by_dphi->process(event);
-    if(sort_by == "mass") topjetsort_by_mass->process(event);
-    if(isTTbar){
-      if(sort_by == "dphi") gentopjetsort_by_dphi->process(event);
-      if(sort_by == "mass") gentopjetsort_by_mass->process(event);
-    }
+    if(sort_by == "dphi") gentopjetsort_by_dphi->process(event);
+    if(sort_by == "mass") gentopjetsort_by_mass->process(event);
+
     ttgenprod->process(event);
     jetsel->process(event);
 
@@ -288,19 +228,19 @@ namespace uhh2examples {
     h_topjet_nocuts->fill(event);
     h_muon_nocuts->fill(event);
 
-    if(isTTbar && matching->passes(event)){
+    if(matching->passes(event)){
       h_nocuts_matched->fill(event);
       h_njet_nocuts_matched->fill(event);
       h_topjet_nocuts_matched->fill(event);
       h_muon_nocuts_matched->fill(event);
     }
-    else if(isTTbar){
+    else{
       h_nocuts_unmatched->fill(event);
       h_njet_nocuts_unmatched->fill(event);
       h_topjet_nocuts_unmatched->fill(event);
       h_muon_nocuts_unmatched->fill(event);
     }
-    if(isTTbar && genmatching->passes(event)){
+    if(genmatching->passes(event)){
       h_nocuts_genmatched->fill(event);
       h_njet_nocuts_genmatched->fill(event);
       h_topjet_nocuts_genmatched->fill(event);
@@ -314,19 +254,19 @@ namespace uhh2examples {
     h_topjet_ntopjet1->fill(event);
     h_muon_ntopjet1->fill(event);
 
-    if(isTTbar && matching->passes(event)){
+    if(matching->passes(event)){
       h_ntopjet1_matched->fill(event);
       h_njet_ntopjet1_matched->fill(event);
       h_topjet_ntopjet1_matched->fill(event);
       h_muon_ntopjet1_matched->fill(event);
     }
-    else if(isTTbar){
+    else{
       h_ntopjet1_unmatched->fill(event);
       h_njet_ntopjet1_unmatched->fill(event);
       h_topjet_ntopjet1_unmatched->fill(event);
       h_muon_ntopjet1_unmatched->fill(event);
     }
-    if(isTTbar && genmatching->passes(event)){
+    if(genmatching->passes(event)){
       h_ntopjet1_genmatched->fill(event);
       h_njet_ntopjet1_genmatched->fill(event);
       h_topjet_ntopjet1_genmatched->fill(event);
@@ -340,19 +280,19 @@ namespace uhh2examples {
     h_topjet_dphi1->fill(event);
     h_muon_dphi1->fill(event);
 
-    if(isTTbar && matching->passes(event)){
+    if(matching->passes(event)){
       h_dphi1_matched->fill(event);
       h_njet_dphi1_matched->fill(event);
       h_topjet_dphi1_matched->fill(event);
       h_muon_dphi1_matched->fill(event);
     }
-    else if(isTTbar){
+    else{
       h_dphi1_unmatched->fill(event);
       h_njet_dphi1_unmatched->fill(event);
       h_topjet_dphi1_unmatched->fill(event);
       h_muon_dphi1_unmatched->fill(event);
     }
-    if(isTTbar && genmatching->passes(event)){
+    if(genmatching->passes(event)){
       h_dphi1_genmatched->fill(event);
       h_njet_dphi1_genmatched->fill(event);
       h_topjet_dphi1_genmatched->fill(event);
@@ -366,19 +306,19 @@ namespace uhh2examples {
     h_topjet_dphi25->fill(event);
     h_muon_dphi25->fill(event);
 
-    if(isTTbar && matching->passes(event)){
+    if(matching->passes(event)){
       h_dphi25_matched->fill(event);
       h_njet_dphi25_matched->fill(event);
       h_topjet_dphi25_matched->fill(event);
       h_muon_dphi25_matched->fill(event);
     }
-    else if(isTTbar){
+    else{
       h_dphi25_unmatched->fill(event);
       h_njet_dphi25_unmatched->fill(event);
       h_topjet_dphi25_unmatched->fill(event);
       h_muon_dphi25_unmatched->fill(event);
     }
-    if(isTTbar && genmatching->passes(event)){
+    if(genmatching->passes(event)){
       h_dphi25_genmatched->fill(event);
       h_njet_dphi25_genmatched->fill(event);
       h_topjet_dphi25_genmatched->fill(event);
@@ -392,19 +332,19 @@ namespace uhh2examples {
     h_topjet_ntopjet2->fill(event);
     h_muon_ntopjet2->fill(event);
 
-    if(isTTbar && matching->passes(event)){
+    if(matching->passes(event)){
       h_ntopjet2_matched->fill(event);
       h_njet_ntopjet2_matched->fill(event);
       h_topjet_ntopjet2_matched->fill(event);
       h_muon_ntopjet2_matched->fill(event);
     }
-    else if(isTTbar){
+    else{
       h_ntopjet2_unmatched->fill(event);
       h_njet_ntopjet2_unmatched->fill(event);
       h_topjet_ntopjet2_unmatched->fill(event);
       h_muon_ntopjet2_unmatched->fill(event);
     }
-    if(isTTbar && genmatching->passes(event)){
+    if(genmatching->passes(event)){
       h_ntopjet2_genmatched->fill(event);
       h_njet_ntopjet2_genmatched->fill(event);
       h_topjet_ntopjet2_genmatched->fill(event);
@@ -416,8 +356,6 @@ namespace uhh2examples {
     return true;
   }
 
-  // as we want to run the ExampleCycleNew directly with AnalysisModuleRunner,
-  // make sure the TopSubstructureModule is found by class name. This is ensured by this macro:
-  UHH2_REGISTER_ANALYSIS_MODULE(TopSubstructureModule)
+  UHH2_REGISTER_ANALYSIS_MODULE(TopSubstructureGenModule)
 
 }

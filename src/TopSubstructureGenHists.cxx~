@@ -286,7 +286,7 @@ void TopSubstructureHists::fill(const Event & event){
 	  sort_by_pt<Muon>(*event.muons);
 	  const auto & muon = event.muons->at(0);
 	  hist("dphi_cand1_ttbar")->Fill(deltaPhi(topjet_cand.at(0), muon),weight);
-	  if(topjet_cand.size()>=2) hist("dphi_cand2_ttbar")->Fill(deltaPhi(topjet_cand.at(1), muon),weight);
+	  if(topjet_cand.size()==2) hist("dphi_cand2_ttbar")->Fill(deltaPhi(topjet_cand.at(1), muon),weight);
 	}
 
 	hist("M_cand1_ttbar")->Fill(topjet_cand.at(0).v4().M(), weight);     
@@ -300,7 +300,7 @@ void TopSubstructureHists::fill(const Event & event){
 	hist("tau21_cand1_ttbar")->Fill(topjet_cand.at(0).tau2()/topjet_cand.at(0).tau1(), weight);
 
 
-	if(topjet_cand.size()>=2){
+	if(topjet_cand.size()==2){
 	  hist("M_cand2_ttbar")->Fill(topjet_cand.at(1).v4().M(), weight);     
 	  hist("pt_topjet_cand2_ttbar")->Fill(topjet_cand.at(1).pt(), weight);      
 	  hist("eta_topjet_cand2_ttbar")->Fill(topjet_cand.at(1).eta(), weight);
@@ -367,7 +367,7 @@ void TopSubstructureHists::fill(const Event & event){
 	    sort_by_pt<Muon>(*event.muons);
 	    const auto & muon = event.muons->at(0);
 	    hist("dphi_cand1_ttbar_gen")->Fill(deltaPhi(gentopjet_cand.at(0), muon),weight);
-	    if(gentopjet_cand.size()>=2) hist("dphi_cand2_ttbar_gen")->Fill(deltaPhi(gentopjet_cand.at(1), muon),weight);
+	    if(gentopjet_cand.size()==2) hist("dphi_cand2_ttbar_gen")->Fill(deltaPhi(gentopjet_cand.at(1), muon),weight);
 	  }
 
 
@@ -382,7 +382,7 @@ void TopSubstructureHists::fill(const Event & event){
 	  hist("tau21_cand1_ttbar_gen")->Fill(gentopjet_cand.at(0).tau2()/gentopjet_cand.at(0).tau1(), weight);
 
 
-	  if(gentopjet_cand.size()>=2){
+	  if(gentopjet_cand.size()==2){
 	    hist("M_cand2_ttbar_gen")->Fill(gentopjet_cand.at(1).v4().M(), weight);     
 	    hist("pt_topjet_cand2_ttbar_gen")->Fill(gentopjet_cand.at(1).pt(), weight);      
 	    hist("eta_topjet_cand2_ttbar_gen")->Fill(gentopjet_cand.at(1).eta(), weight);
