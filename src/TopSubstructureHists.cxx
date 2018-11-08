@@ -33,8 +33,8 @@ TopSubstructureHists::TopSubstructureHists(Context & ctx, const string & dirname
   book<TH1F>("tau1_topjet_cand1", "#tau_{1} first TopJet candidate", 40, 0, 1.);
   book<TH1F>("tau2_topjet_cand1", "#tau_{2} first TopJet candidate", 40, 0, 1.);
   book<TH1F>("tau3_topjet_cand1", "#tau_{3} first TopJet candidate", 40, 0, 1.);
-  book<TH1F>("tau32_cand1", "#tau_{3}/#tau_{2} first TopJet candidate", 40, 0, 1.0);
-  book<TH1F>("tau21_cand1", "#tau_{2}/#tau_{1} first TopJet candidate", 40, 0, 1.0);
+  book<TH1F>("tau32_cand1", "#tau_{3}/#tau_{2} first TopJet candidate", 40, 0, 1.);
+  book<TH1F>("tau21_cand1", "#tau_{2}/#tau_{1} first TopJet candidate", 40, 0, 1.);
   
   // second candidate
   book<TH1F>("M_cand2", "M_{second TopJet candidate} [GeV^{2}/c^{2}]", 70, 0, 700);
@@ -44,34 +44,8 @@ TopSubstructureHists::TopSubstructureHists(Context & ctx, const string & dirname
   book<TH1F>("tau1_topjet_cand2", "#tau_{1} second TopJet candidate", 40, 0, 1.);
   book<TH1F>("tau2_topjet_cand2", "#tau_{2} second TopJet candidate", 40, 0, 1.);
   book<TH1F>("tau3_topjet_cand2", "#tau_{3} second TopJet candidate", 40, 0, 1.);
-  book<TH1F>("tau32_cand2", "#tau_{3}/#tau_{2} second TopJet candidate", 40, 0, 1.0);
-  book<TH1F>("tau21_cand2", "#tau_{2}/#tau_{1} second TopJet candidate", 40, 0, 1.0);
-
-
-  // // third candidate
-  // book<TH1F>("M_cand3", "M_{third TopJet candidate} [GeV^{2}/c^{2}]", 70, 0, 700);
-  // book<TH1F>("pt_topjet_cand3", "p_{T} third TopJet candidate", 150, 0, 1500);
-  // book<TH1F>("eta_topjet_cand3", "#eta third TopJet candidate", 40, -2.5, 2.5);
-  // book<TH1F>("Nsubjet_cand3", "number subjets third TopJet candidate", 6, -0.5, 5.5);
-  // book<TH1F>("tau1_topjet_cand3", "#tau_{1} third TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau2_topjet_cand3", "#tau_{2} third TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau3_topjet_cand3", "#tau_{3} third TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau32_cand3", "#tau_{3}/#tau_{2} third TopJet candidate", 40, 0, 1.0);
-  // book<TH1F>("tau21_cand3", "#tau_{2}/#tau_{1} third TopJet candidate", 40, 0, 1.0);
-
-
-  // // fourth candidate
-  // book<TH1F>("M_cand4", "M_{fourth TopJet candidate} [GeV^{2}/c^{2}]", 70, 0, 700);
-  // book<TH1F>("pt_topjet_cand4", "p_{T} fourth TopJet candidate", 150, 0, 1500);
-  // book<TH1F>("eta_topjet_cand4", "#eta fourth TopJet candidate", 40, -2.5, 2.5);
-  // book<TH1F>("Nsubjet_cand4", "number subjets fourth TopJet candidate", 6, -0.5, 5.5);
-  // book<TH1F>("tau1_topjet_cand4", "#tau_{1} fourth TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau2_topjet_cand4", "#tau_{2} fourth TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau3_topjet_cand4", "#tau_{3} fourth TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau32_cand4", "#tau_{3}/#tau_{2} fourth TopJet candidate", 40, 0, 1.0);
-  // book<TH1F>("tau21_cand4", "#tau_{2}/#tau_{1} fourth TopJet candidate", 40, 0, 1.0);
-
-
+  book<TH1F>("tau32_cand2", "#tau_{3}/#tau_{2} second TopJet candidate", 40, 0, 1.);
+  book<TH1F>("tau21_cand2", "#tau_{2}/#tau_{1} second TopJet candidate", 40, 0, 1.);
 
   // only TTbar
   book<TH1F>("dR8", "#Delta R", 50, 0, 5);
@@ -84,8 +58,8 @@ TopSubstructureHists::TopSubstructureHists(Context & ctx, const string & dirname
   book<TH1F>("tau1_topjet_cand1_ttbar", "#tau_{1} first TopJet candidate", 40, 0, 1.);
   book<TH1F>("tau2_topjet_cand1_ttbar", "#tau_{2} first TopJet candidate", 40, 0, 1.);
   book<TH1F>("tau3_topjet_cand1_ttbar", "#tau_{3} first TopJet candidate", 40, 0, 1.);
-  book<TH1F>("tau32_cand1_ttbar", "#tau_{3}/#tau_{2} first TopJet candidate", 40, 0, 1.0);
-  book<TH1F>("tau21_cand1_ttbar", "#tau_{2}/#tau_{1} first TopJet candidate", 40, 0, 1.0);
+  book<TH1F>("tau32_cand1_ttbar", "#tau_{3}/#tau_{2} first TopJet candidate", 40, 0, 1.);
+  book<TH1F>("tau21_cand1_ttbar", "#tau_{2}/#tau_{1} first TopJet candidate", 40, 0, 1.);
   book<TH1F>("dphi_cand1_ttbar", "#Delta #Phi (#mu, cand1)", 40, 0, 4.0);
 
 
@@ -97,34 +71,10 @@ TopSubstructureHists::TopSubstructureHists(Context & ctx, const string & dirname
   book<TH1F>("tau1_topjet_cand2_ttbar", "#tau_{1} second TopJet candidate", 40, 0, 1.);
   book<TH1F>("tau2_topjet_cand2_ttbar", "#tau_{2} second TopJet candidate", 40, 0, 1.);
   book<TH1F>("tau3_topjet_cand2_ttbar", "#tau_{3} second TopJet candidate", 40, 0, 1.);
-  book<TH1F>("tau32_cand2_ttbar", "#tau_{3}/#tau_{2} second TopJet candidate", 40, 0, 1.0);
-  book<TH1F>("tau21_cand2_ttbar", "#tau_{2}/#tau_{1} second TopJet candidate", 40, 0, 1.0);
+  book<TH1F>("tau32_cand2_ttbar", "#tau_{3}/#tau_{2} second TopJet candidate", 40, 0, 1.);
+  book<TH1F>("tau21_cand2_ttbar", "#tau_{2}/#tau_{1} second TopJet candidate", 40, 0, 1.);
   book<TH1F>("dphi_cand2_ttbar", "#Delta #Phi (#mu, cand2)", 40, 0, 4.0);
 
-
-  // // third candidate
-  // book<TH1F>("M_cand3_ttbar", "M_{third TopJet candidate} [GeV^{2}/c^{2}]", 70, 0, 700);
-  // book<TH1F>("pt_topjet_cand3_ttbar", "p_{T} third TopJet candidate", 150, 0, 1500);
-  // book<TH1F>("eta_topjet_cand3_ttbar", "#eta third TopJet candidate", 40, -2.5, 2.5);
-  // book<TH1F>("Nsubjet_cand3_ttbar", "number subjet third TopJet candidate", 6, -0.5, 5.5);
-  // book<TH1F>("tau1_topjet_cand3_ttbar", "#tau_{1} third TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau2_topjet_cand3_ttbar", "#tau_{2} third TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau3_topjet_cand3_ttbar", "#tau_{3} third TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau32_cand3_ttbar", "#tau_{3}/#tau_{2} third TopJet candidate", 40, 0, 1.0);
-  // book<TH1F>("tau21_cand3_ttbar", "#tau_{2}/#tau_{1} third TopJet candidate", 40, 0, 1.0);
-  book<TH1F>("dphi_cand3_ttbar", "#Delta #Phi (#mu, cand3)", 40, 0, 4.0);
-
-  // // fourth candidate
-  // book<TH1F>("M_cand4_ttbar", "M_{fourth TopJet candidate} [GeV^{2}/c^{2}]", 70, 0, 700);
-  // book<TH1F>("pt_topjet_cand4_ttbar", "p_{T} fourth TopJet candidate", 150, 0, 1500);
-  // book<TH1F>("eta_topjet_cand4_ttbar", "#eta fourth TopJet candidate", 40, -2.5, 2.5);
-  // book<TH1F>("Nsubjet_cand4_ttbar", "number subjet fourth TopJet candidate", 6, -0.5, 5.5);
-  // book<TH1F>("tau1_topjet_cand4_ttbar", "#tau_{1} fourth TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau2_topjet_cand4_ttbar", "#tau_{2} fourth TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau3_topjet_cand4_ttbar", "#tau_{3} fourth TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau32_cand4_ttbar", "#tau_{3}/#tau_{2} fourth TopJet candidate", 40, 0, 1.0);
-  // book<TH1F>("tau21_cand4_ttbar", "#tau_{2}/#tau_{1} fourth TopJet candidate", 40, 0, 1.0);
-  book<TH1F>("dphi_cand4_ttbar", "#Delta #Phi (#mu, cand4)", 40, 0, 4.0);
 
   // Gen lvl
   // TopJets
@@ -139,8 +89,8 @@ TopSubstructureHists::TopSubstructureHists(Context & ctx, const string & dirname
   book<TH1F>("tau1_topjet_cand1_gen", "#tau_{1} first TopJet candidate gen", 40, 0, 1.);
   book<TH1F>("tau2_topjet_cand1_gen", "#tau_{2} first TopJet candidate gen", 40, 0, 1.);
   book<TH1F>("tau3_topjet_cand1_gen", "#tau_{3} first TopJet candidate gen", 40, 0, 1.);
-  book<TH1F>("tau32_cand1_gen", "#tau_{3}/#tau_{2} first TopJet candidate gen", 40, 0, 1.0);
-  book<TH1F>("tau21_cand1_gen", "#tau_{2}/#tau_{1} first TopJet candidate gen", 40, 0, 1.0);
+  book<TH1F>("tau32_cand1_gen", "#tau_{3}/#tau_{2} first TopJet candidate gen", 40, 0, 1.);
+  book<TH1F>("tau21_cand1_gen", "#tau_{2}/#tau_{1} first TopJet candidate gen", 40, 0, 1.);
   
   // second candidate
   book<TH1F>("M_cand2_gen", "M_{second TopJet candidate} [GeV^{2}/c^{2}] gen", 70, 0, 700);
@@ -150,33 +100,8 @@ TopSubstructureHists::TopSubstructureHists(Context & ctx, const string & dirname
   book<TH1F>("tau1_topjet_cand2_gen", "#tau_{1} second TopJet candidate gen", 40, 0, 1.);
   book<TH1F>("tau2_topjet_cand2_gen", "#tau_{2} second TopJet candidate gen", 40, 0, 1.);
   book<TH1F>("tau3_topjet_cand2_gen", "#tau_{3} second TopJet candidate gen", 40, 0, 1.);
-  book<TH1F>("tau32_cand2_gen", "#tau_{3}/#tau_{2} second TopJet candidate gen", 40, 0, 1.0);
-  book<TH1F>("tau21_cand2_gen", "#tau_{2}/#tau_{1} second TopJet candidate gen", 40, 0, 1.0);
-
-
-  // // third candidate
-  // book<TH1F>("M_cand3", "M_{third TopJet candidate} [GeV^{2}/c^{2}]", 70, 0, 700);
-  // book<TH1F>("pt_topjet_cand3", "p_{T} third TopJet candidate", 150, 0, 1500);
-  // book<TH1F>("eta_topjet_cand3", "#eta third TopJet candidate", 40, -2.5, 2.5);
-  // book<TH1F>("Nsubjet_cand3", "number subjets third TopJet candidate", 6, -0.5, 5.5);
-  // book<TH1F>("tau1_topjet_cand3", "#tau_{1} third TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau2_topjet_cand3", "#tau_{2} third TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau3_topjet_cand3", "#tau_{3} third TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau32_cand3", "#tau_{3}/#tau_{2} third TopJet candidate", 40, 0, 1.0);
-  // book<TH1F>("tau21_cand3", "#tau_{2}/#tau_{1} third TopJet candidate", 40, 0, 1.0);
-
-
-  // // fourth candidate
-  // book<TH1F>("M_cand4", "M_{fourth TopJet candidate} [GeV^{2}/c^{2}]", 70, 0, 700);
-  // book<TH1F>("pt_topjet_cand4", "p_{T} fourth TopJet candidate", 150, 0, 1500);
-  // book<TH1F>("eta_topjet_cand4", "#eta fourth TopJet candidate", 40, -2.5, 2.5);
-  // book<TH1F>("Nsubjet_cand4", "number subjets fourth TopJet candidate", 6, -0.5, 5.5);
-  // book<TH1F>("tau1_topjet_cand4", "#tau_{1} fourth TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau2_topjet_cand4", "#tau_{2} fourth TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau3_topjet_cand4", "#tau_{3} fourth TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau32_cand4", "#tau_{3}/#tau_{2} fourth TopJet candidate", 40, 0, 1.0);
-  // book<TH1F>("tau21_cand4", "#tau_{2}/#tau_{1} fourth TopJet candidate", 40, 0, 1.0);
-
+  book<TH1F>("tau32_cand2_gen", "#tau_{3}/#tau_{2} second TopJet candidate gen", 40, 0, 1.);
+  book<TH1F>("tau21_cand2_gen", "#tau_{2}/#tau_{1} second TopJet candidate gen", 40, 0, 1.);
 
 
   // only TTbar
@@ -190,8 +115,8 @@ TopSubstructureHists::TopSubstructureHists(Context & ctx, const string & dirname
   book<TH1F>("tau1_topjet_cand1_ttbar_gen", "#tau_{1} first TopJet candidate gen", 40, 0, 1.);
   book<TH1F>("tau2_topjet_cand1_ttbar_gen", "#tau_{2} first TopJet candidate gen", 40, 0, 1.);
   book<TH1F>("tau3_topjet_cand1_ttbar_gen", "#tau_{3} first TopJet candidate gen", 40, 0, 1.);
-  book<TH1F>("tau32_cand1_ttbar_gen", "#tau_{3}/#tau_{2} first TopJet candidate gen", 40, 0, 1.0);
-  book<TH1F>("tau21_cand1_ttbar_gen", "#tau_{2}/#tau_{1} first TopJet candidate gen", 40, 0, 1.0);
+  book<TH1F>("tau32_cand1_ttbar_gen", "#tau_{3}/#tau_{2} first TopJet candidate gen", 40, 0, 1.);
+  book<TH1F>("tau21_cand1_ttbar_gen", "#tau_{2}/#tau_{1} first TopJet candidate gen", 40, 0, 1.);
   book<TH1F>("dphi_cand1_ttbar_gen", "#Delta #Phi (#mu, cand1) gen", 40, 0, 4.0);
 
 
@@ -203,34 +128,9 @@ TopSubstructureHists::TopSubstructureHists(Context & ctx, const string & dirname
   book<TH1F>("tau1_topjet_cand2_ttbar_gen", "#tau_{1} second TopJet candidate gen", 40, 0, 1.);
   book<TH1F>("tau2_topjet_cand2_ttbar_gen", "#tau_{2} second TopJet candidate gen", 40, 0, 1.);
   book<TH1F>("tau3_topjet_cand2_ttbar_gen", "#tau_{3} second TopJet candidate gen", 40, 0, 1.);
-  book<TH1F>("tau32_cand2_ttbar_gen", "#tau_{3}/#tau_{2} second TopJet candidate gen", 40, 0, 1.0);
-  book<TH1F>("tau21_cand2_ttbar_gen", "#tau_{2}/#tau_{1} second TopJet candidate gen", 40, 0, 1.0);
+  book<TH1F>("tau32_cand2_ttbar_gen", "#tau_{3}/#tau_{2} second TopJet candidate gen", 40, 0, 1.);
+  book<TH1F>("tau21_cand2_ttbar_gen", "#tau_{2}/#tau_{1} second TopJet candidate gen", 40, 0, 1.);
   book<TH1F>("dphi_cand2_ttbar_gen", "#Delta #Phi (#mu, cand2) gen", 40, 0, 4.0);
-
-
-  // // third candidate
-  // book<TH1F>("M_cand3_ttbar", "M_{third TopJet candidate} [GeV^{2}/c^{2}]", 70, 0, 700);
-  // book<TH1F>("pt_topjet_cand3_ttbar", "p_{T} third TopJet candidate", 150, 0, 1500);
-  // book<TH1F>("eta_topjet_cand3_ttbar", "#eta third TopJet candidate", 40, -2.5, 2.5);
-  // book<TH1F>("Nsubjet_cand3_ttbar", "number subjet third TopJet candidate", 6, -0.5, 5.5);
-  // book<TH1F>("tau1_topjet_cand3_ttbar", "#tau_{1} third TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau2_topjet_cand3_ttbar", "#tau_{2} third TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau3_topjet_cand3_ttbar", "#tau_{3} third TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau32_cand3_ttbar", "#tau_{3}/#tau_{2} third TopJet candidate", 40, 0, 1.0);
-  // book<TH1F>("tau21_cand3_ttbar", "#tau_{2}/#tau_{1} third TopJet candidate", 40, 0, 1.0);
-  book<TH1F>("dphi_cand3_ttbar_gen", "#Delta #Phi (#mu, cand3) gen", 40, 0, 4.0);
-
-  // // fourth candidate
-  // book<TH1F>("M_cand4_ttbar", "M_{fourth TopJet candidate} [GeV^{2}/c^{2}]", 70, 0, 700);
-  // book<TH1F>("pt_topjet_cand4_ttbar", "p_{T} fourth TopJet candidate", 150, 0, 1500);
-  // book<TH1F>("eta_topjet_cand4_ttbar", "#eta fourth TopJet candidate", 40, -2.5, 2.5);
-  // book<TH1F>("Nsubjet_cand4_ttbar", "number subjet fourth TopJet candidate", 6, -0.5, 5.5);
-  // book<TH1F>("tau1_topjet_cand4_ttbar", "#tau_{1} fourth TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau2_topjet_cand4_ttbar", "#tau_{2} fourth TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau3_topjet_cand4_ttbar", "#tau_{3} fourth TopJet candidate", 40, 0, 1.);
-  // book<TH1F>("tau32_cand4_ttbar", "#tau_{3}/#tau_{2} fourth TopJet candidate", 40, 0, 1.0);
-  // book<TH1F>("tau21_cand4_ttbar", "#tau_{2}/#tau_{1} fourth TopJet candidate", 40, 0, 1.0);
-  book<TH1F>("dphi_cand4_ttbar_gen", "#Delta #Phi (#mu, cand4) gen", 40, 0, 4.0);
 
 
   book<TH1F>("dR8_topjet_genjet", "#Delta R(TopJet, GenTopJet)", 50, 0, 5);
@@ -257,6 +157,9 @@ TopSubstructureHists::TopSubstructureHists(Context & ctx, const string & dirname
 
 
   // get handles
+  if(ctx.get("dataset_version") == "TTbar_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft") isTTbar = true;
+  else isTTbar = false;
+
   if(sort_by == "dphi") h_topjet_cand = ctx.get_handle<vector<TopJet>>("topjet_cand");
   if(sort_by == "mass") h_topjet_cand = ctx.get_handle<vector<TopJet>>("topjet_cand");
   if(isTTbar && sort_by == "dphi") h_gentopjet_cand = ctx.get_handle<vector<GenTopJet>>("gentopjet_cand");
@@ -268,8 +171,6 @@ TopSubstructureHists::TopSubstructureHists(Context & ctx, const string & dirname
   // if(event.is_valid(h_fjet_nogen_inZ)) fjet_nogen_inZ = event.get(h_fjet_nogen_inZ);
 
   isMC = (ctx.get("dataset_type") == "MC"); 
-  if(ctx.get("dataset_version") == "TTbar_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft") isTTbar = true;
-  else isTTbar = false;
 
 }
 
@@ -380,8 +281,15 @@ void TopSubstructureHists::fill(const Event & event){
       hist("tau21_cand1")->Fill(topjet_cand.at(0).tau2()/topjet_cand.at(0).tau1(), weight);
 
       if(isTTbar){
-	sort_by_pt<Muon>(*event.muons);
-	const auto & muon = event.muons->at(0);
+
+	if(event.muons->size() > 0){
+	  sort_by_pt<Muon>(*event.muons);
+	  const auto & muon = event.muons->at(0);
+	  hist("dphi_cand1_ttbar")->Fill(deltaPhi(topjet_cand.at(0), muon),weight);
+	  if(topjet_cand.size()==2) hist("dphi_cand2_ttbar")->Fill(deltaPhi(topjet_cand.at(1), muon),weight);
+	  if(topjet_cand.size()==3) hist("dphi_cand3_ttbar")->Fill(deltaPhi(topjet_cand.at(2), muon),weight);
+	  if(topjet_cand.size()==4) hist("dphi_cand4_ttbar")->Fill(deltaPhi(topjet_cand.at(3), muon),weight);
+	}
 
 	hist("M_cand1_ttbar")->Fill(topjet_cand.at(0).v4().M(), weight);     
 	hist("pt_topjet_cand1_ttbar")->Fill(topjet_cand.at(0).pt(), weight);      
@@ -393,7 +301,6 @@ void TopSubstructureHists::fill(const Event & event){
 	hist("tau32_cand1_ttbar")->Fill(topjet_cand.at(0).tau3()/topjet_cand.at(0).tau2(), weight);
 	hist("tau21_cand1_ttbar")->Fill(topjet_cand.at(0).tau2()/topjet_cand.at(0).tau1(), weight);
 
-	hist("dphi_cand1_ttbar")->Fill(deltaPhi(topjet_cand.at(0), muon),weight);
 
 	if(topjet_cand.size()==2){
 	  hist("M_cand2_ttbar")->Fill(topjet_cand.at(1).v4().M(), weight);     
@@ -405,31 +312,6 @@ void TopSubstructureHists::fill(const Event & event){
 	  hist("tau3_topjet_cand2_ttbar")->Fill(topjet_cand.at(1).tau3(), weight);
 	  hist("tau32_cand2_ttbar")->Fill(topjet_cand.at(1).tau3()/topjet_cand.at(1).tau2(), weight);
 	  hist("tau21_cand2_ttbar")->Fill(topjet_cand.at(1).tau2()/topjet_cand.at(1).tau1(), weight);
-	  hist("dphi_cand2_ttbar")->Fill(deltaPhi(topjet_cand.at(1), muon),weight);
-	}
-	if(topjet_cand.size()==3){
-	  // hist("M_cand3_ttbar")->Fill(topjet_cand.at(2).v4().M(), weight);     
-	  // hist("pt_topjet_cand3_ttbar")->Fill(topjet_cand.at(2).pt(), weight);      
-	  // hist("eta_topjet_cand3_ttbar")->Fill(topjet_cand.at(2).eta(), weight);
-	  // hist("Nsubjet_cand3_ttbar")->Fill(topjet_cand.at(2).subjets().size(), weight);
-	  // hist("tau1_topjet_cand3_ttbar")->Fill(topjet_cand.at(2).tau1(), weight);
-	  // hist("tau2_topjet_cand3_ttbar")->Fill(topjet_cand.at(2).tau2(), weight);
-	  // hist("tau3_topjet_cand3_ttbar")->Fill(topjet_cand.at(2).tau3(), weight);
-	  // hist("tau32_cand3_ttbar")->Fill(topjet_cand.at(2).tau3()/topjet_cand.at(2).tau2(), weight);
-	  // hist("tau21_cand3_ttbar")->Fill(topjet_cand.at(2).tau2()/topjet_cand.at(2).tau1(), weight);
-	  hist("dphi_cand3_ttbar")->Fill(deltaPhi(topjet_cand.at(2), muon),weight);
-	}
-	if(topjet_cand.size()==4){
-	  // hist("M_cand4_ttbar")->Fill(topjet_cand.at(3).v4().M(), weight);     
-	  // hist("pt_topjet_cand4_ttbar")->Fill(topjet_cand.at(3).pt(), weight);      
-	  // hist("eta_topjet_cand4_ttbar")->Fill(topjet_cand.at(3).eta(), weight);
-	  // hist("Nsubjet_cand4_ttbar")->Fill(topjet_cand.at(3).subjets().size(), weight);
-	  // hist("tau1_topjet_cand4_ttbar")->Fill(topjet_cand.at(3).tau1(), weight);
-	  // hist("tau2_topjet_cand4_ttbar")->Fill(topjet_cand.at(3).tau2(), weight);
-	  // hist("tau3_topjet_cand4_ttbar")->Fill(topjet_cand.at(3).tau3(), weight);
-	  // hist("tau32_cand4_ttbar")->Fill(topjet_cand.at(3).tau3()/topjet_cand.at(3).tau2(), weight);
-	  // hist("tau21_cand4_ttbar")->Fill(topjet_cand.at(3).tau2()/topjet_cand.at(3).tau1(), weight);
-	  hist("dphi_cand4_ttbar")->Fill(deltaPhi(topjet_cand.at(3), muon),weight);
 	}
 
 	if(event.is_valid(h_ttbargen)){
@@ -451,9 +333,8 @@ void TopSubstructureHists::fill(const Event & event){
   } // closing brackets of TopJet
 
 
-
   // GenTopJet
-  if(isTTbar){
+  if(isTTbar){    
     if(event.is_valid(h_gentopjet_cand)) {
       std::vector<GenTopJet> gentopjet_cand;
       gentopjet_cand = event.get(h_gentopjet_cand);
@@ -462,89 +343,72 @@ void TopSubstructureHists::fill(const Event & event){
 
       if(gentopjet_cand.size()>0){
 	for(unsigned int i=0; i < gentopjet_cand.size(); i++){
-	  hist("Nsubjet_cand")->Fill(gentopjet_cand.at(i).subjets().size(), weight);
+	  hist("Nsubjet_cand_gen")->Fill(gentopjet_cand.at(i).subjets().size(), weight);
 	}
-	hist("Nsubjet_cand1")->Fill(gentopjet_cand.at(0).subjets().size(), weight); 
-	hist("M_cand1")->Fill(gentopjet_cand.at(0).v4().M(), weight);     
-	hist("pt_topjet_cand1")->Fill(gentopjet_cand.at(0).pt(), weight);      
-	hist("eta_topjet_cand1")->Fill(gentopjet_cand.at(0).eta(), weight);
-	hist("tau1_topjet_cand1")->Fill(gentopjet_cand.at(0).tau1(), weight);
-	hist("tau2_topjet_cand1")->Fill(gentopjet_cand.at(0).tau2(), weight);
-	hist("tau3_topjet_cand1")->Fill(gentopjet_cand.at(0).tau3(), weight);
+	hist("Nsubjet_cand1_gen")->Fill(gentopjet_cand.at(0).subjets().size(), weight); 
+	hist("M_cand1_gen")->Fill(gentopjet_cand.at(0).v4().M(), weight);     
+	hist("pt_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).pt(), weight);      
+	hist("eta_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).eta(), weight);
+	hist("tau1_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).tau1(), weight);
+	hist("tau2_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).tau2(), weight);
+	hist("tau3_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).tau3(), weight);
 
-	double drmin, ptrel;
-	if(event.muons->size()){
-	  std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
-	  TwoDCut->Fill(drmin, ptrel, weight);
-	}
+	// double drmin, ptrel;
+	// if(event.muons->size()){
+	//   std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
+	//   TwoDCut->Fill(drmin, ptrel, weight);
+	// }
   
     
-	hist("tau32_cand1")->Fill(gentopjet_cand.at(0).tau3()/gentopjet_cand.at(0).tau2(), weight);
-	hist("tau21_cand1")->Fill(gentopjet_cand.at(0).tau2()/gentopjet_cand.at(0).tau1(), weight);
+	hist("tau32_cand1_gen")->Fill(gentopjet_cand.at(0).tau3()/gentopjet_cand.at(0).tau2(), weight);
+	hist("tau21_cand1_gen")->Fill(gentopjet_cand.at(0).tau2()/gentopjet_cand.at(0).tau1(), weight);
 
 	if(isTTbar){
-	  sort_by_pt<Muon>(*event.muons);
-	  const auto & muon = event.muons->at(0);
 
-	  hist("M_cand1_ttbar")->Fill(gentopjet_cand.at(0).v4().M(), weight);     
-	  hist("pt_topjet_cand1_ttbar")->Fill(gentopjet_cand.at(0).pt(), weight);      
-	  hist("eta_topjet_cand1_ttbar")->Fill(gentopjet_cand.at(0).eta(), weight);
-	  hist("Nsubjet_cand1_ttbar")->Fill(gentopjet_cand.at(0).subjets().size(), weight);
-	  hist("tau1_topjet_cand1_ttbar")->Fill(gentopjet_cand.at(0).tau1(), weight);
-	  hist("tau2_topjet_cand1_ttbar")->Fill(gentopjet_cand.at(0).tau2(), weight);
-	  hist("tau3_topjet_cand1_ttbar")->Fill(gentopjet_cand.at(0).tau3(), weight);
-	  hist("tau32_cand1_ttbar")->Fill(gentopjet_cand.at(0).tau3()/gentopjet_cand.at(0).tau2(), weight);
-	  hist("tau21_cand1_ttbar")->Fill(gentopjet_cand.at(0).tau2()/gentopjet_cand.at(0).tau1(), weight);
+	  if(event.muons->size() > 0){
+	    sort_by_pt<Muon>(*event.muons);
+	    const auto & muon = event.muons->at(0);
+	    hist("dphi_cand1_ttbar_gen")->Fill(deltaPhi(gentopjet_cand.at(0), muon),weight);
+	    if(gentopjet_cand.size()==2) hist("dphi_cand2_ttbar_gen")->Fill(deltaPhi(gentopjet_cand.at(1), muon),weight);
+	    if(gentopjet_cand.size()==3) hist("dphi_cand3_ttbar_gen")->Fill(deltaPhi(gentopjet_cand.at(2), muon),weight);
+	    if(gentopjet_cand.size()==4) hist("dphi_cand4_ttbar_gen")->Fill(deltaPhi(gentopjet_cand.at(3), muon),weight);
+	  }
 
-	  hist("dphi_cand1_ttbar")->Fill(deltaPhi(gentopjet_cand.at(0), muon),weight);
+
+	  hist("M_cand1_ttbar_gen")->Fill(gentopjet_cand.at(0).v4().M(), weight);     
+	  hist("pt_topjet_cand1_ttbar_gen")->Fill(gentopjet_cand.at(0).pt(), weight);      
+	  hist("eta_topjet_cand1_ttbar_gen")->Fill(gentopjet_cand.at(0).eta(), weight);
+	  hist("Nsubjet_cand1_ttbar_gen")->Fill(gentopjet_cand.at(0).subjets().size(), weight);
+	  hist("tau1_topjet_cand1_ttbar_gen")->Fill(gentopjet_cand.at(0).tau1(), weight);
+	  hist("tau2_topjet_cand1_ttbar_gen")->Fill(gentopjet_cand.at(0).tau2(), weight);
+	  hist("tau3_topjet_cand1_ttbar_gen")->Fill(gentopjet_cand.at(0).tau3(), weight);
+	  hist("tau32_cand1_ttbar_gen")->Fill(gentopjet_cand.at(0).tau3()/gentopjet_cand.at(0).tau2(), weight);
+	  hist("tau21_cand1_ttbar_gen")->Fill(gentopjet_cand.at(0).tau2()/gentopjet_cand.at(0).tau1(), weight);
+
 
 	  if(gentopjet_cand.size()==2){
-	    hist("M_cand2_ttbar")->Fill(gentopjet_cand.at(1).v4().M(), weight);     
-	    hist("pt_topjet_cand2_ttbar")->Fill(gentopjet_cand.at(1).pt(), weight);      
-	    hist("eta_topjet_cand2_ttbar")->Fill(gentopjet_cand.at(1).eta(), weight);
-	    hist("Nsubjet_cand2_ttbar")->Fill(gentopjet_cand.at(1).subjets().size(), weight);
-	    hist("tau1_topjet_cand2_ttbar")->Fill(gentopjet_cand.at(1).tau1(), weight);
-	    hist("tau2_topjet_cand2_ttbar")->Fill(gentopjet_cand.at(1).tau2(), weight);
-	    hist("tau3_topjet_cand2_ttbar")->Fill(gentopjet_cand.at(1).tau3(), weight);
-	    hist("tau32_cand2_ttbar")->Fill(gentopjet_cand.at(1).tau3()/gentopjet_cand.at(1).tau2(), weight);
-	    hist("tau21_cand2_ttbar")->Fill(gentopjet_cand.at(1).tau2()/gentopjet_cand.at(1).tau1(), weight);
-	    hist("dphi_cand2_ttbar")->Fill(deltaPhi(gentopjet_cand.at(1), muon),weight);
+	    hist("M_cand2_ttbar_gen")->Fill(gentopjet_cand.at(1).v4().M(), weight);     
+	    hist("pt_topjet_cand2_ttbar_gen")->Fill(gentopjet_cand.at(1).pt(), weight);      
+	    hist("eta_topjet_cand2_ttbar_gen")->Fill(gentopjet_cand.at(1).eta(), weight);
+	    hist("Nsubjet_cand2_ttbar_gen")->Fill(gentopjet_cand.at(1).subjets().size(), weight);
+	    hist("tau1_topjet_cand2_ttbar_gen")->Fill(gentopjet_cand.at(1).tau1(), weight);
+	    hist("tau2_topjet_cand2_ttbar_gen")->Fill(gentopjet_cand.at(1).tau2(), weight);
+	    hist("tau3_topjet_cand2_ttbar_gen")->Fill(gentopjet_cand.at(1).tau3(), weight);
+	    hist("tau32_cand2_ttbar_gen")->Fill(gentopjet_cand.at(1).tau3()/gentopjet_cand.at(1).tau2(), weight);
+	    hist("tau21_cand2_ttbar_gen")->Fill(gentopjet_cand.at(1).tau2()/gentopjet_cand.at(1).tau1(), weight);
 	  }
-	  if(gentopjet_cand.size()==3){
-	    // hist("M_cand3_ttbar")->Fill(topjet_cand.at(2).v4().M(), weight);     
-	    // hist("pt_topjet_cand3_ttbar")->Fill(topjet_cand.at(2).pt(), weight);      
-	    // hist("eta_topjet_cand3_ttbar")->Fill(topjet_cand.at(2).eta(), weight);
-	    // hist("Nsubjet_cand3_ttbar")->Fill(topjet_cand.at(2).subjets().size(), weight);
-	    // hist("tau1_topjet_cand3_ttbar")->Fill(topjet_cand.at(2).tau1(), weight);
-	    // hist("tau2_topjet_cand3_ttbar")->Fill(topjet_cand.at(2).tau2(), weight);
-	    // hist("tau3_topjet_cand3_ttbar")->Fill(topjet_cand.at(2).tau3(), weight);
-	    // hist("tau32_cand3_ttbar")->Fill(topjet_cand.at(2).tau3()/topjet_cand.at(2).tau2(), weight);
-	    // hist("tau21_cand3_ttbar")->Fill(topjet_cand.at(2).tau2()/topjet_cand.at(2).tau1(), weight);
-	    hist("dphi_cand3_ttbar")->Fill(deltaPhi(gentopjet_cand.at(2), muon),weight);
-	  }
-	  if(gentopjet_cand.size()==4){
-	    // hist("M_cand4_ttbar")->Fill(topjet_cand.at(3).v4().M(), weight);     
-	    // hist("pt_topjet_cand4_ttbar")->Fill(topjet_cand.at(3).pt(), weight);      
-	    // hist("eta_topjet_cand4_ttbar")->Fill(topjet_cand.at(3).eta(), weight);
-	    // hist("Nsubjet_cand4_ttbar")->Fill(topjet_cand.at(3).subjets().size(), weight);
-	    // hist("tau1_topjet_cand4_ttbar")->Fill(topjet_cand.at(3).tau1(), weight);
-	    // hist("tau2_topjet_cand4_ttbar")->Fill(topjet_cand.at(3).tau2(), weight);
-	    // hist("tau3_topjet_cand4_ttbar")->Fill(topjet_cand.at(3).tau3(), weight);
-	    // hist("tau32_cand4_ttbar")->Fill(topjet_cand.at(3).tau3()/topjet_cand.at(3).tau2(), weight);
-	    // hist("tau21_cand4_ttbar")->Fill(topjet_cand.at(3).tau2()/topjet_cand.at(3).tau1(), weight);
-	    hist("dphi_cand4_ttbar")->Fill(deltaPhi(gentopjet_cand.at(3), muon),weight);
-	  }
+
 	  if(event.is_valid(h_ttbargen)){
 	    const auto & ttbargen = event.get(h_ttbargen);
 
 	    GenParticle tophad;
 	    if(ttbargen.IsTopHadronicDecay()){
 	      tophad = ttbargen.Top();
-	      hist("dR8")->Fill(deltaR(tophad, gentopjet_cand.at(0)), weight);
+	      hist("dR8_gen")->Fill(deltaR(tophad, gentopjet_cand.at(0)), weight);
 	    }
 	    else if(ttbargen.IsAntiTopHadronicDecay()){
 	      tophad = ttbargen.Antitop();
-	      hist("dR8")->Fill(deltaR(tophad, gentopjet_cand.at(0)), weight);
+	      hist("dR8_gen")->Fill(deltaR(tophad, gentopjet_cand.at(0)), weight);
 	    }
 	  }
 	}
