@@ -241,7 +241,7 @@
       <Item Name="TopJetCollection"        Value="slimmedJetsAK8_SoftDrop"/>
       <Item Name="GenTopJetCollection"     Value="ak8GenJetsSoftDrop" />
 
-      <Item Name="additionalBranches" Value="xconePuppi xconeCHS genXCone33TopJets topjet_cand gentopjet_cand"/>
+      <Item Name="additionalBranches" Value="xconePuppi xconeCHS genXCone33TopJets topjet_cand gentopjet_cand jetsel"/>
 
       <Item Name="METName"                 Value="slimmedMETs"/>
 

@@ -19,7 +19,7 @@
 #include "UHH2/common/include/TTbarGen.h"
 
 #include "UHH2/TopSubstructure/include/TopSubstructureSelections.h"
-#include "UHH2/TopSubstructure/include/TopSubstructureHists.h"
+#include "UHH2/TopSubstructure/include/TopSubstructureGenHists.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureUtils.h"
 
 using namespace std;
@@ -97,113 +97,38 @@ namespace uhh2examples {
     ntopjetcand_sel2.reset(new NTopJet(ctx,1,2));
 
     // 3. Set up Hists classes:
-    h_nocuts.reset(new TopSubstructureHists(ctx, "NoCuts", sort_by));
-    h_njet_nocuts.reset(new JetHists(ctx, "Njet_nocuts"));
-    h_topjet_nocuts.reset(new TopJetHists(ctx, "Topjet_nocuts"));
-    h_muon_nocuts.reset(new MuonHists(ctx, "muon_nocuts"));
-
-    h_nocuts_matched.reset(new TopSubstructureHists(ctx, "NoCuts_matched", sort_by));
-    h_njet_nocuts_matched.reset(new JetHists(ctx, "Njet_nocuts_matched"));
-    h_topjet_nocuts_matched.reset(new TopJetHists(ctx, "Topjet_nocuts_matched"));
-    h_muon_nocuts_matched.reset(new MuonHists(ctx, "muon_nocuts_matched"));
-
-    h_nocuts_genmatched.reset(new TopSubstructureHists(ctx, "NoCuts_genmatched", sort_by));
-    h_njet_nocuts_genmatched.reset(new JetHists(ctx, "Njet_nocuts_genmatched"));
-    h_topjet_nocuts_genmatched.reset(new TopJetHists(ctx, "Topjet_nocuts_genmatched"));
-    h_muon_nocuts_genmatched.reset(new MuonHists(ctx, "muon_nocuts_genmatched"));
-
-    h_nocuts_unmatched.reset(new TopSubstructureHists(ctx, "NoCuts_unmatched", sort_by));
-    h_njet_nocuts_unmatched.reset(new JetHists(ctx, "Njet_nocuts_unmatched"));
-    h_topjet_nocuts_unmatched.reset(new TopJetHists(ctx, "Topjet_nocuts_unmatched"));
-    h_muon_nocuts_unmatched.reset(new MuonHists(ctx, "muon_nocuts_unmatched"));
+    h_nocuts.reset(new TopSubstructureGenHists(ctx, "NoCuts", sort_by));
+    h_nocuts_matched.reset(new TopSubstructureGenHists(ctx, "NoCuts_matched", sort_by));
+    h_nocuts_genmatched.reset(new TopSubstructureGenHists(ctx, "NoCuts_genmatched", sort_by));
+    h_nocuts_unmatched.reset(new TopSubstructureGenHists(ctx, "NoCuts_unmatched", sort_by));
 
 
 
-    h_ntopjet1.reset(new TopSubstructureHists(ctx, "ntopjet1", sort_by));
-    h_njet_ntopjet1.reset(new JetHists(ctx, "Njet_ntopjet1"));
-    h_topjet_ntopjet1.reset(new TopJetHists(ctx, "Topjet_ntopjet1"));
-    h_muon_ntopjet1.reset(new MuonHists(ctx, "muon_ntopjet1"));
-
-    h_ntopjet1_matched.reset(new TopSubstructureHists(ctx, "ntopjet1_matched", sort_by));
-    h_njet_ntopjet1_matched.reset(new JetHists(ctx, "Njet_ntopjet1_matched"));
-    h_topjet_ntopjet1_matched.reset(new TopJetHists(ctx, "Topjet_ntopjet1_matched"));
-    h_muon_ntopjet1_matched.reset(new MuonHists(ctx, "muon_ntopjet1_matched"));
-
-    h_ntopjet1_genmatched.reset(new TopSubstructureHists(ctx, "ntopjet1_genmatched", sort_by));
-    h_njet_ntopjet1_genmatched.reset(new JetHists(ctx, "Njet_ntopjet1_genmatched"));
-    h_topjet_ntopjet1_genmatched.reset(new TopJetHists(ctx, "Topjet_ntopjet1_genmatched"));
-    h_muon_ntopjet1_genmatched.reset(new MuonHists(ctx, "muon_ntopjet1_genmatched"));
-
-    h_ntopjet1_unmatched.reset(new TopSubstructureHists(ctx, "ntopjet1_unmatched", sort_by));
-    h_njet_ntopjet1_unmatched.reset(new JetHists(ctx, "Njet_ntopjet1_unmatched"));
-    h_topjet_ntopjet1_unmatched.reset(new TopJetHists(ctx, "Topjet_ntopjet1_unmatched"));
-    h_muon_ntopjet1_unmatched.reset(new MuonHists(ctx, "muon_ntopjet1_unmatched"));
+    h_ntopjet1.reset(new TopSubstructureGenHists(ctx, "ntopjet1", sort_by));
+    h_ntopjet1_matched.reset(new TopSubstructureGenHists(ctx, "ntopjet1_matched", sort_by));
+    h_ntopjet1_genmatched.reset(new TopSubstructureGenHists(ctx, "ntopjet1_genmatched", sort_by));
+    h_ntopjet1_unmatched.reset(new TopSubstructureGenHists(ctx, "ntopjet1_unmatched", sort_by));
 
 
 
-    h_dphi1.reset(new TopSubstructureHists(ctx, "dphi1", sort_by));
-    h_njet_dphi1.reset(new JetHists(ctx, "Njet_dphi1"));
-    h_topjet_dphi1.reset(new TopJetHists(ctx, "Topjet_dphi1"));
-    h_muon_dphi1.reset(new MuonHists(ctx, "muon_dphi1"));
-
-    h_dphi1_matched.reset(new TopSubstructureHists(ctx, "dphi1_matched", sort_by));
-    h_njet_dphi1_matched.reset(new JetHists(ctx, "Njet_dphi1_matched"));
-    h_topjet_dphi1_matched.reset(new TopJetHists(ctx, "Topjet_dphi1_matched"));
-    h_muon_dphi1_matched.reset(new MuonHists(ctx, "muon_dphi1_matched"));
-
-    h_dphi1_genmatched.reset(new TopSubstructureHists(ctx, "dphi1_genmatched", sort_by));
-    h_njet_dphi1_genmatched.reset(new JetHists(ctx, "Njet_dphi1_genmatched"));
-    h_topjet_dphi1_genmatched.reset(new TopJetHists(ctx, "Topjet_dphi1_genmatched"));
-    h_muon_dphi1_genmatched.reset(new MuonHists(ctx, "muon_dphi1_genmatched"));
-
-    h_dphi1_unmatched.reset(new TopSubstructureHists(ctx, "dphi1_unmatched", sort_by));
-    h_njet_dphi1_unmatched.reset(new JetHists(ctx, "Njet_dphi1_unmatched"));
-    h_topjet_dphi1_unmatched.reset(new TopJetHists(ctx, "Topjet_dphi1_unmatched"));
-    h_muon_dphi1_unmatched.reset(new MuonHists(ctx, "muon_dphi1_unmatched"));
+    h_dphi1.reset(new TopSubstructureGenHists(ctx, "dphi1", sort_by));
+    h_dphi1_matched.reset(new TopSubstructureGenHists(ctx, "dphi1_matched", sort_by));
+    h_dphi1_genmatched.reset(new TopSubstructureGenHists(ctx, "dphi1_genmatched", sort_by));
+    h_dphi1_unmatched.reset(new TopSubstructureGenHists(ctx, "dphi1_unmatched", sort_by));
 
 
 
-    h_dphi25.reset(new TopSubstructureHists(ctx, "dphi25", sort_by));
-    h_njet_dphi25.reset(new JetHists(ctx, "Njet_dphi25"));
-    h_topjet_dphi25.reset(new TopJetHists(ctx, "Topjet_dphi25"));
-    h_muon_dphi25.reset(new MuonHists(ctx, "muon_dphi25"));
-
-    h_dphi25_matched.reset(new TopSubstructureHists(ctx, "dphi25_matched", sort_by));
-    h_njet_dphi25_matched.reset(new JetHists(ctx, "Njet_dphi25_matched"));
-    h_topjet_dphi25_matched.reset(new TopJetHists(ctx, "Topjet_dphi25_matched"));
-    h_muon_dphi25_matched.reset(new MuonHists(ctx, "muon_dphi25_matched"));
-
-    h_dphi25_genmatched.reset(new TopSubstructureHists(ctx, "dphi25_genmatched", sort_by));
-    h_njet_dphi25_genmatched.reset(new JetHists(ctx, "Njet_dphi25_genmatched"));
-    h_topjet_dphi25_genmatched.reset(new TopJetHists(ctx, "Topjet_dphi25_genmatched"));
-    h_muon_dphi25_genmatched.reset(new MuonHists(ctx, "muon_dphi25_genmatched"));
-
-    h_dphi25_unmatched.reset(new TopSubstructureHists(ctx, "dphi25_unmatched", sort_by));
-    h_njet_dphi25_unmatched.reset(new JetHists(ctx, "Njet_dphi25_unmatched"));
-    h_topjet_dphi25_unmatched.reset(new TopJetHists(ctx, "Topjet_dphi25_unmatched"));
-    h_muon_dphi25_unmatched.reset(new MuonHists(ctx, "muon_dphi25_unmatched"));
+    h_dphi25.reset(new TopSubstructureGenHists(ctx, "dphi25", sort_by));
+    h_dphi25_matched.reset(new TopSubstructureGenHists(ctx, "dphi25_matched", sort_by));
+    h_dphi25_genmatched.reset(new TopSubstructureGenHists(ctx, "dphi25_genmatched", sort_by));
+    h_dphi25_unmatched.reset(new TopSubstructureGenHists(ctx, "dphi25_unmatched", sort_by));
 
 
 
-    h_ntopjet2.reset(new TopSubstructureHists(ctx, "ntopjet2", sort_by));
-    h_njet_ntopjet2.reset(new JetHists(ctx, "Njet_ntopjet2"));
-    h_topjet_ntopjet2.reset(new TopJetHists(ctx, "Topjet_ntopjet2"));
-    h_muon_ntopjet2.reset(new MuonHists(ctx, "muon_ntopjet2"));
-
-    h_ntopjet2_matched.reset(new TopSubstructureHists(ctx, "ntopjet2_matched", sort_by));
-    h_njet_ntopjet2_matched.reset(new JetHists(ctx, "Njet_ntopjet2_matched"));
-    h_topjet_ntopjet2_matched.reset(new TopJetHists(ctx, "Topjet_ntopjet2_matched"));
-    h_muon_ntopjet2_matched.reset(new MuonHists(ctx, "muon_ntopjet2_matched"));
-
-    h_ntopjet2_genmatched.reset(new TopSubstructureHists(ctx, "ntopjet2_genmatched", sort_by));
-    h_njet_ntopjet2_genmatched.reset(new JetHists(ctx, "Njet_ntopjet2_genmatched"));
-    h_topjet_ntopjet2_genmatched.reset(new TopJetHists(ctx, "Topjet_ntopjet2_genmatched"));
-    h_muon_ntopjet2_genmatched.reset(new MuonHists(ctx, "muon_ntopjet2_genmatched"));
-
-    h_ntopjet2_unmatched.reset(new TopSubstructureHists(ctx, "ntopjet2_unmatched", sort_by));
-    h_njet_ntopjet2_unmatched.reset(new JetHists(ctx, "Njet_ntopjet2_unmatched"));
-    h_topjet_ntopjet2_unmatched.reset(new TopJetHists(ctx, "Topjet_ntopjet2_unmatched"));
-    h_muon_ntopjet2_unmatched.reset(new MuonHists(ctx, "muon_ntopjet2_unmatched"));
+    h_ntopjet2.reset(new TopSubstructureGenHists(ctx, "ntopjet2", sort_by));
+    h_ntopjet2_matched.reset(new TopSubstructureGenHists(ctx, "ntopjet2_matched", sort_by));
+    h_ntopjet2_genmatched.reset(new TopSubstructureGenHists(ctx, "ntopjet2_genmatched", sort_by));
+    h_ntopjet2_unmatched.reset(new TopSubstructureGenHists(ctx, "ntopjet2_unmatched", sort_by));
 
   }
 
@@ -224,131 +149,71 @@ namespace uhh2examples {
 
     // 2. test selections and fill histograms
     h_nocuts->fill(event);
-    h_njet_nocuts->fill(event);
-    h_topjet_nocuts->fill(event);
-    h_muon_nocuts->fill(event);
 
-    if(matching->passes(event)){
+    if(genmatching->passes(event)){
       h_nocuts_matched->fill(event);
-      h_njet_nocuts_matched->fill(event);
-      h_topjet_nocuts_matched->fill(event);
-      h_muon_nocuts_matched->fill(event);
     }
     else{
       h_nocuts_unmatched->fill(event);
-      h_njet_nocuts_unmatched->fill(event);
-      h_topjet_nocuts_unmatched->fill(event);
-      h_muon_nocuts_unmatched->fill(event);
     }
     if(genmatching->passes(event)){
       h_nocuts_genmatched->fill(event);
-      h_njet_nocuts_genmatched->fill(event);
-      h_topjet_nocuts_genmatched->fill(event);
-      h_muon_nocuts_genmatched->fill(event);
     }
 
     //min 1 topjet_cand
     if(!ntopjetcand_sel1->passes(event)) return false;
     h_ntopjet1->fill(event);
-    h_njet_ntopjet1->fill(event);
-    h_topjet_ntopjet1->fill(event);
-    h_muon_ntopjet1->fill(event);
 
-    if(matching->passes(event)){
+    if(genmatching->passes(event)){
       h_ntopjet1_matched->fill(event);
-      h_njet_ntopjet1_matched->fill(event);
-      h_topjet_ntopjet1_matched->fill(event);
-      h_muon_ntopjet1_matched->fill(event);
     }
     else{
       h_ntopjet1_unmatched->fill(event);
-      h_njet_ntopjet1_unmatched->fill(event);
-      h_topjet_ntopjet1_unmatched->fill(event);
-      h_muon_ntopjet1_unmatched->fill(event);
     }
     if(genmatching->passes(event)){
       h_ntopjet1_genmatched->fill(event);
-      h_njet_ntopjet1_genmatched->fill(event);
-      h_topjet_ntopjet1_genmatched->fill(event);
-      h_muon_ntopjet1_genmatched->fill(event);
     }
 
     //dphi(mu,jet1) > 1
     if(!dphi_sel1->passes(event)) return false;
     h_dphi1->fill(event);
-    h_njet_dphi1->fill(event);
-    h_topjet_dphi1->fill(event);
-    h_muon_dphi1->fill(event);
 
-    if(matching->passes(event)){
+    if(genmatching->passes(event)){
       h_dphi1_matched->fill(event);
-      h_njet_dphi1_matched->fill(event);
-      h_topjet_dphi1_matched->fill(event);
-      h_muon_dphi1_matched->fill(event);
     }
     else{
       h_dphi1_unmatched->fill(event);
-      h_njet_dphi1_unmatched->fill(event);
-      h_topjet_dphi1_unmatched->fill(event);
-      h_muon_dphi1_unmatched->fill(event);
     }
     if(genmatching->passes(event)){
       h_dphi1_genmatched->fill(event);
-      h_njet_dphi1_genmatched->fill(event);
-      h_topjet_dphi1_genmatched->fill(event);
-      h_muon_dphi1_genmatched->fill(event);
     }
 
     //dphi(mu,jet1) > 2.5
     if(!dphi_sel2->passes(event)) return false;
     h_dphi25->fill(event);
-    h_njet_dphi25->fill(event);
-    h_topjet_dphi25->fill(event);
-    h_muon_dphi25->fill(event);
 
-    if(matching->passes(event)){
+    if(genmatching->passes(event)){
       h_dphi25_matched->fill(event);
-      h_njet_dphi25_matched->fill(event);
-      h_topjet_dphi25_matched->fill(event);
-      h_muon_dphi25_matched->fill(event);
     }
     else{
       h_dphi25_unmatched->fill(event);
-      h_njet_dphi25_unmatched->fill(event);
-      h_topjet_dphi25_unmatched->fill(event);
-      h_muon_dphi25_unmatched->fill(event);
     }
     if(genmatching->passes(event)){
       h_dphi25_genmatched->fill(event);
-      h_njet_dphi25_genmatched->fill(event);
-      h_topjet_dphi25_genmatched->fill(event);
-      h_muon_dphi25_genmatched->fill(event);
     }
 
     //max 2 topjet_cand
     if(!ntopjetcand_sel2->passes(event)) return false;
     h_ntopjet2->fill(event);
-    h_njet_ntopjet2->fill(event);
-    h_topjet_ntopjet2->fill(event);
-    h_muon_ntopjet2->fill(event);
 
-    if(matching->passes(event)){
+    if(genmatching->passes(event)){
       h_ntopjet2_matched->fill(event);
-      h_njet_ntopjet2_matched->fill(event);
-      h_topjet_ntopjet2_matched->fill(event);
-      h_muon_ntopjet2_matched->fill(event);
     }
     else{
       h_ntopjet2_unmatched->fill(event);
-      h_njet_ntopjet2_unmatched->fill(event);
-      h_topjet_ntopjet2_unmatched->fill(event);
-      h_muon_ntopjet2_unmatched->fill(event);
     }
     if(genmatching->passes(event)){
       h_ntopjet2_genmatched->fill(event);
-      h_njet_ntopjet2_genmatched->fill(event);
-      h_topjet_ntopjet2_genmatched->fill(event);
-      h_muon_ntopjet2_genmatched->fill(event);
     }
 
 
