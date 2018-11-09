@@ -18,7 +18,7 @@
 #include "UHH2/common/include/MCWeight.h"
 #include "UHH2/common/include/TTbarGen.h"
 
-#include "UHH2/TopSubstructure/include/TopSubstructureSelections.h"
+#include "UHH2/TopSubstructure/include/TopSubstructureGenSelections.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureGenHists.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureUtils.h"
 
@@ -47,7 +47,7 @@ namespace uhh2examples {
     std::unique_ptr<Selection> matching, genmatching;
 
     std::unique_ptr<AnalysisModule> PUreweight;
-    std::unique_ptr<AnalysisModule> topjetsort_by_dphi, topjetsort_by_mass, gentopjetsort_by_dphi, gentopjetsort_by_mass, jetsel;
+    std::unique_ptr<AnalysisModule> topjetsort_by_dphi, topjetsort_by_mass, gentopjetsort_by_dphi, gentopjetsort_by_mass, genjetsel;
 
     std::unique_ptr<AnalysisModule> ttgenprod;
     
@@ -89,12 +89,12 @@ namespace uhh2examples {
     ttgenprod.reset(new TTbarGenProducer(ctx, ttbar_gen_label, false));
     if(sort_by == "dphi") gentopjetsort_by_dphi.reset(new GenTopJetSortDPhi(ctx));
     if(sort_by == "mass") gentopjetsort_by_mass.reset(new GenTopJetSortMass(ctx));
-    jetsel.reset(new JetSelection(ctx));
-    genmatching.reset(new QuarkGenJetMatching(ctx));
-    ntopjetcand_sel1.reset(new NTopJet(ctx,1));
-    dphi_sel1.reset(new DPhiSelection(ctx,1));
-    dphi_sel2.reset(new DPhiSelection(ctx,2.5));
-    ntopjetcand_sel2.reset(new NTopJet(ctx,1,2));
+    genjetsel.reset(new GenJetSelection(ctx));
+    genmatching.reset(new GenQuarkGenJetMatching(ctx));
+    ntopjetcand_sel1.reset(new GenNTopJet(ctx,1));
+    dphi_sel1.reset(new GenDPhiSelection(ctx,1));
+    dphi_sel2.reset(new GenDPhiSelection(ctx,2.5));
+    ntopjetcand_sel2.reset(new GenNTopJet(ctx,1,2));
 
     // 3. Set up Hists classes:
     h_nocuts.reset(new TopSubstructureGenHists(ctx, "NoCuts", sort_by));
@@ -143,7 +143,7 @@ namespace uhh2examples {
     if(sort_by == "mass") gentopjetsort_by_mass->process(event);
 
     ttgenprod->process(event);
-    jetsel->process(event);
+    genjetsel->process(event);
 
 
 
