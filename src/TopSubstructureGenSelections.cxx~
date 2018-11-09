@@ -6,10 +6,11 @@
 using namespace uhh2examples;
 using namespace uhh2;
 
-GenDPhiSelection::GenDPhiSelection(uhh2::Context& ctx, double dphi_min_, double dphi_max_): h_gentopjet(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")), dphi_min(dphi_min_), dphi_max(dphi_max_){}
-bool GenDPhiSelection::passes(const Event & event){
+DPhiSelection::DPhiSelection(uhh2::Context& ctx, double dphi_min_, double dphi_max_): h_gentopjet(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")), dphi_min(dphi_min_), dphi_max(dphi_max_){}
+bool DPhiSelection::passes(const Event & event){
 
   bool pass = false;
+
   std::vector<GenTopJet> gentopjets = event.get(h_gentopjet);
 
   if(gentopjets.size() <= 0){
@@ -26,8 +27,8 @@ bool GenDPhiSelection::passes(const Event & event){
   return pass;
 }
 
-GenQuarkGenJetMatching::GenQuarkGenJetMatching(uhh2::Context & ctx):h_gentopjet_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")), h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
-bool GenQuarkGenJetMatching::passes(const uhh2::Event& event){
+QuarkGenJetMatching::QuarkGenJetMatching(uhh2::Context & ctx):h_gentopjet_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")), h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
+bool QuarkGenJetMatching::passes(const uhh2::Event& event){
   bool pass = false;
 
   if(event.is_valid(h_gentopjet_cand)){
@@ -55,8 +56,8 @@ bool GenQuarkGenJetMatching::passes(const uhh2::Event& event){
   return pass;
 }
 
-GenNTopJet::GenNTopJet(uhh2::Context & ctx, double n_min_, double n_max_):h_gentopjet_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")), n_min(n_min_), n_max(n_max_){}
-bool GenNTopJet::passes(const Event & event){
+NTopJet::NTopJet(uhh2::Context & ctx, double n_min_, double n_max_):h_gentopjet_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")), n_min(n_min_), n_max(n_max_){}
+bool NTopJet::passes(const Event & event){
 
   bool pass = false;
   if(event.is_valid(h_gentopjet_cand)){
