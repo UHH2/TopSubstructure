@@ -1,5 +1,4 @@
 #include "UHH2/TopSubstructure/include/TopSubstructureGenHists.h"
-#include "UHH2/core/include/Event.h"
 
 #include <iostream>
 
@@ -47,11 +46,7 @@ TopSubstructureGenHists::TopSubstructureGenHists(Context & ctx, const string & d
 
 
   // only TTbar
-  book<TH1F>("dR8_gen", "#Delta R gen", 50, 0, 5);
-
-
-  book<TH1F>("dR8_topjet_genjet", "#Delta R(TopJet, GenTopJet)", 50, 0, 5);
-
+  book<TH1F>("dR8_gen", "#Delta R(top, GenTopJet) gen", 50, 0, 5);
 
   book<TH1F>("N_jets_clean", "N_{jets} no AK8", 15, 0, 15);
 
@@ -130,6 +125,11 @@ void TopSubstructureGenHists::fill(const Event & event){
 	  tophad = ttbargen.Antitop();
 	  hist("dR8_gen")->Fill(deltaR(tophad, gentopjet_cand.at(0)), weight);
 	}
+      }
+
+      if(event.is_valid(h_genjetsel)){
+	std::vector<Particle> genjet_sel = event.get(h_genjetsel);
+	hist("N_jets_clean")->Fill(genjet_sel.size(), weight);
       }
     } // closing brackets of gentopjet_cand.size()
 

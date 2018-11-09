@@ -167,20 +167,12 @@ TopSubstructureHists::TopSubstructureHists(Context & ctx, const string & dirname
   h_jetsel = ctx.get_handle<vector<Jet>>("jetsel");
   h_ttbargen = ctx.get_handle<TTbarGen>("ttbargen");
   
-  // how to save handle to a variable
-  // if(event.is_valid(h_fjet_nogen_inZ)) fjet_nogen_inZ = event.get(h_fjet_nogen_inZ);
-
   isMC = (ctx.get("dataset_type") == "MC"); 
 
 }
 
 
 void TopSubstructureHists::fill(const Event & event){
-  // fill the histograms. Please note the comments in the header file:
-  // 'hist' is used here a lot for simplicity, but it will be rather
-  // slow when you have many histograms; therefore, better
-  // use histogram pointers as members as in 'UHH2/common/include/ElectronHists.h'
-  
   // Don't forget to always use the weight when filling.
   double weight = event.weight;
 
@@ -270,6 +262,16 @@ void TopSubstructureHists::fill(const Event & event){
       hist("tau2_topjet_cand1")->Fill(topjet_cand.at(0).tau2(), weight);
       hist("tau3_topjet_cand1")->Fill(topjet_cand.at(0).tau3(), weight);
 
+      if(topjet_cand.size()>=2){
+	hist("Nsubjet_cand2")->Fill(topjet_cand.at(1).subjets().size(), weight); 
+	hist("M_cand2")->Fill(topjet_cand.at(1).v4().M(), weight);     
+	hist("pt_topjet_cand2")->Fill(topjet_cand.at(1).pt(), weight);      
+	hist("eta_topjet_cand2")->Fill(topjet_cand.at(1).eta(), weight);
+	hist("tau1_topjet_cand2")->Fill(topjet_cand.at(1).tau1(), weight);
+	hist("tau2_topjet_cand2")->Fill(topjet_cand.at(1).tau2(), weight);
+	hist("tau3_topjet_cand2")->Fill(topjet_cand.at(1).tau3(), weight);
+      }
+
       double drmin, ptrel;
       if(event.muons->size()){
 	std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
@@ -350,13 +352,6 @@ void TopSubstructureHists::fill(const Event & event){
 	hist("tau1_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).tau1(), weight);
 	hist("tau2_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).tau2(), weight);
 	hist("tau3_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).tau3(), weight);
-
-	// double drmin, ptrel;
-	// if(event.muons->size()){
-	//   std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
-	//   TwoDCut->Fill(drmin, ptrel, weight);
-	// }
-  
     
 	hist("tau32_cand1_gen")->Fill(gentopjet_cand.at(0).tau3()/gentopjet_cand.at(0).tau2(), weight);
 	hist("tau21_cand1_gen")->Fill(gentopjet_cand.at(0).tau2()/gentopjet_cand.at(0).tau1(), weight);
