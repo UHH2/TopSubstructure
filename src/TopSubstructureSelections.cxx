@@ -55,28 +55,6 @@ bool TopJetptSelection::passes(const Event & event){
   return pass;
 }
 
-TopJetptSelectionold::TopJetptSelectionold(double pt_min_, double pt_max_):pt_min(pt_min_), pt_max(pt_max_){}
-bool TopJetptSelectionold::passes(const Event & event){
-
-  bool pass = true;
-  sort_by_pt<TopJet> (*event.topjets);
-  std::vector<TopJet>* topjets = event.topjets;
-
-  if(topjets->size() <= 0){
-    std::cout << "\n DPhiSelection::passes: There are no topjets in the event. returning 'false'\n" << std::endl;
-    return false;
-  }
-
-  for(int i=1; i<fabs(topjets->size()); i++){
-    auto diff = topjets->at(0).pt()-topjets->at(i).pt();
-    if(!(diff > 0)) std::cout << "\n In TopJetSelection::passes: event.topjets did not get sorted corretly by pt!\n" << std::endl;;
-  }
-  auto pt = topjets->at(0).pt();
-
-  pass = pt >= pt_min && (pt <= pt_max || pt_max < 0);
-  return pass;
-}
-
 TwoDCut::TwoDCut(double min_deltaR_, double min_pTrel_): min_deltaR(min_deltaR_), min_pTrel(min_pTrel_) {}
 bool TwoDCut::passes(const Event & event){
 
@@ -106,28 +84,6 @@ bool DPhiSelection::passes(const Event & event){
 
   sort_by_pt<Muon>(*event.muons);
   const auto & topjet = topjets.at(0);
-  const auto & muon = event.muons->at(0);
-  auto dphi = deltaPhi(topjet, muon);
-
-  pass = dphi >= dphi_min && ( dphi <= dphi_max || dphi_max < 0);
-  return pass;
-}
-
-DPhiSelectionold::DPhiSelectionold(double dphi_min_, double dphi_max_):dphi_min(dphi_min_), dphi_max(dphi_max_){}
-bool DPhiSelectionold::passes(const Event & event){
-
-  bool pass = false;
-
-  sort_by_pt<TopJet> (*event.topjets);
-  std::vector<TopJet>* topjets = event.topjets;
-
-  if(topjets->size() <= 0){
-    std::cout << "\n DPhiSelection::passes: There are no topjets in the event. returning 'false'\n" << std::endl;
-    return false;
-  }
-
-  sort_by_pt<Muon>(*event.muons);
-  const auto & topjet = topjets->at(0);
   const auto & muon = event.muons->at(0);
   auto dphi = deltaPhi(topjet, muon);
 
@@ -182,35 +138,6 @@ bool QuarkCandJetMatching::passes(const uhh2::Event& event){
 	  q1 = ttbargen.WMinusdecay1();
 	  q2 = ttbargen.WMinusdecay2();
 	  if(deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8) pass = true;
-        }
-      }
-    }
-  }
-  return pass;
-}
-
-QuarkGenJetMatching::QuarkGenJetMatching(uhh2::Context & ctx):h_gentopjet_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")), h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
-bool QuarkGenJetMatching::passes(const uhh2::Event& event){
-  bool pass = false;
-
-  if(event.is_valid(h_gentopjet_cand)){
-    std::vector<GenTopJet> gentopjet_cand = event.get(h_gentopjet_cand);
-    if (gentopjet_cand.size() > 0) {
-      if(event.is_valid(h_ttbargen)){
-        const auto ttbargen = event.get(h_ttbargen);
-
-        GenParticle bq, q1, q2;
-        if(ttbargen.IsTopHadronicDecay()){
-	  bq = ttbargen.bTop();
-	  q1 = ttbargen.Wdecay1();
-	  q2 = ttbargen.Wdecay2();
-	  if(deltaR(bq, gentopjet_cand.at(0)) <= 0.8 && deltaR(q1, gentopjet_cand.at(0)) <= 0.8 && deltaR(q2, gentopjet_cand.at(0)) <= 0.8) pass = true;
-        }
-        else if(ttbargen.IsAntiTopHadronicDecay()){
-	  bq = ttbargen.bAntitop();
-	  q1 = ttbargen.WMinusdecay1();
-	  q2 = ttbargen.WMinusdecay2();
-	  if(deltaR(bq, gentopjet_cand.at(0)) <= 0.8 && deltaR(q1, gentopjet_cand.at(0)) <= 0.8 && deltaR(q2, gentopjet_cand.at(0)) <= 0.8) pass = true;
         }
       }
     }

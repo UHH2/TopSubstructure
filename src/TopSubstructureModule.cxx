@@ -58,62 +58,50 @@ namespace uhh2examples {
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
     std::unique_ptr<Hists> h_nocuts, h_njet_nocuts, h_muon_nocuts, h_topjet_nocuts;
     std::unique_ptr<Hists> h_nocuts_matched, h_njet_nocuts_matched, h_muon_nocuts_matched, h_topjet_nocuts_matched;
-    std::unique_ptr<Hists> h_nocuts_genmatched, h_njet_nocuts_genmatched, h_muon_nocuts_genmatched, h_topjet_nocuts_genmatched;
     std::unique_ptr<Hists> h_nocuts_unmatched, h_njet_nocuts_unmatched, h_muon_nocuts_unmatched, h_topjet_nocuts_unmatched;
 
     std::unique_ptr<Hists> h_MET50, h_njet_MET50, h_muon_MET50, h_topjet_MET50;
     std::unique_ptr<Hists> h_MET50_matched, h_njet_MET50_matched, h_muon_MET50_matched, h_topjet_MET50_matched;
-    std::unique_ptr<Hists> h_MET50_genmatched, h_njet_MET50_genmatched, h_muon_MET50_genmatched, h_topjet_MET50_genmatched;
     std::unique_ptr<Hists> h_MET50_unmatched, h_njet_MET50_unmatched, h_muon_MET50_unmatched, h_topjet_MET50_unmatched;
 
     std::unique_ptr<Hists> h_1mu, h_njet_1mu, h_muon_1mu, h_topjet_1mu;
     std::unique_ptr<Hists> h_1mu_matched, h_njet_1mu_matched, h_muon_1mu_matched, h_topjet_1mu_matched;
-    std::unique_ptr<Hists> h_1mu_genmatched, h_njet_1mu_genmatched, h_muon_1mu_genmatched, h_topjet_1mu_genmatched;
     std::unique_ptr<Hists> h_1mu_unmatched, h_njet_1mu_unmatched, h_muon_1mu_unmatched, h_topjet_1mu_unmatched;
 
     std::unique_ptr<Hists> h_mupt55, h_njet_mupt55, h_muon_mupt55, h_topjet_mupt55;
     std::unique_ptr<Hists> h_mupt55_matched, h_njet_mupt55_matched, h_muon_mupt55_matched, h_topjet_mupt55_matched;
-    std::unique_ptr<Hists> h_mupt55_genmatched, h_njet_mupt55_genmatched, h_muon_mupt55_genmatched, h_topjet_mupt55_genmatched;
     std::unique_ptr<Hists> h_mupt55_unmatched, h_njet_mupt55_unmatched, h_muon_mupt55_unmatched, h_topjet_mupt55_unmatched;
 
     std::unique_ptr<Hists> h_0ele, h_njet_0ele, h_muon_0ele, h_topjet_0ele;
     std::unique_ptr<Hists> h_0ele_matched, h_njet_0ele_matched, h_muon_0ele_matched, h_topjet_0ele_matched;
-    std::unique_ptr<Hists> h_0ele_genmatched, h_njet_0ele_genmatched, h_muon_0ele_genmatched, h_topjet_0ele_genmatched;
     std::unique_ptr<Hists> h_0ele_unmatched, h_njet_0ele_unmatched, h_muon_0ele_unmatched, h_topjet_0ele_unmatched;
 
     std::unique_ptr<Hists> h_twodcut, h_njet_twodcut, h_muon_twodcut, h_topjet_twodcut;
     std::unique_ptr<Hists> h_twodcut_matched, h_njet_twodcut_matched, h_muon_twodcut_matched, h_topjet_twodcut_matched;
-    std::unique_ptr<Hists> h_twodcut_genmatched, h_njet_twodcut_genmatched, h_muon_twodcut_genmatched, h_topjet_twodcut_genmatched;
     std::unique_ptr<Hists> h_twodcut_unmatched, h_njet_twodcut_unmatched, h_muon_twodcut_unmatched, h_topjet_twodcut_unmatched;
 
     std::unique_ptr<Hists> h_1topjet, h_njet_1topjet, h_muon_1topjet, h_topjet_1topjet;
     std::unique_ptr<Hists> h_1topjet_matched, h_njet_1topjet_matched, h_muon_1topjet_matched, h_topjet_1topjet_matched;
-    std::unique_ptr<Hists> h_1topjet_genmatched, h_njet_1topjet_genmatched, h_muon_1topjet_genmatched, h_topjet_1topjet_genmatched;
     std::unique_ptr<Hists> h_1topjet_unmatched, h_njet_1topjet_unmatched, h_muon_1topjet_unmatched, h_topjet_1topjet_unmatched;
 
     std::unique_ptr<Hists> h_1btagtight, h_njet_1btagtight, h_muon_1btagtight, h_topjet_1btagtight;
     std::unique_ptr<Hists> h_1btagtight_matched, h_njet_1btagtight_matched, h_muon_1btagtight_matched, h_topjet_1btagtight_matched;
-    std::unique_ptr<Hists> h_1btagtight_genmatched, h_njet_1btagtight_genmatched, h_muon_1btagtight_genmatched, h_topjet_1btagtight_genmatched;
     std::unique_ptr<Hists> h_1btagtight_unmatched, h_njet_1btagtight_unmatched, h_muon_1btagtight_unmatched, h_topjet_1btagtight_unmatched;
 
     std::unique_ptr<Hists> h_ntopjet1, h_njet_ntopjet1, h_muon_ntopjet1, h_topjet_ntopjet1;
     std::unique_ptr<Hists> h_ntopjet1_matched, h_njet_ntopjet1_matched, h_muon_ntopjet1_matched, h_topjet_ntopjet1_matched;
-    std::unique_ptr<Hists> h_ntopjet1_genmatched, h_njet_ntopjet1_genmatched, h_muon_ntopjet1_genmatched, h_topjet_ntopjet1_genmatched;
     std::unique_ptr<Hists> h_ntopjet1_unmatched, h_njet_ntopjet1_unmatched, h_muon_ntopjet1_unmatched, h_topjet_ntopjet1_unmatched;
 
     std::unique_ptr<Hists> h_dphi1, h_njet_dphi1, h_muon_dphi1, h_topjet_dphi1;
     std::unique_ptr<Hists> h_dphi1_matched, h_njet_dphi1_matched, h_muon_dphi1_matched, h_topjet_dphi1_matched;
-    std::unique_ptr<Hists> h_dphi1_genmatched, h_njet_dphi1_genmatched, h_muon_dphi1_genmatched, h_topjet_dphi1_genmatched;
     std::unique_ptr<Hists> h_dphi1_unmatched, h_njet_dphi1_unmatched, h_muon_dphi1_unmatched, h_topjet_dphi1_unmatched;
 
     std::unique_ptr<Hists> h_dphi25, h_njet_dphi25, h_muon_dphi25, h_topjet_dphi25;
     std::unique_ptr<Hists> h_dphi25_matched, h_njet_dphi25_matched, h_muon_dphi25_matched, h_topjet_dphi25_matched;
-    std::unique_ptr<Hists> h_dphi25_genmatched, h_njet_dphi25_genmatched, h_muon_dphi25_genmatched, h_topjet_dphi25_genmatched;
     std::unique_ptr<Hists> h_dphi25_unmatched, h_njet_dphi25_unmatched, h_muon_dphi25_unmatched, h_topjet_dphi25_unmatched;
 
     std::unique_ptr<Hists> h_ntopjet2, h_njet_ntopjet2, h_muon_ntopjet2, h_topjet_ntopjet2;
     std::unique_ptr<Hists> h_ntopjet2_matched, h_njet_ntopjet2_matched, h_muon_ntopjet2_matched, h_topjet_ntopjet2_matched;
-    std::unique_ptr<Hists> h_ntopjet2_genmatched, h_njet_ntopjet2_genmatched, h_muon_ntopjet2_genmatched, h_topjet_ntopjet2_genmatched;
     std::unique_ptr<Hists> h_ntopjet2_unmatched, h_njet_ntopjet2_unmatched, h_muon_ntopjet2_unmatched, h_topjet_ntopjet2_unmatched;
 
 
@@ -163,11 +151,8 @@ namespace uhh2examples {
     ttgenprod.reset(new TTbarGenProducer(ctx, ttbar_gen_label, false));
     if(sort_by == "dphi") topjetsort_by_dphi.reset(new TopJetSortDPhi(ctx));
     if(sort_by == "mass") topjetsort_by_mass.reset(new TopJetSortMass(ctx));
-    if(isTTbar && sort_by == "dphi") gentopjetsort_by_dphi.reset(new GenTopJetSortDPhi(ctx));
-    if(isTTbar && sort_by == "mass") gentopjetsort_by_mass.reset(new GenTopJetSortMass(ctx));
     jetsel.reset(new JetSelection(ctx));
     matching.reset(new QuarkCandJetMatching(ctx));
-    genmatching.reset(new QuarkGenJetMatching(ctx));
     pv_sel.reset(new NPVSelection(1, -1, PrimaryVertexId(StandardPrimaryVertexId())));
     PUreweight.reset(new MCPileupReweight(ctx, "central"));
     ntopjet_sel.reset(new NTopJetSelection(1)); // see common/include/NSelections.h
@@ -193,11 +178,6 @@ namespace uhh2examples {
     h_topjet_nocuts_matched.reset(new TopJetHists(ctx, "Topjet_nocuts_matched"));
     h_muon_nocuts_matched.reset(new MuonHists(ctx, "muon_nocuts_matched"));
 
-    h_nocuts_genmatched.reset(new TopSubstructureHists(ctx, "NoCuts_genmatched", sort_by));
-    h_njet_nocuts_genmatched.reset(new JetHists(ctx, "Njet_nocuts_genmatched"));
-    h_topjet_nocuts_genmatched.reset(new TopJetHists(ctx, "Topjet_nocuts_genmatched"));
-    h_muon_nocuts_genmatched.reset(new MuonHists(ctx, "muon_nocuts_genmatched"));
-
     h_nocuts_unmatched.reset(new TopSubstructureHists(ctx, "NoCuts_unmatched", sort_by));
     h_njet_nocuts_unmatched.reset(new JetHists(ctx, "Njet_nocuts_unmatched"));
     h_topjet_nocuts_unmatched.reset(new TopJetHists(ctx, "Topjet_nocuts_unmatched"));
@@ -214,11 +194,6 @@ namespace uhh2examples {
     h_njet_MET50_matched.reset(new JetHists(ctx, "Njet_MET50_matched"));
     h_topjet_MET50_matched.reset(new TopJetHists(ctx, "Topjet_MET50_matched"));
     h_muon_MET50_matched.reset(new MuonHists(ctx, "muon_MET50_matched"));
-
-    h_MET50_genmatched.reset(new TopSubstructureHists(ctx, "MET50_genmatched", sort_by));
-    h_njet_MET50_genmatched.reset(new JetHists(ctx, "Njet_MET50_genmatched"));
-    h_topjet_MET50_genmatched.reset(new TopJetHists(ctx, "Topjet_MET50_genmatched"));
-    h_muon_MET50_genmatched.reset(new MuonHists(ctx, "muon_MET50_genmatched"));
 
     h_MET50_unmatched.reset(new TopSubstructureHists(ctx, "MET50_unmatched", sort_by));
     h_njet_MET50_unmatched.reset(new JetHists(ctx, "Njet_MET50_unmatched"));
@@ -237,11 +212,6 @@ namespace uhh2examples {
     h_topjet_1mu_matched.reset(new TopJetHists(ctx, "Topjet_1mu_matched"));
     h_muon_1mu_matched.reset(new MuonHists(ctx, "muon_1mu_matched"));
 
-    h_1mu_genmatched.reset(new TopSubstructureHists(ctx, "1mu_genmatched", sort_by));
-    h_njet_1mu_genmatched.reset(new JetHists(ctx, "Njet_1mu_genmatched"));
-    h_topjet_1mu_genmatched.reset(new TopJetHists(ctx, "Topjet_1mu_genmatched"));
-    h_muon_1mu_genmatched.reset(new MuonHists(ctx, "muon_1mu_genmatched"));
-
     h_1mu_unmatched.reset(new TopSubstructureHists(ctx, "1mu_unmatched", sort_by));
     h_njet_1mu_unmatched.reset(new JetHists(ctx, "Njet_1mu_unmatched"));
     h_topjet_1mu_unmatched.reset(new TopJetHists(ctx, "Topjet_1mu_unmatched"));
@@ -258,11 +228,6 @@ namespace uhh2examples {
     h_njet_mupt55_matched.reset(new JetHists(ctx, "Njet_mupt55_matched"));
     h_topjet_mupt55_matched.reset(new TopJetHists(ctx, "Topjet_mupt55_matched"));
     h_muon_mupt55_matched.reset(new MuonHists(ctx, "muon_mupt55_matched"));
-
-    h_mupt55_genmatched.reset(new TopSubstructureHists(ctx, "mupt55_genmatched", sort_by));
-    h_njet_mupt55_genmatched.reset(new JetHists(ctx, "Njet_mupt55_genmatched"));
-    h_topjet_mupt55_genmatched.reset(new TopJetHists(ctx, "Topjet_mupt55_genmatched"));
-    h_muon_mupt55_genmatched.reset(new MuonHists(ctx, "muon_mupt55_genmatched"));
 
     h_mupt55_unmatched.reset(new TopSubstructureHists(ctx, "mupt55_unmatched", sort_by));
     h_njet_mupt55_unmatched.reset(new JetHists(ctx, "Njet_mupt55_unmatched"));
@@ -281,11 +246,6 @@ namespace uhh2examples {
     h_topjet_0ele_matched.reset(new TopJetHists(ctx, "Topjet_0ele_matched"));
     h_muon_0ele_matched.reset(new MuonHists(ctx, "muon_0ele_matched"));
 
-    h_0ele_genmatched.reset(new TopSubstructureHists(ctx, "0ele_genmatched", sort_by));
-    h_njet_0ele_genmatched.reset(new JetHists(ctx, "Njet_0ele_genmatched"));
-    h_topjet_0ele_genmatched.reset(new TopJetHists(ctx, "Topjet_0ele_genmatched"));
-    h_muon_0ele_genmatched.reset(new MuonHists(ctx, "muon_0ele_genmatched"));
-
     h_0ele_unmatched.reset(new TopSubstructureHists(ctx, "0ele_unmatched", sort_by));
     h_njet_0ele_unmatched.reset(new JetHists(ctx, "Njet_0ele_unmatched"));
     h_topjet_0ele_unmatched.reset(new TopJetHists(ctx, "Topjet_0ele_unmatched"));
@@ -302,11 +262,6 @@ namespace uhh2examples {
     h_njet_twodcut_matched.reset(new JetHists(ctx, "Njet_twodcut_matched"));
     h_topjet_twodcut_matched.reset(new TopJetHists(ctx, "Topjet_twodcut_matched"));
     h_muon_twodcut_matched.reset(new MuonHists(ctx, "muon_twodcut_matched"));
-
-    h_twodcut_genmatched.reset(new TopSubstructureHists(ctx, "twodcut_genmatched", sort_by));
-    h_njet_twodcut_genmatched.reset(new JetHists(ctx, "Njet_twodcut_genmatched"));
-    h_topjet_twodcut_genmatched.reset(new TopJetHists(ctx, "Topjet_twodcut_genmatched"));
-    h_muon_twodcut_genmatched.reset(new MuonHists(ctx, "muon_twodcut_genmatched"));
 
     h_twodcut_unmatched.reset(new TopSubstructureHists(ctx, "twodcut_unmatched", sort_by));
     h_njet_twodcut_unmatched.reset(new JetHists(ctx, "Njet_twodcut_unmatched"));
@@ -325,11 +280,6 @@ namespace uhh2examples {
     h_topjet_1topjet_matched.reset(new TopJetHists(ctx, "Topjet_1topjet_matched"));
     h_muon_1topjet_matched.reset(new MuonHists(ctx, "muon_1topjet_matched"));
 
-    h_1topjet_genmatched.reset(new TopSubstructureHists(ctx, "1topjet_genmatched", sort_by));
-    h_njet_1topjet_genmatched.reset(new JetHists(ctx, "Njet_1topjet_genmatched"));
-    h_topjet_1topjet_genmatched.reset(new TopJetHists(ctx, "Topjet_1topjet_genmatched"));
-    h_muon_1topjet_genmatched.reset(new MuonHists(ctx, "muon_1topjet_genmatched"));
-
     h_1topjet_unmatched.reset(new TopSubstructureHists(ctx, "1topjet_unmatched", sort_by));
     h_njet_1topjet_unmatched.reset(new JetHists(ctx, "Njet_1topjet_unmatched"));
     h_topjet_1topjet_unmatched.reset(new TopJetHists(ctx, "Topjet_1topjet_unmatched"));
@@ -346,11 +296,6 @@ namespace uhh2examples {
     h_njet_1btagtight_matched.reset(new JetHists(ctx, "Njet_1btagtight_matched"));
     h_topjet_1btagtight_matched.reset(new TopJetHists(ctx, "Topjet_1btagtight_matched"));
     h_muon_1btagtight_matched.reset(new MuonHists(ctx, "muon_1btagtight_matched"));
-
-    h_1btagtight_genmatched.reset(new TopSubstructureHists(ctx, "1btagtight_genmatched", sort_by));
-    h_njet_1btagtight_genmatched.reset(new JetHists(ctx, "Njet_1btagtight_genmatched"));
-    h_topjet_1btagtight_genmatched.reset(new TopJetHists(ctx, "Topjet_1btagtight_genmatched"));
-    h_muon_1btagtight_genmatched.reset(new MuonHists(ctx, "muon_1btagtight_genmatched"));
 
     h_1btagtight_unmatched.reset(new TopSubstructureHists(ctx, "1btagtight_unmatched", sort_by));
     h_njet_1btagtight_unmatched.reset(new JetHists(ctx, "Njet_1btagtight_unmatched"));
@@ -369,11 +314,6 @@ namespace uhh2examples {
     h_topjet_ntopjet1_matched.reset(new TopJetHists(ctx, "Topjet_ntopjet1_matched"));
     h_muon_ntopjet1_matched.reset(new MuonHists(ctx, "muon_ntopjet1_matched"));
 
-    h_ntopjet1_genmatched.reset(new TopSubstructureHists(ctx, "ntopjet1_genmatched", sort_by));
-    h_njet_ntopjet1_genmatched.reset(new JetHists(ctx, "Njet_ntopjet1_genmatched"));
-    h_topjet_ntopjet1_genmatched.reset(new TopJetHists(ctx, "Topjet_ntopjet1_genmatched"));
-    h_muon_ntopjet1_genmatched.reset(new MuonHists(ctx, "muon_ntopjet1_genmatched"));
-
     h_ntopjet1_unmatched.reset(new TopSubstructureHists(ctx, "ntopjet1_unmatched", sort_by));
     h_njet_ntopjet1_unmatched.reset(new JetHists(ctx, "Njet_ntopjet1_unmatched"));
     h_topjet_ntopjet1_unmatched.reset(new TopJetHists(ctx, "Topjet_ntopjet1_unmatched"));
@@ -390,11 +330,6 @@ namespace uhh2examples {
     h_njet_dphi1_matched.reset(new JetHists(ctx, "Njet_dphi1_matched"));
     h_topjet_dphi1_matched.reset(new TopJetHists(ctx, "Topjet_dphi1_matched"));
     h_muon_dphi1_matched.reset(new MuonHists(ctx, "muon_dphi1_matched"));
-
-    h_dphi1_genmatched.reset(new TopSubstructureHists(ctx, "dphi1_genmatched", sort_by));
-    h_njet_dphi1_genmatched.reset(new JetHists(ctx, "Njet_dphi1_genmatched"));
-    h_topjet_dphi1_genmatched.reset(new TopJetHists(ctx, "Topjet_dphi1_genmatched"));
-    h_muon_dphi1_genmatched.reset(new MuonHists(ctx, "muon_dphi1_genmatched"));
 
     h_dphi1_unmatched.reset(new TopSubstructureHists(ctx, "dphi1_unmatched", sort_by));
     h_njet_dphi1_unmatched.reset(new JetHists(ctx, "Njet_dphi1_unmatched"));
@@ -413,11 +348,6 @@ namespace uhh2examples {
     h_topjet_dphi25_matched.reset(new TopJetHists(ctx, "Topjet_dphi25_matched"));
     h_muon_dphi25_matched.reset(new MuonHists(ctx, "muon_dphi25_matched"));
 
-    h_dphi25_genmatched.reset(new TopSubstructureHists(ctx, "dphi25_genmatched", sort_by));
-    h_njet_dphi25_genmatched.reset(new JetHists(ctx, "Njet_dphi25_genmatched"));
-    h_topjet_dphi25_genmatched.reset(new TopJetHists(ctx, "Topjet_dphi25_genmatched"));
-    h_muon_dphi25_genmatched.reset(new MuonHists(ctx, "muon_dphi25_genmatched"));
-
     h_dphi25_unmatched.reset(new TopSubstructureHists(ctx, "dphi25_unmatched", sort_by));
     h_njet_dphi25_unmatched.reset(new JetHists(ctx, "Njet_dphi25_unmatched"));
     h_topjet_dphi25_unmatched.reset(new TopJetHists(ctx, "Topjet_dphi25_unmatched"));
@@ -434,11 +364,6 @@ namespace uhh2examples {
     h_njet_ntopjet2_matched.reset(new JetHists(ctx, "Njet_ntopjet2_matched"));
     h_topjet_ntopjet2_matched.reset(new TopJetHists(ctx, "Topjet_ntopjet2_matched"));
     h_muon_ntopjet2_matched.reset(new MuonHists(ctx, "muon_ntopjet2_matched"));
-
-    h_ntopjet2_genmatched.reset(new TopSubstructureHists(ctx, "ntopjet2_genmatched", sort_by));
-    h_njet_ntopjet2_genmatched.reset(new JetHists(ctx, "Njet_ntopjet2_genmatched"));
-    h_topjet_ntopjet2_genmatched.reset(new TopJetHists(ctx, "Topjet_ntopjet2_genmatched"));
-    h_muon_ntopjet2_genmatched.reset(new MuonHists(ctx, "muon_ntopjet2_genmatched"));
 
     h_ntopjet2_unmatched.reset(new TopSubstructureHists(ctx, "ntopjet2_unmatched", sort_by));
     h_njet_ntopjet2_unmatched.reset(new JetHists(ctx, "Njet_ntopjet2_unmatched"));
@@ -491,10 +416,7 @@ namespace uhh2examples {
     // sort the topjets for our needs
     if(sort_by == "dphi") topjetsort_by_dphi->process(event);
     if(sort_by == "mass") topjetsort_by_mass->process(event);
-    if(isTTbar){
-      if(sort_by == "dphi") gentopjetsort_by_dphi->process(event);
-      if(sort_by == "mass") gentopjetsort_by_mass->process(event);
-    }
+
     if(isTTbar) ttgenprod->process(event);
     jetsel->process(event);
 
@@ -518,12 +440,6 @@ namespace uhh2examples {
       h_topjet_nocuts_unmatched->fill(event);
       h_muon_nocuts_unmatched->fill(event);
     }
-    if(isTTbar && genmatching->passes(event)){
-      h_nocuts_genmatched->fill(event);
-      h_njet_nocuts_genmatched->fill(event);
-      h_topjet_nocuts_genmatched->fill(event);
-      h_muon_nocuts_genmatched->fill(event);
-    }
 
     //MET50
     if(!met_sel->passes(event)) return false;
@@ -543,12 +459,6 @@ namespace uhh2examples {
       h_njet_MET50_unmatched->fill(event);
       h_topjet_MET50_unmatched->fill(event);
       h_muon_MET50_unmatched->fill(event);
-    }
-    if(isTTbar && genmatching->passes(event)){
-      h_MET50_genmatched->fill(event);
-      h_njet_MET50_genmatched->fill(event);
-      h_topjet_MET50_genmatched->fill(event);
-      h_muon_MET50_genmatched->fill(event);
     }
 
     //1 muon
@@ -570,12 +480,6 @@ namespace uhh2examples {
       h_topjet_1mu_unmatched->fill(event);
       h_muon_1mu_unmatched->fill(event);
     }
-    if(isTTbar && genmatching->passes(event)){
-      h_1mu_genmatched->fill(event);
-      h_njet_1mu_genmatched->fill(event);
-      h_topjet_1mu_genmatched->fill(event);
-      h_muon_1mu_genmatched->fill(event);
-    }
 
     //mu pt > 55GeV
     if(!pt_mu_sel->passes(event)) return false;
@@ -595,12 +499,6 @@ namespace uhh2examples {
       h_njet_mupt55_unmatched->fill(event);
       h_topjet_mupt55_unmatched->fill(event);
       h_muon_mupt55_unmatched->fill(event);
-    }
-    if(isTTbar && genmatching->passes(event)){
-      h_mupt55_genmatched->fill(event);
-      h_njet_mupt55_genmatched->fill(event);
-      h_topjet_mupt55_genmatched->fill(event);
-      h_muon_mupt55_genmatched->fill(event);
     }
 
     //0 electron
@@ -622,12 +520,6 @@ namespace uhh2examples {
       h_topjet_0ele_unmatched->fill(event);
       h_muon_0ele_unmatched->fill(event);
     }
-    if(isTTbar && genmatching->passes(event)){
-      h_0ele_genmatched->fill(event);
-      h_njet_0ele_genmatched->fill(event);
-      h_topjet_0ele_genmatched->fill(event);
-      h_muon_0ele_genmatched->fill(event);
-    }
 
     //TwoDCut
     if(!twodcut_sel->passes(event)) return false;
@@ -647,12 +539,6 @@ namespace uhh2examples {
       h_njet_twodcut_unmatched->fill(event);
       h_topjet_twodcut_unmatched->fill(event);
       h_muon_twodcut_unmatched->fill(event);
-    }
-    if(isTTbar && genmatching->passes(event)){
-      h_twodcut_genmatched->fill(event);
-      h_njet_twodcut_genmatched->fill(event);
-      h_topjet_twodcut_genmatched->fill(event);
-      h_muon_twodcut_genmatched->fill(event);
     }
 
     //1 topjet
@@ -674,12 +560,6 @@ namespace uhh2examples {
       h_topjet_1topjet_unmatched->fill(event);
       h_muon_1topjet_unmatched->fill(event);
     }
-    if(isTTbar && genmatching->passes(event)){
-      h_1topjet_genmatched->fill(event);
-      h_njet_1topjet_genmatched->fill(event);
-      h_topjet_1topjet_genmatched->fill(event);
-      h_muon_1topjet_genmatched->fill(event);
-    }
 
     //1 tight b-Jet
     if(!nbtag_tight_sel->passes(event)) return false;
@@ -699,12 +579,6 @@ namespace uhh2examples {
       h_njet_1btagtight_unmatched->fill(event);
       h_topjet_1btagtight_unmatched->fill(event);
       h_muon_1btagtight_unmatched->fill(event);
-    }
-    if(isTTbar && genmatching->passes(event)){
-      h_1btagtight_genmatched->fill(event);
-      h_njet_1btagtight_genmatched->fill(event);
-      h_topjet_1btagtight_genmatched->fill(event);
-      h_muon_1btagtight_genmatched->fill(event);
     }
 
     //min 1 topjet_cand
@@ -726,12 +600,6 @@ namespace uhh2examples {
       h_topjet_ntopjet1_unmatched->fill(event);
       h_muon_ntopjet1_unmatched->fill(event);
     }
-    if(isTTbar && genmatching->passes(event)){
-      h_ntopjet1_genmatched->fill(event);
-      h_njet_ntopjet1_genmatched->fill(event);
-      h_topjet_ntopjet1_genmatched->fill(event);
-      h_muon_ntopjet1_genmatched->fill(event);
-    }
 
     //dphi(mu,jet1) > 1
     if(!dphi_sel1->passes(event)) return false;
@@ -751,12 +619,6 @@ namespace uhh2examples {
       h_njet_dphi1_unmatched->fill(event);
       h_topjet_dphi1_unmatched->fill(event);
       h_muon_dphi1_unmatched->fill(event);
-    }
-    if(isTTbar && genmatching->passes(event)){
-      h_dphi1_genmatched->fill(event);
-      h_njet_dphi1_genmatched->fill(event);
-      h_topjet_dphi1_genmatched->fill(event);
-      h_muon_dphi1_genmatched->fill(event);
     }
 
     //dphi(mu,jet1) > 2.5
@@ -778,12 +640,6 @@ namespace uhh2examples {
       h_topjet_dphi25_unmatched->fill(event);
       h_muon_dphi25_unmatched->fill(event);
     }
-    if(isTTbar && genmatching->passes(event)){
-      h_dphi25_genmatched->fill(event);
-      h_njet_dphi25_genmatched->fill(event);
-      h_topjet_dphi25_genmatched->fill(event);
-      h_muon_dphi25_genmatched->fill(event);
-    }
 
     //max 2 topjet_cand
     if(!ntopjetcand_sel2->passes(event)) return false;
@@ -803,12 +659,6 @@ namespace uhh2examples {
       h_njet_ntopjet2_unmatched->fill(event);
       h_topjet_ntopjet2_unmatched->fill(event);
       h_muon_ntopjet2_unmatched->fill(event);
-    }
-    if(isTTbar && genmatching->passes(event)){
-      h_ntopjet2_genmatched->fill(event);
-      h_njet_ntopjet2_genmatched->fill(event);
-      h_topjet_ntopjet2_genmatched->fill(event);
-      h_muon_ntopjet2_genmatched->fill(event);
     }
 
 
