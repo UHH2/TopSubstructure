@@ -42,9 +42,9 @@ namespace uhh2examples {
     string sort_by;
    
     // declare the Selections to use. Use unique_ptr to ensure automatic call of delete in the destructor, to avoid memory leaks.
-    std::unique_ptr<Selection> nmu_sel, ntopjetcand_sel1, dphi_sel1, dphi_sel2, ntopjetcand_sel2;
-    std::unique_ptr<Selection> trigger_sel_A, trigger_sel_B, pv_sel;
-    std::unique_ptr<Selection> matching, genmatching;
+    std::unique_ptr<Selection> ntopjetcand_sel1, dphi_sel1, dphi_sel2, ntopjetcand_sel2;
+    std::unique_ptr<Selection> genmatching;
+    std::unique_ptr<Selection> semilep;
 
     std::unique_ptr<AnalysisModule> PUreweight;
     std::unique_ptr<AnalysisModule> topjetsort_by_dphi, topjetsort_by_mass, gentopjetsort_by_dphi, gentopjetsort_by_mass, genjetsel;
@@ -52,9 +52,8 @@ namespace uhh2examples {
     std::unique_ptr<AnalysisModule> ttgenprod;
     
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
-    std::unique_ptr<Hists> h_nocuts, h_nocuts_matched, h_nocuts_unmatched;
 
-    std::unique_ptr<Hists> h_1mu, h_1mu_matched, h_1mu_unmatched;
+    std::unique_ptr<Hists> h_mu1, h_mu1_matched, h_mu1_unmatched;
 
     std::unique_ptr<Hists> h_ntopjet1, h_ntopjet1_matched, h_ntopjet1_unmatched;
 
@@ -76,24 +75,18 @@ namespace uhh2examples {
     ttgenprod.reset(new TTbarGenProducer(ctx, ttbar_gen_label, false));
     if(sort_by == "dphi") gentopjetsort_by_dphi.reset(new GenTopJetSortDPhi(ctx));
     if(sort_by == "mass") gentopjetsort_by_mass.reset(new GenTopJetSortMass(ctx));
-    nmu_sel.reset(new NMuonSelection(1,1));
     genjetsel.reset(new GenJetSelection(ctx));
     genmatching.reset(new GenQuarkGenJetMatching(ctx));
     ntopjetcand_sel1.reset(new GenNTopJet(ctx,1));
     dphi_sel1.reset(new GenDPhiSelection(ctx,1));
     dphi_sel2.reset(new GenDPhiSelection(ctx,2.5));
     ntopjetcand_sel2.reset(new GenNTopJet(ctx,1,2));
+    semilep.reset(new TTbarSemilep(ctx));
 
     // 3. Set up Hists classes:
-    h_nocuts.reset(new TopSubstructureGenHists(ctx, "NoCuts", sort_by));
-    h_nocuts_matched.reset(new TopSubstructureGenHists(ctx, "NoCuts_matched", sort_by));
-    h_nocuts_unmatched.reset(new TopSubstructureGenHists(ctx, "NoCuts_unmatched", sort_by));
-
-
-
-    h_1mu.reset(new TopSubstructureGenHists(ctx, "1mu", sort_by));
-    h_1mu_matched.reset(new TopSubstructureGenHists(ctx, "1mu_matched", sort_by));
-    h_1mu_unmatched.reset(new TopSubstructureGenHists(ctx, "1mu_unmatched", sort_by));
+    h_mu1.reset(new TopSubstructureGenHists(ctx, "mu1", sort_by));
+    h_mu1_matched.reset(new TopSubstructureGenHists(ctx, "mu1_matched", sort_by));
+    h_mu1_unmatched.reset(new TopSubstructureGenHists(ctx, "mu1_unmatched", sort_by));
 
 
     h_ntopjet1.reset(new TopSubstructureGenHists(ctx, "ntopjet1", sort_by));
@@ -134,25 +127,16 @@ namespace uhh2examples {
     genjetsel->process(event);
 
 
-    // 2. test selections and fill histograms
-    h_nocuts->fill(event);
+
+    //1 mu
+    if(!semilep->passes(event)) return false;
+    h_mu1->fill(event);
 
     if(genmatching->passes(event)){
-      h_nocuts_matched->fill(event);
+      h_mu1_matched->fill(event);
     }
     else{
-      h_nocuts_unmatched->fill(event);
-    }`
-
-    //1 muon
-    if(!nmu_sel->passes(event)) return false;
-    h_1mu->fill(event);
-
-    if(genmatching->passes(event)){
-      h_1mu_matched->fill(event);
-    }
-    else{
-      h_1mu_unmatched->fill(event);
+      h_mu1_unmatched->fill(event);
     }
 
     //min 1 topjet_cand

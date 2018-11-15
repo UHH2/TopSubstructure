@@ -260,7 +260,9 @@ void TopSubstructureHists::fill(const Event & event){
       hist("eta_topjet_cand1")->Fill(topjet_cand.at(0).eta(), weight);
       hist("tau1_topjet_cand1")->Fill(topjet_cand.at(0).tau1(), weight);
       hist("tau2_topjet_cand1")->Fill(topjet_cand.at(0).tau2(), weight);
-      hist("tau3_topjet_cand1")->Fill(topjet_cand.at(0).tau3(), weight);
+      hist("tau3_topjet_cand1")->Fill(topjet_cand.at(0).tau3(), weight);    
+      hist("tau32_cand1")->Fill(topjet_cand.at(0).tau3()/topjet_cand.at(0).tau2(), weight);
+      hist("tau21_cand1")->Fill(topjet_cand.at(0).tau2()/topjet_cand.at(0).tau1(), weight);
 
       if(topjet_cand.size()>=2){
 	hist("Nsubjet_cand2")->Fill(topjet_cand.at(1).subjets().size(), weight); 
@@ -269,7 +271,9 @@ void TopSubstructureHists::fill(const Event & event){
 	hist("eta_topjet_cand2")->Fill(topjet_cand.at(1).eta(), weight);
 	hist("tau1_topjet_cand2")->Fill(topjet_cand.at(1).tau1(), weight);
 	hist("tau2_topjet_cand2")->Fill(topjet_cand.at(1).tau2(), weight);
-	hist("tau3_topjet_cand2")->Fill(topjet_cand.at(1).tau3(), weight);
+	hist("tau3_topjet_cand2")->Fill(topjet_cand.at(1).tau3(), weight);    
+	hist("tau32_cand2")->Fill(topjet_cand.at(1).tau3()/topjet_cand.at(1).tau2(), weight);
+	hist("tau21_cand2")->Fill(topjet_cand.at(1).tau2()/topjet_cand.at(1).tau1(), weight);
       }
 
       double drmin, ptrel;
@@ -277,10 +281,6 @@ void TopSubstructureHists::fill(const Event & event){
 	std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
 	TwoDCut->Fill(drmin, ptrel, weight);
       }
-  
-    
-      hist("tau32_cand1")->Fill(topjet_cand.at(0).tau3()/topjet_cand.at(0).tau2(), weight);
-      hist("tau21_cand1")->Fill(topjet_cand.at(0).tau2()/topjet_cand.at(0).tau1(), weight);
 
       if(isTTbar){
 
@@ -351,13 +351,26 @@ void TopSubstructureHists::fill(const Event & event){
 	hist("eta_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).eta(), weight);
 	hist("tau1_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).tau1(), weight);
 	hist("tau2_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).tau2(), weight);
-	hist("tau3_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).tau3(), weight);
-    
+	hist("tau3_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).tau3(), weight);    
 	hist("tau32_cand1_gen")->Fill(gentopjet_cand.at(0).tau3()/gentopjet_cand.at(0).tau2(), weight);
 	hist("tau21_cand1_gen")->Fill(gentopjet_cand.at(0).tau2()/gentopjet_cand.at(0).tau1(), weight);
 
-	if(isTTbar){
+      if(gentopjet_cand.size()>=2){
+	hist("Nsubjet_cand2_gen")->Fill(gentopjet_cand.at(1).subjets().size(), weight); 
+	hist("M_cand2_gen")->Fill(gentopjet_cand.at(1).v4().M(), weight);     
+	hist("pt_topjet_cand2_gen")->Fill(gentopjet_cand.at(1).pt(), weight);      
+	hist("eta_topjet_cand2_gen")->Fill(gentopjet_cand.at(1).eta(), weight);
+	hist("tau1_topjet_cand2_gen")->Fill(gentopjet_cand.at(1).tau1(), weight);
+	hist("tau2_topjet_cand2_gen")->Fill(gentopjet_cand.at(1).tau2(), weight);
+	hist("tau3_topjet_cand2_gen")->Fill(gentopjet_cand.at(1).tau3(), weight);    
+	hist("tau32_cand2_gen")->Fill(gentopjet_cand.at(1).tau3()/gentopjet_cand.at(1).tau2(), weight);
+	hist("tau21_cand2_gen")->Fill(gentopjet_cand.at(1).tau2()/gentopjet_cand.at(1).tau1(), weight);
+      }
 
+
+
+
+	if(isTTbar){
 	  if(event.muons->size() > 0){
 	    sort_by_pt<Muon>(*event.muons);
 	    const auto & muon = event.muons->at(0);

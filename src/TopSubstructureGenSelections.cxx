@@ -10,19 +10,27 @@ GenDPhiSelection::GenDPhiSelection(uhh2::Context& ctx, double dphi_min_, double 
 bool GenDPhiSelection::passes(const Event & event){
 
   bool pass = false;
-  std::vector<GenTopJet> gentopjets = event.get(h_gentopjet);
 
-  if(gentopjets.size() <= 0){
-    std::cout << "\n DPhiSelection::passes: There are no topjets in the event. returning 'false'\n" << std::endl;
-    return false;
+  if(event.is_valid(h_gentopjet)){
+    std::vector<GenTopJet> gentopjets = event.get(h_gentopjet);
+
+    if(gentopjets.size() <= 0){
+      std::cout << "\n DPhiSelection::passes: There are no gentopjets in the event. returning 'false'\n" << std::endl;
+      return false;
+    }
+
+    const auto & gentopjet = gentopjets.at(0);
+
+    std::vector<GenParticle> gen;
+    for(unsigned int i=0; i < event.genparticles->size(); i++){
+      if (abs(event.genparticles->at(i).pdgId()) == 13) {
+	gen.push_back(event.genparticles->at(i));
+      }
+    }
+      auto dphi = deltaPhi(gentopjet, gen.at(0));
+      pass = dphi >= dphi_min && ( dphi <= dphi_max || dphi_max < 0);
   }
 
-  sort_by_pt<Muon>(*event.muons);
-  const auto & gentopjet = gentopjets.at(0);
-  const auto & muon = event.muons->at(0);
-  auto dphi = deltaPhi(gentopjet, muon);
-
-  pass = dphi >= dphi_min && ( dphi <= dphi_max || dphi_max < 0);
   return pass;
 }
 
@@ -64,4 +72,16 @@ bool GenNTopJet::passes(const Event & event){
     pass = gentopjet_cand.size() >= n_min && (gentopjet_cand.size() <= n_max || n_max < 0);
   }
   return pass;
+}
+
+TTbarSemilep::TTbarSemilep(uhh2::Context& ctx):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
+bool TTbarSemilep::passes(const uhh2::Event& event){
+
+  const auto & ttbargen = event.get(h_ttbargen);
+  bool semilep = false;
+
+  if(ttbargen.DecayChannel() == TTbarGen::e_muhad){
+    semilep = true;
+  }
+  return semilep;
 }

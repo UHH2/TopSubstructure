@@ -9,49 +9,123 @@ using namespace uhh2examples;
 TopSubstructureGenHists::TopSubstructureGenHists(Context & ctx, const string & dirname, const string sort_by): Hists(ctx, dirname){
   // book all histograms here
   // jets
-  book<TH1F>("N_jets", "N_{GenJets}", 15, 0, 15);  
+  book<TH1F>("N_jets", "N_{GenJets}", 21, -0.5, 20.5);  
   book<TH1F>("eta_jet1", "#eta^{GenJet 1}", 40, -2.5, 2.5);
   book<TH1F>("eta_jet2", "#eta^{GenJet 2}", 40, -2.5, 2.5);
   book<TH1F>("eta_jet3", "#eta^{GenJet 3}", 40, -2.5, 2.5);
   book<TH1F>("eta_jet4", "#eta^{GenJet 4}", 40, -2.5, 2.5);
 
-  // Gen lvl
   // TopJets
   book<TH1F>("Ntopjet_cand_gen", "number GenTopJet candidates", 6, -0.5, 5.5);
 
   // first candidate
-  book<TH1F>("M_cand1_gen", "M_{first GenTopJet candidate} [GeV^{2}/c^{2}]", 70, 0, 700);
-  book<TH1F>("pt_topjet_cand1_gen", "p_{T} first GenTopJet candidate", 150, 0, 1500);
+  book<TH1F>("M_cand1_gen", "M_{first GenTopJet candidate} [GeV^{2}]", 40, 0, 400);
+  book<TH1F>("pt_topjet_cand1_gen", "p_{T} first GenTopJet candidate [GeV]", 120, 0, 1200);
   book<TH1F>("eta_topjet_cand1_gen", "#eta first GenTopJet candidate", 40, -2.5, 2.5);
-  book<TH1F>("Nsubjet_cand_gen", "number subjets all candidates", 6, -0.5, 5.5);
-  book<TH1F>("Nsubjet_cand1_gen", "number subjets first GenTopJet candidate", 6, -0.5, 5.5);
+  book<TH1F>("Nsubjet_cand_gen", "N_{subjets} all candidates", 4, -0.5, 3.5);
+  book<TH1F>("Nsubjet_cand1_gen", "N_{subjets} first GenTopJet candidate", 4, -0.5, 3.5);
+  book<TH1F>("pt_subjet1_cand1_gen", "p_{T}^{subjet1} first GenTopJet candidate [GeV]", 120, 0, 1200);
+  book<TH1F>("pt_subjet2_cand1_gen", "p_{T}^{subjet2} first GenTopJet candidate [GeV]", 80, 0, 800);
+  book<TH1F>("m_subjet1_cand1_gen", "M_{subjet1} first GenTopJet candidate [GeV^{2}]", 30, 0, 300);
+  book<TH1F>("m_subjet2_cand1_gen", "M_{subjet2} first GenTopJet candidate [GeV^{2}]", 30, 0, 300);
   book<TH1F>("tau1_topjet_cand1_gen", "#tau_{1} first GenTopJet candidate", 40, 0, 1.);
   book<TH1F>("tau2_topjet_cand1_gen", "#tau_{2} first GenTopJet candidate", 40, 0, 1.);
   book<TH1F>("tau3_topjet_cand1_gen", "#tau_{3} first GenTopJet candidate", 40, 0, 1.);
   book<TH1F>("tau32_cand1_gen", "#tau_{3}/#tau_{2} first GenTopJet candidate", 40, 0, 1.);
   book<TH1F>("tau21_cand1_gen", "#tau_{2}/#tau_{1} first GenTopJet candidate", 40, 0, 1.);
-  
+
+  book<TH1F>("dR_q1_jet_cand1", "#Delta R(quark1, first topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dR_q2_jet_cand1", "#Delta R(quark2, first topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dR_bqhad_jet_cand1", "#Delta R(b-quark (had), first topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dR_whad_jet_cand1", "#Delta R(Whad, first topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dPhi_q1_jet_cand1", "#Delta #Phi (quark1, first topjet candidate)", 40, 0, 4.);
+  book<TH1F>("dPhi_q2_jet_cand1", "#Delta #Phi (quark2, first topjet candidate)", 40, 0, 4.);
+  book<TH1F>("dPhi_bqhad_jet_cand1", "#Delta #Phi (b-quark (had), first topjet candidate)", 40, 0, 4.);
+  book<TH1F>("dPhi_whad_jet_cand1", "#Delta #Phi (Whad, first topjet candidate)", 40, 0, 4.);
+
+  book<TH1F>("dR_mu_jet_cand1", "#Delta R(#mu, first topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dR_nu_jet_cand1", "#Delta R(#nu_{#mu}, first topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dR_bqlep_jet_cand1", "#Delta R(b-quark (lep), first topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dR_wlep_jet_cand1", "#Delta R(Wlep, first topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dPhi_mu_jet_cand1", "#Delta #Phi (#mu, first topjet candidate)", 40, 0, 4.);
+  book<TH1F>("dPhi_nu_jet_cand1", "#Delta #Phi (#nu_{#mu}, first topjet candidate)", 40, 0, 4.);
+  book<TH1F>("dPhi_bqlep_jet_cand1", "#Delta #Phi (b-quark (lep), first topjet candidate)", 40, 0, 4.);
+  book<TH1F>("dPhi_wlep_jet_cand1", "#Delta #Phi (Wlep, first topjet candidate)", 40, 0, 4.);
+
   // second candidate
-  book<TH1F>("M_cand2_gen", "M_{second GenTopJet candidate} [GeV^{2}/c^{2}]", 70, 0, 700);
-  book<TH1F>("pt_topjet_cand2_gen", "p_{T} second GenTopJet candidate", 150, 0, 1500);
+  book<TH1F>("M_cand2_gen", "M_{second GenTopJet candidate} [GeV^{2}]", 40, 0, 400);
+  book<TH1F>("pt_topjet_cand2_gen", "p_{T} second GenTopJet candidate [GeV]", 120, 0, 1200);
   book<TH1F>("eta_topjet_cand2_gen", "#eta second GenTopJet candidate", 40, -2.5, 2.5);
-  book<TH1F>("Nsubjet_cand2_gen", "number subjets second GenTopJet candidate", 6, -0.5, 5.5);
+  book<TH1F>("Nsubjet_cand2_gen", "N_{subjets} second GenTopJet candidate", 4, -0.5, 3.5);
+  book<TH1F>("pt_subjet1_cand2_gen", "p_{T}^{subjet1} second GenTopJet candidate [GeV]", 120, 0, 1200);
+  book<TH1F>("pt_subjet2_cand2_gen", "p_{T}^{subjet2} second GenTopJet candidate [GeV]", 80, 0, 800);
+  book<TH1F>("m_subjet1_cand2_gen", "M_{subjet1} second GenTopJet candidate [GeV^{2}]", 30, 0, 300);
+  book<TH1F>("m_subjet2_cand2_gen", "M_{subjet2} second GenTopJet candidate [GeV^{2}]", 30, 0, 300);
   book<TH1F>("tau1_topjet_cand2_gen", "#tau_{1} second GenTopJet candidate", 40, 0, 1.);
   book<TH1F>("tau2_topjet_cand2_gen", "#tau_{2} second GenTopJet candidate", 40, 0, 1.);
   book<TH1F>("tau3_topjet_cand2_gen", "#tau_{3} second GenTopJet candidate", 40, 0, 1.);
   book<TH1F>("tau32_cand2_gen", "#tau_{3}/#tau_{2} second GenTopJet candidate", 40, 0, 1.);
   book<TH1F>("tau21_cand2_gen", "#tau_{2}/#tau_{1} second GenTopJet candidate", 40, 0, 1.);
-  book<TH1F>("dphi_cand1_gen", "#Delta #Phi (#mu, cand1)", 40, 0, 4.0);
-  book<TH1F>("dphi_cand2_gen", "#Delta #Phi (#mu, cand2)", 40, 0, 4.0);
+
+  book<TH1F>("dR_q1_jet_cand2", "#Delta R(quark1, second topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dR_q2_jet_cand2", "#Delta R(quark2, second topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dR_bqhad_jet_cand2", "#Delta  R(b-quark (had), second topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dR_whad_jet_cand2", "#Delta  R(Whad, second topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dPhi_q1_jet_cand2", "#Delta #Phi (quark1, second topjet candidate)", 40, 0, 4.);
+  book<TH1F>("dPhi_q2_jet_cand2", "#Delta #Phi (quark2, second topjet candidate)", 40, 0, 4.);
+  book<TH1F>("dPhi_bqhad_jet_cand2", "#Delta #Phi (b-quark (had), second topjet candidate)", 40, 0, 4.);
+  book<TH1F>("dPhi_whad_jet_cand2", "#Delta #Phi (Whad, second topjet candidate)", 40, 0, 4.);
+
+  book<TH1F>("dR_mu_jet_cand2", "#Delta R(#mu, second topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dR_nu_jet_cand2", "#Delta R(#nu_{#mu}, second topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dR_bqlep_jet_cand2", "#Delta R(b-quark (lep), second topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dR_wlep_jet_cand2", "#Delta  R(Wlep, second topjet candidate)", 50, 0, 5.);
+  book<TH1F>("dPhi_mu_jet_cand2", "#Delta #Phi (#mu, second topjet candidate)", 40, 0, 4.);
+  book<TH1F>("dPhi_nu_jet_cand2", "#Delta #Phi (#nu_{#mu}, second topjet candidate)", 40, 0, 4.);
+  book<TH1F>("dPhi_bqlep_jet_cand2", "#Delta #Phi (b-quark (lep), second topjet candidate)", 40, 0, 4.);
+  book<TH1F>("dPhi_wlep_jet_cand2", "#Delta #Phi (Wlep, second topjet candidate)", 40, 0, 4.);
 
 
-  // only TTbar
-  book<TH1F>("dR8_gen", "#Delta R(top, GenTopJet) gen", 50, 0, 5);
+  book<TH1F>("dR8_gen", "#Delta R(top, GenTopJet) gen", 50, 0, 5.);
 
-  book<TH1F>("N_jets_clean", "N_{jets} no AK8", 15, 0, 15);
+  book<TH1F>("dR_q1_q2", "#Delta R(quark1, quark2)", 50, 0, 5.);
+  book<TH1F>("dR_bqhad_q1", "#Delta R(b-quark, quark1)", 50, 0, 5.);
+  book<TH1F>("dR_bqhad_q2", "#Delta R(b-quark, quark2)", 50, 0, 5.);
+  book<TH1F>("dPhi_q1_q2", "#Delta #Phi (quark1, quark2)", 40, 0, 4.);
+  book<TH1F>("dPhi_bqhad_q1", "#Delta #Phi (b-quark, quark1)", 40, 0, 4.);
+  book<TH1F>("dPhi_bqhad_q2", "#Delta #Phi (b-quark, quark2)", 40, 0, 4.);
 
+  book<TH1F>("dR_mu_nu", "#Delta R(#mu, #nu_{#mu})", 50, 0, 5.);
+  book<TH1F>("dR_bqlep_mu", "#Delta R(b-quark (lep), #mu)", 50, 0, 5.);
+  book<TH1F>("dR_bqlep_nu", "#Delta R(b-quark (lep), #nu_{#mu})", 50, 0, 5.);
+  book<TH1F>("dPhi_mu_nu", "#Delta #Phi (#mu, #nu_{#mu})", 40, 0, 4.);
+  book<TH1F>("dPhi_bqlep_mu", "#Delta #Phi (b-quark (lep), #mu)", 40, 0, 4.);
+  book<TH1F>("dPhi_bqlep_nu", "#Delta #Phi (b-quark (lep), #nu_{#mu})", 40, 0, 4.);
+  
+
+
+  book<TH1F>("dR_whad_bqhad", "#Delta R(Whad, b-quark had)", 50, 0, 5.);
+  book<TH1F>("dR_whad_bqlep", "#Delta R(Whad, b-quark lep)", 50, 0, 5.);
+  book<TH1F>("dR_whad_wlep", "#Delta R(Whad, Wlep)", 50, 0, 5.);
+  book<TH1F>("dR_wlep_bqhad", "#Delta R(Wlep, b-quark had)", 50, 0, 5.);
+  book<TH1F>("dR_wlep_bqlep", "#Delta R(Wlep, b-quark lep)", 50, 0, 5.);
+  book<TH1F>("dPhi_whad_bqhad", "#Delta #Phi (Whad, b-quark had)", 40, 0, 4.);
+  book<TH1F>("dPhi_whad_bqlep", "#Delta #Phi (Whad, b-quark lep)", 40, 0, 4.);
+  book<TH1F>("dPhi_whad_wlep", "#Delta #Phi (Whad, Wlep)", 40, 0, 4.);
+  book<TH1F>("dPhi_wlep_bqhad", "#Delta #Phi (Wlep, b-quark had)", 40, 0, 4.);
+  book<TH1F>("dPhi_wlep_bqlep", "#Delta #Phi (Wlep, b-quark lep)", 40, 0, 4.);
+
+
+  book<TH1F>("N_jets_clean", "N_{jets} (additional)", 15, 0, 15);
+
+
+  // leptons
+  book<TH1F>("pt_mu", "p_{T}^{#mu} [GeV]", 100, 0, 1000);
+  book<TH1F>("eta_mu", "#eta^{#mu}", 40, -2.5, 2.5);
+  book<TH1F>("mass_mu", "M^{#mu} [GeV]", 50, 0, 0.5);
 
   //general
+  book<TH1F>("E_Tmiss", "missing E_{T} [GeV]", 75, 0, 1500);
   book<TH1F>("sum_event_weights", "BinContent = sum(eventweights)", 1, 0.5, 1.5);
 
 
@@ -64,11 +138,6 @@ TopSubstructureGenHists::TopSubstructureGenHists(Context & ctx, const string & d
 
 
 void TopSubstructureGenHists::fill(const Event & event){
-  // fill the histograms. Please note the comments in the header file:
-  // 'hist' is used here a lot for simplicity, but it will be rather
-  // slow when you have many histograms; therefore, better
-  // use histogram pointers as members as in 'UHH2/common/include/ElectronHists.h'
-  
   // Don't forget to always use the weight when filling.
   double weight = event.weight;
 
@@ -85,6 +154,7 @@ void TopSubstructureGenHists::fill(const Event & event){
   if(Njets>=3) hist("eta_jet3")->Fill(jets->at(2).eta(), weight);
   if(Njets>=4) hist("eta_jet4")->Fill(jets->at(3).eta(), weight);
 
+
   // GenTopJet
   if(event.is_valid(h_gentopjet_cand)) {
     std::vector<GenTopJet> gentopjet_cand;
@@ -99,32 +169,131 @@ void TopSubstructureGenHists::fill(const Event & event){
       hist("M_cand1_gen")->Fill(gentopjet_cand.at(0).v4().M(), weight);     
       hist("pt_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).pt(), weight);      
       hist("eta_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).eta(), weight);
-      hist("Nsubjet_cand1_gen")->Fill(gentopjet_cand.at(0).subjets().size(), weight); 
+      hist("Nsubjet_cand1_gen")->Fill(gentopjet_cand.at(0).subjets().size(), weight);
+      hist("pt_subjet1_cand1_gen")->Fill(gentopjet_cand.at(0).subjets().at(0).v4().pt(), weight); 
+      if(gentopjet_cand.at(0).subjets().size() >= 2) hist("pt_subjet2_cand1_gen")->Fill(gentopjet_cand.at(0).subjets().at(1).v4().pt(), weight);
+      hist("m_subjet1_cand1_gen")->Fill(gentopjet_cand.at(0).subjets().at(0).v4().M(), weight);
+      if(gentopjet_cand.at(0).subjets().size() >= 2) hist("m_subjet2_cand1_gen")->Fill(gentopjet_cand.at(0).subjets().at(1).v4().M(), weight);
       hist("tau1_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).tau1(), weight);
       hist("tau2_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).tau2(), weight);
       hist("tau3_topjet_cand1_gen")->Fill(gentopjet_cand.at(0).tau3(), weight);    
       hist("tau32_cand1_gen")->Fill(gentopjet_cand.at(0).tau3()/gentopjet_cand.at(0).tau2(), weight);
       hist("tau21_cand1_gen")->Fill(gentopjet_cand.at(0).tau2()/gentopjet_cand.at(0).tau1(), weight);
 
-      if(event.muons->size() > 0){
-	sort_by_pt<Muon>(*event.muons);
-	const auto & muon = event.muons->at(0);
-	hist("dphi_cand1_gen")->Fill(deltaPhi(gentopjet_cand.at(0), muon),weight);
-	if(gentopjet_cand.size()>=2) hist("dphi_cand2_gen")->Fill(deltaPhi(gentopjet_cand.at(1), muon),weight);
-      }
 
       if(event.is_valid(h_ttbargen)){
 	const auto & ttbargen = event.get(h_ttbargen);
+	GenParticle tophad, q1, q2, bhad, blep, mu, nu, whad, wlep;
 
-	GenParticle tophad;
-	if(ttbargen.IsTopHadronicDecay()){
-	  tophad = ttbargen.Top();
-	  hist("dR8_gen")->Fill(deltaR(tophad, gentopjet_cand.at(0)), weight);
+	tophad = ttbargen.TopHad();
+	q1 = ttbargen.Q1();
+	q2 = ttbargen.Q2();
+	bhad = ttbargen.BHad();
+	blep = ttbargen.BLep();
+	mu = ttbargen.ChargedLepton();
+	nu = ttbargen.Neutrino();
+	whad = ttbargen.WHad();
+	wlep = ttbargen.WLep();
+	// if(ttbargen.IsTopHadronicDecay()){
+	//   tophad = ttbargen.Top();
+	//   bq = ttbargen.bTop();
+	//   q1 = ttbargen.Wdecay1();
+	//   q2 = ttbargen.Wdecay2();
+	// }
+	// else if(ttbargen.IsAntiTopHadronicDecay()){
+	//   tophad = ttbargen.Antitop();
+	//   bq = ttbargen.bAntitop();
+	//   q1 = ttbargen.WMinusdecay1();
+	//   q2 = ttbargen.WMinusdecay2();
+	// }
+
+
+	// leptons
+	// std::vector<GenParticle> gen;
+	// for(unsigned int i=0; i < event.genparticles->size(); i++){
+	//   if (abs(event.genparticles->at(i).pdgId()) == 13) {
+	//     gen.push_back(event.genparticles->at(i));
+	//   }
+	// }
+	// GenParticle gen_muon = gen.at(0);
+	hist("pt_mu")->Fill(mu.pt(), weight);
+	hist("eta_mu")->Fill(mu.eta(), weight);
+	hist("mass_mu")->Fill(mu.v4().M(), weight);
+
+
+
+	hist("E_Tmiss")->Fill(nu.pt(), weight);
+
+	hist("dPhi_mu_jet_cand1")->Fill(deltaPhi(gentopjet_cand.at(0), mu), weight);
+	if(gentopjet_cand.size()>=2) hist("dPhi_mu_jet_cand2")->Fill(deltaPhi(gentopjet_cand.at(1), mu), weight);
+
+
+	hist("dR8_gen")->Fill(deltaR(tophad, gentopjet_cand.at(0)), weight);
+
+	hist("dR_q1_jet_cand1")->Fill(deltaR(q1, gentopjet_cand.at(0)), weight);
+	hist("dR_q2_jet_cand1")->Fill(deltaR(q2, gentopjet_cand.at(0)), weight);
+	hist("dR_bqhad_jet_cand1")->Fill(deltaR(bhad, gentopjet_cand.at(0)), weight);
+	hist("dR_whad_jet_cand1")->Fill(deltaR(whad, gentopjet_cand.at(0)), weight);
+	hist("dPhi_q1_jet_cand1")->Fill(deltaPhi(q1, gentopjet_cand.at(0)), weight);
+	hist("dPhi_q2_jet_cand1")->Fill(deltaPhi(q2, gentopjet_cand.at(0)), weight);
+	hist("dPhi_bqhad_jet_cand1")->Fill(deltaPhi(bhad, gentopjet_cand.at(0)), weight);
+	hist("dPhi_whad_jet_cand1")->Fill(deltaPhi(whad, gentopjet_cand.at(0)), weight);
+
+	hist("dR_mu_jet_cand1")->Fill(deltaR(mu, gentopjet_cand.at(0)), weight);
+	hist("dR_nu_jet_cand1")->Fill(deltaR(nu, gentopjet_cand.at(0)), weight);
+	hist("dR_bqlep_jet_cand1")->Fill(deltaR(blep, gentopjet_cand.at(0)), weight);
+	hist("dR_wlep_jet_cand1")->Fill(deltaR(wlep, gentopjet_cand.at(0)), weight);
+	hist("dPhi_mu_jet_cand1")->Fill(deltaPhi(mu, gentopjet_cand.at(0)), weight);
+	hist("dPhi_nu_jet_cand1")->Fill(deltaPhi(nu, gentopjet_cand.at(0)), weight);
+	hist("dPhi_bqlep_jet_cand1")->Fill(deltaPhi(blep, gentopjet_cand.at(0)), weight);
+	hist("dPhi_wlep_jet_cand1")->Fill(deltaPhi(wlep, gentopjet_cand.at(0)), weight);
+
+
+	if(gentopjet_cand.size() >= 2){
+	  hist("dR_q1_jet_cand2")->Fill(deltaR(q1, gentopjet_cand.at(1)), weight);
+	  hist("dR_q2_jet_cand2")->Fill(deltaR(q2, gentopjet_cand.at(1)), weight);
+	  hist("dR_bqhad_jet_cand2")->Fill(deltaR(bhad, gentopjet_cand.at(1)), weight);
+	  hist("dR_whad_jet_cand2")->Fill(deltaR(whad, gentopjet_cand.at(1)), weight);
+	  hist("dPhi_q1_jet_cand2")->Fill(deltaPhi(q1, gentopjet_cand.at(1)), weight);
+	  hist("dPhi_q2_jet_cand2")->Fill(deltaPhi(q2, gentopjet_cand.at(1)), weight);
+	  hist("dPhi_bqhad_jet_cand2")->Fill(deltaPhi(bhad, gentopjet_cand.at(1)), weight);
+	  hist("dPhi_whad_jet_cand2")->Fill(deltaPhi(whad, gentopjet_cand.at(1)), weight);
+
+	  hist("dR_mu_jet_cand2")->Fill(deltaR(mu, gentopjet_cand.at(1)), weight);
+	  hist("dR_nu_jet_cand2")->Fill(deltaR(nu, gentopjet_cand.at(1)), weight);
+	  hist("dR_bqlep_jet_cand2")->Fill(deltaR(blep, gentopjet_cand.at(1)), weight);
+	  hist("dR_wlep_jet_cand2")->Fill(deltaR(wlep, gentopjet_cand.at(1)), weight);
+	  hist("dPhi_mu_jet_cand2")->Fill(deltaPhi(mu, gentopjet_cand.at(1)), weight);
+	  hist("dPhi_nu_jet_cand2")->Fill(deltaPhi(nu, gentopjet_cand.at(1)), weight);
+	  hist("dPhi_bqlep_jet_cand2")->Fill(deltaPhi(blep, gentopjet_cand.at(1)), weight);
+	  hist("dPhi_wlep_jet_cand2")->Fill(deltaPhi(wlep, gentopjet_cand.at(1)), weight);
 	}
-	else if(ttbargen.IsAntiTopHadronicDecay()){
-	  tophad = ttbargen.Antitop();
-	  hist("dR8_gen")->Fill(deltaR(tophad, gentopjet_cand.at(0)), weight);
-	}
+
+	hist("dR_q1_q2")->Fill(deltaR(q1, q2), weight);
+	hist("dR_bqhad_q1")->Fill(deltaR(bhad, q1), weight);
+	hist("dR_bqhad_q2")->Fill(deltaR(bhad, q2), weight);
+	hist("dR_whad_bqhad")->Fill(deltaR(whad, bhad), weight);
+	hist("dPhi_q1_q2")->Fill(deltaPhi(q1, q2), weight);
+	hist("dPhi_bqhad_q1")->Fill(deltaPhi(bhad, q1), weight);
+	hist("dPhi_bqhad_q2")->Fill(deltaPhi(bhad, q2), weight);
+	hist("dPhi_whad_bqhad")->Fill(deltaPhi(whad, bhad), weight);
+
+	hist("dR_mu_nu")->Fill(deltaR(mu, nu), weight);
+	hist("dR_bqlep_mu")->Fill(deltaR(blep, mu), weight);
+	hist("dR_bqlep_nu")->Fill(deltaR(blep, nu), weight);
+	hist("dR_wlep_bqlep")->Fill(deltaR(wlep, blep), weight);
+	hist("dPhi_mu_nu")->Fill(deltaPhi(mu, nu), weight);
+	hist("dPhi_bqlep_mu")->Fill(deltaPhi(blep, mu), weight);
+	hist("dPhi_bqlep_nu")->Fill(deltaPhi(blep, nu), weight);
+	hist("dPhi_wlep_bqlep")->Fill(deltaPhi(wlep, blep), weight);
+
+	hist("dR_whad_bqlep")->Fill(deltaR(whad, blep), weight);
+	hist("dR_whad_wlep")->Fill(deltaR(whad, wlep), weight);
+	hist("dR_wlep_bqhad")->Fill(deltaR(wlep, blep), weight);
+	hist("dPhi_whad_bqlep")->Fill(deltaPhi(whad, blep), weight);
+	hist("dPhi_whad_wlep")->Fill(deltaPhi(whad, wlep), weight);
+	hist("dPhi_wlep_bqhad")->Fill(deltaPhi(wlep, blep), weight);
+
       }
 
       if(event.is_valid(h_genjetsel)){
@@ -138,13 +307,16 @@ void TopSubstructureGenHists::fill(const Event & event){
       hist("pt_topjet_cand2_gen")->Fill(gentopjet_cand.at(1).pt(), weight);      
       hist("eta_topjet_cand2_gen")->Fill(gentopjet_cand.at(1).eta(), weight);
       hist("Nsubjet_cand2_gen")->Fill(gentopjet_cand.at(1).subjets().size(), weight);
+      hist("pt_subjet1_cand2_gen")->Fill(gentopjet_cand.at(1).subjets().at(0).v4().pt(), weight); 
+      if(gentopjet_cand.at(1).subjets().size() >= 2) hist("pt_subjet2_cand2_gen")->Fill(gentopjet_cand.at(1).subjets().at(1).v4().pt(), weight); 
+      hist("m_subjet1_cand2_gen")->Fill(gentopjet_cand.at(1).subjets().at(0).v4().M(), weight); 
+      if(gentopjet_cand.at(1).subjets().size() >= 2)  hist("m_subjet2_cand2_gen")->Fill(gentopjet_cand.at(1).subjets().at(1).v4().M(), weight);
       hist("tau1_topjet_cand2_gen")->Fill(gentopjet_cand.at(1).tau1(), weight);
       hist("tau2_topjet_cand2_gen")->Fill(gentopjet_cand.at(1).tau2(), weight);
       hist("tau3_topjet_cand2_gen")->Fill(gentopjet_cand.at(1).tau3(), weight);
       hist("tau32_cand2_gen")->Fill(gentopjet_cand.at(1).tau3()/gentopjet_cand.at(1).tau2(), weight);
       hist("tau21_cand2_gen")->Fill(gentopjet_cand.at(1).tau2()/gentopjet_cand.at(1).tau1(), weight);
     }
-
   } // closing brackets of GenTopJet
 }
 
