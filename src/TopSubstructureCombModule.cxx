@@ -21,6 +21,8 @@
 
 #include "UHH2/TopSubstructure/include/TopSubstructureGenSelections.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureGenHists.h"
+#include "UHH2/TopSubstructure/include/TopSubstructureSelections.h"
+#include "UHH2/TopSubstructure/include/TopSubstructureHists.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureUtils.h"
 
 using namespace std;
@@ -32,9 +34,9 @@ namespace uhh2examples {
    * This AnalysisModule, in turn, is called (via AnalysisModuleRunner) by SFrame.
    */
 
-  class TopSubstructureGenModule: public AnalysisModule {
+  class TopSubstructureCombModule: public AnalysisModule {
   public:
-    explicit TopSubstructureGenModule(Context & ctx);
+    explicit TopSubstructureCombModule(Context & ctx);
     virtual bool process(Event & event) override;
 
   private:
@@ -73,71 +75,35 @@ namespace uhh2examples {
   };
 
 
-  TopSubstructureGenModule::TopSubstructureGenModule(Context & ctx){
+  TopSubstructureCombModule::TopSubstructureCombModule(Context & ctx){
     // set up selections
     // decide how you want to sort your candidates
     cleaner.reset(new GenTopJetLeptonCleaner(ctx));
 
 
     sort_by = ctx.get("sort");
-    if(sort_by == "sel" || sort_by == "pt" || sort_by == "dphipt") gentjetcleaner.reset(new GenTopJetCleaner(ctx));
+    if(sort_by == "sel") gentjetcleaner.reset(new GenTopJetCleaner(ctx));
     double pif = (2./3.)*M_PI;
     const std::string ttbar_gen_label("ttbargen");
     ttgenprod.reset(new TTbarGenProducer(ctx, ttbar_gen_label, false));
     semilep.reset(new TTbarSemilep(ctx));
 
-    if(sort_by == "dphi") gentopjetsort.reset(new GenTopJetSortDPhi(ctx));
-    else if(sort_by == "mass") gentopjetsort.reset(new GenTopJetSortMass(ctx));
-    else if(sort_by == "dphimass1") gentopjetsort.reset(new GenTopJetSortDPhiMass(ctx, 1));
-    else if(sort_by == "dphimasspi") gentopjetsort.reset(new GenTopJetSortDPhiMass(ctx, pif));
-    else if(sort_by == "dphimass25") gentopjetsort.reset(new GenTopJetSortDPhiMass(ctx, 2.5));
-    else if(sort_by == "pt") gentopjetsort.reset(new GenTopJetSortPt(ctx));
-    else if(sort_by == "dphipt") gentopjetsort.reset(new GenTopJetSortDPhiPt(ctx));
-
     genjetsel.reset(new GenJetSelection(ctx));
     genmatching.reset(new GenQuarkGenJetMatching(ctx));
-    if(sort_by == "dphimass1" || sort_by == "dphimasspi" || sort_by == "dphimass25" || sort_by == "sel") mass_sel.reset(new MassSelection(ctx));
+    if(sort_by == "sel") mass_sel.reset(new MassSelection(ctx));
     ntopjetcand_sel1.reset(new GenNTopJetCand(ctx,1));
-    if(sort_by != "sel") dphi_sel1.reset(new GenDPhiSelection(ctx,1));
-    if(sort_by == "dphimass1") dphi_sel2.reset(new GenDPhiSelection(ctx,1));
-    else if(sort_by == "dphimass25" || sort_by == "dphipt" || sort_by == "pt") dphi_sel2.reset(new GenDPhiSelection(ctx,2.5));
-    else if(sort_by == "dphimasspi") dphi_sel2.reset(new GenDPhiSelection(ctx,pif));
-    if(sort_by == "sel") ntopjet.reset(new GenNTopJet(ctx,2,2));
-    if(sort_by != "sel") ntopjetcand_sel2.reset(new GenNTopJetCand(ctx,1,2));
-    if(sort_by == "sel") pt_sel.reset(new PtSelection(ctx, 400, 200));
-    if(sort_by == "sel") dr_sel.reset(new dRSelection(ctx));
+    if(sort_by == "sel"){
+      ntopjet.reset(new GenNTopJet(ctx,2,2));
+      pt_sel.reset(new PtSelection(ctx, 400, 200));
+      dr_sel.reset(new dRSelection(ctx));
+    }
 
     // 3. Set up Hists classes:
     h_mu1.reset(new TopSubstructureGenHists(ctx, "mu1"));
     h_mu1_matched.reset(new TopSubstructureGenHists(ctx, "mu1_matched"));
     h_mu1_unmatched.reset(new TopSubstructureGenHists(ctx, "mu1_unmatched"));
 
-    if(sort_by != "sel"){
-      h_ntopjetcand1.reset(new TopSubstructureGenHists(ctx, "ntopjetcand1"));
-      h_ntopjetcand1_matched.reset(new TopSubstructureGenHists(ctx, "ntopjetcand1_matched"));
-      h_ntopjetcand1_unmatched.reset(new TopSubstructureGenHists(ctx, "ntopjetcand1_unmatched"));
-
-
-      h_dphi1.reset(new TopSubstructureGenHists(ctx, "dphi1"));
-      h_dphi1_matched.reset(new TopSubstructureGenHists(ctx, "dphi1_matched"));
-      h_dphi1_unmatched.reset(new TopSubstructureGenHists(ctx, "dphi1_unmatched"));
-
-
-      h_dphi25.reset(new TopSubstructureGenHists(ctx, "dphi25"));
-      h_dphi25_matched.reset(new TopSubstructureGenHists(ctx, "dphi25_matched"));
-      h_dphi25_unmatched.reset(new TopSubstructureGenHists(ctx, "dphi25_unmatched"));
-
-
-      h_ntopjetcand2.reset(new TopSubstructureGenHists(ctx, "ntopjetcand2"));
-      h_ntopjetcand2_matched.reset(new TopSubstructureGenHists(ctx, "ntopjetcand2_matched"));
-      h_ntopjetcand2_unmatched.reset(new TopSubstructureGenHists(ctx, "ntopjetcand2_unmatched"));
-
-      //
-      // h_mass.reset(new TopSubstructureGenHists(ctx, "mass"));
-      // h_mass_matched.reset(new TopSubstructureGenHists(ctx, "mass_matched"));
-      // h_mass_unmatched.reset(new TopSubstructureGenHists(ctx, "mass_unmatched"));
-    }
-    else if(sort_by == "sel"){
+    if(sort_by == "sel"){
       h_ntopjets.reset(new TopSubstructureGenHists(ctx, "ntopjets"));
       h_ntopjets_matched.reset(new TopSubstructureGenHists(ctx, "ntopjets_matched"));
       h_ntopjets_unmatched.reset(new TopSubstructureGenHists(ctx, "ntopjets_unmatched"));
@@ -159,16 +125,15 @@ namespace uhh2examples {
     }
   }
 
-  bool TopSubstructureGenModule::process(Event & event) {
-    cout << "TopSubstructureGenModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
+  bool TopSubstructureCombModule::process(Event & event) {
+    cout << "TopSubstructureCombModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
 
     // 1. run all modules other modules.
     ttgenprod->process(event);
     //1 mu
     if(!semilep->passes(event)) return false;
     cleaner->process(event); // Do this always!
-    if(sort_by != "sel")gentopjetsort->process(event);
-    else gentjetcleaner->process(event);
+    gentjetcleaner->process(event);
     genjetsel->process(event);
 
 
@@ -177,45 +142,7 @@ namespace uhh2examples {
     else h_mu1_unmatched->fill(event);
 
 
-
-    if(sort_by != "sel"){
-      //min 1 topjet_cand
-      if(!ntopjetcand_sel1->passes(event)) return false;
-      h_ntopjetcand1->fill(event);
-
-      if(genmatching->passes(event)) h_ntopjetcand1_matched->fill(event);
-      else h_ntopjetcand1_unmatched->fill(event);
-
-      //dphi(mu,jet1) > 1
-      if(!dphi_sel1->passes(event)) return false;
-      h_dphi1->fill(event);
-
-      if(genmatching->passes(event)) h_dphi1_matched->fill(event);
-      else h_dphi1_unmatched->fill(event);
-
-      //dphi(mu,jet1) > 2.5
-      if((sort_by == "dphimass25" || sort_by == "dphimasspi" || sort_by == "dphipt" || sort_by == "pt") && !dphi_sel2->passes(event)) return false;
-      h_dphi25->fill(event);
-
-      if(genmatching->passes(event)) h_dphi25_matched->fill(event);
-      else h_dphi25_unmatched->fill(event);
-
-      //max 2 topjet_cand
-      if(!ntopjetcand_sel2->passes(event)) return false;
-      h_ntopjetcand2->fill(event);
-      if(genmatching->passes(event)) h_ntopjetcand2_matched->fill(event);
-      else h_ntopjetcand2_unmatched->fill(event);
-      //
-      // if((sort_by == "dphimass1" || sort_by == "dphimasspi" || sort_by == "dphimass25") && !mass_sel->passes(event)) return false;
-      // h_mass->fill(event);
-      //
-      // if(genmatching->passes(event)) h_mass_matched->fill(event);
-      // else h_mass_unmatched->fill(event);
-      //
-
-
-    }
-    else if(sort_by == "sel"){
+    if(sort_by == "sel"){
       // exactly two GenTopJets
       if(!ntopjet->passes(event)) return false;
       h_ntopjets->fill(event);
@@ -250,6 +177,6 @@ namespace uhh2examples {
     return true;
   }
 
-  UHH2_REGISTER_ANALYSIS_MODULE(TopSubstructureGenModule)
+  UHH2_REGISTER_ANALYSIS_MODULE(TopSubstructureCombModule)
 
 }
