@@ -17,7 +17,7 @@
 namespace uhh2examples {
 
   /**  \brief Example class for booking and filling histograms
-   * 
+   *
    * NOTE: This class uses the 'hist' method to retrieve histograms.
    * This requires a string lookup and is therefore slow if you have
    * many histograms. Therefore, it is recommended to use histogram
@@ -26,7 +26,7 @@ namespace uhh2examples {
   class TopSubstructureGenHists: public uhh2::Hists {
   public:
     // use the same constructor arguments as Hists for forwarding:
-    TopSubstructureGenHists(uhh2::Context & ctx, const std::string & dirname, const std::string sort_by);
+    TopSubstructureGenHists(uhh2::Context & ctx, const std::string & dirname);
 
     virtual void fill(const uhh2::Event & ev) override;
     /* virtual ~TopSubstructureGenHists(); */
@@ -35,7 +35,9 @@ namespace uhh2examples {
     TH2* TwoDCut;
     uhh2::Event::Handle<std::vector<Particle>> h_genjetsel;
     uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
+    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_lep_cand;
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
+    std::string sort_by;
   };
 
 }

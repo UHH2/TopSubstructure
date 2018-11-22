@@ -4,8 +4,8 @@
   <!ENTITY NEVT "-1">
 
  <!ENTITY INdir   "/nfs/dust/cms/user/schwarzd/MTopJet/PreSel">
- <!ENTITY OUTdir  "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/full_selection_gen">
- <!ENTITY sort    "mass">
+ <!ENTITY OUTdir  "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/gen_selection_sel">
+ <!ENTITY sort    "sel">
 
 <!-- =============================================== ttbar =========================================================================== -->
   <!ENTITY TTbar_Mtt0000to0700    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt0000to0700.root">
@@ -15,7 +15,7 @@
 
 <!--
    <ConfigParse NEventsBreak="250000" LastBreak="0" FileSplit="0"/>
-   <ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="SelMuGen_workdir"/>
+   <ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="SelMuGensel_workdir"/>
 -->
 
 <JobConfiguration JobName="TopSubstructureJob" OutputLevel="INFO">
@@ -59,7 +59,7 @@
       <Item Name="TopJetCollection"        Value="slimmedJetsAK8_SoftDrop"/>
       <Item Name="GenTopJetCollection"     Value="ak8GenJetsSoftDrop" />
 
-      <Item Name="additionalBranches" Value="xconePuppi xconeCHS genXCone33TopJets gentopjet_cand gentopjet_had_cand gentopjet_lep_cand genjetsel"/>
+      <Item Name="additionalBranches" Value="xconePuppi xconeCHS genXCone33TopJets gentopjet_cand gentopjet_lep_cand genjetsel"/>
 
       <Item Name="METName"                 Value="slimmedMETs"/>
 
@@ -81,5 +81,3 @@
 
   </Cycle>
 </JobConfiguration>
-
-  
