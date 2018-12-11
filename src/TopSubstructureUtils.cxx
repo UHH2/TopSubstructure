@@ -47,7 +47,7 @@ bool TopJetSortMass::process(uhh2::Event& event){
   return true;
 }
 
-JetSelection::JetSelection(uhh2::Context & ctx):h_jetsel(ctx.declare_event_output<std::vector<Jet>>("jetsel")), h_topjet_cand(ctx.get_handle<std::vector<TopJet>>("topjet_cand")){}
+JetSelection::JetSelection(uhh2::Context & ctx):h_jetsel(ctx.declare_event_output<std::vector<Jet>>("jetsel")), h_topjet_cand(ctx.get_handle<std::vector<TopJet>>("topjet_had_cand")){}
 bool JetSelection::process(uhh2::Event& event){
 
   std::vector<Jet> own_jet;
@@ -70,6 +70,55 @@ bool JetSelection::process(uhh2::Event& event){
 
   return true;
 }
+
+
+RecTopJetCleaner::RecTopJetCleaner(uhh2::Context & ctx):h_topjet_had_cand(ctx.declare_event_output<std::vector<TopJet>>("topjet_had_cand")), h_topjet_lep_cand(ctx.declare_event_output<std::vector<TopJet>>("topjet_lep_cand")){}
+bool RecTopJetCleaner::process(uhh2::Event& event){
+  std::vector<TopJet> candidates, candidates_lep, dummy;
+
+  for(unsigned int i=0; i < event.topjets->size(); i++){
+    if(event.topjets->at(i).pt() >= 0) dummy.push_back(event.topjets->at(i));
+  }
+
+  if(dummy.size() > 0){
+    for(unsigned int i=1; i < dummy.size(); i++){
+      if(dummy.at(0).pt() < dummy.at(i).pt()){
+        std::swap(dummy.at(0), dummy.at(i));
+      }
+    }
+    candidates.push_back(dummy.at(0));
+    if(dummy.size() >=2) candidates_lep.push_back(dummy.at(1));
+  }
+  event.set(h_topjet_had_cand, candidates);
+  event.set(h_topjet_lep_cand, candidates_lep);
+
+  return true;
+}
+
+RecTopJetLeptonCleaner::RecTopJetLeptonCleaner(uhh2::Context & ctx) {}
+bool RecTopJetLeptonCleaner::process(uhh2::Event& event){
+  if(event.muons->size() > 0){
+    for (unsigned int i = 0; i < event.topjets->size(); i++){
+      if (deltaPhi(event.muons->at(0), event.topjets->at(i)) < 0.8){
+        event.topjets->at(i).v4() = event.topjets->at(i).v4() - event.muons->at(0).v4();
+      }
+    }
+  }
+  return true;
+}
+
+
+
+
+/*
+█   ██████  ███████ ███    ██               ██    ██ ████████ ██ ██      ███████  █
+█  ██       ██      ████   ██               ██    ██    ██    ██ ██      ██       █
+█  ██   ███ █████   ██ ██  ██     █████     ██    ██    ██    ██ ██      ███████  █
+█  ██    ██ ██      ██  ██ ██               ██    ██    ██    ██ ██           ██  █
+█   ██████  ███████ ██   ████                ██████     ██    ██ ███████ ███████  █
+*/
+
+
 
 GenTopJetLeptonCleaner::GenTopJetLeptonCleaner(uhh2::Context & ctx): h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
 bool GenTopJetLeptonCleaner::process(uhh2::Event& event){
@@ -157,7 +206,7 @@ bool GenTopJetCleaner::process(uhh2::Event& event){
   std::vector<GenTopJet> candidates, candidates_lep, dummy;
 
   for(unsigned int i=0; i < event.gentopjets->size(); i++){
-    if(event.gentopjets->at(i).pt() > 200) dummy.push_back(event.gentopjets->at(i));
+    if(event.gentopjets->at(i).pt() >= 0) dummy.push_back(event.gentopjets->at(i));
   }
 
   if(dummy.size() > 0){
@@ -175,7 +224,7 @@ bool GenTopJetCleaner::process(uhh2::Event& event){
   return true;
 }
 
-GenJetSelection::GenJetSelection(uhh2::Context & ctx):h_genjetsel(ctx.declare_event_output<std::vector<Particle>>("genjetsel")), h_gentopjet_cand(ctx.declare_event_output<std::vector<GenTopJet>>("gentopjet_cand")){}
+GenJetSelection::GenJetSelection(uhh2::Context & ctx):h_genjetsel(ctx.declare_event_output<std::vector<Particle>>("genjetsel")), h_gentopjet_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")){}
 bool GenJetSelection::process(uhh2::Event& event){
 
   std::vector<Particle> own_jet;
