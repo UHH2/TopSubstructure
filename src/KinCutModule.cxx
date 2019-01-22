@@ -39,8 +39,10 @@ namespace uhh2examples {
     std::unique_ptr<MuonCleaner>     muoSR_cleaner;
     std::unique_ptr<ElectronCleaner> eleSR_cleaner;
 
-    bool isMC;
+    bool isMC, isTTbar;
     bool passed, passed_trig;
+    bool passed_gen, passed_gen_sel, passed_rec;
+    bool matched_gen;
 
     std::unique_ptr<JetCleaner> jetcleaner;
     std::unique_ptr<TopJetCleaner> topjetcleaner;
@@ -48,11 +50,14 @@ namespace uhh2examples {
     // declare the Selections to use. Use unique_ptr to ensure automatic call of delete in the destructor, to avoid memory leaks.
     std::unique_ptr<Selection> nbtag_medium_sel, twodcut_sel, met_sel, nmu_sel, nele_sel, pt_mu_sel;
     std::unique_ptr<Selection> trigger_sel_A, trigger_sel_B, pv_sel;
+    std::unique_ptr<Selection> genmatching, nmu_gen;
 
     std::unique_ptr<AnalysisModule> PUreweight, lumiweight;
     std::unique_ptr<AnalysisModule> cleaner, rectopjetleptoncleaner;
+    std::unique_ptr<AnalysisModule> ttgenprod;
 
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
+    std::unique_ptr<Hists> h_gen_nmu, h_gen_nmu_matched, h_gen_nmu_unmatched;
     std::unique_ptr<Hists> h_start, h_lumi, h_common, h_jetcleaner, h_muoncleaner, h_elecleaner, h_pu, h_trigger;
 
     std::unique_ptr<Hists> h_pv, h_nmu, h_tjlc, h_tjc, h_met, h_pt_mu, h_nele, h_twodcut, h_nbtag_medium;
@@ -61,6 +66,8 @@ namespace uhh2examples {
 
     uhh2::Event::Handle<double> h_rec_weight;
     uhh2::Event::Handle<double> h_gen_weight;
+    uhh2::Event::Handle<bool> h_passed_gen;
+    uhh2::Event::Handle<bool> h_passed_rec;
   };
 
 
@@ -68,6 +75,8 @@ namespace uhh2examples {
     // 1. setup other modules. CommonModules and the JetCleaner:
     h_gen_weight = ctx.declare_event_output<double>("h_gen_weight");
     h_rec_weight = ctx.declare_event_output<double>("h_rec_weight");
+    h_passed_rec = ctx.declare_event_output<bool>("h_passed_rec");
+    h_passed_gen = ctx.declare_event_output<bool>("h_passed_gen");
 
     common.reset(new CommonModules());
     lumiweight.reset(new MCLumiWeight(ctx));
@@ -94,8 +103,16 @@ namespace uhh2examples {
     trigger_sel_B = uhh2::make_unique<TriggerSelection>("HLT_TkMu50_v*");
 
     isMC = (ctx.get("dataset_type") == "MC");
+    isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft");
 
     // 2. set up selections
+    if(isTTbar){
+      const std::string ttbar_gen_label("ttbargen");
+      ttgenprod.reset(new TTbarGenProducer(ctx, ttbar_gen_label, false));
+      nmu_gen.reset(new TTbarSemilep(ctx));
+      genmatching.reset(new GenMatching(ctx));
+    }
+
     pv_sel.reset(new NPVSelection(1, -1, PrimaryVertexId(StandardPrimaryVertexId())));
     PUreweight.reset(new MCPileupReweight(ctx, "central"));
 
@@ -103,11 +120,16 @@ namespace uhh2examples {
     met_sel.reset(new METSelection(50,-1));
     pt_mu_sel.reset(new MuonptSelection(55));
     nele_sel.reset(new NElectronSelection(0, 0));
-    twodcut_sel.reset(new TwoDCut(0.4, 25));
+    twodcut_sel.reset(new TwoDCut(0.4, 40));
     nbtag_medium_sel.reset(new NJetSelection(1, -1, Btag_medium));
 
 
     // 3. Set up Hists classes:
+    h_gen_nmu.reset(new GenHists(ctx, "gen_nmu"));
+    h_gen_nmu_matched.reset(new GenHists(ctx, "gen_nmu_matched"));
+    h_gen_nmu_unmatched.reset(new GenHists(ctx, "gen_nmu_unmatched"));
+
+
     h_start.reset(new TopSubstructureRecoHists(ctx, "start"));
     h_lumi.reset(new TopSubstructureRecoHists(ctx, "lumi"));
     h_common.reset(new TopSubstructureRecoHists(ctx, "common"));
@@ -131,6 +153,7 @@ namespace uhh2examples {
 
   bool KinCutModule::process(Event & event) {
     cout << "KinCutModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
+
     h_start->fill(event);
     lumiweight->process(event);
     h_lumi->fill(event);
@@ -139,6 +162,21 @@ namespace uhh2examples {
     // 1. run all modules other modules.
     passed = false;
     passed_trig = false;
+    passed_gen_sel = false;
+    passed_gen = false;
+    passed_rec = false;
+
+    if(isTTbar){
+      ttgenprod->process(event);
+      passed_gen_sel = nmu_gen->passes(event);
+      if(passed_gen_sel){
+        h_gen_nmu->fill(event);
+        passed_gen = true;
+        matched_gen = genmatching->passes(event);
+        if(matched_gen) h_gen_nmu_matched->fill(event);
+        else h_gen_nmu_unmatched->fill(event);
+      }
+    }
 
     common->process(event);
     h_common->fill(event);
@@ -201,6 +239,7 @@ namespace uhh2examples {
                 passed = nbtag_medium_sel->passes(event);
                 if(passed){
                   h_nbtag_medium->fill(event);
+                  passed_rec = true;
                 }
               }
             }
@@ -208,8 +247,10 @@ namespace uhh2examples {
         }
       }
     }
-    if(!passed) return false;
+    if(!passed_rec && !passed_gen) return false;
     // 3. decide whether or not to keep the current event in the output:
+    event.set(h_passed_rec, passed_rec);
+    event.set(h_passed_gen, passed_gen);
     return true;
   }
   // as we want to run the ExampleCycleNew directly with AnalysisModuleRunner,
