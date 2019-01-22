@@ -43,8 +43,8 @@ namespace uhh2examples {
     explicit TopJetptSelection(uhh2::Context& ctx, double pt_min = 0., double pt_max = -1);
     virtual bool passes(const uhh2::Event & event) override;
   private:
-    double pt_min, pt_max;
     uhh2::Event::Handle<std::vector<TopJet>> h_topjet;
+    double pt_min, pt_max;
   };
 
   class TwoDCut : public uhh2::Selection {
@@ -61,8 +61,8 @@ namespace uhh2examples {
     explicit DPhiSelection(uhh2::Context& ctx, double dphi_min = 0., double dphi_max = -1);
     virtual bool passes(const uhh2::Event & event) override;
   private:
-    double dphi_min, dphi_max;
     uhh2::Event::Handle<std::vector<TopJet>> h_topjet;
+    double dphi_min, dphi_max;
   };
 
   class Matching : public uhh2::Selection{
@@ -71,8 +71,8 @@ namespace uhh2examples {
     virtual bool passes(const uhh2::Event &) override;
 
   private:
-    uhh2::Event::Handle<TTbarGen> h_ttbargen;
     uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
+    uhh2::Event::Handle<TTbarGen> h_ttbargen;
   };
 
   class QuarkCandJetMatching : public uhh2::Selection{
@@ -81,8 +81,8 @@ namespace uhh2examples {
     virtual bool passes(const uhh2::Event &) override;
 
   private:
-    uhh2::Event::Handle<TTbarGen> h_ttbargen;
     uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
+      uhh2::Event::Handle<TTbarGen> h_ttbargen;
   };
 
   class NTopJet : public uhh2::Selection{

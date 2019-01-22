@@ -75,7 +75,7 @@ bool GenNTopJetCand::passes(const Event & event){
   return pass;
 }
 
-GenNTopJet::GenNTopJet(uhh2::Context & ctx, double n_min_, double n_max_):n_min(n_min_), n_max(n_max_){}
+GenNTopJet::GenNTopJet(double n_min_, double n_max_):n_min(n_min_), n_max(n_max_){}
 bool GenNTopJet::passes(const Event & event){
 
   bool pass = false;
@@ -96,46 +96,55 @@ bool TTbarSemilep::passes(const uhh2::Event& event){
   return semilep;
 }
 
-MassSelection::MassSelection(uhh2::Context& ctx):h_gentopjet_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")),h_gentopjet_lep_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_lep_cand")), h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
+MassSelection::MassSelection(uhh2::Context& ctx, int n_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), n(n_){}
 bool MassSelection::passes(const Event & event){
 
   bool pass = false;
-  if(event.is_valid(h_gentopjet_cand) && event.is_valid(h_gentopjet_lep_cand) && event.is_valid(h_ttbargen)){
-    const auto ttbargen = event.get(h_ttbargen);
-    std::vector<GenTopJet> gentopjet_cand = event.get(h_gentopjet_cand);
-    std::vector<GenTopJet> gentopjet_lep_cand = event.get(h_gentopjet_lep_cand);
-    if(gentopjet_cand.size() > 0 && gentopjet_lep_cand.size() > 0){
-      double mass, mass_lep, mass_mu;
-      mass = gentopjet_cand.at(0).v4().M();
-      mass_lep = gentopjet_lep_cand.at(0).v4().M();
-      mass_mu = ttbargen.ChargedLepton().v4().M();
-      if(mass > (mass_lep + mass_mu)) pass = true;
+  switch (n) {
+    case 0:
+    if(event.is_valid(h_ttbargen)){
+      if(event.gentopjets->size() >= 2){
+        double mass, mass_lep;
+        sort_by_pt<GenTopJet>(*event.gentopjets);
+        mass = event.gentopjets->at(0).v4().M();
+        mass_lep = event.gentopjets->at(1).v4().M();
+        if(mass > (mass_lep)) pass = true;
+      }
     }
+    break;
+
+    case 1:
+    if(event.is_valid(h_ttbargen)){
+      const auto ttbargen = event.get(h_ttbargen);
+      if(event.gentopjets->size() >= 2){
+        double mass;
+        sort_by_pt<GenTopJet>(*event.gentopjets);
+        mass = event.gentopjets->at(0).v4().M();
+        const auto dummy = event.gentopjets->at(1).v4() + ttbargen.ChargedLepton().v4();
+        if(mass > (dummy.M())) pass = true;
+      }
+    }
+    break;
   }
   return pass;
 }
 
-PtSelection::PtSelection(uhh2::Context& ctx, double pt_jet1_min_, double pt_jet2_min_):h_gentopjet_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")), h_gentopjet_lep_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_lep_cand")), pt_jet1_min(pt_jet1_min_), pt_jet2_min(pt_jet2_min_){}
+PtSelection::PtSelection(double pt_jet1_min_, double pt_jet2_min_):pt_jet1_min(pt_jet1_min_), pt_jet2_min(pt_jet2_min_){}
 bool PtSelection::passes(const Event & event){
   bool pass = false;
-  if(event.is_valid(h_gentopjet_cand) && event.is_valid(h_gentopjet_lep_cand)){
-    std::vector<GenTopJet> gentopjet = event.get(h_gentopjet_cand);
-    std::vector<GenTopJet> gentopjet_lep = event.get(h_gentopjet_lep_cand);
-    if(gentopjet.size() > 0 && gentopjet_lep.size() > 0 ){
-      pass = (gentopjet.at(0).pt() > pt_jet1_min || pt_jet1_min < 0) && (gentopjet_lep.at(0).pt() > pt_jet2_min || pt_jet2_min < 0);
-    }
+  if(event.gentopjets->size() >= 2){
+    pass = (event.gentopjets->at(0).pt() > pt_jet1_min || pt_jet1_min < 0) && (event.gentopjets->at(1).pt() > pt_jet2_min || pt_jet2_min < 0);
   }
   return pass;
 }
 
-dRSelection::dRSelection(uhh2::Context& ctx, double dr_min_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), h_gentopjet_lep_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_lep_cand")), dr_min(dr_min_){}
+dRSelection::dRSelection(uhh2::Context& ctx, double dr_min_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), dr_min(dr_min_){}
 bool dRSelection::passes(const Event & event){
   bool pass = false;
-  if(event.is_valid(h_gentopjet_lep_cand) && event.is_valid(h_ttbargen)){
+  if(event.is_valid(h_ttbargen)){
     const auto ttbargen = event.get(h_ttbargen);
-    std::vector<GenTopJet> gentopjet = event.get(h_gentopjet_lep_cand);
-    if(gentopjet.size() > 0){
-      pass = deltaR(gentopjet.at(0), ttbargen.ChargedLepton()) < dr_min;
+    if(event.gentopjets->size() > 0){
+      pass = deltaR(event.gentopjets->at(1), ttbargen.ChargedLepton()) < dr_min;
     }
   }
   return pass;

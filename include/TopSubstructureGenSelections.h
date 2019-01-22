@@ -21,8 +21,16 @@ namespace uhh2examples {
     explicit GenDPhiSelection(uhh2::Context& ctx, double dphi_min = 0., double dphi_max = -1);
     virtual bool passes(const uhh2::Event & event) override;
   private:
-    double dphi_min, dphi_max;
     uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
+    double dphi_min, dphi_max;
+  };
+
+  class GenTopJetPtSelection : public uhh2::Selection{
+  public:
+    explicit GenTopJetPtSelection(double pt_min = 0., double pt_max = -1);
+    virtual bool passes(const uhh2::Event & event) override;
+  private:
+    double pt_min, pt_max;
   };
 
   class GenQuarkGenJetMatching : public uhh2::Selection{
@@ -31,8 +39,8 @@ namespace uhh2examples {
     virtual bool passes(const uhh2::Event &) override;
 
   private:
-    uhh2::Event::Handle<TTbarGen> h_ttbargen;
     uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
+    uhh2::Event::Handle<TTbarGen> h_ttbargen;
   };
 
   class GenNTopJetCand : public uhh2::Selection{
@@ -47,7 +55,7 @@ namespace uhh2examples {
 
   class GenNTopJet : public uhh2::Selection{
   public:
-    explicit GenNTopJet(uhh2::Context &, double n_min = 0, double n_max = -1);
+    explicit GenNTopJet(double n_min = 0, double n_max = -1);
     virtual bool passes(const uhh2::Event &) override;
 
   private:
@@ -66,23 +74,20 @@ namespace uhh2examples {
 
   class MassSelection : public uhh2::Selection{
   public:
-    explicit MassSelection(uhh2::Context& ctx);
+    explicit MassSelection(uhh2::Context& ctx, int n);
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
-    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
-    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_lep_cand;
+    int n;
   };
 
   class PtSelection:public uhh2::Selection{
   public:
-    explicit PtSelection(uhh2::Context& ctx, double pt_jet1_min = 0, double pt_jet2_min = 0);
+    explicit PtSelection(double pt_jet1_min = 0, double pt_jet2_min = 0);
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
-    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
-    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_lep_cand;
     double pt_jet1_min, pt_jet2_min;
   };
 
@@ -93,7 +98,6 @@ namespace uhh2examples {
 
   private:
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
-    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_lep_cand;
     double dr_min;
   };
 

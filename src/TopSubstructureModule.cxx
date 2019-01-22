@@ -26,25 +26,25 @@ using namespace std;
 using namespace uhh2;
 
 namespace uhh2examples {
-  /* 
+  /*
    * This is the central class which calls other AnalysisModules, Hists or Selection classes.
    * This AnalysisModule, in turn, is called (via AnalysisModuleRunner) by SFrame.
    */
 
   class TopSubstructureModule: public AnalysisModule {
-  public:    
+  public:
     explicit TopSubstructureModule(Context & ctx);
     virtual bool process(Event & event) override;
 
-  private:    
+  private:
     std::unique_ptr<CommonModules> common;
     std::unique_ptr<MuonCleaner>     muoSR_cleaner;
     std::unique_ptr<ElectronCleaner> eleSR_cleaner;
     bool isMC, isTTbar;
     string sort_by;
-    
+
     std::unique_ptr<JetCleaner> jetcleaner;
-   
+
     // declare the Selections to use. Use unique_ptr to ensure automatic call of delete in the destructor, to avoid memory leaks.
     std::unique_ptr<Selection> nbtag_tight_sel, ntopjet_sel, twodcut_sel, met_sel, nmu_sel, pt_sel, nele_sel, pt_mu_sel, ntopjetcand_sel1, dphi_sel1, dphi_sel2, ntopjetcand_sel2;
     std::unique_ptr<Selection> trigger_sel_A, trigger_sel_B, pv_sel;
@@ -54,7 +54,7 @@ namespace uhh2examples {
     std::unique_ptr<AnalysisModule> topjetsort_by_dphi, topjetsort_by_mass, gentopjetsort_by_dphi, gentopjetsort_by_mass, jetsel;
 
     std::unique_ptr<AnalysisModule> ttgenprod;
-    
+
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
     std::unique_ptr<Hists> h_nocuts, h_njet_nocuts, h_muon_nocuts, h_topjet_nocuts;
     std::unique_ptr<Hists> h_nocuts_matched, h_njet_nocuts_matched, h_muon_nocuts_matched, h_topjet_nocuts_matched;
@@ -114,11 +114,11 @@ namespace uhh2examples {
     // member variables, in particular the AnalysisModules such as
     // CommonModules or some cleaner module, Selections and Hists.
     // But you can do more and e.g. access the configuration, as shown below.
- 
-    
+
+
     // 1. setup other modules. CommonModules and the JetCleaner:
     common.reset(new CommonModules());
-    // TODO: configure common here, e.g. by 
+    // TODO: configure common here, e.g. by
     // calling common->set_*_id or common->disable_*
     common->init(ctx);
 
@@ -128,12 +128,12 @@ namespace uhh2examples {
     muoSR_cleaner.reset(new     MuonCleaner(muid));
     eleSR_cleaner.reset(new ElectronCleaner(eleid));
     Btag_tight = CSVBTag(CSVBTag::WP_TIGHT);
-    jetcleaner.reset(new JetCleaner(ctx, 30.0, 2.4)); 
+    jetcleaner.reset(new JetCleaner(ctx, 30.0, 2.4));
 
 
     trigger_sel_A = uhh2::make_unique<TriggerSelection>("HLT_Mu50_v*");
     trigger_sel_B = uhh2::make_unique<TriggerSelection>("HLT_TkMu50_v*");
-   
+
     // decide how you want to sort your candidates
 
 
@@ -144,19 +144,19 @@ namespace uhh2examples {
     // before the 'common->init(ctx)' line.
 
     isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft");
-    
+
     // 2. set up selections
     const std::string ttbar_gen_label("ttbargen");
     sort_by = ctx.get("sort");
     ttgenprod.reset(new TTbarGenProducer(ctx, ttbar_gen_label, false));
     if(sort_by == "dphi") topjetsort_by_dphi.reset(new TopJetSortDPhi(ctx));
     if(sort_by == "mass") topjetsort_by_mass.reset(new TopJetSortMass(ctx));
-    jetsel.reset(new JetSelection(ctx));
+    // jetsel.reset(new JetSelection(ctx));
     matching.reset(new QuarkCandJetMatching(ctx));
     pv_sel.reset(new NPVSelection(1, -1, PrimaryVertexId(StandardPrimaryVertexId())));
     PUreweight.reset(new MCPileupReweight(ctx, "central"));
     ntopjet_sel.reset(new NTopJetSelection(1)); // see common/include/NSelections.h
-    nbtag_tight_sel.reset(new NJetSelection(1, -1, Btag_tight)); 
+    nbtag_tight_sel.reset(new NJetSelection(1, -1, Btag_tight));
     met_sel.reset(new METSelection(50,-1));
     nmu_sel.reset(new NMuonSelection(1,1));
     twodcut_sel.reset(new TwoDCut(0.4, 40));
@@ -388,9 +388,9 @@ namespace uhh2examples {
     // this is controlled by the return value of this method: If it
     // returns true, the event is kept; if it returns false, the event
     // is thrown away.
-    
+
     cout << "TopSubstructureModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
-    
+
     // 1. run all modules other modules.
 
     common->process(event);
@@ -407,7 +407,7 @@ namespace uhh2examples {
       if(!(trigger_sel_A->passes(event) || trigger_sel_B->passes(event))) return false;
     }
 
-    //at least 1 good primary vertex 
+    //at least 1 good primary vertex
     if(!pv_sel->passes(event)) return false;
 
     /** PU Reweighting *********************/
@@ -418,7 +418,7 @@ namespace uhh2examples {
     if(sort_by == "mass") topjetsort_by_mass->process(event);
 
     if(isTTbar) ttgenprod->process(event);
-    jetsel->process(event);
+    // jetsel->process(event);
 
 
 
@@ -512,7 +512,7 @@ namespace uhh2examples {
       h_0ele_matched->fill(event);
       h_njet_0ele_matched->fill(event);
       h_topjet_0ele_matched->fill(event);
-      h_muon_0ele_matched->fill(event);  
+      h_muon_0ele_matched->fill(event);
     }
     else if(isTTbar){
       h_0ele_unmatched->fill(event);

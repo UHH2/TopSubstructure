@@ -10,22 +10,22 @@ using namespace uhh2;
 METSelection::METSelection(double MET_min_, double MET_max_):MET_min(MET_min_), MET_max(MET_max_){}
 bool METSelection::passes(const Event & event){
 
-  bool pass = true;
+  bool pass = false;
   auto met = event.met->pt();
 
-  pass = met >= MET_min && (met <= MET_max || MET_max < 0);
+  pass = (met >= MET_min && (met <= MET_max || MET_max < 0));
   return pass;
 }
 
 MuonptSelection::MuonptSelection(double pt_min_, double pt_max_):pt_min(pt_min_), pt_max(pt_max_){}
 bool MuonptSelection::passes(const Event & event){
 
-  bool pass = true;
+  bool pass = false;
   sort_by_pt<Muon>(*event.muons);
   if(event.muons->size()){
     auto pt = event.muons->at(0).pt();
 
-    pass = pt >= pt_min && (pt <= pt_max || pt_max < 0);
+    pass = (pt >= pt_min && (pt <= pt_max || pt_max < 0));
     return pass;
   }
   else{
@@ -37,7 +37,7 @@ bool MuonptSelection::passes(const Event & event){
 TopJetptSelection::TopJetptSelection(uhh2::Context& ctx, double pt_min_, double pt_max_):h_topjet(ctx.get_handle<std::vector<TopJet>>("topjet_cand")), pt_min(pt_min_), pt_max(pt_max_){}
 bool TopJetptSelection::passes(const Event & event){
 
-  bool pass = true;
+  bool pass = false;
   std::vector<TopJet> topjets = event.get(h_topjet);
 
   if(topjets.size() <= 0){
@@ -58,6 +58,7 @@ bool TopJetptSelection::passes(const Event & event){
 TwoDCut::TwoDCut(double min_deltaR_, double min_pTrel_): min_deltaR(min_deltaR_), min_pTrel(min_pTrel_) {}
 bool TwoDCut::passes(const Event & event){
 
+  bool pass = false;
   assert(event.muons && event.electrons && event.jets);
   if((event.muons->size()+event.electrons->size()) != 1){
     std::cout << "\n @@@ WARNING -- TwoDCut::passes -- unexpected number of muons+electrons in the event (!=1). returning 'false'\n";
@@ -66,8 +67,9 @@ bool TwoDCut::passes(const Event & event){
 
   double drmin, ptrel;
   std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
+  pass = (drmin > min_deltaR) || (ptrel > min_pTrel);
 
-  return (drmin > min_deltaR) || (ptrel > min_pTrel);
+  return pass;
 }
 
 DPhiSelection::DPhiSelection(uhh2::Context& ctx, double dphi_min_, double dphi_max_): h_topjet(ctx.get_handle<std::vector<TopJet>>("topjet_cand")), dphi_min(dphi_min_), dphi_max(dphi_max_){}

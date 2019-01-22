@@ -4,7 +4,7 @@
   <!ENTITY NEVT "-1">
 
  <!ENTITY INdir   "/nfs/dust/cms/user/schwarzd/MTopJet/PreSel">
- <!ENTITY OUTdir  "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/gen_selection_sel">
+ <!ENTITY OUTdir  "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/gen_test">
  <!ENTITY sort    "sel">
 
 <!-- =============================================== ttbar =========================================================================== -->
@@ -15,7 +15,7 @@
 
 <!--
    <ConfigParse NEventsBreak="250000" LastBreak="0" FileSplit="0"/>
-   <ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="SelMuGensel_workdir"/>
+   <ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="SelMuGenseltest_workdir"/>
 -->
 
 <JobConfiguration JobName="TopSubstructureJob" OutputLevel="INFO">

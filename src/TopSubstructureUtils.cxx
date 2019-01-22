@@ -1,5 +1,8 @@
 #include <UHH2/TopSubstructure/include/TopSubstructureUtils.h>
 
+using namespace uhh2;
+using namespace std;
+
 TopJetSortDPhi::TopJetSortDPhi(uhh2::Context & ctx): h_topjet_cand(ctx.declare_event_output<std::vector<TopJet>>("topjet_cand")){}
 bool TopJetSortDPhi::process(uhh2::Event& event){
 
@@ -47,66 +50,35 @@ bool TopJetSortMass::process(uhh2::Event& event){
   return true;
 }
 
-JetSelection::JetSelection(uhh2::Context & ctx):h_jetsel(ctx.declare_event_output<std::vector<Jet>>("jetsel")), h_topjet_cand(ctx.get_handle<std::vector<TopJet>>("topjet_had_cand")){}
-bool JetSelection::process(uhh2::Event& event){
-
-  std::vector<Jet> own_jet;
-
-  if(event.is_valid(h_topjet_cand)){
-    std::vector<TopJet> topjet_cand = event.get(h_topjet_cand);
-    if(event.jets->size() > 0 && topjet_cand.size() > 0){
-      for(unsigned int i=0; i < event.jets->size(); i++){
-      	double dr=9999999;
-      	double diff = 0;
-  	    for(unsigned int j=0; j < topjet_cand.size(); j++){
-  	      diff = deltaR(event.jets->at(i), topjet_cand.at(j));
-  	      if(diff < dr) dr = diff;
-	      }
-	      if(dr > 0.8) own_jet.push_back(event.jets->at(i));
-      }
-    }
-  }
-  event.set(h_jetsel, own_jet);
-
-  return true;
-}
-
-
-RecTopJetCleaner::RecTopJetCleaner(uhh2::Context & ctx):h_topjet_had_cand(ctx.declare_event_output<std::vector<TopJet>>("topjet_had_cand")), h_topjet_lep_cand(ctx.declare_event_output<std::vector<TopJet>>("topjet_lep_cand")){}
-bool RecTopJetCleaner::process(uhh2::Event& event){
-  std::vector<TopJet> candidates, candidates_lep, dummy;
-
-  for(unsigned int i=0; i < event.topjets->size(); i++){
-    if(event.topjets->at(i).pt() >= 0) dummy.push_back(event.topjets->at(i));
-  }
-
-  if(dummy.size() > 0){
-    for(unsigned int i=1; i < dummy.size(); i++){
-      if(dummy.at(0).pt() < dummy.at(i).pt()){
-        std::swap(dummy.at(0), dummy.at(i));
-      }
-    }
-    candidates.push_back(dummy.at(0));
-    if(dummy.size() >=2) candidates_lep.push_back(dummy.at(1));
-  }
-  event.set(h_topjet_had_cand, candidates);
-  event.set(h_topjet_lep_cand, candidates_lep);
-
-  return true;
-}
-
-RecTopJetLeptonCleaner::RecTopJetLeptonCleaner(uhh2::Context & ctx) {}
+RecTopJetLeptonCleaner::RecTopJetLeptonCleaner() {}
 bool RecTopJetLeptonCleaner::process(uhh2::Event& event){
-  if(event.muons->size() > 0){
+
+  sort_by_pt<Muon>(*event.muons);
+
+  if(event.muons->size() > 0 && event.topjets->size() > 0){
     for (unsigned int i = 0; i < event.topjets->size(); i++){
-      if (deltaPhi(event.muons->at(0), event.topjets->at(i)) < 0.8){
-        event.topjets->at(i).v4() = event.topjets->at(i).v4() - event.muons->at(0).v4();
+      if (deltaR(event.muons->at(0), event.topjets->at(i)) < 0.8){
+        event.topjets->at(i).set_v4(event.topjets->at(i).v4() - event.muons->at(0).v4());
       }
     }
   }
+  sort_by_pt<TopJet>(*event.topjets);
   return true;
 }
 
+
+int NumberJets(uhh2::Event& event){
+  std::vector<TopJet>* topjets = event.topjets;
+  std::vector<Jet>* jets = event.jets;
+  int number = jets->size();
+
+  for(unsigned int i = 0; i < jets->size(); i++){
+    for(unsigned int j = 0; j < topjets->size(); j++){
+      if(deltaR(jets->at(i), topjets->at(j)) < 0.8) number--;
+    }
+  }
+  return number;
+}
 
 
 
@@ -122,15 +94,38 @@ bool RecTopJetLeptonCleaner::process(uhh2::Event& event){
 
 GenTopJetLeptonCleaner::GenTopJetLeptonCleaner(uhh2::Context & ctx): h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
 bool GenTopJetLeptonCleaner::process(uhh2::Event& event){
-  if(event.is_valid(h_ttbargen)){
+
+  if(event.is_valid(h_ttbargen) && event.gentopjets->size() > 0){
     const auto & ttbargen = event.get(h_ttbargen);
     for (unsigned int j = 0; j < event.gentopjets->size(); j++) {
-      if (deltaPhi(ttbargen.ChargedLepton(), event.gentopjets->at(j)) < 0.8) {
-        event.gentopjets->at(j).v4() = event.gentopjets->at(j).v4() - ttbargen.ChargedLepton().v4();
+      if (deltaR(ttbargen.ChargedLepton(), event.gentopjets->at(j)) < 0.8) {
+        event.gentopjets->at(j).set_v4(event.gentopjets->at(j).v4() - ttbargen.ChargedLepton().v4());
       }
     }
   }
+  sort_by_pt<GenTopJet> (*event.gentopjets);
   return true;
+}
+
+GenTopJetCleaner::GenTopJetCleaner(Context & ctx, string const & label_, double pt_min_, double eta_max_):hndl(ctx.get_handle<vector<GenTopJet>>(label_)), pt_min(pt_min_), eta_max(eta_max_){}
+bool GenTopJetCleaner::process(uhh2::Event & event){
+    if (!event.is_valid(hndl)) {
+        cerr << "In GenTopJetCleaner: Handle not valid!\n";
+        assert(false);
+    }
+    if(event.gentopjets->size() > 0){
+      vector<GenTopJet> & gentopjet_old = event.get(hndl);
+      vector<GenTopJet> gentopjet_new;
+
+      for (unsigned int i = 0; i < gentopjet_old.size(); i++) {
+        if((gentopjet_old.at(i).pt() > pt_min) && (gentopjet_old.at(i).eta() < eta_max)){
+          gentopjet_new.push_back(gentopjet_old.at(i));
+        }
+      }
+
+      event.set(hndl, gentopjet_new);
+    }
+    return true;
 }
 
 GenTopJetSortDPhi::GenTopJetSortDPhi(uhh2::Context & ctx):h_gentopjet_cand(ctx.declare_event_output<std::vector<GenTopJet>>("gentopjet_cand")){}
@@ -197,53 +192,6 @@ bool GenTopJetSortPt::process(uhh2::Event& event){
     }
   }
   event.set(h_gentopjet_cand, candidates);
-
-  return true;
-}
-
-GenTopJetCleaner::GenTopJetCleaner(uhh2::Context & ctx):h_gentopjet_cand(ctx.declare_event_output<std::vector<GenTopJet>>("gentopjet_cand")), h_gentopjet_lep_cand(ctx.declare_event_output<std::vector<GenTopJet>>("gentopjet_lep_cand")){}
-bool GenTopJetCleaner::process(uhh2::Event& event){
-  std::vector<GenTopJet> candidates, candidates_lep, dummy;
-
-  for(unsigned int i=0; i < event.gentopjets->size(); i++){
-    if(event.gentopjets->at(i).pt() >= 0) dummy.push_back(event.gentopjets->at(i));
-  }
-
-  if(dummy.size() > 0){
-    for(unsigned int i=1; i < dummy.size(); i++){
-      if(dummy.at(0).pt() < dummy.at(i).pt()){
-        std::swap(dummy.at(0), dummy.at(i));
-      }
-    }
-    candidates.push_back(dummy.at(0));
-    if(dummy.size() >=2) candidates_lep.push_back(dummy.at(1));
-  }
-  event.set(h_gentopjet_cand, candidates);
-  event.set(h_gentopjet_lep_cand, candidates_lep);
-
-  return true;
-}
-
-GenJetSelection::GenJetSelection(uhh2::Context & ctx):h_genjetsel(ctx.declare_event_output<std::vector<Particle>>("genjetsel")), h_gentopjet_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")){}
-bool GenJetSelection::process(uhh2::Event& event){
-
-  std::vector<Particle> own_jet;
-
-  if(event.is_valid(h_gentopjet_cand)){
-    std::vector<GenTopJet> gentopjet_cand = event.get(h_gentopjet_cand);
-    if(event.genjets->size() > 0 && gentopjet_cand.size() > 0){
-      for(unsigned int i=0; i < event.genjets->size(); i++){
-	      double dr=9999999;
-	      double diff = 0;
-	      for(unsigned int j=0; j < gentopjet_cand.size(); j++){
-	        diff = deltaR(event.genjets->at(i), gentopjet_cand.at(j));
-	        if(diff < dr) dr = diff;
-	      }
-	      if(dr > 0.8) own_jet.push_back(event.genjets->at(i));
-      }
-    }
-  }
-  event.set(h_genjetsel, own_jet);
 
   return true;
 }
@@ -315,4 +263,18 @@ bool GenTopJetSortDPhiPt::process(uhh2::Event& event){
   event.set(h_gentopjet_lep_cand, candidates_lep);
 
   return true;
+}
+
+
+int NumberGenJets(uhh2::Event& event){
+  std::vector<GenTopJet>* topjets = event.gentopjets;
+  std::vector<Particle>* jets = event.genjets;
+  int number = jets->size();
+
+  for(unsigned int i = 0; i < jets->size(); i++){
+    for(unsigned int j = 0; j < topjets->size(); j++){
+      if(deltaR(jets->at(i), topjets->at(j)) < 0.8) number--;
+    }
+  }
+  return number;
 }
