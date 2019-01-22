@@ -11,7 +11,7 @@ METSelection::METSelection(double MET_min_, double MET_max_):MET_min(MET_min_), 
 bool METSelection::passes(const Event & event){
 
   bool pass = false;
-  auto met = event.met->pt();
+  double met = event.met->pt();
 
   pass = (met >= MET_min && (met <= MET_max || MET_max < 0));
   return pass;
@@ -23,7 +23,7 @@ bool MuonptSelection::passes(const Event & event){
   bool pass = false;
   sort_by_pt<Muon>(*event.muons);
   if(event.muons->size()){
-    auto pt = event.muons->at(0).pt();
+    double pt = event.muons->at(0).pt();
 
     pass = (pt >= pt_min && (pt <= pt_max || pt_max < 0));
     return pass;
@@ -46,10 +46,10 @@ bool TopJetptSelection::passes(const Event & event){
   }
 
   for(int i=1; i<fabs(topjets.size()); i++){
-    auto diff = topjets.at(0).pt()-topjets.at(i).pt();
+    double diff = topjets.at(0).pt()-topjets.at(i).pt();
     if(!(diff > 0)) std::cout << "\n In TopJetSelection::passes: event.topjets did not get sorted corretly by pt!\n" << std::endl;;
   }
-  auto pt = topjets.at(0).pt();
+  double pt = topjets.at(0).pt();
 
   pass = pt >= pt_min && (pt <= pt_max || pt_max < 0);
   return pass;
@@ -87,7 +87,7 @@ bool DPhiSelection::passes(const Event & event){
   sort_by_pt<Muon>(*event.muons);
   const auto & topjet = topjets.at(0);
   const auto & muon = event.muons->at(0);
-  auto dphi = deltaPhi(topjet, muon);
+  double dphi = deltaPhi(topjet, muon);
 
   pass = dphi >= dphi_min && ( dphi <= dphi_max || dphi_max < 0);
   return pass;

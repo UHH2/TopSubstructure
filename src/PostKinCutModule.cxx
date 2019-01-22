@@ -390,9 +390,6 @@ namespace uhh2examples {
     */
 
     // pT(first Topjet) > 400
-    passed_rec_2 = twodcut_sel16->passes(event);
-    if(passed_rec_2){
-      h_twodcut16->fill(event);
     passed_rec = pt_topjet_sel1->passes(event);
     if(passed_rec){
       h_pt_topjet->fill(event);
@@ -830,33 +827,51 @@ namespace uhh2examples {
                                             }
                                           }
 
-                                          // passed_rec_2 = twodcut_sel16->passes(event);
-                                          // if(passed_rec_2){
-                                          //   h_twodcut16->fill(event);
-                                          //   if(isTTbar){
-                                          //     matched_rec_2 = recmatching->passes(event);
-                                          //     if(matched_rec_2) h_twodcut16_matched->fill(event);
-                                          //     else h_twodcut16_unmatched->fill(event);
-                                          //   }
-                                          //   // if(nbtag_medium_sel->passes(event)){
-                                          //   //   h_nbtagm16->fill(event);
-                                          //   //   if(isTTbar){
-                                          //   //     matched_rec_2 = recmatching->passes(event);
-                                          //   //     if(matched_rec_2) h_nbtagm16_matched->fill(event);
-                                          //   //     else h_nbtagm16_unmatched->fill(event);
-                                          //   //   }
-                                          //   //   // passed_rec_2 = nbtag_tight_sel->passes(event);
-                                          //   //   // if(passed_rec_2){
-                                          //   //   //   h_nbtagt16->fill(event);
-                                          //   //   //   if(isTTbar){
-                                          //   //   //     matched_rec_2 = recmatching->passes(event);
-                                          //   //   //     if(matched_rec_2) h_nbtagt16_matched->fill(event);
-                                          //   //   //     else h_nbtagt16_unmatched->fill(event);
-                                          //   //   //   }                                              }
-                                          //   //                                             }
-                                          //                                                                                       }
-                                                                                                                                                                      }                                      }                                    }                                  }                                }                              }                            }                          }                        }                      }                    }                  }                }              }            }          }        }      }    }
-}
+                                          passed_rec_2 = twodcut_sel16->passes(event);
+                                          if(passed_rec_2){
+                                            h_twodcut16->fill(event);
+                                            if(isTTbar){
+                                              matched_rec_2 = recmatching->passes(event);
+                                              if(matched_rec_2) h_twodcut16_matched->fill(event);
+                                              else h_twodcut16_unmatched->fill(event);
+                                            }
+                                            if(nbtag_medium_sel->passes(event)){
+                                              h_nbtagm16->fill(event);
+                                              if(isTTbar){
+                                                matched_rec_2 = recmatching->passes(event);
+                                                if(matched_rec_2) h_nbtagm16_matched->fill(event);
+                                                else h_nbtagm16_unmatched->fill(event);
+                                              }
+                                              passed_rec_2 = nbtag_tight_sel->passes(event);
+                                              if(passed_rec_2){
+                                                h_nbtagt16->fill(event);
+                                                if(isTTbar){
+                                                  matched_rec_2 = recmatching->passes(event);
+                                                  if(matched_rec_2) h_nbtagt16_matched->fill(event);
+                                                  else h_nbtagt16_unmatched->fill(event);
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
     if((!passed_rec) || (!passed_rec_2)) return false;
 
     // 3. decide whether or not to keep the current event in the output:

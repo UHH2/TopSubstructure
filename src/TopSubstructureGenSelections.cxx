@@ -27,7 +27,7 @@ bool GenDPhiSelection::passes(const Event & event){
 	      gen.push_back(event.genparticles->at(i));
       }
     }
-    auto dphi = deltaPhi(gentopjet, gen.at(0));
+    double dphi = deltaPhi(gentopjet, gen.at(0));
     pass = dphi >= dphi_min && ( dphi <= dphi_max || dphi_max < 0);
   }
 

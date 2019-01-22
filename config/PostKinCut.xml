@@ -3,7 +3,7 @@
 
   <!ENTITY NEVT "-1">
 
- <!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/kin_cut_loose">
+ <!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/kin_cut_test">
  <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_test">
 
 
