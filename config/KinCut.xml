@@ -4,7 +4,7 @@
   <!ENTITY NEVT "-1">
 
  <!ENTITY INdir    "/nfs/dust/cms/user/schwarzd/MTopJet/PreSel">
- <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/kin_cut_test">
+ <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/kin_cut_TDC40_btm">
 
 
 <!-- =============================================== DATA =========================================================================== -->
@@ -64,7 +64,7 @@
 
 <!--
    <ConfigParse NEventsBreak="250000" LastBreak="0" FileSplit="0"/>
-   <ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="SelMukincutmediumbtag_workdir"/>
+   <ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="SelMukincut_workdir"/>
 -->
 
 <JobConfiguration JobName="TopSubstructureJob" OutputLevel="INFO">

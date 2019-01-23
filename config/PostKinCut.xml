@@ -3,8 +3,8 @@
 
   <!ENTITY NEVT "-1">
 
- <!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/kin_cut_test">
- <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_test">
+ <!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/kin_cut_TDC40_btm">
+ <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel">
 
 
 <!-- =============================================== DATA =========================================================================== -->
