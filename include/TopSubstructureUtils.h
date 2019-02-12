@@ -39,6 +39,27 @@ class RecTopJetLeptonCleaner: public uhh2::AnalysisModule{
   virtual bool process(uhh2::Event &) override;
 };
 
+class GenParticleRemover : public uhh2::AnalysisModule {
+  public:
+
+    explicit GenParticleRemover(uhh2::Context & ctx, std::string const & label_ = "genparticles");
+    virtual bool process(uhh2::Event & event) override;
+
+  private:
+    uhh2::Event::Handle<std::vector<GenParticle>> hndl;
+    uhh2::Event::Handle<TTbarGen> h_ttbargen;
+};
+
+class PFParticleRemover : public uhh2::AnalysisModule {
+  public:
+
+    explicit PFParticleRemover(uhh2::Context & ctx, std::string const & label_ = "pfparticles");
+    virtual bool process(uhh2::Event & event) override;
+
+  private:
+    uhh2::Event::Handle<std::vector<PFParticle>> hndl;
+};
+
 class GenTopJetLeptonCleaner: public uhh2::AnalysisModule{
  public:
   explicit GenTopJetLeptonCleaner(uhh2::Context &);
@@ -55,7 +76,7 @@ public:
     virtual bool process(uhh2::Event & event) override;
 
 private:
-uhh2::Event::Handle<std::vector<GenTopJet>> hndl;
+    uhh2::Event::Handle<std::vector<GenTopJet>> hndl;
     double pt_min, eta_max;
 };
 

@@ -69,6 +69,7 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
 
 
   // leptons
+  book<TH1D>("N_mu", "N_{#mu}", 21, -0.5, 20.5);
   book<TH1D>("pt_mu", "p_{T}^{#mu} [GeV]", 100, 0, 1000);
   book<TH1D>("eta_mu", "#eta^{#mu}", 40, -2.5, 2.5);
   book<TH1D>("mass_mu", "M^{#mu} [GeV]", 50, 0, 0.5);
@@ -166,6 +167,7 @@ void TopSubstructureRecoHists::fill(const Event & event){
     hist("tau32_tj1")->Fill(topjet->at(0).tau3()/topjet->at(0).tau2(), weight);
     hist("tau21_tj1")->Fill(topjet->at(0).tau2()/topjet->at(0).tau1(), weight);
 
+    hist("N_mu")->Fill(event.muons->size(), weight);
     if(event.muons->size() > 0) hist("pt_mu")->Fill(event.muons->at(0).pt(), weight);
     if(event.muons->size() > 0) hist("eta_mu")->Fill(event.muons->at(0).eta(), weight);
     if(event.muons->size() > 0) hist("mass_mu")->Fill(event.muons->at(0).v4().M(), weight);

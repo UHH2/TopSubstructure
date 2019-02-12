@@ -64,7 +64,7 @@
 
 <!--
    <ConfigParse NEventsBreak="250000" LastBreak="0" FileSplit="0"/>
-   <ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="SelMu_workdir"/>
+   <ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="SelMuPostkin_workdir"/>
 -->
 
 <JobConfiguration JobName="TopSubstructureJob" OutputLevel="INFO">
@@ -240,7 +240,7 @@
       <Item Name="TopJetCollection"        Value="slimmedJetsAK8_SoftDrop"/>
       <Item Name="GenTopJetCollection"     Value="ak8GenJetsSoftDrop" />
 
-      <Item Name="additionalBranches" Value="xconePuppi xconeCHS genXCone33TopJets ttbargen h_rec_weight h_gen_weight"/>
+      <Item Name="additionalBranches" Value="ttbargen h_rec_weight h_gen_weight h_passed_gen h_passed_rec"/>
 
       <Item Name="METName"                 Value="slimmedMETs"/>
 

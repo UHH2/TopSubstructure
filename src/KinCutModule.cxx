@@ -40,7 +40,7 @@ namespace uhh2examples {
     std::unique_ptr<ElectronCleaner> eleSR_cleaner;
 
     bool isMC, isTTbar;
-    bool passed, passed_trig;
+    bool passed;
     bool passed_gen, passed_gen_sel, passed_rec;
     bool matched_gen;
 
@@ -161,7 +161,6 @@ namespace uhh2examples {
     event.set(h_gen_weight, event.weight);
     // 1. run all modules other modules.
     passed = false;
-    passed_trig = false;
     passed_gen_sel = false;
     passed_gen = false;
     passed_rec = false;
@@ -188,58 +187,59 @@ namespace uhh2examples {
     h_elecleaner->fill(event);
 
     /** PU Reweighting *********************/
-    PUreweight->process(event);
+    PUreweight->process(event); //evtl spaeter fuer unsicherheit
     h_pu->fill(event);
     /* *********** Trigger *********** */
     // for DATA until run 274954 -> use only Trigger A
     // for MC and DATA from 274954 -> use "A || B"
     if(!isMC && event.run < 274954) {
-      passed_trig = trigger_sel_A->passes(event);
+      passed = trigger_sel_A->passes(event);
     }else{
-      passed_trig = (trigger_sel_A->passes(event) || trigger_sel_B->passes(event));
+      passed = (trigger_sel_A->passes(event) || trigger_sel_B->passes(event));
     }
-    if(!passed_trig) return false;
-    h_trigger->fill(event);
 
     event.set(h_rec_weight, event.weight);
-
-    //at least 1 good primary vertex
-    passed = pv_sel->passes(event);
     if(passed){
-      h_pv->fill(event);
-      // exactly 1 muon
-      passed = nmu_sel->passes(event);
+      h_trigger->fill(event);
+
+      //at least 1 good primary vertex
+      passed = pv_sel->passes(event);
       if(passed){
-        h_nmu->fill(event);
-
-        // remove muon four-vector from topjet four-vector
-        rectopjetleptoncleaner->process(event);
-        h_tjlc->fill(event);
-
-        topjetcleaner->process(event);
-        h_tjc->fill(event);
-
-        // MET
-        passed = met_sel->passes(event);
+        h_pv->fill(event);
+        // exactly 1 muon
+        passed = nmu_sel->passes(event);
         if(passed){
-          h_met->fill(event);
-          // pT(muon)
-          passed = pt_mu_sel->passes(event);
+          h_nmu->fill(event);
+
+          // remove muon four-vector from topjet four-vector
+          rectopjetleptoncleaner->process(event);
+          h_tjlc->fill(event);
+
+          topjetcleaner->process(event);
+          h_tjc->fill(event);
+
+          // MET
+          passed = met_sel->passes(event);
           if(passed){
-            h_pt_mu->fill(event);
-            // exactly 0 electron
-            passed = nele_sel->passes(event);
+            h_met->fill(event);
+            // pT(muon)
+            passed = pt_mu_sel->passes(event);
             if(passed){
-              h_nele->fill(event);
-              // TwoDCut
-              passed = twodcut_sel->passes(event);
+              h_pt_mu->fill(event);
+              // exactly 0 electron
+              passed = nele_sel->passes(event);
               if(passed){
-                h_twodcut->fill(event);
-                // at least one tight b-tag
-                passed = nbtag_medium_sel->passes(event);
+                h_nele->fill(event);
+                // TwoDCut
+                passed = twodcut_sel->passes(event);
                 if(passed){
-                  h_nbtag_medium->fill(event);
-                  passed_rec = true;
+                  h_twodcut->fill(event);
+                  // at least one tight b-tag
+                  passed = nbtag_medium_sel->passes(event);
+                  if(passed){
+                    h_nbtag_medium->fill(event);
+                    passed_rec = true;
+                  }
                 }
               }
             }

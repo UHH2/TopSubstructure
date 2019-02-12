@@ -60,25 +60,26 @@ RecMatching::RecMatching(uhh2::Context & ctx):h_ttbargen(ctx.get_handle<TTbarGen
 bool RecMatching::passes(const uhh2::Event& event){
   bool pass = false;
 
-  if(event.topjets->size() > 0) {
-    std::vector<TopJet> topjet_cand;
-    topjet_cand.push_back(event.topjets->at(0));
+  if(event.is_valid(h_ttbargen)){
+  const auto ttbargen = event.get(h_ttbargen);
+    if(ttbargen.DecayChannel() == TTbarGen::e_muhad){
+      if(event.topjets->size() > 0) {
+        std::vector<TopJet> topjet_cand;
+        topjet_cand.push_back(event.topjets->at(0));
 
-    if(event.is_valid(h_ttbargen)){
-      const auto ttbargen = event.get(h_ttbargen);
-
-      GenParticle bq, q1, q2;
-      if(ttbargen.IsTopHadronicDecay()){
-    	  bq = ttbargen.bTop();
-    	  q1 = ttbargen.Wdecay1();
-    	  q2 = ttbargen.Wdecay2();
-    	  pass = (deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8);
-      }
-      else if(ttbargen.IsAntiTopHadronicDecay()){
-    	  bq = ttbargen.bAntitop();
-    	  q1 = ttbargen.WMinusdecay1();
-    	  q2 = ttbargen.WMinusdecay2();
-        pass = (deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8);
+        GenParticle bq, q1, q2;
+        if(ttbargen.IsTopHadronicDecay()){
+      	  bq = ttbargen.bTop();
+      	  q1 = ttbargen.Wdecay1();
+      	  q2 = ttbargen.Wdecay2();
+      	  pass = (deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8);
+        }
+        else if(ttbargen.IsAntiTopHadronicDecay()){
+      	  bq = ttbargen.bAntitop();
+      	  q1 = ttbargen.WMinusdecay1();
+      	  q2 = ttbargen.WMinusdecay2();
+          pass = (deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8);
+        }
       }
     }
   }
@@ -89,26 +90,28 @@ GenMatching::GenMatching(uhh2::Context & ctx):h_ttbargen(ctx.get_handle<TTbarGen
 bool GenMatching::passes(const uhh2::Event& event){
   bool pass = false;
 
-  if(event.gentopjets->size() > 0) {
-    std::vector<GenTopJet> gentopjet_cand;
-    gentopjet_cand.push_back(event.gentopjets->at(0));
+  if(event.is_valid(h_ttbargen)){
+    const auto ttbargen = event.get(h_ttbargen);
+    if(ttbargen.DecayChannel() == TTbarGen::e_muhad){
+      if(event.gentopjets->size() > 0) {
+        std::vector<GenTopJet> gentopjet_cand;
+        gentopjet_cand.push_back(event.gentopjets->at(0));
 
-    if (gentopjet_cand.size() > 0) {
-      if(event.is_valid(h_ttbargen)){
-        const auto ttbargen = event.get(h_ttbargen);
+        if (gentopjet_cand.size() > 0) {
 
-        GenParticle bq, q1, q2;
-        if(ttbargen.IsTopHadronicDecay()){
-      	  bq = ttbargen.bTop();
-      	  q1 = ttbargen.Wdecay1();
-      	  q2 = ttbargen.Wdecay2();
-      	  pass = (deltaR(bq, gentopjet_cand.at(0)) <= 0.8 && deltaR(q1, gentopjet_cand.at(0)) <= 0.8 && deltaR(q2, gentopjet_cand.at(0)) <= 0.8);
-        }
-        else if(ttbargen.IsAntiTopHadronicDecay()){
-      	  bq = ttbargen.bAntitop();
-      	  q1 = ttbargen.WMinusdecay1();
-      	  q2 = ttbargen.WMinusdecay2();
-	        pass = (deltaR(bq, gentopjet_cand.at(0)) <= 0.8 && deltaR(q1, gentopjet_cand.at(0)) <= 0.8 && deltaR(q2, gentopjet_cand.at(0)) <= 0.8);
+          GenParticle bq, q1, q2;
+          if(ttbargen.IsTopHadronicDecay()){
+        	  bq = ttbargen.bTop();
+        	  q1 = ttbargen.Wdecay1();
+        	  q2 = ttbargen.Wdecay2();
+        	  pass = (deltaR(bq, gentopjet_cand.at(0)) <= 0.8 && deltaR(q1, gentopjet_cand.at(0)) <= 0.8 && deltaR(q2, gentopjet_cand.at(0)) <= 0.8);
+          }
+          else if(ttbargen.IsAntiTopHadronicDecay()){
+        	  bq = ttbargen.bAntitop();
+        	  q1 = ttbargen.WMinusdecay1();
+        	  q2 = ttbargen.WMinusdecay2();
+            pass = (deltaR(bq, gentopjet_cand.at(0)) <= 0.8 && deltaR(q1, gentopjet_cand.at(0)) <= 0.8 && deltaR(q2, gentopjet_cand.at(0)) <= 0.8);
+          }
         }
       }
     }

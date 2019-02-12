@@ -91,6 +91,35 @@ int NumberJets(uhh2::Event& event){
 */
 
 
+GenParticleRemover::GenParticleRemover(Context & ctx, string const & label_):hndl(ctx.get_handle<vector<GenParticle>>(label_)){}
+bool GenParticleRemover::process(uhh2::Event & event){
+    if (!event.is_valid(hndl)) {
+        cerr << "In GenParticleRemover: Handle not valid!\n";
+        assert(false);
+    }
+    if(event.genparticles->size() > 0){
+      vector<GenParticle> genparticle_new;
+
+      event.set(hndl, genparticle_new);
+    }
+    return true;
+}
+
+PFParticleRemover::PFParticleRemover(Context & ctx, string const & label_):hndl(ctx.get_handle<vector<PFParticle>>(label_)){}
+bool PFParticleRemover::process(uhh2::Event & event){
+    if (!event.is_valid(hndl)) {
+        cerr << "In PFParticleRemover: Handle not valid!\n";
+        assert(false);
+    }
+    if(event.pfparticles->size() > 0){
+      vector<PFParticle> pfparticle_new;
+
+      event.set(hndl, pfparticle_new);
+    }
+    return true;
+}
+
+
 
 GenTopJetLeptonCleaner::GenTopJetLeptonCleaner(uhh2::Context & ctx): h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
 bool GenTopJetLeptonCleaner::process(uhh2::Event& event){

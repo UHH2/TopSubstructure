@@ -17,6 +17,7 @@
 #include "UHH2/common/include/TopJetIds.h"
 #include "UHH2/common/include/MCWeight.h"
 #include "UHH2/common/include/TTbarGen.h"
+#include "UHH2/common/include/TTbarGenHists.h"
 
 #include "UHH2/TopSubstructure/include/TopSubstructureSelections.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureCombinedSelections.h"
@@ -67,7 +68,8 @@ namespace uhh2examples {
     std::unique_ptr<Hists> h_pt_topjet, h_pt_topjet_matched, h_pt_topjet_unmatched;
     std::unique_ptr<Hists> h_dr, h_dr_matched, h_dr_unmatched;
     std::unique_ptr<Hists> h_mass, h_mass_matched, h_mass_unmatched;
-    std::unique_ptr<Hists> h_passedgen_rec, h_passedgen_gen, h_passedrec_rec, h_passedrec_gen;
+    std::unique_ptr<Hists> h_passedgen_rec, h_passedrec_gen;
+    std::unique_ptr<Hists> h_ttbar_hist;
 
     JetId Btag_tight;
 
@@ -76,6 +78,7 @@ namespace uhh2examples {
 
     uhh2::Event::Handle<bool> h_passed_rec;
     uhh2::Event::Handle<bool> h_passed_gen;
+    uhh2::Event::Handle<double> h_weight;
   };
 
 
@@ -84,6 +87,7 @@ namespace uhh2examples {
 
     h_passed_rec = ctx.get_handle<bool>("h_passed_rec");
     h_passed_gen = ctx.get_handle<bool>("h_passed_gen");
+    h_weight = ctx.get_handle<double>("h_gen_weight");
 
 
 
@@ -92,14 +96,15 @@ namespace uhh2examples {
 
     // 2. set up selections
     if(isTTbar){
-      // const std::string ttbar_gen_label("ttbargen");
-      // ttgenprod.reset(new TTbarGenProducer(ctx, ttbar_gen_label, false));
+      const std::string ttbar_gen_label("ttbargen");
+      ttgenprod.reset(new TTbarGenProducer(ctx, ttbar_gen_label, false));
       cleaner.reset(new GenTopJetLeptonCleaner(ctx));
       gentopjetcleaner.reset(new GenTopJetCleaner(ctx));
       ntopjet2_gen.reset(new GenNTopJet(2,2));
       dr_gen.reset(new dRSelection(ctx));
       mass_gen.reset(new MassSelection(ctx, 1));
       pt_topjet_gen.reset(new PtSelection(400, 200));
+      genmatching.reset(new GenMatching(ctx));
       recmatching.reset(new RecMatching(ctx));
     }
 
@@ -151,28 +156,30 @@ namespace uhh2examples {
     h_mass_unmatched.reset(new TopSubstructureRecoHists(ctx, "mass_unmatched"));
 
     h_passedgen_rec.reset(new TopSubstructureRecoHists(ctx, "passedgen_rec"));
-    h_passedgen_gen.reset(new GenHists(ctx, "passedgen_gen"));
-    h_passedrec_rec.reset(new TopSubstructureRecoHists(ctx, "passedrec_rec"));
     h_passedrec_gen.reset(new GenHists(ctx, "passedrec_gen"));
+
+    h_ttbar_hist.reset(new TTbarGenHists(ctx, "ttbar_hist"));
   }
 
 
   bool PostKinCutModule::process(Event & event) {
     cout << "PostKinCutModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
-    // if(isTTbar) ttgenprod->process(event);
+    event.weight = event.get(h_weight);
     // 1. run all modules other modules.
     if(event.is_valid(h_passed_gen)) passed_gen = event.get(h_passed_gen);
     else passed_gen = false;
+
     if(event.is_valid(h_passed_rec)) passed_rec = event.get(h_passed_rec);
     else passed_rec = false;
+    if(isTTbar) ttgenprod->process(event);
 
     matched_rec = false;
     matched_gen = false;
     passed_rec_2 = false;
-
     if(isTTbar && passed_gen){
       cleaner->process(event); // Do this always!
       gentopjetcleaner->process(event);
+
       passed_gen = pt_topjet_gen->passes(event);
       if(passed_gen){
         h_gen_pt_topjet->fill(event);
@@ -197,6 +204,7 @@ namespace uhh2examples {
             passed_gen = mass_gen->passes(event);
             if(passed_gen){
               h_gen_mass->fill(event);
+              h_passedgen_rec->fill(event);
               matched_gen = genmatching->passes(event);
               if(matched_gen) h_gen_mass_matched->fill(event);
               else h_gen_mass_unmatched->fill(event);
@@ -264,6 +272,8 @@ namespace uhh2examples {
             if(passed_rec){
               h_mass->fill(event);
               if(isTTbar){
+                h_passedrec_gen->fill(event);
+                h_ttbar_hist->fill(event);
                 matched_rec = recmatching->passes(event);
                 if(matched_rec) h_mass_matched->fill(event);
                 else h_mass_unmatched->fill(event);
@@ -274,15 +284,6 @@ namespace uhh2examples {
       }
     }
     if((!passed_rec && !passed_gen)) return false;
-
-    if(!passed_rec && passed_gen){
-      h_passedgen_gen->fill(event);
-      h_passedgen_rec->fill(event);
-    }
-    if(passed_rec && !passed_gen){
-      h_passedrec_gen->fill(event);
-      h_passedrec_rec->fill(event);
-    }
 
     // 3. decide whether or not to keep the current event in the output:
     return true;
