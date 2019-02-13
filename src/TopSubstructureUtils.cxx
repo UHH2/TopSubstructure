@@ -297,7 +297,7 @@ bool GenTopJetSortDPhiPt::process(uhh2::Event& event){
 
 int NumberGenJets(uhh2::Event& event){
   std::vector<GenTopJet>* topjets = event.gentopjets;
-  std::vector<Particle>* jets = event.genjets;
+  std::vector<GenJet>* jets = event.genjets;
   int number = jets->size();
 
   for(unsigned int i = 0; i < jets->size(); i++){

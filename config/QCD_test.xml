@@ -3,12 +3,12 @@
 
   <!ENTITY NEVT "-1">
 
- <!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Test_Files/QCD_1000/muon_cuts">
- <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Test_Files/QCD_1000/muon_cuts">
+ <!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Test_Files/QCD/">
+ <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Test_Files/QCD/">
 
 
 <!-- =============================================== QCD Mu =========================================================================== -->
-  <!ENTITY  QCD_Pt-1000toInft_MuEnrichedPt5    "&INdir;/Ntuple_QCD_muon_cuts.root">
+  <!ENTITY  QCD_Pt-1000toInft_MuEnrichedPt5    "&INdir;/Ntuple_QCD.root">
 
 ]>
 
@@ -50,9 +50,9 @@
       <Item Name="MuonCollection"          Value="slimmedMuonsUSER"/>
       <Item Name="TauCollection"           Value="slimmedTaus"/>
 
-      <Item Name="JetCollection"           Value="slimmedJets"/>
+      <Item Name="JetCollection"           Value="jetsAk4CHS"/>
       <Item Name="GenJetCollection"        Value="slimmedGenJets"/>
-      <Item Name="TopJetCollection"        Value="slimmedJetsAK8_SoftDrop"/>
+      <Item Name="TopJetCollection"        Value="jetsAk8CHSSubstructure_SoftDropCHS"/>
       <Item Name="GenTopJetCollection"     Value="ak8GenJetsSoftDrop" />
 
       <Item Name="additionalBranches" Value="h_gen_weight"/>

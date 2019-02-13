@@ -157,7 +157,7 @@ void GenHists::fill(const Event & event){
   hist("sum_event_weights")->Fill(1, weight);
 
   // Jets
-  std::vector<Particle>* jets = event.genjets;
+  std::vector<GenJet>* jets = event.genjets;
   int Njets = jets->size();
 
   hist("N_jets")->Fill(Njets, weight);

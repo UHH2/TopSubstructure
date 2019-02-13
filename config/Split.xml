@@ -8,9 +8,9 @@
 
 
 <!-- =============================================== ttbar =========================================================================== -->
-  <!ENTITY TTbar_Mtt0000to0700    "&INdir;/Ntuple_TTbar_decaychannel.root">
-  <!ENTITY TTbar_Mtt0700to1000    "&INdir;/Ntuple_TTbar_decaychannel.root">
-  <!ENTITY TTbar_Mtt1000toInft    "&INdir;/Ntuple_TTbar_decaychannel.root">
+  <!ENTITY TTbar_Mtt0000to0700    "&INdir;/Ntuple_TTbar_sel.root">
+  <!ENTITY TTbar_Mtt0700to1000    "&INdir;/Ntuple_TTbar_sel.root">
+  <!ENTITY TTbar_Mtt1000toInft    "&INdir;/Ntuple_TTbar_sel.root">
 
 ]>
 
@@ -54,9 +54,9 @@
       <Item Name="MuonCollection"          Value="slimmedMuonsUSER"/>
       <Item Name="TauCollection"           Value="slimmedTaus"/>
 
-      <Item Name="JetCollection"           Value="slimmedJets"/>
+      <Item Name="JetCollection"           Value="jetsAk4CHS"/>
       <Item Name="GenJetCollection"        Value="slimmedGenJets"/>
-      <Item Name="TopJetCollection"        Value="slimmedJetsAK8_SoftDrop"/>
+      <Item Name="TopJetCollection"        Value="jetsAk8CHSSubstructure_SoftDropCHS"/>
       <Item Name="GenTopJetCollection"     Value="ak8GenJetsSoftDrop" />
 
       <Item Name="additionalBranches" Value="PFParticles ttbargen"/>

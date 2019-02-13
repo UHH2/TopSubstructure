@@ -122,7 +122,7 @@ namespace uhh2examples {
     // calling common->set_*_id or common->disable_*
     common->init(ctx);
 
-    MuonId muid = AndId<Muon>(MuonIDTight(), PtEtaCut(55., 2.4));
+    MuonId muid = AndId<Muon>(MuonID(Muon::CutBasedIdTight), PtEtaCut(55., 2.4));
     ElectronId eleid = AndId<Electron>(ElectronID_Spring16_medium_noIso, PtEtaCut(55., 2.4));
 
     muoSR_cleaner.reset(new     MuonCleaner(muid));

@@ -17,6 +17,7 @@
 #include "UHH2/common/include/TopJetIds.h"
 #include "UHH2/common/include/MCWeight.h"
 #include "UHH2/common/include/TTbarGen.h"
+#include "UHH2/common/include/TTbarGenHists.h"
 
 #include "UHH2/TopSubstructure/include/GenHists.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureRecoHists.h"
@@ -41,6 +42,7 @@ namespace uhh2examples {
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
     std::unique_ptr<Hists> h_mass_0_700, h_mass_700_1000, h_mass_1000_Inft;
     std::unique_ptr<Hists> h_rec_0_700, h_rec_700_1000, h_rec_1000_Inft;
+    std::unique_ptr<Hists> h_ttbar_0_700, h_ttbar_700_1000, h_ttbar_1000_Inft;
 
     uhh2::Event::Handle<double> h_gen_weight;
   };
@@ -63,14 +65,17 @@ namespace uhh2examples {
     if(isTTbar){
       h_mass_0_700.reset(new GenHists(ctx, "mass_0_700"));
       h_rec_0_700.reset(new TopSubstructureRecoHists(ctx, "rec_0_700"));
+      h_ttbar_0_700.reset(new TTbarGenHists(ctx, "ttbar_0_700"));
     }
     if(isTTbar2) {
       h_mass_700_1000.reset(new GenHists(ctx, "mass_700_1000"));
       h_rec_700_1000.reset(new TopSubstructureRecoHists(ctx, "rec_700_1000"));
+      h_ttbar_700_1000.reset(new TTbarGenHists(ctx, "ttbar_700_1000"));
     }
     if(isTTbar3){
       h_mass_1000_Inft.reset(new GenHists(ctx, "mass_1000_Inft"));
       h_rec_1000_Inft.reset(new TopSubstructureRecoHists(ctx, "rec_1000_Inft"));
+      h_ttbar_1000_Inft.reset(new TTbarGenHists(ctx, "ttbar_1000_Inft"));
     }
   }
 
@@ -94,16 +99,19 @@ namespace uhh2examples {
     if(isTTbar && dummy.M() >= 0 && dummy.M() < 700){
       h_mass_0_700->fill(event);
       h_rec_0_700->fill(event);
+      h_ttbar_0_700->fill(event);
       return true;
     }
     else if(isTTbar2 && dummy.M() >= 700 && dummy.M() < 1000){
       h_mass_700_1000->fill(event);
       h_rec_700_1000->fill(event);
+      h_ttbar_700_1000->fill(event);
       return true;
     }
     else if(isTTbar3 && dummy.M() >= 1000){
       h_mass_1000_Inft->fill(event);
       h_rec_1000_Inft->fill(event);
+      h_ttbar_1000_Inft->fill(event);
       return true;
     }
 
