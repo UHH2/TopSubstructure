@@ -40,6 +40,7 @@ namespace uhh2examples {
     bool isMC, isTTbar;
     bool passed_rec, passed_gen, passed_gen_sel, passed_rec_sel;
     bool matched_rec, matched_gen;
+    bool passed_rec_mass, passed_gen_mass;
 
     bool passed_rec_2;
 
@@ -76,9 +77,11 @@ namespace uhh2examples {
     uhh2::Event::Handle<double> h_rec_weight;
     uhh2::Event::Handle<double> h_gen_weight;
 
-    uhh2::Event::Handle<bool> h_passed_rec;
-    uhh2::Event::Handle<bool> h_passed_gen;
-    uhh2::Event::Handle<double> h_weight;
+    uhh2::Event::Handle<bool> h_passed_rec, h_passed_rec_final;
+    uhh2::Event::Handle<bool> h_passed_gen, h_passed_gen_final;
+
+    uhh2::Event::Handle<double> h_pt_rec;
+    uhh2::Event::Handle<double> h_pt_gen;
   };
 
 
@@ -87,8 +90,12 @@ namespace uhh2examples {
 
     h_passed_rec = ctx.get_handle<bool>("h_passed_rec");
     h_passed_gen = ctx.get_handle<bool>("h_passed_gen");
-    h_weight = ctx.get_handle<double>("h_gen_weight");
-
+    h_passed_rec_final = ctx.declare_event_output<bool>("h_passed_rec_final");
+    h_passed_gen_final = ctx.declare_event_output<bool>("h_passed_gen_final");
+    h_rec_weight = ctx.get_handle<double>("h_rec_weight");
+    h_gen_weight = ctx.get_handle<double>("h_gen_weight");
+    h_pt_rec = ctx.declare_event_output<double>("h_pt_rec");
+    h_pt_gen = ctx.declare_event_output<double>("h_pt_gen");
 
 
     isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft");
@@ -164,7 +171,7 @@ namespace uhh2examples {
 
   bool PostKinCutModule::process(Event & event) {
     cout << "PostKinCutModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
-    event.weight = event.get(h_weight);
+    // event.weight = event.get(h_weight);
     // 1. run all modules other modules.
     if(event.is_valid(h_passed_gen)) passed_gen = event.get(h_passed_gen);
     else passed_gen = false;
@@ -172,6 +179,8 @@ namespace uhh2examples {
     if(event.is_valid(h_passed_rec)) passed_rec = event.get(h_passed_rec);
     else passed_rec = false;
     if(isTTbar) ttgenprod->process(event);
+    passed_rec_mass = false;
+    passed_gen_mass = false;
 
     matched_rec = false;
     matched_gen = false;
@@ -201,8 +210,8 @@ namespace uhh2examples {
             if(matched_gen) h_gen_dr_matched->fill(event);
             else h_gen_dr_unmatched->fill(event);
 
-            passed_gen = mass_gen->passes(event);
-            if(passed_gen){
+            passed_gen_mass = mass_gen->passes(event);
+            if(passed_gen_mass){
               h_gen_mass->fill(event);
               h_passedgen_rec->fill(event);
               matched_gen = genmatching->passes(event);
@@ -268,8 +277,8 @@ namespace uhh2examples {
           }
 
             // M(first TopJet) > M(second TopJet + Muon)
-            passed_rec = mass_sel1->passes(event);
-            if(passed_rec){
+            passed_rec_mass = mass_sel1->passes(event);
+            if(passed_rec_mass){
               h_mass->fill(event);
               if(isTTbar){
                 h_passedrec_gen->fill(event);
@@ -283,6 +292,10 @@ namespace uhh2examples {
         }
       }
     }
+    event.set(h_passed_rec_final, passed_rec_mass);
+    event.set(h_passed_gen_final, passed_gen_mass);
+    if(event.topjets->size() > 0) event.set(h_pt_rec, event.topjets->at(0).pt());
+    if(isTTbar && event.gentopjets->size() > 0) event.set(h_pt_gen, event.gentopjets->at(0).pt());
     if((!passed_rec && !passed_gen)) return false;
 
     // 3. decide whether or not to keep the current event in the output:

@@ -1,0 +1,47 @@
+hadd Target file: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root
+hadd compression setting for all ouput: 1
+hadd Source file 1: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/SelMuPostkin_workdir/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_0.root
+hadd Source file 2: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/SelMuPostkin_workdir/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_1.root
+hadd Source file 3: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/SelMuPostkin_workdir/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_2.root
+hadd Source file 4: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/SelMuPostkin_workdir/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_3.root
+hadd Source file 5: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/SelMuPostkin_workdir/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_4.root
+hadd Source file 6: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/SelMuPostkin_workdir/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_5.root
+hadd Source file 7: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/SelMuPostkin_workdir/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_6.root
+hadd Source file 8: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/SelMuPostkin_workdir/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_7.root
+hadd Source file 9: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/SelMuPostkin_workdir/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_8.root
+hadd Source file 10: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/SelMuPostkin_workdir/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_9.root
+hadd Source file 11: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/SelMuPostkin_workdir/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_10.root
+hadd Source file 12: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/SelMuPostkin_workdir/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_11.root
+hadd Source file 13: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/SelMuPostkin_workdir/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_12.root
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/gen_pt_topjet
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/gen_pt_topjet_matched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/gen_pt_topjet_unmatched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/gen_ntopjet2
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/gen_ntopjet2_matched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/gen_ntopjet2_unmatched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/gen_dr
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/gen_dr_matched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/gen_dr_unmatched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/gen_mass
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/gen_mass_matched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/gen_mass_unmatched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/pt_topjet
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/pt_topjet_matched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/pt_topjet_unmatched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/ntopjet2
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/ntopjet2_matched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/ntopjet2_unmatched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/ntopjet1
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/ntopjet1_matched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/ntopjet1_unmatched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/dr
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/dr_matched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/dr_unmatched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/mass
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/mass_matched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/mass_unmatched
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/passedgen_rec
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/passedrec_gen
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/ttbar_hist
+hadd Target path: /nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft.root:/SFrame

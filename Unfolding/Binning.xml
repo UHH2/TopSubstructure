@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE TUnfoldBinning SYSTEM "tunfoldbinning.dtd">
+<TUnfoldBinning>
+<BinningNode name="binning_rec" firstbin="1" factor="1">
+ <BinningNode name="measurement_rec" firstbin="1" factor="1">
+  <Axis name="pt" lowEdge="400">
+   <Bin repeat="30" width="10" center="405" />
+   <Bin location="overflow" width="10" center="705"/>
+  </Axis>
+ </BinningNode>
+</BinningNode>
+<BinningNode name="binning_gen" firstbin="1" factor="1">
+ <BinningNode name="measurement_gen" firstbin="1" factor="1">
+  <Axis name="pt" lowEdge="400">
+   <Bin repeat="15" width="20" center="410" />
+   <Bin location="overflow" width="20" center="710"/>
+  </Axis>
+ </BinningNode>
+</BinningNode>
+</TUnfoldBinning>

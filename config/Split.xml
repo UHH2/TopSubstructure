@@ -3,14 +3,14 @@
 
   <!ENTITY NEVT "-1">
 
- <!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Test_Files/">
- <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Test_Files/">
+ <!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Test_Files/Events_63k/">
+ <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Test_Files/Events_63k/">
 
 
 <!-- =============================================== ttbar =========================================================================== -->
-  <!ENTITY TTbar_Mtt0000to0700    "&INdir;/Ntuple_TTbar_decaychannel.root">
-  <!ENTITY TTbar_Mtt0700to1000    "&INdir;/Ntuple_TTbar_decaychannel.root">
-  <!ENTITY TTbar_Mtt1000toInft    "&INdir;/Ntuple_TTbar_decaychannel.root">
+  <!ENTITY TTbar_Mtt0000to0700    "&INdir;/Ntuple_63k.root">
+  <!ENTITY TTbar_Mtt0700to1000    "&INdir;/Ntuple_63k.root">
+  <!ENTITY TTbar_Mtt1000toInft    "&INdir;/Ntuple_63k.root">
 
 ]>
 
