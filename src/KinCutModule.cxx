@@ -85,11 +85,14 @@ namespace uhh2examples {
 
     common->disable_mclumiweight();
     common->switch_jetlepcleaner();
+
+    // common->disable_jersmear();
+    // common->disable_jec();
     common->init(ctx); // always last!
 
 
     MuonId muid       = AndId<Muon>(MuonID(Muon::CutBasedIdTight), PtEtaCut(55., 2.4));
-    ElectronId eleid  = AndId<Electron>(ElectronID_Spring16_medium_noIso, PtEtaCut(55., 2.4));
+    ElectronId eleid  = AndId<Electron>(ElectronID_Summer16_medium_noIso, PtEtaCut(55., 2.4));
     Btag_medium        = CSVBTag(CSVBTag::WP_MEDIUM);
 
     muoSR_cleaner.reset(new MuonCleaner(muid));
@@ -111,7 +114,7 @@ namespace uhh2examples {
       ttgenprod.reset(new TTbarGenProducer(ctx, ttbar_gen_label, false));
       nmu_gen.reset(new TTbarSemilep(ctx));
       genmatching.reset(new GenMatching(ctx));
-    }
+  }
 
     pv_sel.reset(new NPVSelection(1, -1, PrimaryVertexId(StandardPrimaryVertexId())));
     PUreweight.reset(new MCPileupReweight(ctx, "central"));
@@ -128,7 +131,6 @@ namespace uhh2examples {
     h_gen_nmu.reset(new GenHists(ctx, "gen_nmu"));
     h_gen_nmu_matched.reset(new GenHists(ctx, "gen_nmu_matched"));
     h_gen_nmu_unmatched.reset(new GenHists(ctx, "gen_nmu_unmatched"));
-
 
     h_start.reset(new TopSubstructureRecoHists(ctx, "start"));
     h_lumi.reset(new TopSubstructureRecoHists(ctx, "lumi"));

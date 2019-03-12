@@ -112,7 +112,7 @@ namespace uhh2examples {
 
 
     MuonId muid       = AndId<Muon>(MuonID(Muon::CutBasedIdTight), PtEtaCut(55., 2.4));
-    ElectronId eleid  = AndId<Electron>(ElectronID_Spring16_medium_noIso, PtEtaCut(55., 2.4));
+    ElectronId eleid  = AndId<Electron>(ElectronID_Summer16_medium_noIso, PtEtaCut(55., 2.4));
     Btag_medium        = CSVBTag(CSVBTag::WP_MEDIUM);
 
     muoSR_cleaner.reset(new MuonCleaner(muid));
