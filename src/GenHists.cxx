@@ -151,7 +151,9 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
 
 void GenHists::fill(const Event & event){
   // Don't forget to always use the weight when filling.
-  double weight = event.get(h_weight);
+  double weight;
+  if(event.is_valid(h_weight))  weight = event.get(h_weight);
+  else weight = event.weight;
 
   //general
   hist("sum_event_weights")->Fill(1, weight);

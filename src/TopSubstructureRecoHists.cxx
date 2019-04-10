@@ -83,7 +83,7 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
 
   // get handles
   h_weight = ctx.get_handle<double>("h_rec_weight");
-  isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft");
+  isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v2" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000_2016v2" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft_2016v2");
 }
 
 
@@ -167,12 +167,6 @@ void TopSubstructureRecoHists::fill(const Event & event){
     hist("tau32_tj1")->Fill(topjet->at(0).tau3()/topjet->at(0).tau2(), weight);
     hist("tau21_tj1")->Fill(topjet->at(0).tau2()/topjet->at(0).tau1(), weight);
 
-    hist("N_mu")->Fill(event.muons->size(), weight);
-    if(event.muons->size() > 0) hist("pt_mu")->Fill(event.muons->at(0).pt(), weight);
-    if(event.muons->size() > 0) hist("eta_mu")->Fill(event.muons->at(0).eta(), weight);
-    if(event.muons->size() > 0) hist("mass_mu")->Fill(event.muons->at(0).v4().M(), weight);
-
-    if(event.muons->size() > 0) hist("E_Tmiss")->Fill(event.met->pt(), weight);
     if(event.muons->size() > 0) hist("dPhi_mu_tj1")->Fill(deltaPhi(topjet->at(0), event.muons->at(0)), weight);
 
     if(event.muons->size() > 0) hist("dR_mu_tj1")->Fill(deltaR(event.muons->at(0), topjet->at(0)), weight);
@@ -205,4 +199,11 @@ void TopSubstructureRecoHists::fill(const Event & event){
       }
     }
   } // closing brackets of TopJet
+  hist("N_mu")->Fill(event.muons->size(), weight);
+  if(event.muons->size() > 0) hist("pt_mu")->Fill(event.muons->at(0).pt(), weight);
+  if(event.muons->size() > 0) hist("eta_mu")->Fill(event.muons->at(0).eta(), weight);
+  if(event.muons->size() > 0) hist("mass_mu")->Fill(event.muons->at(0).v4().M(), weight);
+
+  // if(event.muons->size() > 0) hist("E_Tmiss")->Fill(event.met->pt(), weight);
+  hist("E_Tmiss")->Fill(event.met->pt(), weight);
 }

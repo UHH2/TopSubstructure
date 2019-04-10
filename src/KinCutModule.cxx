@@ -57,7 +57,7 @@ namespace uhh2examples {
     std::unique_ptr<AnalysisModule> ttgenprod;
 
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
-    std::unique_ptr<Hists> h_gen_nmu, h_gen_nmu_matched, h_gen_nmu_unmatched;
+    std::unique_ptr<Hists> h_gen_start, h_gen_lumi, h_gen_nmu, h_gen_nmu_matched, h_gen_nmu_unmatched;
     std::unique_ptr<Hists> h_start, h_lumi, h_common, h_jetcleaner, h_muoncleaner, h_elecleaner, h_pu, h_trigger;
 
     std::unique_ptr<Hists> h_pv, h_nmu, h_tjlc, h_tjc, h_met, h_pt_mu, h_nele, h_twodcut, h_nbtag_medium;
@@ -66,6 +66,8 @@ namespace uhh2examples {
 
     uhh2::Event::Handle<double> h_rec_weight;
     uhh2::Event::Handle<double> h_gen_weight;
+    uhh2::Event::Handle<bool> h_passed_gen_pre;
+    uhh2::Event::Handle<bool> h_passed_rec_pre;
     uhh2::Event::Handle<bool> h_passed_gen;
     uhh2::Event::Handle<bool> h_passed_rec;
   };
@@ -75,6 +77,9 @@ namespace uhh2examples {
     // 1. setup other modules. CommonModules and the JetCleaner:
     h_gen_weight = ctx.declare_event_output<double>("h_gen_weight");
     h_rec_weight = ctx.declare_event_output<double>("h_rec_weight");
+
+    h_passed_rec_pre = ctx.get_handle<bool>("h_passed_rec_pre");
+    h_passed_gen_pre = ctx.get_handle<bool>("h_passed_gen_pre");
     h_passed_rec = ctx.declare_event_output<bool>("h_passed_rec");
     h_passed_gen = ctx.declare_event_output<bool>("h_passed_gen");
 
@@ -91,7 +96,7 @@ namespace uhh2examples {
     common->init(ctx); // always last!
 
 
-    MuonId muid       = AndId<Muon>(MuonID(Muon::CutBasedIdTight), PtEtaCut(55., 2.4));
+    MuonId muid       = AndId<Muon>(MuonID(Muon::Tight), PtEtaCut(55., 2.4));
     ElectronId eleid  = AndId<Electron>(ElectronID_Summer16_medium_noIso, PtEtaCut(55., 2.4));
     Btag_medium        = CSVBTag(CSVBTag::WP_MEDIUM);
 
@@ -106,7 +111,7 @@ namespace uhh2examples {
     trigger_sel_B = uhh2::make_unique<TriggerSelection>("HLT_TkMu50_v*");
 
     isMC = (ctx.get("dataset_type") == "MC");
-    isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft");
+    isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v2" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000_2016v2" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft_2016v2");
 
     // 2. set up selections
     if(isTTbar){
@@ -114,7 +119,7 @@ namespace uhh2examples {
       ttgenprod.reset(new TTbarGenProducer(ctx, ttbar_gen_label, false));
       nmu_gen.reset(new TTbarSemilep(ctx));
       genmatching.reset(new GenMatching(ctx));
-  }
+    }
 
     pv_sel.reset(new NPVSelection(1, -1, PrimaryVertexId(StandardPrimaryVertexId())));
     PUreweight.reset(new MCPileupReweight(ctx, "central"));
@@ -126,8 +131,9 @@ namespace uhh2examples {
     twodcut_sel.reset(new TwoDCut(0.4, 40));
     nbtag_medium_sel.reset(new NJetSelection(1, -1, Btag_medium));
 
-
     // 3. Set up Hists classes:
+    h_gen_start.reset(new GenHists(ctx, "gen_start"));
+    h_gen_lumi.reset(new GenHists(ctx, "gen_lumi"));
     h_gen_nmu.reset(new GenHists(ctx, "gen_nmu"));
     h_gen_nmu_matched.reset(new GenHists(ctx, "gen_nmu_matched"));
     h_gen_nmu_unmatched.reset(new GenHists(ctx, "gen_nmu_unmatched"));
@@ -156,28 +162,23 @@ namespace uhh2examples {
   bool KinCutModule::process(Event & event) {
     cout << "KinCutModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
 
+    event.set(h_gen_weight, 1);
     h_start->fill(event);
+    h_gen_start->fill(event);
     lumiweight->process(event);
     h_lumi->fill(event);
 
     event.set(h_gen_weight, event.weight);
+    h_gen_lumi->fill(event);
     // 1. run all modules other modules.
+    if(event.is_valid(h_passed_gen_pre)) passed_gen = event.get(h_passed_gen_pre);
+    else passed_gen = false;
+
+    if(event.is_valid(h_passed_rec_pre)) passed_rec = event.get(h_passed_rec_pre);
+    else passed_rec = false;
+
     passed = false;
     passed_gen_sel = false;
-    passed_gen = false;
-    passed_rec = false;
-
-    if(isTTbar){
-      ttgenprod->process(event);
-      passed_gen_sel = nmu_gen->passes(event);
-      if(passed_gen_sel){
-        h_gen_nmu->fill(event);
-        passed_gen = true;
-        matched_gen = genmatching->passes(event);
-        if(matched_gen) h_gen_nmu_matched->fill(event);
-        else h_gen_nmu_unmatched->fill(event);
-      }
-    }
 
     common->process(event);
     h_common->fill(event);
