@@ -101,4 +101,24 @@ namespace uhh2examples {
     double dr_min;
   };
 
+  class GenMuonPtSelection:public uhh2::Selection{
+  public:
+    explicit GenMuonPtSelection(uhh2::Context& ctx, double pt_min = 0, double pt_max = -1);
+    virtual bool passes(const uhh2::Event & event) override;
+
+  private:
+    uhh2::Event::Handle<TTbarGen> h_ttbargen;
+    double pt_min, pt_max;
+  };
+
+  class GenMETSelection:public uhh2::Selection{
+  public:
+    explicit GenMETSelection(uhh2::Context& ctx, double met_min = 0, double met_max = -1);
+    virtual bool passes(const uhh2::Event & event) override;
+
+  private:
+    uhh2::Event::Handle<TTbarGen> h_ttbargen;
+    double met_min, met_max;
+  };
+
 }

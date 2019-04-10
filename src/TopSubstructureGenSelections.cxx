@@ -149,3 +149,23 @@ bool dRSelection::passes(const Event & event){
   }
   return pass;
 }
+
+GenMuonPtSelection::GenMuonPtSelection(uhh2::Context& ctx, double pt_min_, double pt_max_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), pt_min(pt_min_), pt_max(pt_max_){}
+bool GenMuonPtSelection::passes(const Event & event){
+  bool pass = false;
+  if(event.is_valid(h_ttbargen)){
+    const auto ttbargen = event.get(h_ttbargen);
+    if((ttbargen.ChargedLepton().pt() < pt_max || pt_max < 0) && ttbargen.ChargedLepton().pt() > pt_min) pass = true;
+  }
+  return pass;
+}
+
+GenMETSelection::GenMETSelection(uhh2::Context& ctx, double met_min_, double met_max_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), met_min(met_min_), met_max(met_max_){}
+bool GenMETSelection::passes(const Event & event){
+  bool pass = false;
+  if(event.is_valid(h_ttbargen)){
+    const auto ttbargen = event.get(h_ttbargen);
+    if((ttbargen.Neutrino().pt() < met_max || met_max < 0) && ttbargen.Neutrino().pt() > met_min) pass = true;
+  }
+  return pass;
+}
