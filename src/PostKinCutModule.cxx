@@ -36,21 +36,23 @@ namespace uhh2examples {
     virtual bool process(Event & event) override;
 
   private:
-
-    bool isMC, isTTbar;
-    bool passed_rec, passed_gen, passed_gen_sel, passed_rec_sel;
+    // bool passed_rec_2;
+    // bool isMC;
+    bool isTTbar;
+    bool passed_rec, passed_gen;
     bool matched_rec, matched_gen;
     bool passed_rec_mass, passed_gen_mass;
-
-    bool passed_rec_2;
 
     std::unique_ptr<GenTopJetCleaner> gentopjetcleaner;
 
     // declare the Selections to use. Use unique_ptr to ensure automatic call of delete in the destructor, to avoid memory leaks.
-    std::unique_ptr<Selection> ntopjet2_sel, ntopjet1_sel, nbtag_medium_sel, nbtag_tight_sel;
+    // std::unique_ptr<Selection> nbtag_tight_sel;
+    // std::unique_ptr<Selection> mass_sel0;
+    // std::unique_ptr<Selection> ntopjet1_sel;
+
+    std::unique_ptr<Selection> ntopjet2_sel;
     std::unique_ptr<Selection> pt_topjet_sel1;
-    std::unique_ptr<Selection> mass_sel0, mass_sel1, dr_sel;
-    std::unique_ptr<Selection> twodcut_sel1, twodcut_sel2, twodcut_sel3, twodcut_sel4, twodcut_sel5, twodcut_sel6, twodcut_sel7, twodcut_sel8, twodcut_sel9, twodcut_sel10, twodcut_sel11, twodcut_sel12, twodcut_sel13, twodcut_sel14, twodcut_sel15, twodcut_sel16;
+    std::unique_ptr<Selection> mass_sel1, dr_sel;
 
     std::unique_ptr<Selection> pt_topjet_gen, ntopjet2_gen, dr_gen, mass_gen, genmatching;
     std::unique_ptr<Selection> recmatching;
@@ -72,7 +74,7 @@ namespace uhh2examples {
     std::unique_ptr<Hists> h_passedgen_rec, h_passedrec_gen;
     std::unique_ptr<Hists> h_ttbar_hist;
 
-    JetId Btag_tight;
+    // JetId Btag_tight;
 
     uhh2::Event::Handle<double> h_rec_weight;
     uhh2::Event::Handle<double> h_gen_weight;
@@ -86,20 +88,20 @@ namespace uhh2examples {
 
 
   PostKinCutModule::PostKinCutModule(Context & ctx){
-    Btag_tight        = CSVBTag(CSVBTag::WP_TIGHT);
+    // Btag_tight        = CSVBTag(CSVBTag::WP_TIGHT);
 
     h_passed_rec = ctx.get_handle<bool>("h_passed_rec");
     h_passed_gen = ctx.get_handle<bool>("h_passed_gen");
-    h_passed_rec_final = ctx.declare_event_output<bool>("h_passed_rec_final");
-    h_passed_gen_final = ctx.declare_event_output<bool>("h_passed_gen_final");
+    // h_passed_rec_final = ctx.declare_event_output<bool>("h_passed_rec_final");
+    // h_passed_gen_final = ctx.declare_event_output<bool>("h_passed_gen_final");
     h_rec_weight = ctx.get_handle<double>("h_rec_weight");
     h_gen_weight = ctx.get_handle<double>("h_gen_weight");
-    h_pt_rec = ctx.declare_event_output<double>("h_pt_rec");
-    h_pt_gen = ctx.declare_event_output<double>("h_pt_gen");
+    // h_pt_rec = ctx.declare_event_output<double>("h_pt_rec");
+    // h_pt_gen = ctx.declare_event_output<double>("h_pt_gen");
 
 
     isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft");
-    isMC = (ctx.get("dataset_type") == "MC");
+    // isMC = (ctx.get("dataset_type") == "MC");
 
     // 2. set up selections
     if(isTTbar){
@@ -116,13 +118,13 @@ namespace uhh2examples {
     }
 
 
+    // nbtag_tight_sel.reset(new NJetSelection(1, -1, Btag_tight));
+    // mass_sel0.reset(new RecMassSelection(0));   // 0: compare mass between first and second topjet
+    // ntopjet1_sel.reset(new NTopJetSelection(1,1));
     ntopjet2_sel.reset(new NTopJetSelection(2,2));
-    ntopjet1_sel.reset(new NTopJetSelection(1,1));
-    mass_sel0.reset(new RecMassSelection(0));   // 0: compare mass between first and second topjet
     mass_sel1.reset(new RecMassSelection(1));   // 1: added 4-vector of lepton and second topjet, then compare masses
     dr_sel.reset(new RecdRSelection());
     pt_topjet_sel1.reset(new RecPtSelection(400, 200));
-    nbtag_tight_sel.reset(new NJetSelection(1, -1, Btag_tight));
 
 
     // 3. Set up Hists classes:
@@ -184,7 +186,7 @@ namespace uhh2examples {
 
     matched_rec = false;
     matched_gen = false;
-    passed_rec_2 = false;
+    // passed_rec_2 = false;
     if(isTTbar && passed_gen){
       cleaner->process(event); // Do this always!
       gentopjetcleaner->process(event);
@@ -246,15 +248,15 @@ namespace uhh2examples {
         }
 
 
-        passed_rec_2 = ntopjet1_sel->passes(event);
-        if(passed_rec_2){
-          h_ntopjet1->fill(event);
-          if(isTTbar){
-            matched_rec = recmatching->passes(event);
-            if(matched_rec) h_ntopjet1_matched->fill(event);
-            else h_ntopjet1_unmatched->fill(event);
-          }
-        }
+        // passed_rec_2 = ntopjet1_sel->passes(event);
+        // if(passed_rec_2){
+        //   h_ntopjet1->fill(event);
+        //   if(isTTbar){
+        //     matched_rec = recmatching->passes(event);
+        //     if(matched_rec) h_ntopjet1_matched->fill(event);
+        //     else h_ntopjet1_unmatched->fill(event);
+        //   }
+        // }
 
         // >= 2 TopJets
         passed_rec = ntopjet2_sel->passes(event);
@@ -292,10 +294,10 @@ namespace uhh2examples {
         }
       }
     }
-    event.set(h_passed_rec_final, passed_rec_mass);
-    event.set(h_passed_gen_final, passed_gen_mass);
-    if(event.topjets->size() > 0) event.set(h_pt_rec, event.topjets->at(0).pt());
-    if(isTTbar && event.gentopjets->size() > 0) event.set(h_pt_gen, event.gentopjets->at(0).pt());
+    // event.set(h_passed_rec_final, passed_rec_mass);
+    // event.set(h_passed_gen_final, passed_gen_mass);
+    // if(event.topjets->size() > 0) event.set(h_pt_rec, event.topjets->at(0).pt());
+    // if(isTTbar && event.gentopjets->size() > 0) event.set(h_pt_gen, event.gentopjets->at(0).pt());
     if((!passed_rec && !passed_gen)) return false;
 
     // 3. decide whether or not to keep the current event in the output:

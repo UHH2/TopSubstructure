@@ -18,54 +18,54 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   book<TH1D>("pt_jet2", "p_{T}^{Jet 2}", 120, 0, 1200);
   book<TH1D>("pt_jet3", "p_{T}^{Jet 3}", 120, 0, 1200);
   book<TH1D>("pt_jet4", "p_{T}^{Jet 4}", 120, 0, 1200);
-  book<TH1D>("N_topjets", "N_{TopJets}", 10, -0.5, 9.5);
+  book<TH1D>("N_topjets", "N_{AK8 jets}", 10, -0.5, 9.5);
 
   // bJets
   book<TH1D>("N_bJets_loose", "N_{Bjets}^{loose}", 8, -0.5, 7.5);
   book<TH1D>("N_bJets_med", "N_{Bjets}^{medium}", 8, -0.5, 7.5);
   book<TH1D>("N_bJets_tight", "N_{Bjets}^{tight}", 8, -0.5, 7.5);
 
-  book<TH1D>("M_diff1", "M_{had. TopJet candidate} - M_{lep. TopJet candidate} [GeV^{2}]", 80, -400, 400);
-  book<TH1D>("M_diff2", "M_{had. TopJet candidate} - M_{lep. TopJet candidate + Muon} [GeV^{2}]", 80, -400, 400);
+  book<TH1D>("M_diff1", "M_{had. AK8 jet candidate} - M_{lep. AK8 jet candidate} [GeV^{2}]", 80, -400, 400);
+  book<TH1D>("M_diff2", "M_{had. AK8 jet candidate} - M_{lep. AK8 jet candidate + Muon} [GeV^{2}]", 80, -400, 400);
 
   // TopJets
   // first candidate
-  book<TH1D>("M_tj1", "M_{had. TopJet candidate} [GeV^{2}]", 40, 0, 400);
-  book<TH1D>("pt_tj1", "p_{T} had. TopJet candidate [GeV]", 120, 0, 1200);
-  book<TH1D>("eta_tj1", "#eta had. TopJet candidate", 40, -2.5, 2.5);
+  book<TH1D>("M_tj1", "M_{had. AK8 jet candidate} [GeV^{2}]", 40, 0, 400);
+  book<TH1D>("pt_tj1", "p_{T} had. AK8 jet candidate [GeV]", 120, 0, 1200);
+  book<TH1D>("eta_tj1", "#eta had. AK8 jet candidate", 40, -2.5, 2.5);
   book<TH1D>("Nsubjet_tjs", "N_{subjets} all candidates", 4, -0.5, 3.5);
-  book<TH1D>("Nsubjet_tj1", "N_{subjets} had. TopJet candidate", 4, -0.5, 3.5);
-  book<TH1D>("pt_subjet1_tj1", "p_{T}^{subjet1} had. TopJet candidate [GeV]", 120, 0, 1200);
-  book<TH1D>("pt_subjet2_tj1", "p_{T}^{subjet2} had. TopJet candidate [GeV]", 80, 0, 800);
-  book<TH1D>("m_subjet1_tj1", "M_{subjet1} had. TopJet candidate [GeV^{2}]", 30, 0, 300);
-  book<TH1D>("m_subjet2_tj1", "M_{subjet2} had. TopJet candidate [GeV^{2}]", 30, 0, 300);
-  book<TH1D>("tau1_tj1", "#tau_{1} had. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau2_tj1", "#tau_{2} had. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau3_tj1", "#tau_{3} had. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau32_tj1", "#tau_{3}/#tau_{2} had. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau21_tj1", "#tau_{2}/#tau_{1} had. TopJet candidate", 40, 0, 1.);
+  book<TH1D>("Nsubjet_tj1", "N_{subjets} had. AK8 jet candidate", 4, -0.5, 3.5);
+  book<TH1D>("pt_subjet1_tj1", "p_{T}^{subjet1} had. AK8 jet candidate [GeV]", 120, 0, 1200);
+  book<TH1D>("pt_subjet2_tj1", "p_{T}^{subjet2} had. AK8 jet candidate [GeV]", 80, 0, 800);
+  book<TH1D>("m_subjet1_tj1", "M_{subjet1} had. AK8 jet candidate [GeV^{2}]", 30, 0, 300);
+  book<TH1D>("m_subjet2_tj1", "M_{subjet2} had. AK8 jet candidate [GeV^{2}]", 30, 0, 300);
+  book<TH1D>("tau1_tj1", "#tau_{1} had. AK8 jet candidate", 40, 0, 1.);
+  book<TH1D>("tau2_tj1", "#tau_{2} had. AK8 jet candidate", 40, 0, 1.);
+  book<TH1D>("tau3_tj1", "#tau_{3} had. AK8 jet candidate", 40, 0, 1.);
+  book<TH1D>("tau32_tj1", "#tau_{3}/#tau_{2} had. AK8 jet candidate", 40, 0, 1.);
+  book<TH1D>("tau21_tj1", "#tau_{2}/#tau_{1} had. AK8 jet candidate", 40, 0, 1.);
 
-  book<TH1D>("dR_mu_tj1", "#Delta R(#mu, had. TopJet candidate)", 50, 0, 5.);
-  book<TH1D>("dPhi_mu_tj1", "#Delta #Phi (#mu, had. TopJet candidate)", 40, 0, 4.);
+  book<TH1D>("dR_mu_tj1", "#Delta R(#mu, had. AK8 jet candidate)", 50, 0, 5.);
+  book<TH1D>("dPhi_mu_tj1", "#Delta #Phi (#mu, had. AK8 jet candidate)", 40, 0, 4.);
 
 
   //  second candidate
-  book<TH1D>("M_tj2", "M_{lep. TopJet candidate} [GeV^{2}]", 40, 0, 400);
-  book<TH1D>("pt_tj2", "p_{T} lep. TopJet candidate [GeV]", 120, 0, 1200);
-  book<TH1D>("eta_tj2", "#eta lep. TopJet candidate", 40, -2.5, 2.5);
-  book<TH1D>("Nsubjet_tj2", "N_{subjets} lep. TopJet candidate", 4, -0.5, 3.5);
-  book<TH1D>("pt_subjet1_tj2", "p_{T}^{subjet1} lep. TopJet candidate [GeV]", 120, 0, 1200);
-  book<TH1D>("pt_subjet2_tj2", "p_{T}^{subjet2} lep. TopJet candidate [GeV]", 80, 0, 800);
-  book<TH1D>("m_subjet1_tj2", "M_{subjet1} lep. TopJet candidate [GeV^{2}]", 30, 0, 300);
-  book<TH1D>("m_subjet2_tj2", "M_{subjet2} lep. TopJet candidate [GeV^{2}]", 30, 0, 300);
-  book<TH1D>("tau1_tj2", "#tau_{1} lep. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau2_tj2", "#tau_{2} lep. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau3_tj2", "#tau_{3} lep. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau32_tj2", "#tau_{3}/#tau_{2} lep. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau21_tj2", "#tau_{2}/#tau_{1} lep. TopJet candidate", 40, 0, 1.);
+  book<TH1D>("M_tj2", "M_{lep. AK8 jet candidate} [GeV^{2}]", 40, 0, 400);
+  book<TH1D>("pt_tj2", "p_{T} lep. AK8 jet candidate [GeV]", 120, 0, 1200);
+  book<TH1D>("eta_tj2", "#eta lep. AK8 jet candidate", 40, -2.5, 2.5);
+  book<TH1D>("Nsubjet_tj2", "N_{subjets} lep. AK8 jet candidate", 4, -0.5, 3.5);
+  book<TH1D>("pt_subjet1_tj2", "p_{T}^{subjet1} lep. AK8 jet candidate [GeV]", 120, 0, 1200);
+  book<TH1D>("pt_subjet2_tj2", "p_{T}^{subjet2} lep. AK8 jet candidate [GeV]", 80, 0, 800);
+  book<TH1D>("m_subjet1_tj2", "M_{subjet1} lep. AK8 jet candidate [GeV^{2}]", 30, 0, 300);
+  book<TH1D>("m_subjet2_tj2", "M_{subjet2} lep. AK8 jet candidate [GeV^{2}]", 30, 0, 300);
+  book<TH1D>("tau1_tj2", "#tau_{1} lep. AK8 jet candidate", 40, 0, 1.);
+  book<TH1D>("tau2_tj2", "#tau_{2} lep. AK8 jet candidate", 40, 0, 1.);
+  book<TH1D>("tau3_tj2", "#tau_{3} lep. AK8 jet candidate", 40, 0, 1.);
+  book<TH1D>("tau32_tj2", "#tau_{3}/#tau_{2} lep. AK8 jet candidate", 40, 0, 1.);
+  book<TH1D>("tau21_tj2", "#tau_{2}/#tau_{1} lep. AK8 jet candidate", 40, 0, 1.);
 
-  book<TH1D>("dR_mu_tj2", "#Delta R(#mu, lep. TopJet candidate)", 50, 0, 5.);
-  book<TH1D>("dPhi_mu_tj2", "#Delta #Phi (#mu, lep. TopJet candidate)", 40, 0, 4.);
+  book<TH1D>("dR_mu_tj2", "#Delta R(#mu, lep. AK8 jet candidate)", 50, 0, 5.);
+  book<TH1D>("dPhi_mu_tj2", "#Delta #Phi (#mu, lep. AK8 jet candidate)", 40, 0, 4.);
 
 
   // leptons
@@ -92,6 +92,8 @@ void TopSubstructureRecoHists::fill(const Event & event){
   double weight;
   if(event.is_valid(h_weight))  weight = event.get(h_weight);
   else weight = event.weight;
+
+  if(isTTbar) weight *= 0.6784;
 
   std::vector<TopJet>* topjet = event.topjets;
 

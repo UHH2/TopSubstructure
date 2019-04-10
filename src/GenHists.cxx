@@ -18,11 +18,11 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
   book<TH1D>("pt_jet2", "p_{T}^{GenJet 2}", 120, 0, 1200);
   book<TH1D>("pt_jet3", "p_{T}^{GenJet 3}", 120, 0, 1200);
   book<TH1D>("pt_jet4", "p_{T}^{GenJet 4}", 120, 0, 1200);
-  book<TH1D>("N_topjets", "N_{GenTopJets}", 10, -0.5, 9.5);
+  book<TH1D>("N_topjets", "N_{AK8 GenJets}", 10, -0.5, 9.5);
 
   // TopJets
-  book<TH1D>("M_diff1", "M_{had. GenTopJet} - M_{lep. GenTopJet} [GeV^{2}]", 80, -400, 400);
-  book<TH1D>("M_diff2", "M_{had. GenTopJet} - M_{lep. GenTopJet + Muon} [GeV^{2}]", 80, -400, 400);
+  book<TH1D>("M_diff1", "M_{had. AK8 GenJet} - M_{lep. AK8 GenJet} [GeV^{2}]", 80, -400, 400);
+  book<TH1D>("M_diff2", "M_{had. AK8 GenJet} - M_{lep. AK8 GenJet + Muon} [GeV^{2}]", 80, -400, 400);
 
   book<TH1D>("top_pt", "p_{T} top-quark [GeV]", 120, 0, 1200);
   book<TH1D>("top1_pt", "p_{T} top-quark (first) [GeV]", 120, 0, 1200);
@@ -31,74 +31,74 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
 
 
   // first candidate
-  book<TH1D>("M_gtj1", "M_{had. GenTopJet} [GeV^{2}]", 40, 0, 400);
-  book<TH1D>("pt_gtj1", "p_{T} had. GenTopJet [GeV]", 120, 0, 1200);
-  book<TH1D>("eta_gtj1", "#eta had. GenTopJet", 40, -2.5, 2.5);
-  book<TH1D>("Nsubjet_all", "N_{subjets} all GenTopJets", 4, -0.5, 3.5);
-  book<TH1D>("Nsubjet_gtj1", "N_{subjets} had. GenTopJet", 4, -0.5, 3.5);
-  book<TH1D>("pt_gtj1_subjet1", "p_{T}^{subjet1} had. GenTopJet [GeV]", 120, 0, 1200);
-  book<TH1D>("pt_gtj1_subjet2", "p_{T}^{subjet2} had. GenTopJet [GeV]", 80, 0, 800);
-  book<TH1D>("m_gtj1_subjet1", "M_{subjet1} had. GenTopJet [GeV^{2}]", 30, 0, 300);
-  book<TH1D>("m_gtj1_subjet2", "M_{subjet2} had. GenTopJet [GeV^{2}]", 30, 0, 300);
-  book<TH1D>("tau1_gtj1", "#tau_{1} had. GenTopJet", 40, 0, 1.);
-  book<TH1D>("tau2_gtj1", "#tau_{2} had. GenTopJet", 40, 0, 1.);
-  book<TH1D>("tau3_gtj1", "#tau_{3} had. GenTopJet", 40, 0, 1.);
-  book<TH1D>("tau32_gtj1", "#tau_{3}/#tau_{2} had. GenTopJet", 40, 0, 1.);
-  book<TH1D>("tau21_gtj1", "#tau_{2}/#tau_{1} had. GenTopJet", 40, 0, 1.);
+  book<TH1D>("M_gtj1", "M_{had. AK8 GenJet} [GeV^{2}]", 40, 0, 400);
+  book<TH1D>("pt_gtj1", "p_{T} had. AK8 GenJet [GeV]", 120, 0, 1200);
+  book<TH1D>("eta_gtj1", "#eta had. AK8 GenJet", 40, -2.5, 2.5);
+  book<TH1D>("Nsubjet_all", "N_{subjets} all AK8 GenJets", 4, -0.5, 3.5);
+  book<TH1D>("Nsubjet_gtj1", "N_{subjets} had. AK8 GenJet", 4, -0.5, 3.5);
+  book<TH1D>("pt_gtj1_subjet1", "p_{T}^{subjet1} had. AK8 GenJet [GeV]", 120, 0, 1200);
+  book<TH1D>("pt_gtj1_subjet2", "p_{T}^{subjet2} had. AK8 GenJet [GeV]", 80, 0, 800);
+  book<TH1D>("m_gtj1_subjet1", "M_{subjet1} had. AK8 GenJet [GeV^{2}]", 30, 0, 300);
+  book<TH1D>("m_gtj1_subjet2", "M_{subjet2} had. AK8 GenJet [GeV^{2}]", 30, 0, 300);
+  book<TH1D>("tau1_gtj1", "#tau_{1} had. AK8 GenJet", 40, 0, 1.);
+  book<TH1D>("tau2_gtj1", "#tau_{2} had. AK8 GenJet", 40, 0, 1.);
+  book<TH1D>("tau3_gtj1", "#tau_{3} had. AK8 GenJet", 40, 0, 1.);
+  book<TH1D>("tau32_gtj1", "#tau_{3}/#tau_{2} had. AK8 GenJet", 40, 0, 1.);
+  book<TH1D>("tau21_gtj1", "#tau_{2}/#tau_{1} had. AK8 GenJet", 40, 0, 1.);
 
-  book<TH1D>("dR_q1_gtj1", "#Delta R(quark1, had. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dR_q2_gtj1", "#Delta R(quark2, had. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dR_bqhad_gtj1", "#Delta R(b-quark (had), had. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dR_whad_gtj1", "#Delta R(Whad, had. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dPhi_q1_gtj1", "#Delta #Phi (quark1, had. GenTopJet)", 40, 0, 4.);
-  book<TH1D>("dPhi_q2_gtj1", "#Delta #Phi (quark2, had. GenTopJet)", 40, 0, 4.);
-  book<TH1D>("dPhi_bqhad_gtj1", "#Delta #Phi (b-quark (had), had. GenTopJet)", 40, 0, 4.);
-  book<TH1D>("dPhi_whad_gtj1", "#Delta #Phi (Whad, had. GenTopJet)", 40, 0, 4.);
+  book<TH1D>("dR_q1_gtj1", "#Delta R(quark1, had. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dR_q2_gtj1", "#Delta R(quark2, had. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dR_bqhad_gtj1", "#Delta R(b-quark (had), had. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dR_whad_gtj1", "#Delta R(Whad, had. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dPhi_q1_gtj1", "#Delta #Phi (quark1, had. AK8 GenJet)", 40, 0, 4.);
+  book<TH1D>("dPhi_q2_gtj1", "#Delta #Phi (quark2, had. AK8 GenJet)", 40, 0, 4.);
+  book<TH1D>("dPhi_bqhad_gtj1", "#Delta #Phi (b-quark (had), had. AK8 GenJet)", 40, 0, 4.);
+  book<TH1D>("dPhi_whad_gtj1", "#Delta #Phi (Whad, had. AK8 GenJet)", 40, 0, 4.);
 
-  book<TH1D>("dR_mu_gtj1", "#Delta R(#mu, had. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dR_nu_gtj1", "#Delta R(#nu_{#mu}, had. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dR_bqlep_gtj1", "#Delta R(b-quark (lep), had. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dR_wlep_gtj1", "#Delta R(Wlep, had. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dPhi_mu_gtj1", "#Delta #Phi (#mu, had. GenTopJet)", 40, 0, 4.);
-  book<TH1D>("dPhi_nu_gtj1", "#Delta #Phi (#nu_{#mu}, had. GenTopJet)", 40, 0, 4.);
-  book<TH1D>("dPhi_bqlep_gtj1", "#Delta #Phi (b-quark (lep), had. GenTopJet)", 40, 0, 4.);
-  book<TH1D>("dPhi_wlep_gtj1", "#Delta #Phi (Wlep, had. GenTopJet)", 40, 0, 4.);
+  book<TH1D>("dR_mu_gtj1", "#Delta R(#mu, had. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dR_nu_gtj1", "#Delta R(#nu_{#mu}, had. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dR_bqlep_gtj1", "#Delta R(b-quark (lep), had. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dR_wlep_gtj1", "#Delta R(Wlep, had. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dPhi_mu_gtj1", "#Delta #Phi (#mu, had. AK8 GenJet)", 40, 0, 4.);
+  book<TH1D>("dPhi_nu_gtj1", "#Delta #Phi (#nu_{#mu}, had. AK8 GenJet)", 40, 0, 4.);
+  book<TH1D>("dPhi_bqlep_gtj1", "#Delta #Phi (b-quark (lep), had. AK8 GenJet)", 40, 0, 4.);
+  book<TH1D>("dPhi_wlep_gtj1", "#Delta #Phi (Wlep, had. AK8 GenJet)", 40, 0, 4.);
 
 
   //  second candidate
-  book<TH1D>("M_gtj2", "M_{lep GenTopJet} [GeV^{2}]", 40, 0, 400);
-  book<TH1D>("pt_gtj2", "p_{T} lep. GenTopJet [GeV]", 120, 0, 1200);
-  book<TH1D>("eta_gtj2", "#eta lep. GenTopJet", 40, -2.5, 2.5);
-  book<TH1D>("Nsubjet_gtj2", "N_{subjets} lep. GenTopJet", 4, -0.5, 3.5);
-  book<TH1D>("pt_gtj2_subjet1", "p_{T}^{subjet1} lep. GenTopJet [GeV]", 120, 0, 1200);
-  book<TH1D>("pt_gtj2_subjet2", "p_{T}^{subjet2} lep. GenTopJet [GeV]", 80, 0, 800);
-  book<TH1D>("m_gtj2_subjet1", "M_{subjet1} lep. GenTopJet [GeV^{2}]", 30, 0, 300);
-  book<TH1D>("m_gtj2_subjet2", "M_{subjet2} lep. GenTopJet [GeV^{2}]", 30, 0, 300);
-  book<TH1D>("tau1_gtj2", "#tau_{1} lep. GenTopJet", 40, 0, 1.);
-  book<TH1D>("tau2_gtj2", "#tau_{2} lep. GenTopJet", 40, 0, 1.);
-  book<TH1D>("tau3_gtj2", "#tau_{3} lep. GenTopJet", 40, 0, 1.);
-  book<TH1D>("tau32_gtj2", "#tau_{3}/#tau_{2} lep. GenTopJet", 40, 0, 1.);
-  book<TH1D>("tau21_gtj2", "#tau_{2}/#tau_{1} lep. GenTopJet", 40, 0, 1.);
+  book<TH1D>("M_gtj2", "M_{lep AK8 GenJet} [GeV^{2}]", 40, 0, 400);
+  book<TH1D>("pt_gtj2", "p_{T} lep. AK8 GenJet [GeV]", 120, 0, 1200);
+  book<TH1D>("eta_gtj2", "#eta lep. AK8 GenJet", 40, -2.5, 2.5);
+  book<TH1D>("Nsubjet_gtj2", "N_{subjets} lep. AK8 GenJet", 4, -0.5, 3.5);
+  book<TH1D>("pt_gtj2_subjet1", "p_{T}^{subjet1} lep. AK8 GenJet [GeV]", 120, 0, 1200);
+  book<TH1D>("pt_gtj2_subjet2", "p_{T}^{subjet2} lep. AK8 GenJet [GeV]", 80, 0, 800);
+  book<TH1D>("m_gtj2_subjet1", "M_{subjet1} lep. AK8 GenJet [GeV^{2}]", 30, 0, 300);
+  book<TH1D>("m_gtj2_subjet2", "M_{subjet2} lep. AK8 GenJet [GeV^{2}]", 30, 0, 300);
+  book<TH1D>("tau1_gtj2", "#tau_{1} lep. AK8 GenJet", 40, 0, 1.);
+  book<TH1D>("tau2_gtj2", "#tau_{2} lep. AK8 GenJet", 40, 0, 1.);
+  book<TH1D>("tau3_gtj2", "#tau_{3} lep. AK8 GenJet", 40, 0, 1.);
+  book<TH1D>("tau32_gtj2", "#tau_{3}/#tau_{2} lep. AK8 GenJet", 40, 0, 1.);
+  book<TH1D>("tau21_gtj2", "#tau_{2}/#tau_{1} lep. AK8 GenJet", 40, 0, 1.);
 
-  book<TH1D>("dR_q1_gtj2", "#Delta R(quark1, lep. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dR_q2_gtj2", "#Delta R(quark2, lep. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dR_bqhad_gtj2", "#Delta  R(b-quark (had), lep. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dR_whad_gtj2", "#Delta  R(Whad, lep. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dPhi_q1_gtj2", "#Delta #Phi (quark1, lep. GenTopJet)", 40, 0, 4.);
-  book<TH1D>("dPhi_q2_gtj2", "#Delta #Phi (quark2, lep. GenTopJet)", 40, 0, 4.);
-  book<TH1D>("dPhi_bqhad_gtj2", "#Delta #Phi (b-quark (had), lep. GenTopJet)", 40, 0, 4.);
-  book<TH1D>("dPhi_whad_gtj2", "#Delta #Phi (Whad, lep. GenTopJet)", 40, 0, 4.);
+  book<TH1D>("dR_q1_gtj2", "#Delta R(quark1, lep. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dR_q2_gtj2", "#Delta R(quark2, lep. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dR_bqhad_gtj2", "#Delta  R(b-quark (had), lep. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dR_whad_gtj2", "#Delta  R(Whad, lep. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dPhi_q1_gtj2", "#Delta #Phi (quark1, lep. AK8 GenJet)", 40, 0, 4.);
+  book<TH1D>("dPhi_q2_gtj2", "#Delta #Phi (quark2, lep. AK8 GenJet)", 40, 0, 4.);
+  book<TH1D>("dPhi_bqhad_gtj2", "#Delta #Phi (b-quark (had), lep. AK8 GenJet)", 40, 0, 4.);
+  book<TH1D>("dPhi_whad_gtj2", "#Delta #Phi (Whad, lep. AK8 GenJet)", 40, 0, 4.);
 
-  book<TH1D>("dR_mu_gtj2", "#Delta R(#mu, lep. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dR_nu_gtj2", "#Delta R(#nu_{#mu}, lep. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dR_bqlep_gtj2", "#Delta R(b-quark (lep), lep. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dR_wlep_gtj2", "#Delta  R(Wlep, lep. GenTopJet)", 50, 0, 5.);
-  book<TH1D>("dPhi_mu_gtj2", "#Delta #Phi (#mu, lep. GenTopJet)", 40, 0, 4.);
-  book<TH1D>("dPhi_nu_gtj2", "#Delta #Phi (#nu_{#mu}, lep. GenTopJet)", 40, 0, 4.);
-  book<TH1D>("dPhi_bqlep_gtj2", "#Delta #Phi (b-quark (lep), lep. GenTopJet)", 40, 0, 4.);
-  book<TH1D>("dPhi_wlep_gtj2", "#Delta #Phi (Wlep, lep. GenTopJet)", 40, 0, 4.);
+  book<TH1D>("dR_mu_gtj2", "#Delta R(#mu, lep. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dR_nu_gtj2", "#Delta R(#nu_{#mu}, lep. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dR_bqlep_gtj2", "#Delta R(b-quark (lep), lep. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dR_wlep_gtj2", "#Delta  R(Wlep, lep. AK8 GenJet)", 50, 0, 5.);
+  book<TH1D>("dPhi_mu_gtj2", "#Delta #Phi (#mu, lep. AK8 GenJet)", 40, 0, 4.);
+  book<TH1D>("dPhi_nu_gtj2", "#Delta #Phi (#nu_{#mu}, lep. AK8 GenJet)", 40, 0, 4.);
+  book<TH1D>("dPhi_bqlep_gtj2", "#Delta #Phi (b-quark (lep), lep. AK8 GenJet)", 40, 0, 4.);
+  book<TH1D>("dPhi_wlep_gtj2", "#Delta #Phi (Wlep, lep. AK8 GenJet)", 40, 0, 4.);
 
-  book<TH1D>("dR8_top_gtj1", "#Delta R(top, had. GenTopJet)", 50, 0, 5.);
+  book<TH1D>("dR8_top_gtj1", "#Delta R(top, had. AK8 GenJet)", 50, 0, 5.);
 
 
 
@@ -152,6 +152,8 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
 void GenHists::fill(const Event & event){
   // Don't forget to always use the weight when filling.
   double weight = event.get(h_weight);
+
+  weight *= 0.6784;
 
   //general
   hist("sum_event_weights")->Fill(1, weight);
