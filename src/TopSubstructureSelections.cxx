@@ -65,10 +65,11 @@ bool TwoDCut::passes(const Event & event){
     return false;
   }
 
-  double drmin, ptrel;
-  std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
-  pass = (drmin > min_deltaR) || (ptrel > min_pTrel);
-
+  if(event.muons->size()){
+    double drmin, ptrel;
+    std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
+    pass = (drmin > min_deltaR) || (ptrel > min_pTrel);
+  }
   return pass;
 }
 

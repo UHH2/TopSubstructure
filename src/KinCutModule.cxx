@@ -176,8 +176,8 @@ namespace uhh2examples {
     h_nele.reset(new TopSubstructureRecoHists(ctx, "nele"));
     h_twodcut.reset(new TopSubstructureRecoHists(ctx, "twodcut"));
     h_nbtag_medium.reset(new TopSubstructureRecoHists(ctx, "nbtag_medium"));
-    h_rec_met_sideband.reset(new GenHists(ctx, "rec_met_sideband"));
-    h_rec_pt_mu_sideband.reset(new GenHists(ctx, "rec_pt_mu_sideband"));
+    h_rec_met_sideband.reset(new TopSubstructureRecoHists(ctx, "rec_met_sideband"));
+    h_rec_pt_mu_sideband.reset(new TopSubstructureRecoHists(ctx, "rec_pt_mu_sideband"));
   }
 
 
@@ -260,74 +260,97 @@ namespace uhh2examples {
     }else{
       passed_trigger = (trigger_sel_A->passes(event) || trigger_sel_B->passes(event));
     }
-
+    cout << "test1" << '\n';
     //at least 1 good primary vertex
     passed_pv = pv_sel->passes(event);
 
+    cout << "test2" << '\n';
     // exactly 1 muon
     passed_nmu = nmu_sel->passes(event);
+    cout << "test3" << '\n';
 
     // remove muon four-vector from topjet four-vector
     rectopjetleptoncleaner->process(event);
+    cout << "test4" << '\n';
     h_tjlc->fill(event);
+    cout << "test5" << '\n';
 
     topjetcleaner->process(event);
+    cout << "test6" << '\n';
     h_tjc->fill(event);
+    cout << "test7" << '\n';
 
     // MET
     passed_met = met_sel->passes(event);
+    cout << "test8" << '\n';
 
     // pT(muon)
     passed_pt_mu = pt_mu_sel->passes(event);
+    cout << "test9" << '\n';
 
     // exactly 0 electron
     passed_nele = nele_sel->passes(event);
+    cout << "test10" << '\n';
 
     // TwoDCut
     passed_twodcut = twodcut_sel->passes(event);
+    cout << "test11" << '\n';
 
     // at least one medium b-tag
     passed_nbtag_medium = nbtag_medium_sel->passes(event);
+    cout << "test12" << '\n';
 
     event.set(h_rec_weight, event.weight);
+    cout << "test13" << '\n';
 
     if(passed_trigger){
       h_trigger->fill(event);
+    cout << "test14" << '\n';
     }
     if(passed_trigger && passed_pv){
       h_pv->fill(event);
+    cout << "test15" << '\n';
     }
     if(passed_trigger && passed_pv && passed_nmu){
       h_nmu->fill(event);
+    cout << "test16" << '\n';
     }
     if(passed_trigger && passed_pv && passed_nmu && passed_met){
       h_met->fill(event);
+    cout << "test17" << '\n';
     }
     if(passed_trigger && passed_pv && passed_nmu && passed_met && passed_pt_mu){
       h_pt_mu->fill(event);
+    cout << "test18" << '\n';
     }
     if(passed_trigger && passed_pv && passed_nmu && passed_met && passed_pt_mu && passed_nele){
       h_nele->fill(event);
+    cout << "test19" << '\n';
     }
     if(passed_trigger && passed_pv && passed_nmu && passed_met && passed_pt_mu && passed_nele && passed_twodcut){
       h_twodcut->fill(event);
+    cout << "test20" << '\n';
     }
     if(passed_trigger && passed_pv && passed_nmu && passed_met && passed_pt_mu && passed_nele && passed_twodcut && passed_nbtag_medium){
       h_nbtag_medium->fill(event);
+    cout << "test21" << '\n';
       passed_rec = true;
     }
 
     if(passed_trigger && passed_pv && passed_nmu && !passed_met && passed_pt_mu && passed_nele && passed_twodcut && passed_nbtag_medium && rec_met_sideband->passes(event)){
       h_rec_met_sideband->fill(event);
+    cout << "test22" << '\n';
       passed_rec_met_sideband = true;
     }
     if(passed_trigger && passed_pv && passed_nmu && passed_met && !passed_pt_mu && passed_nele && passed_twodcut && passed_nbtag_medium && rec_pt_mu_sideband->passes(event)){
       h_rec_pt_mu_sideband->fill(event);
+    cout << "test23" << '\n';
       passed_rec_pt_mu_sideband = true;
     }
 
     if(!passed_rec && !passed_gen && !passed_gen_met_sideband && !passed_gen_pt_mu_sideband && !passed_rec_met_sideband && !passed_rec_pt_mu_sideband) return false;
 
+    cout << "test24" << '\n';
     event.set(h_passed_rec, passed_rec);
     event.set(h_passed_gen, passed_gen);
     event.set(h_passed_rec_met_sideband, passed_rec_met_sideband);
