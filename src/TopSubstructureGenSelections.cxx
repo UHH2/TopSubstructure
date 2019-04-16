@@ -103,7 +103,7 @@ bool MassSelection::passes(const Event & event){
   switch (n) {
     case 0:
     if(event.is_valid(h_ttbargen)){
-      if(event.gentopjets->size() >= 2){
+      if(event.gentopjets->size() > 1){
         double mass, mass_lep;
         sort_by_pt<GenTopJet>(*event.gentopjets);
         mass = event.gentopjets->at(0).v4().M();
@@ -116,12 +116,26 @@ bool MassSelection::passes(const Event & event){
     case 1:
     if(event.is_valid(h_ttbargen)){
       const auto ttbargen = event.get(h_ttbargen);
-      if(event.gentopjets->size() >= 2){
+      if(event.gentopjets->size() > 1 && ttbargen.IsSemiLeptonicDecay()){
         double mass;
         sort_by_pt<GenTopJet>(*event.gentopjets);
         mass = event.gentopjets->at(0).v4().M();
         const auto dummy = event.gentopjets->at(1).v4() + ttbargen.ChargedLepton().v4();
         if(mass > (dummy.M())) pass = true;
+      }
+    }
+    break;
+
+    case 2:
+    if(event.is_valid(h_ttbargen)){
+      const auto ttbargen = event.get(h_ttbargen);
+      if(event.gentopjets->size() > 1 && ttbargen.IsSemiLeptonicDecay()){
+        double mass;
+        sort_by_pt<GenTopJet>(*event.gentopjets);
+        mass = event.gentopjets->at(0).v4().M();
+        const auto dummy = event.gentopjets->at(1).v4() + ttbargen.ChargedLepton().v4();
+        double diff = mass - dummy.M();
+        if(diff > -50) pass = true;
       }
     }
     break;
@@ -134,7 +148,7 @@ bool PtSelection::passes(const Event & event){
   bool pass = false;
   if(event.gentopjets->size() >= 2){
     pass = (event.gentopjets->at(0).pt() > pt_jet1_min || pt_jet1_min < 0) && (event.gentopjets->at(1).pt() > pt_jet2_min || pt_jet2_min < 0);
-  }
+}
   return pass;
 }
 
@@ -143,9 +157,30 @@ bool dRSelection::passes(const Event & event){
   bool pass = false;
   if(event.is_valid(h_ttbargen)){
     const auto ttbargen = event.get(h_ttbargen);
-    if(event.gentopjets->size() > 0){
+    if(!ttbargen.IsSemiLeptonicDecay()) return false;
+    if(event.gentopjets->size() > 1){
       pass = deltaR(event.gentopjets->at(1), ttbargen.ChargedLepton()) < dr_min;
     }
+  }
+  return pass;
+}
+
+GenMuonPtSelection::GenMuonPtSelection(uhh2::Context& ctx, double pt_min_, double pt_max_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), pt_min(pt_min_), pt_max(pt_max_){}
+bool GenMuonPtSelection::passes(const Event & event){
+  bool pass = false;
+  if(event.is_valid(h_ttbargen)){
+    const auto ttbargen = event.get(h_ttbargen);
+    if((ttbargen.ChargedLepton().pt() < pt_max || pt_max < 0) && ttbargen.ChargedLepton().pt() > pt_min) pass = true;
+  }
+  return pass;
+}
+
+GenMETSelection::GenMETSelection(uhh2::Context& ctx, double met_min_, double met_max_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), met_min(met_min_), met_max(met_max_){}
+bool GenMETSelection::passes(const Event & event){
+  bool pass = false;
+  if(event.is_valid(h_ttbargen)){
+    const auto ttbargen = event.get(h_ttbargen);
+    if((ttbargen.Neutrino().pt() < met_max || met_max < 0) && ttbargen.Neutrino().pt() > met_min) pass = true;
   }
   return pass;
 }

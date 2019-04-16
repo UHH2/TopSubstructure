@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from datetime import datetime
 import sys, time, subprocess
-from ROOT import *
+# from ROOT import *
 from multiprocessing import Pool, Value
 import random
 import shutil
@@ -9,7 +9,6 @@ import glob
 import os
 
 Ndone = None # keep track of finished jobs by each worker
-
 def main():
     if len(sys.argv) < 3:
         print 'Usage: ./SFrameMainMultiCore.py <Name Workdir> <Number of Jobs>'
@@ -33,7 +32,7 @@ def main():
         print '[ERROR] not a proper sframe_batch workdir, missing_files.txt not found!'
         exit(0)
 
-    # read missing_files.txt
+    # read missing_files.
     lines = read_missing_files(workdir)
 
     # remove everything but the name of the xml file

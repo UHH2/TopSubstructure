@@ -83,7 +83,8 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
 
   // get handles
   h_weight = ctx.get_handle<double>("h_rec_weight");
-  isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v2" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000_2016v2" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft_2016v2");
+  isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft_2016v3" || ctx.get("dataset_version") == "TTbar_2016v3");
+
 }
 
 

@@ -43,6 +43,16 @@ bool RecMassSelection::passes(const Event & event){
         if(mass > (dummy.M())) pass = true;
       }
     break;
+
+    case 2:
+      if(event.topjets->size() > 1 && event.muons->size() > 0){
+        double mass;
+        mass = event.topjets->at(0).v4().M();
+        const auto dummy = event.topjets->at(1).v4() + event.muons->at(0).v4();
+        double diff = mass - dummy.M();
+        if(diff > -50) pass = true;
+      }
+    break;
   }
   return pass;
 }

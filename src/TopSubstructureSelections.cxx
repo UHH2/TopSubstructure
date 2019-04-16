@@ -59,8 +59,8 @@ TwoDCut::TwoDCut(double min_deltaR_, double min_pTrel_): min_deltaR(min_deltaR_)
 bool TwoDCut::passes(const Event & event){
 
   bool pass = false;
-  assert(event.muons && event.electrons && event.jets);
-  if((event.muons->size()+event.electrons->size()) != 1){
+  assert(event.muons && event.jets);
+  if(event.muons->size()!= 1){
     std::cout << "\n @@@ WARNING -- TwoDCut::passes -- unexpected number of muons+electrons in the event (!=1). returning 'false'\n";
     return false;
   }
@@ -130,16 +130,16 @@ bool QuarkCandJetMatching::passes(const uhh2::Event& event){
 
         GenParticle bq, q1, q2;
         if(ttbargen.IsTopHadronicDecay()){
-	  bq = ttbargen.bTop();
-	  q1 = ttbargen.Wdecay1();
-	  q2 = ttbargen.Wdecay2();
-	  if(deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8) pass = true;
+      	  bq = ttbargen.bTop();
+      	  q1 = ttbargen.Wdecay1();
+      	  q2 = ttbargen.Wdecay2();
+      	  if(deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8) pass = true;
         }
         else if(ttbargen.IsAntiTopHadronicDecay()){
-	  bq = ttbargen.bAntitop();
-	  q1 = ttbargen.WMinusdecay1();
-	  q2 = ttbargen.WMinusdecay2();
-	  if(deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8) pass = true;
+      	  bq = ttbargen.bAntitop();
+      	  q1 = ttbargen.WMinusdecay1();
+      	  q2 = ttbargen.WMinusdecay2();
+      	  if(deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8) pass = true;
         }
       }
     }

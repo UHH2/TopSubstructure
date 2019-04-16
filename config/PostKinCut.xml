@@ -3,39 +3,38 @@
 
   <!ENTITY NEVT "-1">
 
- <!-- <!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/kin_cut_TDC40_btm">
- <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_test"> -->
-  <!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Test_Files/TTbar/TTbar_amc/kin_selection">
-  <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Test_Files/TTbar/TTbar_amc/post_selection/">
+ <!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/kin_cut_TDC40_btm_cmssw10">
+ <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_cmssw10">
 
 
 <!-- =============================================== DATA =========================================================================== -->
-  <!ENTITY SingleMuonB    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonB_2016v2.root">
+  <!-- <!ENTITY SingleMuonB    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonB_2016v2.root">
   <!ENTITY SingleMuonC    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonC_2016v2.root">
   <!ENTITY SingleMuonD    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonD_2016v2.root">
   <!ENTITY SingleMuonE    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonE_2016v2.root">
   <!ENTITY SingleMuonF    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonF_2016v2.root">
   <!ENTITY SingleMuonG    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonG_2016v2.root">
-  <!ENTITY SingleMuonH    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonH_2016v2.root">
+  <!ENTITY SingleMuonH    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonH_2016v2.root"> -->
 
 <!-- =============================================== Single Top ===================================================================== -->
-  <!ENTITY ST_t-channel_antitop    "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_t-channel_antitop_2016v2.root">
+  <!-- <!ENTITY ST_t-channel_antitop    "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_t-channel_antitop_2016v2.root">
   <!ENTITY ST_t-channel_top        "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_t-channel_top_2016v2.root">
   <!ENTITY ST_s-channel            "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_s-channel_2016v2.root">
   <!ENTITY ST_tW_antitop           "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_tW_antitop_2016v2.root">
-  <!ENTITY ST_tW_top               "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_tW_top_2016v2.root">
+  <!ENTITY ST_tW_top               "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_tW_top_2016v2.root"> -->
 
 <!-- =============================================== ttbar =========================================================================== -->
-  <!ENTITY TTbar_Mtt0000to0700    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt0000to0700_2016v2.root">
+  <!-- <!ENTITY TTbar_Mtt0000to0700    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt0000to0700_2016v2.root">
   <!ENTITY TTbar_Mtt0700to1000    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt0700to1000_2016v2.root">
-  <!ENTITY TTbar_Mtt1000toInft    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_2016v2.root">
+  <!ENTITY TTbar_Mtt1000toInft    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_2016v2.root"> -->
+  <!ENTITY TTbar_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3.root">
 
 <!-- =============================================== DiBoson =========================================================================== -->
-  <!ENTITY  WW    "&INdir;/uhh2.AnalysisModuleRunner.MC.WW_2016v2.root">
+  <!-- <!ENTITY  WW    "&INdir;/uhh2.AnalysisModuleRunner.MC.WW_2016v2.root">
   <!ENTITY  WZ    "&INdir;/uhh2.AnalysisModuleRunner.MC.WZ_2016v2.root">
-  <!ENTITY  ZZ    "&INdir;/uhh2.AnalysisModuleRunner.MC.ZZ_2016v2.root">
+  <!ENTITY  ZZ    "&INdir;/uhh2.AnalysisModuleRunner.MC.ZZ_2016v2.root"> -->
 <!-- =============================================== QCD Mu =========================================================================== -->
-  <!ENTITY  QCD_Pt-0015to0020_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-0015to0020_MuEnrichedPt5_2016v2.root">
+  <!-- <!ENTITY  QCD_Pt-0015to0020_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-0015to0020_MuEnrichedPt5_2016v2.root">
   <!ENTITY  QCD_Pt-0020to0030_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-0020to0030_MuEnrichedPt5_2016v2.root">
   <!ENTITY  QCD_Pt-0030to0050_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-0030to0050_MuEnrichedPt5_2016v2.root">
   <!ENTITY  QCD_Pt-0050to0080_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-0050to0080_MuEnrichedPt5_2016v2.root">
@@ -46,27 +45,27 @@
   <!ENTITY  QCD_Pt-0470to0600_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-0470to0600_MuEnrichedPt5_2016v2.root">
   <!ENTITY  QCD_Pt-0600to0800_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-0600to0800_MuEnrichedPt5_2016v2.root">
   <!ENTITY  QCD_Pt-0800to1000_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-0800to1000_MuEnrichedPt5_2016v2.root">
-  <!ENTITY  QCD_Pt-1000toInft_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-1000toInft_MuEnrichedPt5_2016v2.root">
+  <!ENTITY  QCD_Pt-1000toInft_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-1000toInft_MuEnrichedPt5_2016v2.root"> -->
 <!-- =============================================== W+jets =========================================================================== -->
-  <!ENTITY  WJetsToLNu_Pt0100to0250   "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_Pt0100to0250_2016v2.root">
+  <!-- <!ENTITY  WJetsToLNu_Pt0100to0250   "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_Pt0100to0250_2016v2.root">
   <!ENTITY  WJetsToLNu_Pt0250to0400   "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_Pt0250to0400_2016v2.root">
   <!ENTITY  WJetsToLNu_Pt0400to0600   "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_Pt0400to0600_2016v2.root">
-  <!ENTITY  WJetsToLNu_Pt0600toInft   "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_Pt0600toInft_2016v2.root">
+  <!ENTITY  WJetsToLNu_Pt0600toInft   "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_Pt0600toInft_2016v2.root"> -->
 <!-- =============================================== Z+jets =========================================================================== -->
-  <!ENTITY DYJetsToLL_LO_M50_HT0070to0100    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0070to0100_2016v2.root">
+  <!-- <!ENTITY DYJetsToLL_LO_M50_HT0070to0100    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0070to0100_2016v2.root">
   <!ENTITY DYJetsToLL_LO_M50_HT0100to0200    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0100to0200_2016v2.root">
   <!ENTITY DYJetsToLL_LO_M50_HT0200to0400    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0200to0400_2016v2.root">
   <!ENTITY DYJetsToLL_LO_M50_HT0400to0600    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0400to0600_2016v2.root">
   <!ENTITY DYJetsToLL_LO_M50_HT0600to0800    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0600to0800_2016v2.root">
   <!ENTITY DYJetsToLL_LO_M50_HT0800to1200    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0800to1200_2016v2.root">
   <!ENTITY DYJetsToLL_LO_M50_HT1200to2500    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT1200to2500_2016v2.root">
-  <!ENTITY DYJetsToLL_LO_M50_HT2500toInft    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT2500toInft_2016v2.root">
+  <!ENTITY DYJetsToLL_LO_M50_HT2500toInft    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT2500toInft_2016v2.root"> -->
 
 ]>
 
 <!--
    <ConfigParse NEventsBreak="250000" LastBreak="0" FileSplit="0"/>
-   <ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="tbar_workdir"/>
+   <ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="PostSel_workdir"/>
 -->
 
 <JobConfiguration JobName="TopSubstructureJob" OutputLevel="INFO">
@@ -145,12 +144,14 @@
      ██       ██
     -->
 
-    <InputData Version="TTbar_Mtt0000to0700_2016v2" Lumi="92478.840" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+    <!-- <InputData Version="TTbar_Mtt0000to0700_2016v2" Lumi="92478.840" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
     <In FileName="&TTbar_Mtt0000to0700;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/> </InputData>
     <InputData Version="TTbar_Mtt0700to1000_2016v2" Lumi="503319.757" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
     <In FileName="&TTbar_Mtt0700to1000;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/> </InputData>
     <InputData Version="TTbar_Mtt1000toInft_2016v2" Lumi="1192545.000" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-    <In FileName="&TTbar_Mtt1000toInft;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/> </InputData>
+    <In FileName="&TTbar_Mtt1000toInft;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/> </InputData> -->
+    <InputData Version="TTbar_2016v3" Lumi="105034.648" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+    <In FileName="&TTbar_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/> </InputData>
 
 
 
@@ -247,7 +248,7 @@
       <Item Name="TopJetCollection"        Value="jetsAk8CHSSubstructure_SoftDropCHS"/>
       <Item Name="GenTopJetCollection"     Value="genjetsAk8SubstructureSoftDrop" />
 
-      <Item Name="additionalBranches" Value="h_rec_weight h_gen_weight h_passed_gen h_passed_rec"/>
+      <Item Name="additionalBranches" Value="h_rec_weight h_gen_weight h_passed_gen h_passed_rec h_passed_rec_met_sideband h_passed_rec_pt_mu_sideband h_passed_gen_met_sideband h_passed_gen_pt_mu_sideband"/>
 
       <Item Name="METName"                 Value="slimmedMETs"/>
 

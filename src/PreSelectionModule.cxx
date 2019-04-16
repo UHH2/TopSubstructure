@@ -66,8 +66,8 @@ namespace uhh2examples {
     h_passed_gen_pre = ctx.declare_event_output<bool>("h_passed_gen_pre");
 
     isMC = (ctx.get("dataset_type") == "MC");
-    isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v2" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000_2016v2" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft_2016v2");
-
+    isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft_2016v3" || ctx.get("dataset_version") == "TTbar_2016v3");
+    // isTTbar = true;
     // 2. set up selections
     if(isTTbar){
       const std::string ttbar_gen_label("ttbargen");
