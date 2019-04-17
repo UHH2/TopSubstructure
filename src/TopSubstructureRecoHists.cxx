@@ -83,6 +83,7 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
 
   // get handles
   h_weight = ctx.get_handle<double>("h_rec_weight");
+  h_weight_kin = ctx.get_handle<double>("h_gen_weight_kin");
   isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft_2016v3" || ctx.get("dataset_version") == "TTbar_2016v3");
 
 }
@@ -92,6 +93,7 @@ void TopSubstructureRecoHists::fill(const Event & event){
   // Don't forget to always use the weight when filling.
   double weight;
   if(event.is_valid(h_weight))  weight = event.get(h_weight);
+  else if(event.is_valid(h_weight_kin))  weight = event.get(h_weight_kin);
   else weight = event.weight;
 
   std::vector<TopJet>* topjet = event.topjets;

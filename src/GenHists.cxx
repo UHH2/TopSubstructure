@@ -146,6 +146,7 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
   // get handles
   h_ttbargen = ctx.get_handle<TTbarGen>("ttbargen");
   h_weight = ctx.get_handle<double>("h_gen_weight");
+  h_weight_kin = ctx.get_handle<double>("h_gen_weight_kin");
 }
 
 
@@ -153,6 +154,7 @@ void GenHists::fill(const Event & event){
   // Don't forget to always use the weight when filling.
   double weight;
   if(event.is_valid(h_weight))  weight = event.get(h_weight);
+  else if(event.is_valid(h_weight_kin))  weight = event.get(h_weight_kin);
   else weight = event.weight;
 
   //general

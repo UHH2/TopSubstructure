@@ -248,7 +248,7 @@
       <Item Name="TopJetCollection"        Value="jetsAk8CHSSubstructure_SoftDropCHS"/>
       <Item Name="GenTopJetCollection"     Value="genjetsAk8SubstructureSoftDrop" />
 
-      <Item Name="additionalBranches" Value="h_rec_weight h_gen_weight h_passed_gen h_passed_rec h_passed_rec_met_sideband h_passed_rec_pt_mu_sideband h_passed_gen_met_sideband h_passed_gen_pt_mu_sideband"/>
+      <Item Name="additionalBranches" Value="h_rec_weight_kin h_gen_weight_kin h_passed_gen h_passed_rec"/>
 
       <Item Name="METName"                 Value="slimmedMETs"/>
 

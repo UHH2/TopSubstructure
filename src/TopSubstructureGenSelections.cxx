@@ -34,6 +34,18 @@ bool GenDPhiSelection::passes(const Event & event){
   return pass;
 }
 
+GenTopJetPtSelection::GenTopJetPtSelection(double pt_min_):pt_min(pt_min_){}
+bool GenTopJetPtSelection::passes(const Event & event){
+
+  bool pass = false;
+
+  for(unsigned int i = 0; i < event.gentopjets->size(); i++){
+    if(event.gentopjets->at(i).pt() > pt_min) pass = true;
+  }
+
+  return pass;
+}
+
 GenQuarkGenJetMatching::GenQuarkGenJetMatching(uhh2::Context & ctx):h_gentopjet_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")), h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
 bool GenQuarkGenJetMatching::passes(const uhh2::Event& event){
   bool pass = false;
@@ -170,17 +182,8 @@ bool GenMuonPtSelection::passes(const Event & event){
   bool pass = false;
   if(event.is_valid(h_ttbargen)){
     const auto ttbargen = event.get(h_ttbargen);
+    if(!ttbargen.IsSemiLeptonicDecay()) return false;
     if((ttbargen.ChargedLepton().pt() < pt_max || pt_max < 0) && ttbargen.ChargedLepton().pt() > pt_min) pass = true;
-  }
-  return pass;
-}
-
-GenMETSelection::GenMETSelection(uhh2::Context& ctx, double met_min_, double met_max_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), met_min(met_min_), met_max(met_max_){}
-bool GenMETSelection::passes(const Event & event){
-  bool pass = false;
-  if(event.is_valid(h_ttbargen)){
-    const auto ttbargen = event.get(h_ttbargen);
-    if((ttbargen.Neutrino().pt() < met_max || met_max < 0) && ttbargen.Neutrino().pt() > met_min) pass = true;
   }
   return pass;
 }
