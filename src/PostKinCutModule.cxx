@@ -36,7 +36,7 @@ namespace uhh2examples {
     virtual bool process(Event & event) override;
 
   private:
-    bool isTTbar;
+    bool isTTbar, isPseudoData;
     bool passed_rec, passed_gen;
     bool matched_rec, matched_gen;
 
@@ -61,6 +61,7 @@ namespace uhh2examples {
     std::unique_ptr<Selection> pt_topjet_gen, ntopjet2_gen, dr_gen, mass_gen, genmatching, pt_mu_gen, pt_mu_sel;
     std::unique_ptr<Selection> recmatching;
 
+    std::unique_ptr<AnalysisModule> scale_variation;
     std::unique_ptr<AnalysisModule> PUreweight, lumiweight;
     std::unique_ptr<AnalysisModule> ttgenprod;
 
@@ -104,6 +105,7 @@ namespace uhh2examples {
 
   PostKinCutModule::PostKinCutModule(Context & ctx){
     // Btag_tight        = CSVBTag(CSVBTag::WP_TIGHT);
+    ctx.undeclare_all_event_output();
 
     h_passed_rec                    = ctx.get_handle<bool>("h_passed_rec");
     h_passed_gen                    = ctx.get_handle<bool>("h_passed_gen");
@@ -126,11 +128,14 @@ namespace uhh2examples {
     h_passed_rec_pt_mu_sideband     = ctx.declare_event_output<bool>("h_passed_rec_pt_mu_sideband");
     h_passed_rec_pt_topjet_sideband = ctx.declare_event_output<bool>("h_passed_rec_pt_topjet_sideband");
 
+    //scale variation
+    scale_variation.reset(new MCScaleVariation(ctx));
     lumiweight.reset(new MCLumiWeight(ctx));
     PUreweight.reset(new MCPileupReweight(ctx, "central"));
 
 
     isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft_2016v3" || ctx.get("dataset_version") == "TTbar_2016v3");
+    isPseudoData = (ctx.get("dataset_version") == "PseudoData");
     // isMC = (ctx.get("dataset_type") == "MC");
 
     // 2. set up selections
@@ -223,9 +228,10 @@ namespace uhh2examples {
 
   bool PostKinCutModule::process(Event & event) {
     cout << "PostKinCutModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
-
     if(event.is_valid(h_gen_weight_kin)) event.weight = event.get(h_gen_weight_kin);
     lumiweight->process(event);
+    scale_variation->process(event); // here, it is only executed to be filled into the gen weight is has to be done again to appear in the event.weight
+
     event.set(h_gen_weight, event.weight);
     if(event.is_valid(h_rec_weight_kin)) event.weight *= event.get(h_rec_weight_kin);
 
@@ -244,10 +250,26 @@ namespace uhh2examples {
     passed_gen_final                   = false;
     matched_gen                        = false;
 
+    if(event.is_valid(h_passed_rec)) passed_rec = event.get(h_passed_rec);
+    else passed_rec                    = false;
+    // passed_rec_ntopjet_sideband_l2  = false;
+    // passed_rec_ntopjet_sideband_g2  = false;
+    passed_rec_ntopjet                 = false;
+    passed_rec_dr                      = false;
+    passed_rec_mass                    = false;
+    passed_rec_pt_topjet               = false;
+    passed_rec_dr_sideband             = false;
+    passed_rec_mass_sideband           = false;
+    passed_rec_pt_mu_sideband          = false;
+    passed_rec_pt_topjet_sideband      = false;
+    passed_rec_final                   = false;
+    matched_rec                        = false;
+
     /** PU Reweighting *********************/
     PUreweight->process(event); //evtl spaeter fuer unsicherheit
 
     event.set(h_rec_weight, event.weight);
+
 
     if(isTTbar) {
       ttgenprod->process(event);
@@ -323,21 +345,6 @@ namespace uhh2examples {
     ██   ██ ███████  ██████  ██████
     */
 
-    if(event.is_valid(h_passed_rec)) passed_rec = event.get(h_passed_rec);
-    else passed_rec                    = false;
-    // passed_rec_ntopjet_sideband_l2  = false;
-    // passed_rec_ntopjet_sideband_g2  = false;
-    passed_rec_ntopjet                 = false;
-    passed_rec_dr                      = false;
-    passed_rec_mass                    = false;
-    passed_rec_pt_topjet               = false;
-    passed_rec_dr_sideband             = false;
-    passed_rec_mass_sideband           = false;
-    passed_rec_pt_mu_sideband          = false;
-    passed_rec_pt_topjet_sideband      = false;
-    passed_rec_final                   = false;
-    matched_rec                        = false;
-
     // pT(first Topjet) > 400
     passed_rec_pt_topjet = pt_topjet_sel1->passes(event);
     if(passed_rec && passed_rec_pt_topjet){
@@ -375,10 +382,10 @@ namespace uhh2examples {
     passed_rec_mass = mass_sel1->passes(event);
     if(passed_rec && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && passed_rec_mass){
       h_mass->fill(event);
+      passed_rec_final = true;
       if(isTTbar){
         h_passedrec_gen->fill(event);
         h_ttbar_hist->fill(event);
-        passed_rec_final = true;
         matched_rec = recmatching->passes(event);
         if(matched_rec) h_mass_matched->fill(event);
         else h_mass_unmatched->fill(event);
@@ -417,15 +424,23 @@ namespace uhh2examples {
     event.set(h_passed_rec_pt_mu_sideband, passed_rec_pt_mu_sideband);
     event.set(h_passed_rec_pt_topjet_sideband, passed_rec_pt_topjet_sideband);
 
-    if(event.topjets->size() > 0){
+    if(passed_rec_final){
       event.set(h_pt_rec, event.topjets->at(0).pt());
       double tau32_rec = event.topjets->at(0).tau3()/event.topjets->at(0).tau2();
       event.set(h_tau32_rec, tau32_rec);
     }
-    if(isTTbar && event.gentopjets->size() > 0){
+    else{
+      event.set(h_pt_rec, -100);
+      event.set(h_tau32_rec, -100);
+    }
+    if(passed_gen_final){
       event.set(h_pt_gen, event.gentopjets->at(0).pt());
       double tau32_gen = event.gentopjets->at(0).tau3()/event.gentopjets->at(0).tau2();
       event.set(h_tau32_gen, tau32_gen);
+    }
+    else{
+      event.set(h_pt_gen, -100);
+      event.set(h_tau32_gen, -100);
     }
 
     if(!passed_rec_final && !passed_gen_final && !passed_gen_pt_mu_sideband && !passed_gen_pt_topjet_sideband && !passed_gen_dr_sideband && !passed_gen_mass_sideband && !passed_rec_pt_mu_sideband & !passed_rec_pt_topjet_sideband && !passed_rec_dr_sideband && !passed_rec_mass_sideband) return false;

@@ -172,9 +172,10 @@ namespace uhh2examples {
 
     if(isTTbar){
       ttgenprod->process(event);
-      cleaner->process(event); // Do this always!
-      gentopjetcleaner->process(event);
-
+      if(passed_gen_pre){
+        cleaner->process(event); // Do this always!
+        gentopjetcleaner->process(event);
+      }
       passed_pt_mu_gen = pt_mu_gen->passes(event);
       if(passed_gen_pre && passed_pt_mu_gen){
         h_gen_pt_mu->fill(event);

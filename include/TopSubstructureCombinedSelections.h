@@ -59,5 +59,4 @@ namespace uhh2examples {
   private:
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
   };
-
 }

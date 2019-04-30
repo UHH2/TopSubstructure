@@ -32,28 +32,21 @@ int main(int argc, char* argv[]){
   TString binning_xml;
   binning_xml = "Binning.xml";
 
-  Int_t error=parser.ParseFile(binning_xml);
-  if(error) cout<<"error="<<error<<" from TDOMParser\n";
-  TXMLDocument const *XMLdocument=parser.GetXMLDocument();
-  binning_rec = TUnfoldBinningXML::ImportXML(XMLdocument,"binning_rec");
-  binning_gen = TUnfoldBinningXML::ImportXML(XMLdocument,"binning_gen");
+  Int_t error = parser.ParseFile(binning_xml);
+  if(error) cout << "error = " << error << " from TDOMParser\n";
+  TXMLDocument const *XMLdocument = parser.GetXMLDocument();
+  binning_rec = TUnfoldBinningXML::ImportXML(XMLdocument, "binning_rec");
+  binning_gen = TUnfoldBinningXML::ImportXML(XMLdocument, "binning_gen");
+  binning_rec->Write();
+  binning_gen->Write();
 
-
-  if(!binning_rec) cout<<"could not read 'rec' binning\n";
-  if(!binning_gen) cout<<"could not read 'gen' binning\n";
+  if(!binning_rec) cout << "could not read 'rec' binning\n";
+  if(!binning_gen) cout << "could not read 'gen' binning\n";
 
 
   // get distributions from measurement phase space and sideband regions
   measurement_rec = binning_rec->FindNode("measurement_rec");
   measurement_gen = binning_gen->FindNode("measurement_gen");
-
-  ptmigration_rec = binning_rec->FindNode("ptmigration_rec");
-  ptmigration_gen = binning_gen->FindNode("ptmigration_gen");
-
-  massmigration_rec = binning_rec->FindNode("massmigration_rec");
-  massmigration_gen = binning_gen->FindNode("massmigration_gen");
-
-  btagmigration_rec = binning_rec->FindNode("btagmigration_rec");
 
   /*
   ███████ ██ ██      ██          ██   ██ ██ ███████ ████████  ██████   ██████  ██████   █████  ███    ███ ███████
@@ -64,16 +57,31 @@ int main(int argc, char* argv[]){
   */
 
   // define directory
-  TString dir = "/nfs/dust/cms/user/schwarzd/MTopJet/PostSelection/muon/";
+  TString dir = "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_cmssw10/";
   TString prefix = "/uhh2.AnalysisModuleRunner.";
 
   // fill data
-  TFile *data_File=new TFile(dir+prefix+"DATA.DATA.root");
-  fill_data((TTree *) data_File->Get("AnalysisTree"));
+  // TFile *data_File = new TFile(dir + prefix + "DATA.DATA.root");
+  // fill_data((TTree *) data_File->Get("AnalysisTree"));
 
+  // fill pseudodata
+  TFile *pseudodata_matrix_File = new TFile(dir+prefix+"MC.TTbar_2016v3.root");
+  fill_pseudodata((TTree *) pseudodata_matrix_File->Get("AnalysisTree"));
+
+  // fill ttbar
+  TFile *mc_matrix_File = new TFile(dir+prefix+"MC.TTbar_2016v3.root");
+  fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"));
+
+  // fill background
+  // std::vector<TString> background = {"DYJets", "QCD", "ST", "WJets", "WW", "WZ", "ZZ"};
+  std::vector<TString> background = {};
+
+  for(int i = 0; i < background.size(); i++){
+    TFile *background_File = new TFile(dir+prefix+"MC."+background[i]+".root");
+    fill_background((TTree *) background_File->Get("AnalysisTree"), background[i]);
+  }
   return 0;
 }
-
 
 /*
 ███████ ██ ██      ██          ██████   █████  ████████  █████
@@ -82,8 +90,6 @@ int main(int argc, char* argv[]){
 ██      ██ ██      ██          ██   ██ ██   ██    ██    ██   ██
 ██      ██ ███████ ███████     ██████  ██   ██    ██    ██   ██
 */
-
-
 
 void fill_data(TTree* tree){
   if(!tree) cout << "could not read 'data' tree\n";
@@ -94,31 +100,304 @@ void fill_data(TTree* tree){
   outputFile->cd();
 
   tree->ResetBranchAddresses();
-  tree->SetBranchAddress("Mass_Rec",&massRec);
-  tree->SetBranchAddress("Pt_Rec",&ptRec);
-  tree->SetBranchAddress("passed_measurement_rec",&passed_measurement_rec);
-  tree->SetBranchAddress("passed_ptmigration_rec",&passed_ptmigration_rec);
-  tree->SetBranchAddress("passed_massmigration_rec",&passed_massmigration_rec);
-  tree->SetBranchAddress("passed_btagmigration_rec",&passed_btagmigration_rec);
+  tree->SetBranchAddress("h_tau32_rec", &tau32_rec);
+  tree->SetBranchAddress("h_passed_rec_final", &passed_rec_final);
 
-  tree->SetBranchStatus("*",1);
+  tree->SetBranchStatus("*", 1);
 
-  for(Int_t ievent=0; ievent < tree->GetEntriesFast(); ievent++) {
-    if(tree->GetEntry(ievent)<=0) break;
+  for(Int_t ievent = 0; ievent < tree->GetEntriesFast(); ievent++){
+    if(tree->GetEntry(ievent) <= 0) break;
 
     Int_t binNumber = 0;
-    if     (passed_measurement_rec)    binNumber = measurement_rec->GetGlobalBinNumber(massRec,ptRec);
-    else if(passed_ptmigration_rec)    binNumber = ptmigration_rec->GetGlobalBinNumber(massRec,ptRec);
-    else if(passed_massmigration_rec)  binNumber = massmigration_rec->GetGlobalBinNumber(massRec);
-    else if(passed_btagmigration_rec)  binNumber = btagmigration_rec->GetGlobalBinNumber(massRec);
-
-
-    if(passed_measurement_rec || passed_ptmigration_rec || passed_massmigration_rec || passed_btagmigration_rec){
-      h_data->Fill(binNumber);
-    }
+    if(passed_rec_final) binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec);
+    if(passed_rec_final) h_data->Fill(binNumber);
   }
 
   h_data->Write();
   delete h_data;
+  cout << "finished: filling data" << '\n';
+  return;
+}
+
+/*
+███████ ██ ██      ██          ██████  ███████ ███████ ██    ██ ██████   ██████  ██████   █████  ████████  █████
+██      ██ ██      ██          ██   ██ ██      ██      ██    ██ ██   ██ ██    ██ ██   ██ ██   ██    ██    ██   ██
+█████   ██ ██      ██          ██████  ███████ █████   ██    ██ ██   ██ ██    ██ ██   ██ ███████    ██    ███████
+██      ██ ██      ██          ██           ██ ██      ██    ██ ██   ██ ██    ██ ██   ██ ██   ██    ██    ██   ██
+██      ██ ███████ ███████     ██      ███████ ███████  ██████  ██████   ██████  ██████  ██   ██    ██    ██   ██
+*/
+
+
+void fill_pseudodata(TTree* tree){
+  if(!tree) cout << "could not read 'data' tree\n";
+  else      cout << "Filling Pseudodata Histograms...\n";
+
+  // setup hists
+  TH1* h_pseudodata_1 = binning_rec->CreateHistogram("pseudodata_1");
+  TH1* h_pseudodata_truth_1    = binning_gen->CreateHistogram("pseudodata_truth_1",kTRUE,0,0);
+  TH1* h_pseudodata_2 = binning_rec->CreateHistogram("pseudodata_2");
+  TH1* h_pseudodata_truth_2    = binning_gen->CreateHistogram("pseudodata_truth_2",kTRUE,0,0);
+  TH1* h_pseudodata_3 = binning_rec->CreateHistogram("pseudodata_3");
+  TH1* h_pseudodata_truth_3    = binning_gen->CreateHistogram("pseudodata_truth_3",kTRUE,0,0);
+  outputFile->cd();
+
+  tree->ResetBranchAddresses();
+  tree->SetBranchAddress("h_tau32_rec", &tau32_rec);
+  tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
+  tree->SetBranchAddress("h_passed_rec_final", &passed_rec_final);
+  tree->SetBranchAddress("h_passed_gen_final", &passed_gen_final);
+  tree->SetBranchAddress("h_rec_weight", &rec_weight);
+  tree->SetBranchAddress("h_gen_weight", &gen_weight);
+
+  tree->SetBranchStatus("*", 1);
+  int counter = 1;
+  for(Int_t ievent = 0; ievent < tree->GetEntriesFast(); ievent++){
+    if(tree->GetEntry(ievent) <= 0) break;
+
+    // get weights for migration matrix
+    w_central = rec_weight*10;
+    w_nogen = rec_weight*10;
+    w_norec = gen_weight*10;
+    w_correction = gen_weight*10 - rec_weight*10;
+
+    // get weight for gen and rec hists
+    w_sig_rec = rec_weight*10;
+    w_gen = gen_weight*10;
+
+    Int_t rec_binNumber = 0, gen_binNumber = 0;
+    if(passed_rec_final){
+      rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec);
+      if(counter == 8) h_pseudodata_1->Fill(rec_binNumber, w_sig_rec);
+      else if(counter == 9) h_pseudodata_2->Fill(rec_binNumber, w_sig_rec);
+      else if(counter == 10) h_pseudodata_3->Fill(rec_binNumber, w_sig_rec);
+    }
+    if(passed_gen_final){
+      if(counter == 8) h_pseudodata_truth_1->Fill(tau32_gen, w_gen);
+      else if(counter == 9) h_pseudodata_truth_2->Fill(tau32_gen, w_gen);
+      else if(counter == 10) h_pseudodata_truth_3->Fill(tau32_gen, w_gen);
+    }
+    if(counter != 10) counter++;
+    else counter = 1;
+  }
+
+  h_pseudodata_1->Write();
+  h_pseudodata_truth_1->Write();
+  delete h_pseudodata_1;
+  delete h_pseudodata_truth_1;
+
+  h_pseudodata_2->Write();
+  h_pseudodata_truth_2->Write();
+  delete h_pseudodata_2;
+  delete h_pseudodata_truth_2;
+
+  h_pseudodata_3->Write();
+  h_pseudodata_truth_3->Write();
+  delete h_pseudodata_3;
+  delete h_pseudodata_truth_3;
+  cout << "Finished: Filling Pseudodata" << '\n';
+  return;
+}
+
+
+
+/*
+███████ ██ ██      ██          ████████ ████████ ██████   █████  ██████
+██      ██ ██      ██             ██       ██    ██   ██ ██   ██ ██   ██
+█████   ██ ██      ██             ██       ██    ██████  ███████ ██████
+██      ██ ██      ██             ██       ██    ██   ██ ██   ██ ██   ██
+██      ██ ███████ ███████        ██       ██    ██████  ██   ██ ██   ██
+*/
+
+void fill_ttbar(TTree* tree){
+  if(!tree) cout << "could not read 'mc signal' tree\n";
+  else      cout << "Filling Histograms for TTbar ...\n";
+
+  // setup hists
+  TH1* h_ttbar_rec_1      = binning_rec->CreateHistogram("TTbar_rec_1");
+  TH1* h_ttbar_gen_1      = binning_gen->CreateHistogram("TTbar_gen_1");
+  TH1* h_ttbar_truth_1    = binning_gen->CreateHistogram("TTbar_truth_1",kTRUE,0,0);
+  TH1* h_purity_all_1     = binning_gen->CreateHistogram("TTbar_purity_all_1",kTRUE,0,0);
+  TH1* h_purity_samebin_1 = binning_gen->CreateHistogram("TTbar_purity_samebin_1",kTRUE,0,0);
+
+  TH1* h_ttbar_rec_2      = binning_rec->CreateHistogram("TTbar_rec_2");
+  TH1* h_ttbar_gen_2      = binning_gen->CreateHistogram("TTbar_gen_2");
+  TH1* h_ttbar_truth_2    = binning_gen->CreateHistogram("TTbar_truth_2",kTRUE,0,0);
+  TH1* h_purity_all_2     = binning_gen->CreateHistogram("TTbar_purity_all_2",kTRUE,0,0);
+  TH1* h_purity_samebin_2 = binning_gen->CreateHistogram("TTbar_purity_samebin_2",kTRUE,0,0);
+
+  TH1* h_ttbar_rec_3      = binning_rec->CreateHistogram("TTbar_rec_3");
+  TH1* h_ttbar_gen_3      = binning_gen->CreateHistogram("TTbar_gen_3");
+  TH1* h_ttbar_truth_3    = binning_gen->CreateHistogram("TTbar_truth_3",kTRUE,0,0);
+  TH1* h_purity_all_3     = binning_gen->CreateHistogram("TTbar_purity_all_3",kTRUE,0,0);
+  TH1* h_purity_samebin_3 = binning_gen->CreateHistogram("TTbar_purity_samebin_3",kTRUE,0,0);
+
+  TH2* h_mc_matrix_1 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, "ttbar_matrix_1");
+  TH2* h_mc_matrix_2 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, "ttbar_matrix_2");
+  TH2* h_mc_matrix_3 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, "ttbar_matrix_3");
+
+  outputFile->cd();
+
+  tree->ResetBranchAddresses();
+  tree->SetBranchAddress("h_tau32_rec", &tau32_rec);
+  tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
+  tree->SetBranchAddress("h_passed_rec_final", &passed_rec_final);
+  tree->SetBranchAddress("h_passed_gen_final", &passed_gen_final);
+  tree->SetBranchAddress("h_rec_weight", &rec_weight);
+  tree->SetBranchAddress("h_gen_weight", &gen_weight);
+
+  tree->SetBranchStatus("*", 1);
+  int counter = 1;
+  for(Int_t ievent = 0; ievent < tree->GetEntriesFast(); ievent++){
+    if(tree->GetEntry(ievent) <= 0) break;
+
+    // get weights for migration matrix
+    w_central = rec_weight*10/9;
+    w_nogen = rec_weight*10/9;
+    w_norec = gen_weight*10/9;
+    w_correction = gen_weight*10/9 - rec_weight*10/9;
+
+    // get weight for gen and rec hists
+    w_sig_rec = rec_weight*10/9;
+    w_gen = gen_weight*10/9;
+
+    Int_t rec_binNumber = 0, gen_binNumber = 0;
+    if(passed_rec_final) rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec);
+    if(passed_gen_final) gen_binNumber = measurement_gen->GetGlobalBinNumber(tau32_gen);
+    if(passed_rec_final){
+      if(counter != 8)  h_ttbar_rec_1->Fill(rec_binNumber, w_sig_rec);
+      if(counter != 9)  h_ttbar_rec_2->Fill(rec_binNumber, w_sig_rec);
+      if(counter != 10) h_ttbar_rec_3->Fill(rec_binNumber, w_sig_rec);
+    }
+    if(passed_gen_final){
+      if(counter != 8)  h_ttbar_gen_1->Fill(gen_binNumber, w_gen);
+      if(counter != 8)  h_ttbar_truth_1->Fill(tau32_gen, w_gen);
+      if(counter != 9)  h_ttbar_gen_2->Fill(gen_binNumber, w_gen);
+      if(counter != 9)  h_ttbar_truth_2->Fill(tau32_gen, w_gen);
+      if(counter != 10) h_ttbar_gen_3->Fill(gen_binNumber, w_gen);
+      if(counter != 10) h_ttbar_truth_3->Fill(tau32_gen, w_gen);
+    }
+
+    if( passed_rec_final &&  passed_gen_final){
+      if(counter != 8)  h_mc_matrix_1->Fill(gen_binNumber, rec_binNumber, w_central);
+      if(counter != 9)  h_mc_matrix_2->Fill(gen_binNumber, rec_binNumber, w_central);
+      if(counter != 10) h_mc_matrix_3->Fill(gen_binNumber, rec_binNumber, w_central);
+    }
+    if(!passed_rec_final &&  passed_gen_final){
+      if(counter != 8)  h_mc_matrix_1->Fill(gen_binNumber, rec_binNumber, w_norec);
+      if(counter != 9)  h_mc_matrix_2->Fill(gen_binNumber, rec_binNumber, w_norec);
+      if(counter != 10) h_mc_matrix_3->Fill(gen_binNumber, rec_binNumber, w_norec);
+    }
+    if( passed_rec_final && !passed_gen_final){
+      if(counter != 8)  h_mc_matrix_1->Fill(gen_binNumber, rec_binNumber, w_nogen);
+      if(counter != 9)  h_mc_matrix_2->Fill(gen_binNumber, rec_binNumber, w_nogen);
+      if(counter != 10) h_mc_matrix_3->Fill(gen_binNumber, rec_binNumber, w_nogen);
+    }
+    if( passed_rec_final &&  passed_gen_final){
+      if(counter != 8)  h_mc_matrix_1->Fill(gen_binNumber, 0., w_correction);
+      if(counter != 9)  h_mc_matrix_2->Fill(gen_binNumber, 0., w_correction);
+      if(counter != 10) h_mc_matrix_3->Fill(gen_binNumber, 0., w_correction);
+    }
+
+    //fill hists for purity
+    int genBin_recInfo = 0;
+    // if(passed_measurement_gen && rec_info){
+    if(passed_gen_final && passed_rec_final){
+      genBin_recInfo = measurement_gen->GetGlobalBinNumber(tau32_rec);
+      if(counter != 8){
+        h_purity_all_1->Fill(tau32_gen, w_gen);
+        if(genBin_recInfo == gen_binNumber) h_purity_samebin_1->Fill(tau32_gen, w_gen);
+      }
+      if(counter != 9){
+        h_purity_all_2->Fill(tau32_gen, w_gen);
+        if(genBin_recInfo == gen_binNumber) h_purity_samebin_2->Fill(tau32_gen, w_gen);
+      }
+      if(counter != 10){
+        h_purity_all_3->Fill(tau32_gen, w_gen);
+        if(genBin_recInfo == gen_binNumber) h_purity_samebin_3->Fill(tau32_gen, w_gen);
+      }
+    }
+    counter++;
+    if(counter >= 10) counter = 1;
+  }
+
+  h_ttbar_rec_1->Write();
+  h_ttbar_gen_1->Write();
+  h_ttbar_truth_1->Write();
+  h_mc_matrix_1->Write();
+  h_purity_all_1->Write();
+  h_purity_samebin_1->Write();
+  delete h_ttbar_rec_1;
+  delete h_ttbar_gen_1;
+  delete h_ttbar_truth_1;
+  delete h_mc_matrix_1;
+
+  h_ttbar_rec_2->Write();
+  h_ttbar_gen_2->Write();
+  h_ttbar_truth_2->Write();
+  h_mc_matrix_2->Write();
+  h_purity_all_2->Write();
+  h_purity_samebin_2->Write();
+  delete h_ttbar_rec_2;
+  delete h_ttbar_gen_2;
+  delete h_ttbar_truth_2;
+  delete h_mc_matrix_2;
+
+  h_ttbar_rec_3->Write();
+  h_ttbar_gen_3->Write();
+  h_ttbar_truth_3->Write();
+  h_mc_matrix_3->Write();
+  h_purity_all_3->Write();
+  h_purity_samebin_3->Write();
+  delete h_ttbar_rec_3;
+  delete h_ttbar_gen_3;
+  delete h_ttbar_truth_3;
+  delete h_mc_matrix_3;
+  cout << "Finished: Filling TTbar" << '\n';
+  return;
+}
+
+
+
+/*
+███████ ██ ██      ██          ██████   █████   ██████ ██   ██  ██████  ██████   ██████  ██    ██ ███    ██ ██████
+██      ██ ██      ██          ██   ██ ██   ██ ██      ██  ██  ██       ██   ██ ██    ██ ██    ██ ████   ██ ██   ██
+█████   ██ ██      ██          ██████  ███████ ██      █████   ██   ███ ██████  ██    ██ ██    ██ ██ ██  ██ ██   ██
+██      ██ ██      ██          ██   ██ ██   ██ ██      ██  ██  ██    ██ ██   ██ ██    ██ ██    ██ ██  ██ ██ ██   ██
+██      ██ ███████ ███████     ██████  ██   ██  ██████ ██   ██  ██████  ██   ██  ██████   ██████  ██   ████ ██████
+*/
+
+
+
+void fill_background(TTree* tree, TString prefix){
+  if(!tree) cout << "could not read 'mc signal' tree\n";
+  else      cout << "Filling Matrix Histograms for " + prefix + "...\n";
+
+  // setup hists
+  TH1* h_background_rec = binning_rec->CreateHistogram("background_rec_"+prefix);
+
+  outputFile->cd();
+
+  tree->ResetBranchAddresses();
+  tree->SetBranchAddress("h_tau32_rec", &tau32_rec);
+  tree->SetBranchAddress("h_passed_rec_final", &passed_rec_final);
+  tree->SetBranchAddress("h_rec_weight", &rec_weight);
+
+  tree->SetBranchStatus("*", 1);
+
+  for(Int_t ievent = 0; ievent < tree->GetEntriesFast(); ievent++){
+    if(tree->GetEntry(ievent) <= 0) break;
+
+    // get weights for migration matrix
+    w_central = rec_weight;
+
+    Int_t rec_binNumber = 0;
+    if(passed_rec_final) rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec);
+
+    if(passed_rec_final) h_background_rec->Fill(rec_binNumber, w_central);
+  }
+
+  h_background_rec->Write();
+  delete h_background_rec;
+  cout << "finished: filling background" << '\n';
   return;
 }

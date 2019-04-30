@@ -294,7 +294,6 @@ bool GenTopJetSortDPhiPt::process(uhh2::Event& event){
   return true;
 }
 
-
 int NumberGenJets(uhh2::Event& event){
   std::vector<GenTopJet>* topjets = event.gentopjets;
   std::vector<GenJet>* jets = event.genjets;

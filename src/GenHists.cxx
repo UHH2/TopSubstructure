@@ -41,10 +41,15 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
   book<TH1D>("m_gtj1_subjet1", "M_{subjet1} had. GenTopJet [GeV^{2}]", 30, 0, 300);
   book<TH1D>("m_gtj1_subjet2", "M_{subjet2} had. GenTopJet [GeV^{2}]", 30, 0, 300);
   book<TH1D>("tau1_gtj1", "#tau_{1} had. GenTopJet", 40, 0, 1.);
+  book<TH1D>("tau1_gtj1_rebin", "#tau_{1} had. GenTopJet", 10000, 0, 1.);
   book<TH1D>("tau2_gtj1", "#tau_{2} had. GenTopJet", 40, 0, 1.);
+  book<TH1D>("tau2_gtj1_rebin", "#tau_{2} had. GenTopJet", 10000, 0, 1.);
   book<TH1D>("tau3_gtj1", "#tau_{3} had. GenTopJet", 40, 0, 1.);
+  book<TH1D>("tau3_gtj1_rebin", "#tau_{3} had. GenTopJet", 10000, 0, 1.);
   book<TH1D>("tau32_gtj1", "#tau_{3}/#tau_{2} had. GenTopJet", 40, 0, 1.);
+  book<TH1D>("tau32_gtj1_rebin", "#tau_{3}/#tau_{2} had. GenTopJet", 10000, 0, 1.);
   book<TH1D>("tau21_gtj1", "#tau_{2}/#tau_{1} had. GenTopJet", 40, 0, 1.);
+  book<TH1D>("tau21_gtj1_rebin", "#tau_{2}/#tau_{1} had. GenTopJet", 10000, 0, 1.);
 
   book<TH1D>("dR_q1_gtj1", "#Delta R(quark1, had. GenTopJet)", 50, 0, 5.);
   book<TH1D>("dR_q2_gtj1", "#Delta R(quark2, had. GenTopJet)", 50, 0, 5.);
@@ -75,10 +80,15 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
   book<TH1D>("m_gtj2_subjet1", "M_{subjet1} lep. GenTopJet [GeV^{2}]", 30, 0, 300);
   book<TH1D>("m_gtj2_subjet2", "M_{subjet2} lep. GenTopJet [GeV^{2}]", 30, 0, 300);
   book<TH1D>("tau1_gtj2", "#tau_{1} lep. GenTopJet", 40, 0, 1.);
+  book<TH1D>("tau1_gtj2_rebin", "#tau_{1} lep. GenTopJet", 10000, 0, 1.);
   book<TH1D>("tau2_gtj2", "#tau_{2} lep. GenTopJet", 40, 0, 1.);
+  book<TH1D>("tau2_gtj2_rebin", "#tau_{2} lep. GenTopJet", 10000, 0, 1.);
   book<TH1D>("tau3_gtj2", "#tau_{3} lep. GenTopJet", 40, 0, 1.);
+  book<TH1D>("tau3_gtj2_rebin", "#tau_{3} lep. GenTopJet", 10000, 0, 1.);
   book<TH1D>("tau32_gtj2", "#tau_{3}/#tau_{2} lep. GenTopJet", 40, 0, 1.);
+  book<TH1D>("tau32_gtj2_rebin", "#tau_{3}/#tau_{2} lep. GenTopJet", 10000, 0, 1.);
   book<TH1D>("tau21_gtj2", "#tau_{2}/#tau_{1} lep. GenTopJet", 40, 0, 1.);
+  book<TH1D>("tau21_gtj2_rebin", "#tau_{2}/#tau_{1} lep. GenTopJet", 10000, 0, 1.);
 
   book<TH1D>("dR_q1_gtj2", "#Delta R(quark1, lep. GenTopJet)", 50, 0, 5.);
   book<TH1D>("dR_q2_gtj2", "#Delta R(quark2, lep. GenTopJet)", 50, 0, 5.);
@@ -191,10 +201,15 @@ void GenHists::fill(const Event & event){
       hist("m_gtj1_subjet1")->Fill(event.gentopjets->at(0).subjets().at(0).v4().M(), weight);
       if(event.gentopjets->at(0).subjets().size() >= 2) hist("m_gtj1_subjet2")->Fill(event.gentopjets->at(0).subjets().at(1).v4().M(), weight);
       hist("tau1_gtj1")->Fill(event.gentopjets->at(0).tau1(), weight);
+      hist("tau1_gtj1_rebin")->Fill(event.gentopjets->at(0).tau1(), weight);
       hist("tau2_gtj1")->Fill(event.gentopjets->at(0).tau2(), weight);
+      hist("tau2_gtj1_rebin")->Fill(event.gentopjets->at(0).tau2(), weight);
       hist("tau3_gtj1")->Fill(event.gentopjets->at(0).tau3(), weight);
+      hist("tau3_gtj1_rebin")->Fill(event.gentopjets->at(0).tau3(), weight);
       hist("tau32_gtj1")->Fill(event.gentopjets->at(0).tau3()/event.gentopjets->at(0).tau2(), weight);
+      hist("tau32_gtj1_rebin")->Fill(event.gentopjets->at(0).tau3()/event.gentopjets->at(0).tau2(), weight);
       hist("tau21_gtj1")->Fill(event.gentopjets->at(0).tau2()/event.gentopjets->at(0).tau1(), weight);
+      hist("tau21_gtj1_rebin")->Fill(event.gentopjets->at(0).tau2()/event.gentopjets->at(0).tau1(), weight);
 
 
       if(event.is_valid(h_ttbargen)){
@@ -320,10 +335,15 @@ void GenHists::fill(const Event & event){
         hist("m_gtj2_subjet1")->Fill(event.gentopjets->at(1).subjets().at(0).v4().M(), weight);
         if(event.gentopjets->at(1).subjets().size() >= 2)  hist("m_gtj2_subjet2")->Fill(event.gentopjets->at(1).subjets().at(1).v4().M(), weight);
         hist("tau1_gtj2")->Fill(event.gentopjets->at(1).tau1(), weight);
+        hist("tau1_gtj2_rebin")->Fill(event.gentopjets->at(1).tau1(), weight);
         hist("tau2_gtj2")->Fill(event.gentopjets->at(1).tau2(), weight);
+        hist("tau2_gtj2_rebin")->Fill(event.gentopjets->at(1).tau2(), weight);
         hist("tau3_gtj2")->Fill(event.gentopjets->at(1).tau3(), weight);
+        hist("tau3_gtj2_rebin")->Fill(event.gentopjets->at(1).tau3(), weight);
         hist("tau32_gtj2")->Fill(event.gentopjets->at(1).tau3()/event.gentopjets->at(1).tau2(), weight);
+        hist("tau32_gtj2_rebin")->Fill(event.gentopjets->at(1).tau3()/event.gentopjets->at(1).tau2(), weight);
         hist("tau21_gtj2")->Fill(event.gentopjets->at(1).tau2()/event.gentopjets->at(1).tau1(), weight);
+        hist("tau21_gtj2_rebin")->Fill(event.gentopjets->at(1).tau2()/event.gentopjets->at(1).tau1(), weight);
       }
     }
 }

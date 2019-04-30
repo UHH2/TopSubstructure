@@ -40,10 +40,15 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   book<TH1D>("m_subjet1_tj1", "M_{subjet1} had. TopJet candidate [GeV^{2}]", 30, 0, 300);
   book<TH1D>("m_subjet2_tj1", "M_{subjet2} had. TopJet candidate [GeV^{2}]", 30, 0, 300);
   book<TH1D>("tau1_tj1", "#tau_{1} had. TopJet candidate", 40, 0, 1.);
+  book<TH1D>("tau1_tj1_rebin", "#tau_{1} had. TopJet candidate", 10000, 0, 1.);
   book<TH1D>("tau2_tj1", "#tau_{2} had. TopJet candidate", 40, 0, 1.);
+  book<TH1D>("tau2_tj1_rebin", "#tau_{2} had. TopJet candidate", 10000, 0, 1.);
   book<TH1D>("tau3_tj1", "#tau_{3} had. TopJet candidate", 40, 0, 1.);
+  book<TH1D>("tau3_tj1_rebin", "#tau_{3} had. TopJet candidate", 10000, 0, 1.);
   book<TH1D>("tau32_tj1", "#tau_{3}/#tau_{2} had. TopJet candidate", 40, 0, 1.);
+  book<TH1D>("tau32_tj1_rebin", "#tau_{3}/#tau_{2} had. TopJet candidate", 10000, 0, 1.);
   book<TH1D>("tau21_tj1", "#tau_{2}/#tau_{1} had. TopJet candidate", 40, 0, 1.);
+  book<TH1D>("tau21_tj1_rebin", "#tau_{2}/#tau_{1} had. TopJet candidate", 10000, 0, 1.);
 
   book<TH1D>("dR_mu_tj1", "#Delta R(#mu, had. TopJet candidate)", 50, 0, 5.);
   book<TH1D>("dPhi_mu_tj1", "#Delta #Phi (#mu, had. TopJet candidate)", 40, 0, 4.);
@@ -59,10 +64,15 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   book<TH1D>("m_subjet1_tj2", "M_{subjet1} lep. TopJet candidate [GeV^{2}]", 30, 0, 300);
   book<TH1D>("m_subjet2_tj2", "M_{subjet2} lep. TopJet candidate [GeV^{2}]", 30, 0, 300);
   book<TH1D>("tau1_tj2", "#tau_{1} lep. TopJet candidate", 40, 0, 1.);
+  book<TH1D>("tau1_tj2_rebin", "#tau_{1} lep. TopJet candidate", 10000, 0, 1.);
   book<TH1D>("tau2_tj2", "#tau_{2} lep. TopJet candidate", 40, 0, 1.);
+  book<TH1D>("tau2_tj2_rebin", "#tau_{2} lep. TopJet candidate", 10000, 0, 1.);
   book<TH1D>("tau3_tj2", "#tau_{3} lep. TopJet candidate", 40, 0, 1.);
+  book<TH1D>("tau3_tj2_rebin", "#tau_{3} lep. TopJet candidate", 10000, 0, 1.);
   book<TH1D>("tau32_tj2", "#tau_{3}/#tau_{2} lep. TopJet candidate", 40, 0, 1.);
+  book<TH1D>("tau32_tj2_rebin", "#tau_{3}/#tau_{2} lep. TopJet candidate", 10000, 0, 1.);
   book<TH1D>("tau21_tj2", "#tau_{2}/#tau_{1} lep. TopJet candidate", 40, 0, 1.);
+  book<TH1D>("tau21_tj2_rebin", "#tau_{2}/#tau_{1} lep. TopJet candidate", 10000, 0, 1.);
 
   book<TH1D>("dR_mu_tj2", "#Delta R(#mu, lep. TopJet candidate)", 50, 0, 5.);
   book<TH1D>("dPhi_mu_tj2", "#Delta #Phi (#mu, lep. TopJet candidate)", 40, 0, 4.);
@@ -165,10 +175,15 @@ void TopSubstructureRecoHists::fill(const Event & event){
     if(topjet->at(0).subjets().size() >= 1) hist("m_subjet1_tj1")->Fill(topjet->at(0).subjets().at(0).v4().M(), weight);
     if(topjet->at(0).subjets().size() >= 2) hist("m_subjet2_tj1")->Fill(topjet->at(0).subjets().at(1).v4().M(), weight);
     hist("tau1_tj1")->Fill(topjet->at(0).tau1(), weight);
+    hist("tau1_tj1_rebin")->Fill(topjet->at(0).tau1(), weight);
     hist("tau2_tj1")->Fill(topjet->at(0).tau2(), weight);
+    hist("tau2_tj1_rebin")->Fill(topjet->at(0).tau2(), weight);
     hist("tau3_tj1")->Fill(topjet->at(0).tau3(), weight);
+    hist("tau3_tj1_rebin")->Fill(topjet->at(0).tau3(), weight);
     hist("tau32_tj1")->Fill(topjet->at(0).tau3()/topjet->at(0).tau2(), weight);
+    hist("tau32_tj1_rebin")->Fill(topjet->at(0).tau3()/topjet->at(0).tau2(), weight);
     hist("tau21_tj1")->Fill(topjet->at(0).tau2()/topjet->at(0).tau1(), weight);
+    hist("tau21_tj1_rebin")->Fill(topjet->at(0).tau2()/topjet->at(0).tau1(), weight);
 
     if(event.muons->size() > 0) hist("dPhi_mu_tj1")->Fill(deltaPhi(topjet->at(0), event.muons->at(0)), weight);
 
@@ -188,10 +203,15 @@ void TopSubstructureRecoHists::fill(const Event & event){
       if(topjet->at(1).subjets().size() >= 1)  hist("m_subjet1_tj2")->Fill(topjet->at(1).subjets().at(0).v4().M(), weight);
       if(topjet->at(1).subjets().size() >= 2)  hist("m_subjet2_tj2")->Fill(topjet->at(1).subjets().at(1).v4().M(), weight);
       hist("tau1_tj2")->Fill(topjet->at(1).tau1(), weight);
+      hist("tau1_tj2_rebin")->Fill(topjet->at(1).tau1(), weight);
       hist("tau2_tj2")->Fill(topjet->at(1).tau2(), weight);
+      hist("tau2_tj2_rebin")->Fill(topjet->at(1).tau2(), weight);
       hist("tau3_tj2")->Fill(topjet->at(1).tau3(), weight);
+      hist("tau3_tj2_rebin")->Fill(topjet->at(1).tau3(), weight);
       hist("tau32_tj2")->Fill(topjet->at(1).tau3()/topjet->at(1).tau2(), weight);
+      hist("tau32_tj2_rebin")->Fill(topjet->at(1).tau3()/topjet->at(1).tau2(), weight);
       hist("tau21_tj2")->Fill(topjet->at(1).tau2()/topjet->at(1).tau1(), weight);
+      hist("tau21_tj2_rebin")->Fill(topjet->at(1).tau2()/topjet->at(1).tau1(), weight);
 
 
       hist("M_diff1")->Fill(topjet->at(0).v4().M() - topjet->at(1).v4().M(), weight);

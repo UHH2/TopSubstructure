@@ -17,6 +17,13 @@
 #include "UHH2/common/include/TopJetIds.h"
 #include "UHH2/common/include/MCWeight.h"
 #include "UHH2/common/include/TTbarGen.h"
+#include <UHH2/core/include/AnalysisModule.h>
+#include <UHH2/core/include/Selection.h>
+#include <UHH2/common/include/LumiSelection.h>
+#include <UHH2/common/include/JetCorrections.h>
+#include <UHH2/common/include/ObjectIdUtils.h>
+#include <UHH2/common/include/Utils.h>
+#include <UHH2/common/include/AdditionalSelections.h>
 
 #include "UHH2/TopSubstructure/include/TopSubstructureSelections.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureCombinedSelections.h"
@@ -40,6 +47,7 @@ namespace uhh2examples {
     bool passed_rec, passed_gen;
 
     // declare the Selections to use. Use unique_ptr to ensure automatic call of delete in the destructor, to avoid memory leaks.
+    std::unique_ptr<uhh2::Selection> genmttbar_sel;
     std::unique_ptr<Selection> met_sel, nmu_sel, njet_sel;
     std::unique_ptr<Selection> nmu_gen, pt_mu_gen, pt_topjet_gen;
 
@@ -60,7 +68,10 @@ namespace uhh2examples {
     h_passed_gen_pre = ctx.declare_event_output<bool>("h_passed_gen_pre");
 
     isMC = (ctx.get("dataset_type") == "MC");
-    isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft_2016v3" || ctx.get("dataset_version") == "TTbar_2016v3");
+    isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft_2016v3");
+
+    if(ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v3") genmttbar_sel.reset(new MttbarGenSelection(0., 700.));
+    else genmttbar_sel.reset(new uhh2::AndSelection(ctx));
 
     // 2. set up selections
     if(isTTbar){
@@ -100,6 +111,7 @@ namespace uhh2examples {
 
     if(isTTbar){
       ttgenprod->process(event);
+      if(!genmttbar_sel->passes(event)) return false;
       passed_gen = nmu_gen->passes(event);
       if(passed_gen){
         h_gen_nmu->fill(event);
