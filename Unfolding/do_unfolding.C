@@ -36,8 +36,8 @@ int main(int argc, char* argv[]){
   background_names = {"DYJets", "QCD", "ST", "WJets", "Diboson_WW", "Diboson_WZ", "Diboson_ZZ"};
 
   // Setup everything for unfolding!
-  if(argc < 3){
-    throw runtime_error("Use: ./do_unfolding <dataset> <number of scans>");
+  if(argc < 4){
+    throw runtime_error("Use: ./do_unfolding <dataset> <number of scans> <value of tau>; if you don't want to use a custom value of tau, then set it to -1");
   }
   else if(argv[1] == std::string("pseudo1")){
     data_File->GetObject("ttbar_matrix_1", mat_response);             // fill response matrix
@@ -45,6 +45,7 @@ int main(int argc, char* argv[]){
     data_File->GetObject("pseudodata_truth_1", h_truth);
     data_File->GetObject("TTbar_gen_1", h_unfold);                    // fill histogram with what data should be unfolded
     data_File->GetObject("TTbar_rec_1", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("TTbar_truth_1", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
     data_File->GetObject("TTbar_purity_all_1", h_purity_all);
     data_File->GetObject("TTbar_purity_samebin_1", h_purity_samebin);
   }
@@ -54,6 +55,7 @@ int main(int argc, char* argv[]){
     data_File->GetObject("pseudodata_truth_2", h_truth);
     data_File->GetObject("TTbar_gen_2", h_unfold);                    // fill histogram with what data should be unfolded
     data_File->GetObject("TTbar_rec_2", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("TTbar_truth_2", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
     data_File->GetObject("TTbar_purity_all_2", h_purity_all);
     data_File->GetObject("TTbar_purity_samebin_2", h_purity_samebin);
   }
@@ -63,6 +65,7 @@ int main(int argc, char* argv[]){
     data_File->GetObject("pseudodata_truth_3", h_truth);              // fill histogram with truth
     data_File->GetObject("TTbar_gen_3", h_unfold);                    // fill histogram with what data should be unfolded
     data_File->GetObject("TTbar_rec_3", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("TTbar_truth_3", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
     data_File->GetObject("TTbar_purity_all_3", h_purity_all);
     data_File->GetObject("TTbar_purity_samebin_3", h_purity_samebin);
   }
@@ -84,7 +87,7 @@ int main(int argc, char* argv[]){
   for(unsigned int i = 0; i < background_names.size(); i++){
     background.push_back((TH1D*) data_File->Get("background_rec_" + background_names.at(i)));
   }
-  subtract_background = false;                                      // should the background be subtracted?
+  subtract_background = false;
   TString save_dir = "/afs/desy.de/user/s/skottkej/Plots/Unfolding/";
   TString dataset = argv[1];
   TString format = ".eps";
@@ -94,30 +97,56 @@ int main(int argc, char* argv[]){
   int nscan = atoi(argv[2]);
   bool do_lcurve = true;
   bool do_lcurve_2 = false;
+  tau_value = atoi(argv[3]);
+  TString tau_value_word = argv[3];
 
-  // TString save_projection_x_as = "LCurve_projection_x";
-  // save_projection_x_as += regmode;
-  // save_projection_x_as += density_flag;
+  if(tau_value < 0){
+    save_projection_x = "Projection_X_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
+    save_projection_y = "Projection_Y_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
+    save_LCurve_Unfolding = "LCurve_Unfolding_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
+    save_LCurve_Unfolding_correlation = "LCurve_Unfolding_correlation_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
+    save_LCurve_TauX = "LCurve_TauX_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
+    save_LCurve_TauY = "LCurve_TauY_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
+    save_LCurve_crosscheck = "LCurve_crosscheck_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
+    save_TauScan = "TauScan_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
+    save_TauScan_RhoLogTau = "TauScan_RhoLogTau_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
+    save_TauScan_Unfolding = "TauScan_Unfolding_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
+    save_TauScan_Unfolding_correlation = "TauScan_Unfolding_correlation_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
+    save_TauScan_crosscheck = "TauScan_crosscheck_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
+  }
+  else{
+    save_projection_x = "CustomTau_projection_X_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + "_" + tau_value_word + format;
+    save_projection_y = "CustomTau_projection_Y_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + "_" + tau_value_word + format;
+    save_LCurve_Unfolding = "CustomTau_Unfolding_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + "_" + tau_value_word + format;
+    save_LCurve_Unfolding_correlation = "CustomTau_Unfolding_correlation_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + "_" + tau_value_word + format;
+    save_LCurve_crosscheck = "CustomTau_crosscheck_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + "_" + tau_value_word + format;
+  }
 
-  TString save_LCurve_projection_x = "LCurve_projection_X_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
-  TString save_LCurve_projection_y = "LCurve_projection_Y_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
-  TString save_LCurve_Unfolding = "LCurve_Unfolding_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
-  TString save_LCurve_Unfolding_correlation = "LCurve_Unfolding_correlation_" + dataset + regmode + "_" + density_flag + "_" + nscan_word + format;
-  TString save_LCurve_TauX = "LCurve_TauX_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
-  TString save_LCurve_TauY = "LCurve_TauY_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
-  TString save_LCurve_TauScan = "LCurve_TauScan_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
-  TString save_TauScan_RhoLogTau = "TauScan_RhoLogTau_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
-
-  unfolding unfold(h_data, h_mc, mat_response, h_truth, h_mc, binning_gen, binning_rec, background, background_names, nscan, regmode, density_flag, do_lcurve, subtract_background);
+  // what the unfolding class needs:
+  // 1.    Set the data which should be unfolded.
+  // 2.    Set reco histogram which fills the response matrix.
+  // 3.    Set response matrix.
+  // 4.    Set truth of unfolded data (for pseudo data, truth of pseudodata; for data, truth of gen level).
+  // 5./6. Set binning of gen and reco level.
+  // 7./8. Set background Histograms (and their names).
+  // 9.    Set the number of scans.
+  // 10.   Set the unfolding mode.
+  // 11.   Set density flag.
+  // 12.   Should  the L-Curve scan be done? Otherwise do the TauScan!
+  // 13.   Should the background be subtracted?
+  // 14.   Set a Tau value if wanted (default = -1 --> don't use a custom value)
+  unfolding unfold(h_data, h_mc, mat_response, h_truth, binning_gen, binning_rec, background, background_names, nscan, regmode, density_flag, do_lcurve, subtract_background, tau_value);
 
   unfolded_data = unfold.get_output();
   correlation_matrix = unfold.get_correlation();
   unfolded_mc_test = unfold.get_output_check();
-  lcurve = unfold.get_lcurve();
-  coordinates = unfold.get_coordinates();
-  tau = unfold.get_tau();
-  logTau = unfold.get_logtau();
-  rhologTau = unfold.get_rhologtau();
+  if(tau_value < 0){
+    lcurve = unfold.get_lcurve();
+    coordinates = unfold.get_coordinates();
+    tau = unfold.get_tau();
+    logTau = unfold.get_logtau();
+    rhologTau = unfold.get_rhologtau();
+  }
   std::vector<TH1D*> projections = unfold.check_projection();
 
   outputFile->cd();
@@ -130,7 +159,7 @@ int main(int argc, char* argv[]){
   projections.at(0)->DrawCopy();
   h_unfold->SetLineColor(kRed);
   h_unfold->DrawCopy("same");
-  c_projection->cd(1)->SaveAs(save_dir + save_LCurve_projection_x);
+  c_projection->cd(1)->SaveAs(save_dir + save_projection_x);
 
   c_projection->cd(2);
   projections.at(1)->GetYaxis()->SetTitle("events");
@@ -138,7 +167,7 @@ int main(int argc, char* argv[]){
   projections.at(1)->DrawCopy();
   h_mc->SetLineColor(kRed);
   h_mc->DrawCopy("same");
-  c_projection->cd(2)->SaveAs(save_dir + save_LCurve_projection_y);
+  c_projection->cd(2)->SaveAs(save_dir + save_projection_y);
   c_projection->Write();
   delete c_projection;
 
@@ -167,143 +196,189 @@ int main(int argc, char* argv[]){
   c_unfolding->Write();
   delete c_unfolding;
 
-  TCanvas* c_lcurve = new TCanvas("LCurve ", "LCurve of unfolding", 600, 1200);
-  c_lcurve->Divide(1, 3);
+  TCanvas* c_crosscheck = new TCanvas("LCurve Crosscheck", "Unfolded data", 1000, 800);
   gStyle->SetOptStat(0);
+  c_crosscheck->cd();
+  // unfolded_data->GetYaxis()->SetRangeUser(-2000, 2000);
+  unfolded_mc_test->SetLineColor(kRed);
+  unfolded_mc_test->GetYaxis()->SetTitle("events");
+  unfolded_mc_test->SetTitle("");
+  unfolded_mc_test->DrawCopy();
+  h_trutch_check->DrawCopy("same hist");
+  TLegend *legend_crosscheck = new TLegend(0.15, 0.22, 0.65, 0.42, "");
+  legend_crosscheck->SetBorderSize(0);
+  legend_crosscheck->SetFillStyle(0);
+  legend_crosscheck->AddEntry(unfolded_mc_test, "unfolded MC", "l");
+  legend_crosscheck->AddEntry(h_trutch_check, "truth", "l");
+  legend_crosscheck->Draw();
+  c_crosscheck->SaveAs(save_dir + save_LCurve_crosscheck);
 
-  c_lcurve->cd(1);
-  p2=new TMarker(TMath::Log10(tau), coordinates.at(0), 20);
+  c_crosscheck->Write();
+  delete c_crosscheck;
 
-  double logtau = TMath::Log10(tau);
-  std::vector<double> Xpoint_x = {logtau};
-  std::vector<double> Ypoint_x = {coordinates.at(0)};
-  TGraph * point_x = new TGraph(1, &Xpoint_x[0], &Ypoint_x[0]);
-  point_x->SetTitle("");
-  point_x->GetXaxis()->SetTitle("log #tau");
-  point_x->GetYaxis()->SetTitle("L_{X}");
-  point_x->GetYaxis()->SetTitleOffset(1.5);
-  point_x->GetXaxis()->SetNdivisions(510);
-  point_x->GetYaxis()->SetNdivisions(810);
-  point_x->SetMarkerStyle(20);
-  point_x->SetMarkerSize(1.5);
-  point_x->SetLineColor(1);
-  point_x->Draw("AP");
-  point_x->GetXaxis()->SetLimits(-6.0, 0.0);
-  double ymin_x = Ypoint_x[0]*0.99;
-  double ymax_x = Ypoint_x[0]*1.08;
-  point_x->GetYaxis()->SetRangeUser(ymin_x, ymax_x);
-  point_x->DrawClone("AP");
-  c_lcurve->cd(1)->Update();
-  logTau.at(0)->SetLineColor(kRed);
-  logTau.at(0)->DrawClone("same");
-  point_x->DrawClone("psame");
-  TLegend *legend_logtaux = new TLegend(0.15, 0.22, 0.65, 0.42, "");
-  legend_logtaux->SetBorderSize(0);
-  legend_logtaux->SetFillStyle(0);
-  legend_logtaux->AddEntry(logTau.at(0), "unfolded " + dataset,"l");
-  legend_logtaux->Draw();
-  c_lcurve->cd(1)->SaveAs(save_dir + save_LCurve_TauX);
+  if(tau_value < 0){
+    TCanvas* c_lcurve = new TCanvas("LCurve ", "LCurve of unfolding", 600, 1200);
+    c_lcurve->Divide(1, 3);
+    gStyle->SetOptStat(0);
 
-  c_lcurve->cd(2);
-  std::vector<double> Xpoint_y = {logtau};
-  std::vector<double> Ypoint_y = {coordinates.at(1)};
-  TGraph * point_y = new TGraph(1, &Xpoint_y[0], &Ypoint_y[0]);
-  point_y->SetTitle("");
-  point_y->GetXaxis()->SetTitle("log #tau");
-  point_y->GetYaxis()->SetTitle("L_{Y}");
-  point_y->GetYaxis()->SetTitleOffset(1.5);
-  point_y->GetXaxis()->SetNdivisions(510);
-  point_y->GetYaxis()->SetNdivisions(810);
-  point_y->SetMarkerStyle(20);
-  point_y->SetMarkerSize(1.5);
-  point_y->SetLineColor(1);
-  point_y->Draw("AP");
-  point_y->GetXaxis()->SetLimits(-6.0, 0.0);
-  double ymin_y = Ypoint_y[0]*-0.7;
-  double ymax_y = Ypoint_y[0]*1.08;
-  point_y->GetYaxis()->SetRangeUser(ymin_y, ymax_y);
-  point_y->DrawClone("AP");
-  c_lcurve->cd(2)->Update();
-  logTau.at(1)->SetLineColor(kRed);
-  logTau.at(1)->DrawClone("same");
-  point_y->DrawClone("psame");
-  TLegend *legend_logtauy = new TLegend(0.15, 0.22, 0.65, 0.42, "");
-  legend_logtauy->SetBorderSize(0);
-  legend_logtauy->SetFillStyle(0);
-  legend_logtauy->AddEntry(logTau.at(1), "unfolded " + dataset,"l");
-  legend_logtauy->Draw();
-  c_lcurve->cd(2)->SaveAs(save_dir + save_LCurve_TauY);
+    c_lcurve->cd(1);
+    p2=new TMarker(TMath::Log10(tau), coordinates.at(0), 20);
 
-  c_lcurve->Write();
-  delete c_lcurve;
+    double logtau = TMath::Log10(tau);
+    std::vector<double> Xpoint_x = {logtau};
+    std::vector<double> Ypoint_x = {coordinates.at(0)};
+    TGraph * point_x = new TGraph(1, &Xpoint_x[0], &Ypoint_x[0]);
+    point_x->SetTitle("");
+    point_x->GetXaxis()->SetTitle("log #tau");
+    point_x->GetYaxis()->SetTitle("L_{X}");
+    point_x->GetYaxis()->SetTitleOffset(1.5);
+    point_x->GetXaxis()->SetNdivisions(510);
+    point_x->GetYaxis()->SetNdivisions(810);
+    point_x->SetMarkerStyle(20);
+    point_x->SetMarkerSize(1.5);
+    point_x->SetLineColor(1);
+    point_x->Draw("AP");
+    point_x->GetXaxis()->SetLimits(-6.0, 0.0);
+    double ymin_x = Ypoint_x[0]*0.99;
+    double ymax_x = Ypoint_x[0]*1.08;
+    point_x->GetYaxis()->SetRangeUser(ymin_x, ymax_x);
+    point_x->DrawClone("AP");
+    c_lcurve->cd(1)->Update();
+    logTau.at(0)->SetLineColor(kRed);
+    logTau.at(0)->DrawClone("same");
+    point_x->DrawClone("psame");
+    TLegend *legend_logtaux = new TLegend(0.15, 0.22, 0.65, 0.42, "");
+    legend_logtaux->SetBorderSize(0);
+    legend_logtaux->SetFillStyle(0);
+    legend_logtaux->AddEntry(logTau.at(0), "unfolded " + dataset,"l");
+    legend_logtaux->Draw();
+    c_lcurve->cd(1)->SaveAs(save_dir + save_LCurve_TauX);
 
+    c_lcurve->cd(2);
+    std::vector<double> Xpoint_y = {logtau};
+    std::vector<double> Ypoint_y = {coordinates.at(1)};
+    TGraph * point_y = new TGraph(1, &Xpoint_y[0], &Ypoint_y[0]);
+    point_y->SetTitle("");
+    point_y->GetXaxis()->SetTitle("log #tau");
+    point_y->GetYaxis()->SetTitle("L_{Y}");
+    point_y->GetYaxis()->SetTitleOffset(1.5);
+    point_y->GetXaxis()->SetNdivisions(510);
+    point_y->GetYaxis()->SetNdivisions(810);
+    point_y->SetMarkerStyle(20);
+    point_y->SetMarkerSize(1.5);
+    point_y->SetLineColor(1);
+    point_y->Draw("AP");
+    point_y->GetXaxis()->SetLimits(-6.0, 0.0);
+    double ymin_y = Ypoint_y[0]*-0.7;
+    double ymax_y = Ypoint_y[0]*1.08;
+    point_y->GetYaxis()->SetRangeUser(ymin_y, ymax_y);
+    point_y->DrawClone("AP");
+    c_lcurve->cd(2)->Update();
+    logTau.at(1)->SetLineColor(kRed);
+    logTau.at(1)->DrawClone("same");
+    point_y->DrawClone("psame");
+    TLegend *legend_logtauy = new TLegend(0.15, 0.22, 0.65, 0.42, "");
+    legend_logtauy->SetBorderSize(0);
+    legend_logtauy->SetFillStyle(0);
+    legend_logtauy->AddEntry(logTau.at(1), "unfolded " + dataset,"l");
+    legend_logtauy->Draw();
+    c_lcurve->cd(2)->SaveAs(save_dir + save_LCurve_TauY);
 
+    c_lcurve->Write();
+    delete c_lcurve;
+  }
 
-  unfolding unfold2(h_data, h_mc, mat_response, h_truth, h_mc, binning_gen, binning_rec, background, background_names, nscan, regmode, density_flag, do_lcurve_2, subtract_background);
+  if(tau_value < 0){
+    unfolding unfold2(h_data, h_mc, mat_response, h_truth, binning_gen, binning_rec, background, background_names, nscan, regmode, density_flag, do_lcurve_2, subtract_background, tau_value);
 
-  coordinates_2 = unfold2.get_coordinates();
-  tau_2 = unfold2.get_tau();
-  logTau_2 = unfold2.get_logtau();
-  rhologTau_2 = unfold2.get_rhologtau();
+    coordinates_2 = unfold2.get_coordinates();
+    lcurve_2 = unfold2.get_lcurve();
+    tau_2 = unfold2.get_tau();
+    logTau_2 = unfold2.get_logtau();
+    rhologTau_2 = unfold2.get_rhologtau();
+    unfolded_data_2 = unfold2.get_output();
+    correlation_matrix_2 = unfold2.get_correlation();
+    unfolded_mc_test_2 = unfold2.get_output_check();
 
-  TCanvas* c_unfolding_2 = new TCanvas("Unfolding2 ", "Unfolded data", 1000, 1000);
-  gStyle->SetOptStat(0);
-  c_unfolding_2->Divide(1,2);
-  c_unfolding_2->cd(1);
-  // unfolded_data_tau->GetYaxis()->SetRangeUser(-2000, 2000);
-  LCurve_tau = new TMarker(coordinates.at(0), coordinates.at(1), 10);
-  LCurve_tau->SetMarkerColor(kRed);
-  TauScan_tau = new TMarker(coordinates_2.at(0), coordinates_2.at(1), 20);
-  TauScan_tau->SetMarkerColor(kBlue);
-  lcurve->GetYaxis()->SetRangeUser(0, 6);
-  lcurve->GetYaxis()->SetTitle("L_{Y}");
-  lcurve->GetXaxis()->SetTitle("L_{X}");
-  lcurve->DrawClone();
-  LCurve_tau->DrawClone("same");
-  TauScan_tau->DrawClone("same");
-  TLegend *legend_lcurve = new TLegend(0.15, 0.22, 0.65, 0.42, "");
-  legend_lcurve->SetBorderSize(0);
-  legend_lcurve->SetFillStyle(0);
-  legend_lcurve->AddEntry(lcurve, "LCurve", "l");
-  legend_lcurve->AddEntry(LCurve_tau, "#tau value of LCurve", "p");
-  legend_lcurve->AddEntry(TauScan_tau, "#tau value of ScanTau", "p");
-  legend_lcurve->Draw();
-  c_unfolding_2->cd(1)->SaveAs(save_dir + save_LCurve_TauScan);
+    TCanvas* c_unfolding_2 = new TCanvas("Unfolding2 ", "Unfolded data", 1000, 1000);
+    gStyle->SetOptStat(0);
+    c_unfolding_2->Divide(1,2);
+    c_unfolding_2->cd(1);
+    // unfolded_data_tau->GetYaxis()->SetRangeUser(-2000, 2000);
+    LCurve_tau = new TMarker(coordinates.at(0), coordinates.at(1), 10);
+    LCurve_tau->SetMarkerColor(kRed);
+    TauScan_tau = new TMarker(coordinates_2.at(0), coordinates_2.at(1), 20);
+    TauScan_tau->SetMarkerColor(kBlue);
+    lcurve->GetYaxis()->SetRangeUser(0, 6);
+    lcurve->GetYaxis()->SetTitle("L_{Y}");
+    lcurve->GetXaxis()->SetTitle("L_{X}");
+    lcurve->DrawClone();
+    LCurve_tau->DrawClone("same");
+    TauScan_tau->DrawClone("same");
+    TLegend *legend_lcurve = new TLegend(0.15, 0.22, 0.65, 0.42, "");
+    legend_lcurve->SetBorderSize(0);
+    legend_lcurve->SetFillStyle(0);
+    legend_lcurve->AddEntry(lcurve, "LCurve", "l");
+    legend_lcurve->AddEntry(LCurve_tau, "#tau value of LCurve", "p");
+    legend_lcurve->AddEntry(TauScan_tau, "#tau value of ScanTau", "p");
+    legend_lcurve->Draw();
+    c_unfolding_2->cd(1)->SaveAs(save_dir + save_TauScan);
 
-  c_unfolding_2->cd(2);
-  // p4=new TMarker(TMath::Log10(tau_2), rhologTau_2->Eval(TMath::Log10(tau_2)), 20);
-  // point->GetXaxis()->SetTitle("log #tau");
-  // point->GetYaxis()->SetTitle("#rho(log #tau)");
-  std::vector<double> Xpoint_rhologtau = {TMath::Log10(tau_2)};
-  std::vector<double> Ypoint_rhologtau = {rhologTau_2->Eval(TMath::Log10(tau_2))};
-  TGraph * point_rhologtau = new TGraph(1, &Xpoint_rhologtau[0], &Ypoint_rhologtau[0]);
-  point_rhologtau->SetTitle("");
-  point_rhologtau->GetXaxis()->SetTitle("log #tau");
-  point_rhologtau->GetYaxis()->SetTitle("#rho(log #tau)");
-  point_rhologtau->GetYaxis()->SetTitleOffset(1.5);
-  point_rhologtau->GetXaxis()->SetNdivisions(510);
-  point_rhologtau->GetYaxis()->SetNdivisions(810);
-  point_rhologtau->SetMarkerStyle(20);
-  point_rhologtau->SetMarkerSize(1.5);
-  point_rhologtau->SetLineColor(1);
-  point_rhologtau->Draw("AP");
-  point_rhologtau->GetXaxis()->SetLimits(-6.0, 0.0);
-  double ymin_rhologtau = Ypoint_rhologtau[0]*0.95;
-  double ymax_rhologtau = 1.15;
-  point_rhologtau->GetYaxis()->SetRangeUser(ymin_rhologtau, ymax_rhologtau);
-  point_rhologtau->DrawClone("AP");
-  c_unfolding_2->cd(2)->Update();
-  rhologTau_2->SetLineColor(kRed);
-  rhologTau_2->DrawClone("same");
-  point_rhologtau->DrawClone("psame");
-  TLegend *legend_rhologTau = new TLegend(0.15, 0.22, 0.65, 0.42, "");
-  legend_rhologTau->SetBorderSize(0);
-  legend_rhologTau->SetFillStyle(0);
-  legend_rhologTau->AddEntry(rhologTau_2, "unfolded " + dataset, "l");
-  legend_rhologTau->Draw();
-  c_unfolding_2->cd(2)->SaveAs(save_dir + save_TauScan_RhoLogTau  );
-  c_unfolding_2->Write();
-  delete c_unfolding_2;
+    c_unfolding_2->cd(2);
+    // p4=new TMarker(TMath::Log10(tau_2), rhologTau_2->Eval(TMath::Log10(tau_2)), 20);
+    // point->GetXaxis()->SetTitle("log #tau");
+    // point->GetYaxis()->SetTitle("#rho(log #tau)");
+    std::vector<double> Xpoint_rhologtau = {TMath::Log10(tau_2)};
+    std::vector<double> Ypoint_rhologtau = {rhologTau_2->Eval(TMath::Log10(tau_2))} ;
+    TGraph * point_rhologtau = new TGraph(1, &Xpoint_rhologtau[0], &Ypoint_rhologtau[0]);
+    point_rhologtau->SetTitle("");
+    point_rhologtau->GetXaxis()->SetTitle("log #tau");
+    point_rhologtau->GetYaxis()->SetTitle("#rho(log #tau)");
+    point_rhologtau->GetYaxis()->SetTitleOffset(1.5);
+    point_rhologtau->GetXaxis()->SetNdivisions(510);
+    point_rhologtau->GetYaxis()->SetNdivisions(810);
+    point_rhologtau->SetMarkerStyle(20);
+    point_rhologtau->SetMarkerSize(1.5);
+    point_rhologtau->SetLineColor(1);
+    point_rhologtau->Draw("AP");
+    point_rhologtau->GetXaxis()->SetLimits(-6.0, 0.0);
+    double ymin_rhologtau = Ypoint_rhologtau[0]*0.95;
+    double ymax_rhologtau = 1.15;
+    point_rhologtau->GetYaxis()->SetRangeUser(ymin_rhologtau, ymax_rhologtau);
+    point_rhologtau->DrawClone("AP");
+    c_unfolding_2->cd(2)->Update();
+    rhologTau_2->SetLineColor(kRed);
+    rhologTau_2->DrawClone("same");
+    point_rhologtau->DrawClone("psame");
+    TLegend *legend_rhologTau = new TLegend(0.15, 0.22, 0.65, 0.42, "");
+    legend_rhologTau->SetBorderSize(0);
+    legend_rhologTau->SetFillStyle(0);
+    legend_rhologTau->AddEntry(rhologTau_2, "unfolded " + dataset, "l");
+    legend_rhologTau->Draw();
+    c_unfolding_2->cd(2)->SaveAs(save_dir + save_TauScan_RhoLogTau  );
+    c_unfolding_2->Write();
+    delete c_unfolding_2;
+
+    TCanvas* c_crosscheck_2 = new TCanvas("TauScan Crosscheck", "Unfolded data", 1000, 800);
+    gStyle->SetOptStat(0);
+    c_crosscheck_2->cd();
+    // unfolded_data->GetYaxis()->SetRangeUser(-2000, 2000);
+    unfolded_mc_test_2->SetLineColor(kRed);
+    unfolded_mc_test_2->GetYaxis()->SetTitle("events");
+    unfolded_mc_test_2->SetTitle("");
+    unfolded_mc_test_2->DrawCopy();
+    h_trutch_check->DrawCopy("same hist");
+    TLegend *legend_crosscheck_2 = new TLegend(0.15, 0.22, 0.65, 0.42, "");
+    legend_crosscheck_2->SetBorderSize(0);
+    legend_crosscheck_2->SetFillStyle(0);
+    legend_crosscheck_2->AddEntry(unfolded_mc_test_2, "unfolded MC", "l");
+    legend_crosscheck_2->AddEntry(h_trutch_check, "truth", "l");
+    legend_crosscheck_2->Draw();
+    c_crosscheck_2->SaveAs(save_dir + save_TauScan_crosscheck);
+
+    c_crosscheck_2->Write();
+    delete c_crosscheck_2;
+  }
 
   outputFile->Close();
   return 0;

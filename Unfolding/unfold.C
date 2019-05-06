@@ -2,12 +2,12 @@
 
 using namespace std;
 
-unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TH1D* h_test, TUnfoldBinning* binning_gen, TUnfoldBinning* binning_rec, std::vector<TH1D*> background, std::vector<TString> background_names, int nscan, TString regmode_, TString density_flag, bool do_lcurve, bool subtract_background){
+unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TUnfoldBinning* binning_gen, TUnfoldBinning* binning_rec, std::vector<TH1D*> background, std::vector<TString> background_names, int nscan, TString regmode_, TString density_flag, bool do_lcurve, bool subtract_background, double tau_value){
   response_matrix = response;
   hist_truth = h_truth;
   hist_mc = h_mc;
 
- // preserve the area
+  // preserve the area
   TUnfold::EConstraint constraintMode = TUnfold::kEConstraintNone;
   // TUnfold::EConstraint constraintMode = TUnfold::kEConstraintArea;
 
@@ -19,6 +19,7 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TH
   else throw std::runtime_error("unfold.C: Use regmode: 'size', 'derivative' or 'curvature'!");
 
   // density flags
+  // cout << "density_flag: " << density_flag << '\n';
   if(density_flag == "none")                 densityFlags = TUnfoldDensity::kDensityModeNone;
   else if(density_flag == "binwidth")        densityFlags = TUnfoldDensity::kDensityModeBinWidth;
   else if(density_flag == "binwidthanduser") densityFlags = TUnfoldDensity::kDensityModeBinWidthAndUser;
@@ -40,10 +41,10 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TH
       background_integral += background.at(i)->Integral();
     }
   }
-  double sf_ratio = (h_data->Integral()-background_integral)/h_test->Integral();
+  double sf_ratio = (h_data->Integral()-background_integral)/hist_mc->Integral();
   cout << "ratio between data and mc (ttbar): " << sf_ratio << '\n';
   unfold.SetInput(h_data, sf_ratio);
-  unfold_check.SetInput(h_mc, 1);
+  unfold_check.SetInput(hist_mc, 1);
 
   if(subtract_background){
     for(unsigned int i = 0; i < background.size(); i++){
@@ -55,59 +56,53 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TH
   TString unfolding_result = "Unfolded Pseudodata ";
   TString unfolding_corr = "Correlation Matrix ";
   TString unfolding_check = "Unfolded mc ";
-  if(do_lcurve){
-    unfolding_result += "LCurve";
-    unfolding_corr += "LCurve";
-    unfolding_check += "LCurve";
+  if(tau_value < 0){
+    if(do_lcurve){
+      unfolding_result += "LCurve";
+      unfolding_corr += "LCurve";
+      unfolding_check += "LCurve";
+    }
+    else{
+      unfolding_result += "TauScan";
+      unfolding_corr += "TauScan";
+      unfolding_check += "TauScan";
+    }
   }
   else{
-    unfolding_result += "TauScan";
-    unfolding_corr += "TauScan";
-    unfolding_check += "TauScan";
+    unfolding_result += "CustomTau";
+    unfolding_corr += "CustomTau";
+    unfolding_check += "CustomTau";
+  }
+  if(tau_value < 0){
+    if(do_lcurve){
+      unfold.ScanLcurve(nscan, 0.000001, 0.9, &l_curve, &logTauX, &logTauY);
+      unfold_check.ScanLcurve(1, 0.000001, 0.9, &lcurve_check, &logTauX_check, &logTauY_check);
+    }
+    else{
+      const char *SCAN_DISTRIBUTION = 0;
+      const char *SCAN_AXISSTEERING = 0;
+      TUnfoldDensity::EScanTauMode scanMode = TUnfoldDensity::kEScanTauRhoAvgSys;
+      unfold.ScanTau(nscan , 0.000001, 0.9, &rhoLogTau, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &l_curve, &logTauX, &logTauY);
+      unfold_check.ScanTau(1 , 0.000001, 0.9, &rhoLogTau_check, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &lcurve_check, &logTauX_check, &logTauY_check);
+    }
+  }
+  else{
+    unfold.DoUnfold(tau_value);
+    unfold_check.DoUnfold(tau_value);
   }
 
-  if(do_lcurve){
-    TSpline *logTauX = 0, *logTauY = 0;
-    TGraph *lcurve_check = 0;
-    TSpline *logTauX_check = 0, *logTauY_check = 0;
-    unfold.ScanLcurve(nscan, 0.000001, 0.9, &l_curve, &logTauX, &logTauY);
-    unfold_check.ScanLcurve(1, 0.000001, 0.9, &lcurve_check, &logTauX_check, &logTauY_check);
 
-    h_data_output = unfold.GetOutput(unfolding_result);
-    h_data_rho = unfold.GetRhoIJtotal(unfolding_corr);
-    h_check = unfold_check.GetOutput(unfolding_check);
-
+  h_data_output = unfold.GetOutput(unfolding_result);
+  h_data_rho = unfold.GetRhoIJtotal(unfolding_corr);
+  h_check = unfold_check.GetOutput(unfolding_check);
+  if(tau_value < 0){
     logTau.push_back(logTauX);
     logTau.push_back(logTauY);
 
     tau = unfold.GetTau();
     double logTaud = TMath::Log10(tau);
-    // double lcurveX = logTauX->Eval(logTau);
-    // double lcurveY = logTauY->Eval(logTau);
     coords.push_back(logTauX->Eval(logTaud));
     coords.push_back(logTauY->Eval(logTaud));
-  }
-  else{
-    TSpline *rhoLogTau_test = 0;
-    TGraph *lcurve_check = 0;
-    TSpline *logTauX = 0, *logTauY = 0;
-    const char *SCAN_DISTRIBUTION = 0;
-    const char *SCAN_AXISSTEERING = 0;
-    TUnfoldDensity::EScanTauMode scanMode = TUnfoldDensity::kEScanTauRhoAvgSys;
-    unfold.ScanTau(nscan , 0.000001, 0.9, &rhoLogTau, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &l_curve, &logTauX, &logTauY);
-    int iBest_check = unfold_check.ScanTau(nscan , 0.000001, 0.9, &rhoLogTau_test, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &lcurve_check);
-
-    logTau.push_back(logTauX);
-    logTau.push_back(logTauY);
-
-    tau = unfold.GetTau();
-    double logTaud = TMath::Log10(tau);
-    coords.push_back(logTauX->Eval(logTaud));
-    coords.push_back(logTauY->Eval(logTaud));
-
-    h_data_output = unfold.GetOutput(unfolding_result);
-    h_data_rho = unfold.GetRhoIJtotal(unfolding_corr);
-    h_check = unfold_check.GetOutput(unfolding_check);
   }
   return;
 }

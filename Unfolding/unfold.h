@@ -15,7 +15,7 @@
 
 class unfolding{
 public:
-  unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TH1D* h_test, TUnfoldBinning* binning_gen, TUnfoldBinning* binning_rec, std::vector<TH1D*> background, std::vector<TString> background_names, int nscan = 100, TString regmode_ = "curvature", TString density_flag = "none", bool do_lcurve = true, bool subtract_background = true);
+  unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TUnfoldBinning* binning_gen, TUnfoldBinning* binning_rec, std::vector<TH1D*> background, std::vector<TString> background_names, int nscan = 100, TString regmode_ = "curvature", TString density_flag = "none", bool do_lcurve = true, bool subtract_background = true, double tau_value = -1);
   TH1* get_output_check();
   TH1* get_output();
   TGraph* get_lcurve();
@@ -36,8 +36,11 @@ private:
   TUnfoldDensity::EDensityMode densityFlags;
   TH1 *h_check;
   TH1 *h_data_output;
-  TSpline *rhoLogTau;
+  TSpline *rhoLogTau, *rhoLogTau_check;
   TGraph *l_curve;
+  TSpline *logTauX, *logTauY;
+  TGraph *lcurve_check;
+  TSpline *logTauX_check, *logTauY_check;
   TH2 *h_data_rho;
   TH2D *response_matrix;
   TH1D *hist_truth, *hist_mc;
