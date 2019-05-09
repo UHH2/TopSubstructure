@@ -13,6 +13,7 @@
 #include <TRandom3.h>
 #include <TLegend.h>
 #include "unfold.h"
+#include "Plots.h"
 #include "TFile.h"
 #include "TTree.h"
 #include <TH1F.h>
@@ -26,7 +27,7 @@ TDOMParser parser;
 
 TUnfoldBinning *binning_rec, *binning_gen;
 const TUnfoldBinning *measurement_rec, *measurement_gen;
-TString save_projection_x, save_projection_y, save_LCurve_Unfolding, save_LCurve_Unfolding_correlation, save_LCurve_TauX,  save_LCurve_TauY, save_TauScan, save_TauScan_RhoLogTau, save_TauScan_Unfolding, save_TauScan_Unfolding_correlation, save_TauScan_crosscheck, save_LCurve_crosscheck;
+TString save_LCurve_Unfolding, save_LCurve_Unfolding_norm, save_LCurve_Unfolding_correlation, save_LCurve_TauX,  save_LCurve_TauY, save_TauScan_LCurve, save_TauScan_RhoLogTau, save_TauScan_Unfolding, save_TauScan_Unfolding_norm, save_TauScan_Unfolding_correlation, save_TauScan_crosscheck, save_LCurve_crosscheck, save_projection_x, save_projection_y, save_response_matrix;
 TH2D *mat_response;
 TH2 *correlation_matrix, *correlation_matrix_2;
 TH1D *h_data, *h_unfold, *h_truth, *h_mc, *h_trutch_check, *h_purity_all, *h_purity_samebin;
@@ -39,4 +40,3 @@ std::vector<TSpline*> logTau, logTau_2;
 std::vector<TString> background_names;
 std::vector<TH1D*> background;
 bool subtract_background;
-TMarker *p1, *p2, *p3, *p4, *LCurve_tau, *TauScan_tau;

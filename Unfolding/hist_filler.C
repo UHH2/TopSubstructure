@@ -7,11 +7,11 @@ int main(int argc, char* argv[]){
   TH1::SetDefaultSumw2();
 
   /*
-   ██████ ██████  ███████  █████  ████████ ███████      ██████  ██    ██ ████████ ██████  ██    ██ ████████     ███████ ██ ██      ███████
+  ██████ ██████  ███████  █████  ████████ ███████      ██████  ██    ██ ████████ ██████  ██    ██ ████████     ███████ ██ ██      ███████
   ██      ██   ██ ██      ██   ██    ██    ██          ██    ██ ██    ██    ██    ██   ██ ██    ██    ██        ██      ██ ██      ██
   ██      ██████  █████   ███████    ██    █████       ██    ██ ██    ██    ██    ██████  ██    ██    ██        █████   ██ ██      █████
   ██      ██   ██ ██      ██   ██    ██    ██          ██    ██ ██    ██    ██    ██      ██    ██    ██        ██      ██ ██      ██
-   ██████ ██   ██ ███████ ██   ██    ██    ███████      ██████   ██████     ██    ██       ██████     ██        ██      ██ ███████ ███████
+  ██████ ██   ██ ███████ ██   ██    ██    ███████      ██████   ██████     ██    ██       ██████     ██        ██      ██ ███████ ███████
   */
 
   std::string filename;
@@ -47,6 +47,8 @@ int main(int argc, char* argv[]){
   // get distributions from measurement phase space and sideband regions
   measurement_rec = binning_rec->FindNode("measurement_rec");
   measurement_gen = binning_gen->FindNode("measurement_gen");
+  rec_pt_topjet_sideband = binning_rec->FindNode("rec_pt_topjet_sideband");
+  gen_pt_topjet_sideband = binning_gen->FindNode("gen_pt_topjet_sideband");
 
   /*
   ███████ ██ ██      ██          ██   ██ ██ ███████ ████████  ██████   ██████  ██████   █████  ███    ███ ███████
@@ -133,12 +135,12 @@ void fill_pseudodata(TTree* tree){
   else      cout << "Filling Pseudodata Histograms...\n";
 
   // setup hists
-  TH1* h_pseudodata_1 = binning_rec->CreateHistogram("pseudodata_1");
-  TH1* h_pseudodata_truth_1    = binning_gen->CreateHistogram("pseudodata_truth_1",kTRUE,0,0);
-  TH1* h_pseudodata_2 = binning_rec->CreateHistogram("pseudodata_2");
-  TH1* h_pseudodata_truth_2    = binning_gen->CreateHistogram("pseudodata_truth_2",kTRUE,0,0);
-  TH1* h_pseudodata_3 = binning_rec->CreateHistogram("pseudodata_3");
-  TH1* h_pseudodata_truth_3    = binning_gen->CreateHistogram("pseudodata_truth_3",kTRUE,0,0);
+  TH1* h_pseudodata_1          = binning_rec->CreateHistogram("pseudodata_1");
+  TH1* h_pseudodata_truth_1    = measurement_gen->CreateHistogram("pseudodata_truth_1",kTRUE,0,0, "tau[C]");
+  TH1* h_pseudodata_2          = binning_rec->CreateHistogram("pseudodata_2");
+  TH1* h_pseudodata_truth_2    = measurement_gen->CreateHistogram("pseudodata_truth_2",kTRUE,0,0, "tau[C]");
+  TH1* h_pseudodata_3          = binning_rec->CreateHistogram("pseudodata_3");
+  TH1* h_pseudodata_truth_3    = measurement_gen->CreateHistogram("pseudodata_truth_3",kTRUE,0,0, "tau[C]");
   outputFile->cd();
 
   tree->ResetBranchAddresses();
@@ -146,6 +148,8 @@ void fill_pseudodata(TTree* tree){
   tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
   tree->SetBranchAddress("h_passed_rec_final", &passed_rec_final);
   tree->SetBranchAddress("h_passed_gen_final", &passed_gen_final);
+  tree->SetBranchAddress("h_passed_rec_pt_topjet_sideband", &passed_rec_pt_topjet_sideband);
+  tree->SetBranchAddress("h_passed_gen_pt_topjet_sideband", &passed_gen_pt_topjet_sideband);
   tree->SetBranchAddress("h_rec_weight", &rec_weight);
   tree->SetBranchAddress("h_gen_weight", &gen_weight);
 
@@ -164,9 +168,20 @@ void fill_pseudodata(TTree* tree){
     w_sig_rec = rec_weight*10;
     w_gen = gen_weight*10;
 
+
     Int_t rec_binNumber = 0, gen_binNumber = 0;
-    if(passed_rec_final){
-      rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec);
+    if(passed_rec_final)                  rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec);
+    else if(passed_rec_pt_topjet_sideband)  rec_binNumber = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec);
+    if(passed_gen_final)                  gen_binNumber = measurement_gen->GetGlobalBinNumber(tau32_gen);
+    else if(passed_gen_pt_topjet_sideband)  gen_binNumber = gen_pt_topjet_sideband->GetGlobalBinNumber(tau32_gen);
+
+    bool gen_info = false;
+    bool rec_info = false;
+    if(passed_gen_final || passed_gen_pt_topjet_sideband) gen_info = true;
+    if(passed_rec_final || passed_rec_pt_topjet_sideband) rec_info = true;
+
+
+    if(rec_info){
       if(counter == 8) h_pseudodata_1->Fill(rec_binNumber, w_sig_rec);
       else if(counter == 9) h_pseudodata_2->Fill(rec_binNumber, w_sig_rec);
       else if(counter == 10) h_pseudodata_3->Fill(rec_binNumber, w_sig_rec);
@@ -215,21 +230,21 @@ void fill_ttbar(TTree* tree){
   // setup hists
   TH1* h_ttbar_rec_1      = binning_rec->CreateHistogram("TTbar_rec_1");
   TH1* h_ttbar_gen_1      = binning_gen->CreateHistogram("TTbar_gen_1");
-  TH1* h_ttbar_truth_1    = binning_gen->CreateHistogram("TTbar_truth_1",kTRUE,0,0);
-  TH1* h_purity_all_1     = binning_gen->CreateHistogram("TTbar_purity_all_1",kTRUE,0,0);
-  TH1* h_purity_samebin_1 = binning_gen->CreateHistogram("TTbar_purity_samebin_1",kTRUE,0,0);
+  TH1* h_ttbar_truth_1    = measurement_gen->CreateHistogram("TTbar_truth_1",kTRUE,0,0);
+  TH1* h_purity_all_1     = measurement_gen->CreateHistogram("TTbar_purity_all_1",kTRUE,0,0);
+  TH1* h_purity_samebin_1 = measurement_gen->CreateHistogram("TTbar_purity_samebin_1",kTRUE,0,0);
 
   TH1* h_ttbar_rec_2      = binning_rec->CreateHistogram("TTbar_rec_2");
   TH1* h_ttbar_gen_2      = binning_gen->CreateHistogram("TTbar_gen_2");
-  TH1* h_ttbar_truth_2    = binning_gen->CreateHistogram("TTbar_truth_2",kTRUE,0,0);
-  TH1* h_purity_all_2     = binning_gen->CreateHistogram("TTbar_purity_all_2",kTRUE,0,0);
-  TH1* h_purity_samebin_2 = binning_gen->CreateHistogram("TTbar_purity_samebin_2",kTRUE,0,0);
+  TH1* h_ttbar_truth_2    = measurement_gen->CreateHistogram("TTbar_truth_2",kTRUE,0,0);
+  TH1* h_purity_all_2     = measurement_gen->CreateHistogram("TTbar_purity_all_2",kTRUE,0,0);
+  TH1* h_purity_samebin_2 = measurement_gen->CreateHistogram("TTbar_purity_samebin_2",kTRUE,0,0);
 
   TH1* h_ttbar_rec_3      = binning_rec->CreateHistogram("TTbar_rec_3");
   TH1* h_ttbar_gen_3      = binning_gen->CreateHistogram("TTbar_gen_3");
-  TH1* h_ttbar_truth_3    = binning_gen->CreateHistogram("TTbar_truth_3",kTRUE,0,0);
-  TH1* h_purity_all_3     = binning_gen->CreateHistogram("TTbar_purity_all_3",kTRUE,0,0);
-  TH1* h_purity_samebin_3 = binning_gen->CreateHistogram("TTbar_purity_samebin_3",kTRUE,0,0);
+  TH1* h_ttbar_truth_3    = measurement_gen->CreateHistogram("TTbar_truth_3",kTRUE,0,0);
+  TH1* h_purity_all_3     = measurement_gen->CreateHistogram("TTbar_purity_all_3",kTRUE,0,0);
+  TH1* h_purity_samebin_3 = measurement_gen->CreateHistogram("TTbar_purity_samebin_3",kTRUE,0,0);
 
   TH2* h_mc_matrix_1 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, "ttbar_matrix_1");
   TH2* h_mc_matrix_2 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, "ttbar_matrix_2");
@@ -242,10 +257,12 @@ void fill_ttbar(TTree* tree){
   tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
   tree->SetBranchAddress("h_passed_rec_final", &passed_rec_final);
   tree->SetBranchAddress("h_passed_gen_final", &passed_gen_final);
+  tree->SetBranchAddress("h_passed_rec_pt_topjet_sideband", &passed_rec_pt_topjet_sideband);
+  tree->SetBranchAddress("h_passed_gen_pt_topjet_sideband", &passed_gen_pt_topjet_sideband);
   tree->SetBranchAddress("h_rec_weight", &rec_weight);
   tree->SetBranchAddress("h_gen_weight", &gen_weight);
-
   tree->SetBranchStatus("*", 1);
+
   int counter = 1;
   for(Int_t ievent = 0; ievent < tree->GetEntriesFast(); ievent++){
     if(tree->GetEntry(ievent) <= 0) break;
@@ -261,38 +278,50 @@ void fill_ttbar(TTree* tree){
     w_gen = gen_weight*10/9;
 
     Int_t rec_binNumber = 0, gen_binNumber = 0;
-    if(passed_rec_final) rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec);
-    if(passed_gen_final) gen_binNumber = measurement_gen->GetGlobalBinNumber(tau32_gen);
-    if(passed_rec_final){
+
+    if(passed_rec_final)                    rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec);
+    else if(passed_rec_pt_topjet_sideband)  rec_binNumber = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec);
+
+    if(passed_gen_final)                    gen_binNumber = measurement_gen->GetGlobalBinNumber(tau32_gen);
+    else if(passed_gen_pt_topjet_sideband)  gen_binNumber = gen_pt_topjet_sideband->GetGlobalBinNumber(tau32_gen);
+
+    bool gen_info = false;
+    bool rec_info = false;
+    if(passed_gen_final || passed_gen_pt_topjet_sideband) gen_info = true;
+    if(passed_rec_final || passed_rec_pt_topjet_sideband) rec_info = true;
+
+    if(rec_info){
       if(counter != 8)  h_ttbar_rec_1->Fill(rec_binNumber, w_sig_rec);
       if(counter != 9)  h_ttbar_rec_2->Fill(rec_binNumber, w_sig_rec);
       if(counter != 10) h_ttbar_rec_3->Fill(rec_binNumber, w_sig_rec);
     }
     if(passed_gen_final){
-      if(counter != 8)  h_ttbar_gen_1->Fill(gen_binNumber, w_gen);
       if(counter != 8)  h_ttbar_truth_1->Fill(tau32_gen, w_gen);
-      if(counter != 9)  h_ttbar_gen_2->Fill(gen_binNumber, w_gen);
       if(counter != 9)  h_ttbar_truth_2->Fill(tau32_gen, w_gen);
-      if(counter != 10) h_ttbar_gen_3->Fill(gen_binNumber, w_gen);
       if(counter != 10) h_ttbar_truth_3->Fill(tau32_gen, w_gen);
     }
+    if(gen_info){
+      if(counter != 8)  h_ttbar_gen_1->Fill(gen_binNumber, w_gen);
+      if(counter != 9)  h_ttbar_gen_2->Fill(gen_binNumber, w_gen);
+      if(counter != 10) h_ttbar_gen_3->Fill(gen_binNumber, w_gen);
+    }
 
-    if( passed_rec_final &&  passed_gen_final){
+    if( rec_info &&  gen_info){
       if(counter != 8)  h_mc_matrix_1->Fill(gen_binNumber, rec_binNumber, w_central);
       if(counter != 9)  h_mc_matrix_2->Fill(gen_binNumber, rec_binNumber, w_central);
       if(counter != 10) h_mc_matrix_3->Fill(gen_binNumber, rec_binNumber, w_central);
     }
-    if(!passed_rec_final &&  passed_gen_final){
+    if(!rec_info &&  gen_info){
       if(counter != 8)  h_mc_matrix_1->Fill(gen_binNumber, rec_binNumber, w_norec);
       if(counter != 9)  h_mc_matrix_2->Fill(gen_binNumber, rec_binNumber, w_norec);
       if(counter != 10) h_mc_matrix_3->Fill(gen_binNumber, rec_binNumber, w_norec);
     }
-    if( passed_rec_final && !passed_gen_final){
+    if( rec_info && !gen_info){
       if(counter != 8)  h_mc_matrix_1->Fill(gen_binNumber, rec_binNumber, w_nogen);
       if(counter != 9)  h_mc_matrix_2->Fill(gen_binNumber, rec_binNumber, w_nogen);
       if(counter != 10) h_mc_matrix_3->Fill(gen_binNumber, rec_binNumber, w_nogen);
     }
-    if( passed_rec_final &&  passed_gen_final){
+    if( rec_info &&  gen_info){
       if(counter != 8)  h_mc_matrix_1->Fill(gen_binNumber, 0., w_correction);
       if(counter != 9)  h_mc_matrix_2->Fill(gen_binNumber, 0., w_correction);
       if(counter != 10) h_mc_matrix_3->Fill(gen_binNumber, 0., w_correction);
@@ -300,8 +329,8 @@ void fill_ttbar(TTree* tree){
 
     //fill hists for purity
     int genBin_recInfo = 0;
-    // if(passed_measurement_gen && rec_info){
-    if(passed_gen_final && passed_rec_final){
+
+    if(gen_info && rec_info){
       genBin_recInfo = measurement_gen->GetGlobalBinNumber(tau32_rec);
       if(counter != 8){
         h_purity_all_1->Fill(tau32_gen, w_gen);
@@ -317,7 +346,7 @@ void fill_ttbar(TTree* tree){
       }
     }
     counter++;
-    if(counter >= 10) counter = 1;
+    if(counter > 10) counter = 1;
   }
 
   h_ttbar_rec_1->Write();

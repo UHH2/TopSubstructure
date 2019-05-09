@@ -36,7 +36,7 @@ namespace uhh2examples {
     virtual bool process(Event & event) override;
 
   private:
-    bool isTTbar, isPseudoData;
+    bool isTTbar, isPseudoData, isMC;
     bool passed_rec, passed_gen;
     bool matched_rec, matched_gen;
 
@@ -72,8 +72,8 @@ namespace uhh2examples {
     std::unique_ptr<Hists> h_gen_dr, h_gen_dr_matched, h_gen_dr_unmatched;
     std::unique_ptr<Hists> h_gen_mass, h_gen_mass_matched, h_gen_mass_unmatched;
 
+    std::unique_ptr<Hists> h_pt_mu, h_pt_mu_matched, h_pt_mu_unmatched;
     std::unique_ptr<Hists> h_ntopjet2, h_ntopjet2_matched, h_ntopjet2_unmatched;
-    std::unique_ptr<Hists> h_ntopjet1, h_ntopjet1_matched, h_ntopjet1_unmatched;
     std::unique_ptr<Hists> h_pt_topjet, h_pt_topjet_matched, h_pt_topjet_unmatched;
     std::unique_ptr<Hists> h_dr, h_dr_matched, h_dr_unmatched;
     std::unique_ptr<Hists> h_mass, h_mass_matched, h_mass_unmatched;
@@ -136,7 +136,7 @@ namespace uhh2examples {
 
     isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft_2016v3" || ctx.get("dataset_version") == "TTbar_2016v3");
     isPseudoData = (ctx.get("dataset_version") == "PseudoData");
-    // isMC = (ctx.get("dataset_type") == "MC");
+    isMC = (ctx.get("dataset_type") == "MC");
 
     // 2. set up selections
     if(isTTbar){
@@ -194,6 +194,10 @@ namespace uhh2examples {
     h_gen_dr_sideband.reset(new GenHists(ctx, "gen_dr_sideband"));
     h_gen_mass_sideband.reset(new GenHists(ctx, "gen_mass_sideband"));
 
+    h_pt_mu.reset(new TopSubstructureRecoHists(ctx, "pt_mu"));
+    h_pt_mu_matched.reset(new TopSubstructureRecoHists(ctx, "pt_mu_matched"));
+    h_pt_mu_unmatched.reset(new TopSubstructureRecoHists(ctx, "pt_mu_unmatched"));
+
     h_pt_topjet.reset(new TopSubstructureRecoHists(ctx, "pt_topjet"));
     h_pt_topjet_matched.reset(new TopSubstructureRecoHists(ctx, "pt_topjet_matched"));
     h_pt_topjet_unmatched.reset(new TopSubstructureRecoHists(ctx, "pt_topjet_unmatched"));
@@ -201,10 +205,6 @@ namespace uhh2examples {
     h_ntopjet2.reset(new TopSubstructureRecoHists(ctx, "ntopjet2"));
     h_ntopjet2_matched.reset(new TopSubstructureRecoHists(ctx, "ntopjet2_matched"));
     h_ntopjet2_unmatched.reset(new TopSubstructureRecoHists(ctx, "ntopjet2_unmatched"));
-
-    h_ntopjet1.reset(new TopSubstructureRecoHists(ctx, "ntopjet1"));
-    h_ntopjet1_matched.reset(new TopSubstructureRecoHists(ctx, "ntopjet1_matched"));
-    h_ntopjet1_unmatched.reset(new TopSubstructureRecoHists(ctx, "ntopjet1_unmatched"));
 
     h_dr.reset(new TopSubstructureRecoHists(ctx, "dr"));
     h_dr_matched.reset(new TopSubstructureRecoHists(ctx, "dr_matched"));
@@ -254,6 +254,7 @@ namespace uhh2examples {
     else passed_rec                    = false;
     // passed_rec_ntopjet_sideband_l2  = false;
     // passed_rec_ntopjet_sideband_g2  = false;
+    passed_rec_pt_mu                   = false;
     passed_rec_ntopjet                 = false;
     passed_rec_dr                      = false;
     passed_rec_mass                    = false;
@@ -316,24 +317,24 @@ namespace uhh2examples {
         else h_gen_mass_unmatched->fill(event);
       }
 
-      passed_gen_pt_mu_sideband = pt_mu_gen_sideband->passes(event);
-      if(passed_gen && !passed_gen_pt_mu && passed_gen_pt_topjet && passed_gen_ntopjet && passed_gen_dr && passed_gen_mass && passed_gen_pt_mu_sideband){
+      if(passed_gen && !passed_gen_pt_mu && passed_gen_pt_topjet && passed_gen_ntopjet && passed_gen_dr && passed_gen_mass && pt_mu_gen_sideband->passes(event)){
         h_gen_pt_mu_sideband->fill(event);
+        passed_gen_pt_mu_sideband = true;
       }
 
-      passed_gen_pt_topjet_sideband = pt_topjet_gen_sideband->passes(event);
-      if(passed_gen && passed_gen_pt_mu && !passed_gen_pt_topjet && passed_gen_ntopjet && passed_gen_dr && passed_gen_mass && passed_gen_pt_topjet_sideband){
+      if(passed_gen && passed_gen_pt_mu && !passed_gen_pt_topjet && passed_gen_ntopjet && passed_gen_dr && passed_gen_mass && pt_topjet_gen_sideband->passes(event)){
         h_gen_pt_topjet_sideband->fill(event);
+        passed_gen_pt_topjet_sideband = true;
       }
 
-      passed_gen_dr_sideband = dr_gen_sideband->passes(event);
-      if(passed_gen && passed_gen_pt_mu && passed_gen_pt_topjet && passed_gen_ntopjet && !passed_gen_dr && passed_gen_mass && passed_gen_dr_sideband){
+      if(passed_gen && passed_gen_pt_mu && passed_gen_pt_topjet && passed_gen_ntopjet && !passed_gen_dr && passed_gen_mass && dr_gen_sideband->passes(event)){
         h_gen_dr_sideband->fill(event);
+        passed_gen_dr_sideband = true;
       }
 
-      if(!passed_gen_mass) passed_gen_mass_sideband = true;
-      if(passed_gen && passed_gen_pt_topjet && passed_gen_ntopjet && passed_gen_dr && !passed_gen_mass && passed_gen_mass_sideband){
+      if(passed_gen && passed_gen_pt_topjet && passed_gen_ntopjet && passed_gen_dr && !passed_gen_mass){
         h_gen_mass_sideband->fill(event);
+        passed_gen_mass_sideband = true;
       }
     }
 
@@ -345,9 +346,20 @@ namespace uhh2examples {
     ██   ██ ███████  ██████  ██████
     */
 
+    passed_rec_pt_mu = pt_mu_sel->passes(event);
+    if(passed_rec && passed_rec_pt_mu){
+      h_pt_mu->fill(event);
+      if(isTTbar){
+        matched_rec = recmatching->passes(event);
+        if(matched_rec) h_pt_mu_matched->fill(event);
+        else h_pt_mu_unmatched->fill(event);
+      }
+    }
+
+
     // pT(first Topjet) > 400
     passed_rec_pt_topjet = pt_topjet_sel1->passes(event);
-    if(passed_rec && passed_rec_pt_topjet){
+    if(passed_rec && passed_rec_pt_mu && passed_rec_pt_topjet){
       h_pt_topjet->fill(event);
       if(isTTbar){
         matched_rec = recmatching->passes(event);
@@ -358,7 +370,7 @@ namespace uhh2examples {
 
     // >= 2 TopJets
     passed_rec_ntopjet = ntopjet2_sel->passes(event);
-    if(passed_rec && passed_rec_pt_topjet && passed_rec_ntopjet){
+    if(passed_rec && passed_rec_pt_mu && passed_rec_pt_topjet && passed_rec_ntopjet){
       h_ntopjet2->fill(event);
       if(isTTbar){
         matched_rec = recmatching->passes(event);
@@ -369,7 +381,7 @@ namespace uhh2examples {
 
     // dR(muon, second TopJet) < 0.8
     passed_rec_dr = dr_sel->passes(event);
-    if(passed_rec && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr){
+    if(passed_rec && passed_rec_pt_mu && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr){
       h_dr->fill(event);
       if(isTTbar){
         matched_rec = recmatching->passes(event);
@@ -380,7 +392,7 @@ namespace uhh2examples {
 
     // M(first TopJet) > M(second TopJet + Muon)
     passed_rec_mass = mass_sel1->passes(event);
-    if(passed_rec && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && passed_rec_mass){
+    if(passed_rec && passed_rec_pt_mu && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && passed_rec_mass){
       h_mass->fill(event);
       passed_rec_final = true;
       if(isTTbar){
@@ -392,24 +404,24 @@ namespace uhh2examples {
       }
     }
 
-    passed_rec_pt_mu_sideband = pt_mu_rec_sideband->passes(event);
-    if(passed_gen && !passed_rec_pt_mu && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && passed_rec_mass && passed_rec_pt_mu_sideband){
+    if(passed_rec && !passed_rec_pt_mu && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && passed_rec_mass && pt_mu_rec_sideband->passes(event)){
       h_rec_pt_mu_sideband->fill(event);
+      passed_rec_pt_mu_sideband = true;
     }
 
-    passed_rec_pt_topjet_sideband = pt_topjet_rec_sideband->passes(event);
-    if(isTTbar && passed_rec && !passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && passed_rec_mass && passed_rec_pt_topjet_sideband){
+    if(passed_rec && passed_rec_pt_mu && !passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && passed_rec_mass && pt_topjet_rec_sideband->passes(event)){
       h_rec_pt_topjet_sideband->fill(event);
+      passed_rec_pt_topjet_sideband = true;
     }
 
-    passed_rec_dr_sideband = dr_rec_sideband->passes(event);
-    if(isTTbar && passed_rec && passed_rec_pt_topjet && passed_rec_ntopjet && !passed_rec_dr && passed_rec_mass && passed_rec_dr_sideband){
+    if(passed_rec && passed_rec_pt_mu && passed_rec_pt_topjet && passed_rec_ntopjet && !passed_rec_dr && passed_rec_mass && dr_rec_sideband->passes(event)){
       h_rec_dr_sideband->fill(event);
+      passed_rec_dr_sideband = true;
     }
 
-    if(!passed_rec_mass) passed_rec_mass_sideband = true;
-    if(isTTbar && passed_gen && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && !passed_rec_mass && passed_rec_mass_sideband){
+    if(passed_rec && passed_rec_pt_mu && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && !passed_rec_mass){
       h_rec_mass_sideband->fill(event);
+      passed_rec_mass_sideband = true;
     }
 
 
@@ -424,7 +436,7 @@ namespace uhh2examples {
     event.set(h_passed_rec_pt_mu_sideband, passed_rec_pt_mu_sideband);
     event.set(h_passed_rec_pt_topjet_sideband, passed_rec_pt_topjet_sideband);
 
-    if(passed_rec_final){
+    if(event.topjets->size() > 0){
       event.set(h_pt_rec, event.topjets->at(0).pt());
       double tau32_rec = event.topjets->at(0).tau3()/event.topjets->at(0).tau2();
       event.set(h_tau32_rec, tau32_rec);
@@ -433,7 +445,7 @@ namespace uhh2examples {
       event.set(h_pt_rec, -100);
       event.set(h_tau32_rec, -100);
     }
-    if(passed_gen_final){
+    if(isMC && event.gentopjets->size() > 0){
       event.set(h_pt_gen, event.gentopjets->at(0).pt());
       double tau32_gen = event.gentopjets->at(0).tau3()/event.gentopjets->at(0).tau2();
       event.set(h_tau32_gen, tau32_gen);

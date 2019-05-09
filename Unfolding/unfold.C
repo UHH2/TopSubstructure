@@ -75,15 +75,15 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
   }
   if(tau_value < 0){
     if(do_lcurve){
-      unfold.ScanLcurve(nscan, 0.000001, 0.9, &l_curve, &logTauX, &logTauY);
-      unfold_check.ScanLcurve(1, 0.000001, 0.9, &lcurve_check, &logTauX_check, &logTauY_check);
+      unfold.ScanLcurve(nscan, 0.1, 0.1, &l_curve, &logTauX, &logTauY);
+      unfold_check.ScanLcurve(1, 0.0001, 0.9, &lcurve_check, &logTauX_check, &logTauY_check);
     }
     else{
       const char *SCAN_DISTRIBUTION = 0;
       const char *SCAN_AXISSTEERING = 0;
       TUnfoldDensity::EScanTauMode scanMode = TUnfoldDensity::kEScanTauRhoAvgSys;
-      unfold.ScanTau(nscan , 0.000001, 0.9, &rhoLogTau, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &l_curve, &logTauX, &logTauY);
-      unfold_check.ScanTau(1 , 0.000001, 0.9, &rhoLogTau_check, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &lcurve_check, &logTauX_check, &logTauY_check);
+      unfold.ScanTau(nscan , 0.00001, 0.9, &rhoLogTau, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &l_curve, &logTauX, &logTauY);
+      unfold_check.ScanTau(1 , 0.00001, 0.9, &rhoLogTau_check, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &lcurve_check, &logTauX_check, &logTauY_check);
     }
   }
   else{
@@ -91,15 +91,19 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
     unfold_check.DoUnfold(tau_value);
   }
 
-
-  h_data_output = unfold.GetOutput(unfolding_result);
-  h_data_rho = unfold.GetRhoIJtotal(unfolding_corr);
-  h_check = unfold_check.GetOutput(unfolding_check);
+  cout << "test1" << '\n';
+  h_data_output = unfold.GetOutput(unfolding_result, 0, "measurement_gen");
+  cout << "test2" << '\n';
+  h_data_rho = unfold.GetRhoIJtotal(unfolding_corr, 0, "measurement_gen");
+  cout << "test3" << '\n';
+  h_check = unfold_check.GetOutput(unfolding_check, 0, "measurement_gen");
+  cout << "test4" << '\n';
   if(tau_value < 0){
     logTau.push_back(logTauX);
     logTau.push_back(logTauY);
 
     tau = unfold.GetTau();
+    cout << "tau: " << tau << '\n';
     double logTaud = TMath::Log10(tau);
     coords.push_back(logTauX->Eval(logTaud));
     coords.push_back(logTauY->Eval(logTaud));
@@ -145,19 +149,19 @@ TH2* unfolding::get_correlation(){
 std::vector<TH1D*> unfolding::check_projection(){
   std::cout << "starting to check projections \n";
 
-  TH1D* hist_data_rec = (TH1D*)hist_truth->Clone("hist_data_rec");
-  TRandom3 rnd;
-  for(int iRec=1; iRec <= hist_data_rec->GetSize(); iRec++) {
-    double c0 = hist_data_rec->GetBinContent(iRec);
-    double e0 = hist_data_rec->GetBinError(iRec);
-    double n0 = c0*c0/(e0*e0);
-    double a = e0*e0/c0;
-    double ni = rnd.Poisson(n0);
-    double ci = a*ni;
-    double ei = a*TMath::Sqrt(ni);
-    hist_data_rec->SetBinContent(iRec, ci);
-    hist_data_rec->SetBinError(iRec, ei);
-  }
+  // TH1D* hist_data_rec = (TH1D*)hist_truth->Clone("hist_data_rec");
+  // TRandom3 rnd;
+  // for(int iRec=1; iRec <= hist_data_rec->GetSize(); iRec++) {
+  //   double c0 = hist_data_rec->GetBinContent(iRec);
+  //   double e0 = hist_data_rec->GetBinError(iRec);
+  //   double n0 = c0*c0/(e0*e0);
+  //   double a = e0*e0/c0;
+  //   double ni = rnd.Poisson(n0);
+  //   double ci = a*ni;
+  //   double ei = a*TMath::Sqrt(ni);
+  //   hist_data_rec->SetBinContent(iRec, ci);
+  //   hist_data_rec->SetBinError(iRec, ei);
+  // }
   TString title_proj_y = "Projection of rec distribution ";
   TString title_proj_x = "Projection of gen distribution ";
   title_proj_y += response_matrix->GetTitle();
@@ -165,13 +169,15 @@ std::vector<TH1D*> unfolding::check_projection(){
 
   m_1 = (TH1D*)gROOT->FindObject(title_proj_y);
   m_2 = (TH1D*)gROOT->FindObject(title_proj_x);
-  if(m_1 || m_2){
+  if(m_1 && m_2){
     m_1->Delete();
     m_2->Delete();
   }
 
   TH1D* projection_y = new TH1D(title_proj_y, "", response_matrix->GetNbinsY(), 0.5, response_matrix->GetNbinsY()+0.5);
   TH1D* projection_x = new TH1D(title_proj_x, "", response_matrix->GetNbinsX(), 0.5, response_matrix->GetNbinsX()+0.5);
+  cout << "NBinsY: " << response_matrix->GetNbinsY() << '\n';
+  cout << "NBinsX: " << response_matrix->GetNbinsX() << '\n';
 
   for(int i = 0; i <= response_matrix->GetNbinsY() + 1; i++){
     double content_y = 0;

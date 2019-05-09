@@ -30,10 +30,14 @@ TUnfoldBinning *binning_rec;
 TUnfoldBinning *binning_gen;
 const TUnfoldBinning *measurement_rec;
 const TUnfoldBinning *measurement_gen;
+const TUnfoldBinning *rec_pt_topjet_sideband;
+const TUnfoldBinning *gen_pt_topjet_sideband;
+
 
 // variables to store gen or rec info
 Double_t tau32_rec, tau32_gen;             // variables
 Bool_t passed_rec_final, passed_gen_final; // bools
+Bool_t passed_rec_pt_topjet_sideband, passed_gen_pt_topjet_sideband; // bools
 Double_t gen_weight, rec_weight;           //weights
 
 
