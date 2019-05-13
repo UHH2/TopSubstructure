@@ -11,18 +11,19 @@ void bin_range(){
   TFile *TTbar = new TFile("/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_cmssw10/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3.root", "READ");
 
   // TH1D* tau32 = (TH1D*)TTbar->Get("mass/tau32_tj1_rebin");
-  TH1D* tau32 = (TH1D*)TTbar->Get("rec_pt_topjet_sideband/tau32_tj1_rebin");
+  // TH1D* tau32 = (TH1D*)TTbar->Get("rec_dr_sideband/tau32_tj1_rebin");
+  TH1D* tau32 = (TH1D*)TTbar->Get("rec_mass_sideband/tau32_tj1_rebin");
 
   int start = 0;
   for(int i = 0; i < tau32->GetNbinsX(); i++){
-    if(tau32->Integral(start, i) >= 103){
+    if(tau32->Integral(start, i) >= 107){
       cout << "bin range from: " << start << " to: " << i << '\n';
       cout << tau32->Integral(start, i) << '\n';
       start = i;
     }
   }
   // cout << ""  << tau32->Integral(0, 7015) << '\n';
-  cout << "last bin: "  << tau32->Integral(8928, 10000) << '\n';
+  cout << "last bin: "  << tau32->Integral(start, 10000) << '\n';
   //
   // cout << "1. range:  "  << tau32->Integral(0   , 3624) << '\n';
   // cout << "2. range:  "  << tau32->Integral(3624, 4053) << '\n';

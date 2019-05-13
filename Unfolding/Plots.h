@@ -20,13 +20,14 @@ class Plotter{
 public:
   Plotter(TString);
   void Plot_projections(TH1D* projections, TH1* h_input, TString save);
-  void Plot_output(TH1* h_unfolded, TH1* h_truth, bool normalise, TString save);
+  void Plot_output(TH1* h_unfolded, TH1* h_truth_, bool normalise, TString save);
   void Plot_correlation_matrix(TH2* h_corr_matrix, TString save);
-  void Plot_LogTau(TSpline* logTau, double tau, double coordinate, TString save);
+  void Plot_LogTau(TSpline* logTau_, double tau, double coordinate, TString save);
   void Plot_LCurve(TGraph* lcurve, std::vector<double> coordinates, std::vector<double> coordinates_2, TString save);
   void Plot_RhoLogTau(TSpline* rhologTau, double tau, TString save);
-  void Plot_ResponseMatrix(TH2* response_matrix, TString save);
+  void Plot_ResponseMatrix(TH2* resp_matrix_, TString save);
+  void Plot_purity(TH1* purity_same, TH1* purity_all, TString save);
 
 private:
-  TString save_dir, name, x_axis_title, y_axis_title, dataset;
+  TString save_dir_, name, x_axis_title, y_axis_title, dataset;
 };

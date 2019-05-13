@@ -35,6 +35,7 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
   TUnfoldDensity unfold(response_matrix, TUnfold::kHistMapOutputHoriz, regMode, constraintMode, densityFlags, binning_gen, binning_rec, REGULARISATION_DISTRIBUTION, REGULARISATION_AXISSTEERING);
   TUnfoldDensity unfold_check(response_matrix, TUnfold::kHistMapOutputHoriz, regMode, constraintMode, densityFlags, binning_gen, binning_rec, REGULARISATION_DISTRIBUTION, REGULARISATION_AXISSTEERING);
 
+
   double background_integral = 0;
   if(subtract_background){
     for(unsigned int i = 0; i < background.size(); i++){
@@ -73,52 +74,65 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
     unfolding_corr += "CustomTau";
     unfolding_check += "CustomTau";
   }
+  l_curve = 0;
+  l_curve_check = 0;
+  logTauX = 0;
+  logTauY = 0;
   if(tau_value < 0){
     if(do_lcurve){
-      unfold.ScanLcurve(nscan, 0.1, 0.1, &l_curve, &logTauX, &logTauY);
-      unfold_check.ScanLcurve(1, 0.0001, 0.9, &lcurve_check, &logTauX_check, &logTauY_check);
+      unfold.ScanLcurve(nscan, 0.000000000000000000000001, 0.9, &l_curve, &logTauX, &logTauY);
+      unfold_check.ScanLcurve(1, 0.000000000000000000000001, 0.9, &l_curve_check);
     }
     else{
+      rhoLogTau = 0;
+      rhoLogTau_check = 0;
       const char *SCAN_DISTRIBUTION = 0;
       const char *SCAN_AXISSTEERING = 0;
       TUnfoldDensity::EScanTauMode scanMode = TUnfoldDensity::kEScanTauRhoAvgSys;
-      unfold.ScanTau(nscan , 0.00001, 0.9, &rhoLogTau, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &l_curve, &logTauX, &logTauY);
-      unfold_check.ScanTau(1 , 0.00001, 0.9, &rhoLogTau_check, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &lcurve_check, &logTauX_check, &logTauY_check);
+      unfold.ScanTau(nscan , 0.000000000000000000000001, 0.9, &rhoLogTau, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &l_curve, &logTauX, &logTauY);
+      unfold_check.ScanTau(1 , 0.000000000000000000000001, 0.9, &rhoLogTau_check, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING);
     }
   }
   else{
     unfold.DoUnfold(tau_value);
     unfold_check.DoUnfold(tau_value);
   }
-
-  cout << "test1" << '\n';
   h_data_output = unfold.GetOutput(unfolding_result, 0, "measurement_gen");
-  cout << "test2" << '\n';
+  h_data_output_all = unfold.GetOutput(unfolding_result+"_all", 0, 0,0,kFALSE);
   h_data_rho = unfold.GetRhoIJtotal(unfolding_corr, 0, "measurement_gen");
-  cout << "test3" << '\n';
+  h_data_rho_all = unfold.GetRhoIJtotal(unfolding_corr+"_all", 0, 0,0,kFALSE);
   h_check = unfold_check.GetOutput(unfolding_check, 0, "measurement_gen");
-  cout << "test4" << '\n';
+  h_check_all = unfold_check.GetOutput(unfolding_check+"_all", 0, 0,0,kFALSE);
+  // unfolding_result += "_all";
+  // h_data_output_all = unfold.GetOutput(unfolding_result, 0, 0, 0, kFALSE);
   if(tau_value < 0){
+    logTau.clear();
     logTau.push_back(logTauX);
     logTau.push_back(logTauY);
 
     tau = unfold.GetTau();
-    cout << "tau: " << tau << '\n';
     double logTaud = TMath::Log10(tau);
+    coords.clear();
     coords.push_back(logTauX->Eval(logTaud));
     coords.push_back(logTauY->Eval(logTaud));
   }
   return;
 }
 
-
 TH1* unfolding::get_output_check(){
   return h_check;
 }
 
+TH1* unfolding::get_output_check_all(){
+  return h_check_all;
+}
 
 TH1* unfolding::get_output(){
   return h_data_output;
+}
+
+TH1* unfolding::get_output_all(){
+  return h_data_output_all;
 }
 
 TGraph* unfolding::get_lcurve(){
@@ -145,6 +159,10 @@ TH2* unfolding::get_correlation(){
   return h_data_rho;
 }
 
+TH2* unfolding::get_correlation_all(){
+  return h_data_rho_all;
+}
+
 
 std::vector<TH1D*> unfolding::check_projection(){
   std::cout << "starting to check projections \n";
@@ -167,17 +185,8 @@ std::vector<TH1D*> unfolding::check_projection(){
   title_proj_y += response_matrix->GetTitle();
   title_proj_x += response_matrix->GetTitle();
 
-  m_1 = (TH1D*)gROOT->FindObject(title_proj_y);
-  m_2 = (TH1D*)gROOT->FindObject(title_proj_x);
-  if(m_1 && m_2){
-    m_1->Delete();
-    m_2->Delete();
-  }
-
   TH1D* projection_y = new TH1D(title_proj_y, "", response_matrix->GetNbinsY(), 0.5, response_matrix->GetNbinsY()+0.5);
   TH1D* projection_x = new TH1D(title_proj_x, "", response_matrix->GetNbinsX(), 0.5, response_matrix->GetNbinsX()+0.5);
-  cout << "NBinsY: " << response_matrix->GetNbinsY() << '\n';
-  cout << "NBinsX: " << response_matrix->GetNbinsX() << '\n';
 
   for(int i = 0; i <= response_matrix->GetNbinsY() + 1; i++){
     double content_y = 0;
@@ -195,7 +204,6 @@ std::vector<TH1D*> unfolding::check_projection(){
   }
 
   vector<TH1D*> projections = {projection_x, projection_y};
-  // projection_y->Delete();
   std::cout << "Finished. \n";
   return projections;
 }
