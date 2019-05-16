@@ -20,6 +20,12 @@ public:
   TH1* get_output_check_all();
   TH1* get_output();
   TH1* get_output_all();
+  TH2* get_input_statcov();
+  TH2* get_input_statcov_all();
+  TH2* get_matrix_statcov();
+  TH2* get_matrix_statcov_all();
+  TH2* get_total_statcov();
+  TH2* get_total_statcov_all();
   TGraph* get_lcurve();
   TH2* get_correlation();
   TH2* get_correlation_all();
@@ -32,7 +38,8 @@ public:
 private:
   TUnfold::ERegMode regMode;
   TUnfoldDensity::EDensityMode densityFlags;
-  TH1 *h_check, *h_check_all;
+  TH1 *h_check;
+  TH1 *h_check_all;
   TH1 *h_data_output, *h_data_output_all;
   TSpline *rhoLogTau;
   TSpline *rhoLogTau_check;
@@ -44,6 +51,7 @@ private:
 
   TH2 *h_data_rho, *h_data_rho_all;
   TH2D *response_matrix;
+  TH2 *h_covarianceinputstat, *h_covarianceinputstat_all, *h_covartiancematrixstat, *h_covartiancematrixstat_all, *h_covariancetotal, *h_covariancetotal_all;
   TH1D *hist_truth, *hist_mc;
   std::vector<double> coords;
   std::vector<TSpline*> logTau;

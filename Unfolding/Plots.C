@@ -7,7 +7,6 @@ Plotter::Plotter(TString directory){
   gStyle->SetOptStat(kFALSE);
   gStyle->SetPadTickY(1);
   gStyle->SetPadTickX(1);
-  // gStyle->SetPadTopMargin(0.04);
   gStyle->SetLegendBorderSize(0);
 }
 
@@ -100,7 +99,7 @@ void Plotter::Plot_output(TH1* h_unfolded, TH1* h_truth_, bool normalise, TStrin
     legend1->SetBorderSize(0);
     legend1->SetFillStyle(0);
     if(save.Contains("crosscheck")) legend1->AddEntry(h_unfolded_clone, "unfolded mc","l");
-    else legend1->AddEntry(h_unfolded_clone, "unfolded " + dataset,"l");
+    else legend1->AddEntry(h_unfolded_clone, "unfolded pseudodata","l"); // + dataset
     legend1->AddEntry(h_truth_clone, "truth", "l");
     legend1->Draw();
   }
@@ -125,7 +124,7 @@ void Plotter::Plot_output(TH1* h_unfolded, TH1* h_truth_, bool normalise, TStrin
       h_truth_norm->SetBinError(i, new_error_truth);
       unfolded_data_norm->SetBinContent(i, new_content);
       unfolded_data_norm->SetBinError(i, new_error);
-  }
+    }
 
     unfolded_data_norm->SetLineColor(kRed);
     unfolded_data_norm->SetMarkerColor(kRed);
@@ -144,10 +143,11 @@ void Plotter::Plot_output(TH1* h_unfolded, TH1* h_truth_, bool normalise, TStrin
     legend_unfolding_norm->SetBorderSize(0);
     legend_unfolding_norm->SetFillStyle(0);
     if(save.Contains("crosscheck")) legend_unfolding_norm->AddEntry(unfolded_data_norm, "unfolded mc","l");
-    else legend_unfolding_norm->AddEntry(unfolded_data_norm, "unfolded " + dataset,"l");
+    else legend_unfolding_norm->AddEntry(unfolded_data_norm, "unfolded pseudodata","l"); //  + dataset
     legend_unfolding_norm->AddEntry(h_truth_norm, "truth", "l");
     legend_unfolding_norm->Draw();
   }
+
   c_unfolding->SaveAs(save_dir_ + save);
   c_unfolding->Write();
   delete c_unfolding;
@@ -163,6 +163,7 @@ void Plotter::Plot_correlation_matrix(TH2* h_corr_matrix, TString save){
   else if(save.Contains("CustomTau")) name = " (CustomTau)";
   TCanvas* c_corr_matrix = new TCanvas("Correlation Matrix" + name, "Correlation Matrix", 1000, 800);
   c_corr_matrix->cd();
+  h_corr_matrix_clone->SetTitle("Correlation Matrix");
   h_corr_matrix_clone->GetYaxis()->SetTitleSize(0.06);
   h_corr_matrix_clone->GetYaxis()->SetTitleOffset(0.7);
   h_corr_matrix_clone->GetXaxis()->SetTitleSize(0.06);
@@ -170,6 +171,24 @@ void Plotter::Plot_correlation_matrix(TH2* h_corr_matrix, TString save){
   if(save.Contains("all"))h_corr_matrix_clone->GetYaxis()->SetTitle("binning_gen");
   else h_corr_matrix_clone->GetYaxis()->SetTitle("#tau_{3/2}");
   h_corr_matrix_clone->Draw("colz");
+  Double_t ymax = h_corr_matrix_clone->GetNbinsY();
+  Double_t xmax = h_corr_matrix_clone->GetNbinsX();
+  if(xmax/2 > 1){
+    TLine *line = new TLine(6.5,0.5,6.5,ymax+0.5);
+    line->SetLineColor(kRed);
+    line->Draw("same");
+    TLine *line2 = new TLine(0.5,6.5,xmax+0.5,6.5);
+    line2->SetLineColor(kRed);
+    line2->Draw("same");
+      if(xmax/3 >= 2){
+        TLine *line3 = new TLine(12.5,0.5,12.5,ymax+0.5);
+        line3->SetLineColor(kRed);
+        line3->Draw("same");
+        TLine *line4 = new TLine(0.5,12.5,xmax+0.5,12.5);
+        line4->SetLineColor(kRed);
+        line4->Draw("same");
+      }
+    }
   c_corr_matrix->SaveAs(save_dir_ + save);
   c_corr_matrix->Write();
   delete c_corr_matrix;
@@ -229,11 +248,11 @@ void Plotter::Plot_LogTau(TSpline* logTau_, double tau, double coordinate, TStri
   // double ymin = Ypoint[0]*0.99;
   // double ymax = Ypoint[0]*1.08;
   // point->GetYaxis()->SetRangeUser(ymin, ymax);
-  point->DrawClone("AP");
+  point->Draw("AP");
   c_lcurve->Update();
   logTau_->SetLineColor(kRed);
-  logTau_->DrawClone("same");
-  point->DrawClone("psame");
+  logTau_->Draw("same");
+  point->Draw("psame");
   TLegend *legend_logtau = new TLegend(0.15, 0.42, 0.65, 0.62, "");
   legend_logtau->SetBorderSize(0);
   legend_logtau->SetFillStyle(0);
@@ -340,40 +359,182 @@ void Plotter::Plot_ResponseMatrix(TH2* resp_matrix_, TString save){
   TCanvas* c_response = new TCanvas("Response Matrix", "", 1000, 800);
   gStyle->SetPadLeftMargin(0.1);
   gStyle->SetPadRightMargin(0.12);
+  c_response->SetLogz();
   c_response->cd();
-  resp_matrix_->SetTitle("");
+  resp_matrix_->SetTitle("Migration Matrix");
   resp_matrix_->GetYaxis()->SetTitleSize(0.06);
   resp_matrix_->GetYaxis()->SetTitleOffset(0.7);
   resp_matrix_->GetXaxis()->SetTitleSize(0.06);
   resp_matrix_->GetXaxis()->SetTitleOffset(0.7);
   resp_matrix_->DrawCopy("colz");
-  c_response->SaveAs(save_dir_ + save);
-  c_response->Write();
-  delete c_response;
-}
-void Plotter::Plot_purity(TH1* purity_same, TH1* purity_all, TString save){
-  TH1* purity_ratio = (TH1*) purity_same->Clone("purity_ratio");
-  if(save.Contains("pseudo1")){
-    name = " of pseudo1";
-    dataset = "pseudo1";
+
+  Double_t ymax = resp_matrix_->GetNbinsY();
+  Double_t xmax = resp_matrix_->GetNbinsX();
+  if(xmax/2 > 1){
+    TLine *line = new TLine(6.5,0.5,6.5,ymax+0.5);
+    line->SetLineColor(kRed);
+    line->Draw("same");
+    TLine *line2 = new TLine(0.5,27.5,xmax+0.5,27+0.5);
+    line2->SetLineColor(kRed);
+    line2->Draw("same");
+      if(xmax/3 >= 2){
+        TLine *line3 = new TLine(12.5,0.5,12.5,ymax+0.5);
+        line3->SetLineColor(kRed);
+        line3->Draw("same");
+        TLine *line4 = new TLine(0.5,37.5,xmax+0.5,37+0.5);
+        line4->SetLineColor(kRed);
+        line4->Draw("same");
+      }
+    }
+    c_response->SaveAs(save_dir_ + save);
+    c_response->Write();
+    delete c_response;
   }
-  else if(save.Contains("pseudo2")){
-    name = " of pseudo2";
-    dataset = "pseudo2";
+
+  void Plotter::Plot_purity(TH1* purity_same, TH1* purity_all, TString save){
+    TH1* purity_ratio = (TH1*) purity_same->Clone("purity_ratio");
+    if(save.Contains("pseudo1")){
+      name = " of pseudo1";
+      dataset = "pseudo1";
+    }
+    else if(save.Contains("pseudo2")){
+      name = " of pseudo2";
+      dataset = "pseudo2";
+    }
+    else if(save.Contains("pseudo3")){
+      name = " of pseudo3";
+      dataset = "pseudo3";
+    }
+    else if(save.Contains("data")){
+      name = " of data";
+      dataset = "data";
+    }
+    TCanvas* c_purity = new TCanvas("Purity" + name, "Purity", 1000, 800);
+    gStyle->SetPadLeftMargin(0.12);
+    gStyle->SetPadRightMargin(0.06);
+    c_purity->cd();
+    purity_ratio->SetTitle("");
+    purity_ratio->GetYaxis()->SetTitleSize(0.06);
+    purity_ratio->GetYaxis()->SetTitleOffset(0.7);
+    purity_ratio->GetXaxis()->SetTitleSize(0.06);
+    purity_ratio->GetXaxis()->SetTitleOffset(0.7);
+    purity_ratio->GetYaxis()->SetTitle("ratio [%]");
+    purity_ratio->Scale(100);
+    purity_ratio->Divide(purity_all);
+    purity_ratio->DrawCopy();
+    c_purity->SaveAs(save_dir_ + save);
+    c_purity->Write();
+    delete c_purity;
   }
-  else if(save.Contains("pseudo3")){
-    name = " of pseudo3";
-    dataset = "pseudo3";
+
+  void Plotter::Plot_input(TH1* data, TH1* mc, TString save){
+  gStyle->SetPadLeftMargin(0.12);
+  gStyle->SetPadRightMargin(0.06);
+    if(save.Contains("pseudo1")){
+      name = " of pseudo1";
+      dataset = "pseudo1";
+    }
+    else if(save.Contains("pseudo2")){
+      name = " of pseudo2";
+      dataset = "pseudo2";
+    }
+    else if(save.Contains("pseudo3")){
+      name = " of pseudo3";
+      dataset = "pseudo3";
+    }
+    else if(save.Contains("data")){
+      name = " of data";
+      dataset = "data";
+    }
+    TCanvas* c_input = new TCanvas("Input" + dataset, "Input", 1000, 800);
+    c_input->cd();
+    if(!save.Contains("dist")){
+      l_input = new TLine(27.5,0,27.5,130);
+      l_input->SetLineColor(kBlue);
+      l_input_2 = new TLine(37.5,0,37.5,130);
+      l_input_2->SetLineColor(kBlue);
+    }
+    mc->SetLineColor(633);
+    mc->SetFillColor(633);
+    mc->SetMarkerColor(633);
+    if(save.Contains("dist")) mc->GetYaxis()->SetRangeUser(0, 500);
+    else mc->GetYaxis()->SetRangeUser(0, 200);
+    mc->SetTitle("");
+    mc->GetYaxis()->SetTitle("events");
+    mc->GetYaxis()->SetTitleSize(0.06);
+    mc->GetYaxis()->SetTitleOffset(0.7);
+    mc->GetXaxis()->SetTitleSize(0.06);
+    mc->GetXaxis()->SetTitleOffset(0.7);
+    mc->Draw("hist");
+    data->SetLineColor(kBlack);
+    data->SetMarkerColor(kBlack);
+    data->SetMarkerStyle(20);
+    data->Draw("same");
+    l_input->Draw("same");
+    l_input_2->Draw("same");
+    TLegend *legend_input = new TLegend(0.39, 0.70, 0.59, 0.85, "");
+    legend_input->SetBorderSize(0);
+    legend_input->SetFillStyle(0);
+    legend_input->AddEntry(data, dataset, "lp");
+    legend_input->AddEntry(mc, "MC", "f");
+    legend_input->Draw();
+    c_input->SaveAs(save_dir_ + save);
+    c_input->Write();
+    delete c_input;
   }
-  else if(save.Contains("data")){
-    name = " of data";
-    dataset = "data";
+
+  void Plotter::Plot_covariance(TH2* matrix, TString save){
+    if(save.Contains("pseudo1")){
+      name = " of pseudo1";
+      dataset = "pseudo1";
+    }
+    else if(save.Contains("pseudo2")){
+      name = " of pseudo2";
+      dataset = "pseudo2";
+    }
+    else if(save.Contains("pseudo3")){
+      name = " of pseudo3";
+      dataset = "pseudo3";
+    }
+    else if(save.Contains("data")){
+      name = " of data";
+      dataset = "data";
+    }
+    if(save.Contains("total")) name += " total";
+    else if(save.Contains("input")) name += " input";
+    else if(save.Contains("matrix")) name += " matrix";
+    TCanvas* c_cov = new TCanvas("Covariance"+name, "Covariance", 1000, 800);
+    c_cov->cd();
+    c_cov->SetLogz();
+    gStyle->SetPadLeftMargin(0.1);
+    gStyle->SetPadRightMargin(0.11);
+    if(save.Contains("input")) matrix->SetTitle("Covariance of Pseudodata");
+    else if(save.Contains("matrix")) matrix->SetTitle("Covariance of Migration Matrix");
+    matrix->GetYaxis()->SetTitle("binning_gen");
+    matrix->GetYaxis()->SetTitleSize(0.06);
+    matrix->GetYaxis()->SetTitleOffset(0.7);
+    matrix->GetXaxis()->SetTitleSize(0.06);
+    matrix->GetXaxis()->SetTitleOffset(0.7);
+    matrix->DrawCopy("colz");
+    Double_t ymax = matrix->GetNbinsY();
+    Double_t xmax = matrix->GetNbinsX();
+    if(xmax/2 > 1){
+      TLine *line = new TLine(6.5,0.5,6.5,ymax+0.5);
+      line->SetLineColor(kRed);
+      line->Draw("same");
+      TLine *line2 = new TLine(0.5,6.5,xmax+0.5,6.5);
+      line2->SetLineColor(kRed);
+      line2->Draw("same");
+        if(xmax/3 >= 2){
+          TLine *line3 = new TLine(12.5,0.5,12.5,ymax+0.5);
+          line3->SetLineColor(kRed);
+          line3->Draw("same");
+          TLine *line4 = new TLine(0.5,12.5,xmax+0.5,12.5);
+          line4->SetLineColor(kRed);
+          line4->Draw("same");
+        }
+      }
+    c_cov->SaveAs(save_dir_+save);
+    c_cov->Write();
+    delete c_cov;
   }
-  TCanvas* c_purity = new TCanvas("Purity" + name, "Purity", 1000, 800);
-  c_purity->cd();
-  purity_ratio->Divide(purity_all);
-  purity_ratio->DrawCopy();
-  c_purity->SaveAs(save_dir_ + save);
-  c_purity->Write();
-  delete c_purity;
-}

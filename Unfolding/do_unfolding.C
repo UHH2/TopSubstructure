@@ -7,8 +7,9 @@ int main(int argc, char* argv[]){
   TH1::SetDefaultSumw2();
 
   string filename;
-  filename = "Unfolding.root";
-  outputFile = new TFile(filename.c_str(),"recreate");
+  TString dataset = argv[1];
+  filename = "Unfolding_" + dataset + ".root";
+  TFile *outputFile = new TFile(filename.c_str(),"recreate");
 
   binning_xml = "Binning.xml";
 
@@ -39,43 +40,49 @@ int main(int argc, char* argv[]){
   if(argc < 4){
     throw runtime_error("Use: ./do_unfolding <dataset> <number of scans> <value of tau>; if you don't want to use a custom value of tau, then set it to -1");
   }
-  else if(argv[1] == std::string("pseudo1")){
+  else if(dataset == std::string("pseudo1")){
     data_File->GetObject("mc_TTbar_matrix_1", mat_response);             // fill response matrix
     data_File->GetObject("Pseudodata_1", h_data);                     // fill histogram with data which should be unfolded
+    data_File->GetObject("Pseudodata_dist_1", h_data_dist);                     // fill histogram with data which should be unfolded
     data_File->GetObject("Pseudodata_truth_1", h_truth);
     data_File->GetObject("Pseudodata_truth_all_1", h_truth_all);
     data_File->GetObject("mc_TTbar_gen_1", h_unfold);                    // fill histogram with what data should be unfolded
     data_File->GetObject("mc_TTbar_rec_1", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("mc_TTbar_rec_dist_1", h_mc_dist);
     data_File->GetObject("mc_TTbar_truth_1", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
     data_File->GetObject("mc_TTbar_truth_all_1", h_trutch_check_all);            // fill histogram to check if ratio between data and mc is appropiate
     data_File->GetObject("mc_TTbar_purity_all_1", h_purity_all);
     data_File->GetObject("mc_TTbar_purity_samebin_1", h_purity_samebin);
   }
-  else if(argv[1] == std::string("pseudo2")){
+  else if(dataset == std::string("pseudo2")){
     data_File->GetObject("mc_TTbar_matrix_2", mat_response);             // fill response matrix
     data_File->GetObject("Pseudodata_2", h_data);                     // fill histogram with data which should be unfolded
+    data_File->GetObject("Pseudodata_dist_2", h_data_dist);                     // fill histogram with data which should be unfolded
     data_File->GetObject("Pseudodata_truth_2", h_truth);
     data_File->GetObject("Pseudodata_truth_all_2", h_truth_all);
     data_File->GetObject("mc_TTbar_gen_2", h_unfold);                    // fill histogram with what data should be unfolded
     data_File->GetObject("mc_TTbar_rec_2", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("mc_TTbar_rec_dist_2", h_mc_dist);
     data_File->GetObject("mc_TTbar_truth_2", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
     data_File->GetObject("mc_TTbar_truth_all_2", h_trutch_check_all);            // fill histogram to check if ratio between data and mc is appropiate
     data_File->GetObject("mc_TTbar_purity_all_2", h_purity_all);
     data_File->GetObject("mc_TTbar_purity_samebin_2", h_purity_samebin);
   }
-  else if(argv[1] == std::string("pseudo3")){
+  else if(dataset == std::string("pseudo3")){
     data_File->GetObject("mc_TTbar_matrix_3", mat_response);             // fill response matrix
     data_File->GetObject("Pseudodata_3", h_data);                     // fill histogram with data which should be unfolded
+    data_File->GetObject("Pseudodata_dist_3", h_data_dist);                     // fill histogram with data which should be unfolded
     data_File->GetObject("Pseudodata_truth_3", h_truth);              // fill histogram with truth
     data_File->GetObject("Pseudodata_truth_all_3", h_truth_all);
     data_File->GetObject("mc_TTbar_gen_3", h_unfold);                    // fill histogram with what data should be unfolded
     data_File->GetObject("mc_TTbar_rec_3", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("mc_TTbar_rec_dist_3", h_mc_dist);
     data_File->GetObject("mc_TTbar_truth_3", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
     data_File->GetObject("mc_TTbar_truth_all_3", h_trutch_check_all);            // fill histogram to check if ratio between data and mc is appropiate
     data_File->GetObject("mc_TTbar_purity_all_3", h_purity_all);
     data_File->GetObject("mc_TTbar_purity_samebin_3", h_purity_samebin);
   }
-  else if(argv[1] == std::string("svuu")){
+  else if(dataset == std::string("svuu1")){
     data_File->GetObject("SVMR_u_SVMF_u_TTbar_matrix_1", mat_response);             // fill response matrix
     data_File->GetObject("Pseudodata_1", h_data);                     // fill histogram with data which should be unfolded
     data_File->GetObject("Pseudodata_truth_1", h_truth);
@@ -87,7 +94,31 @@ int main(int argc, char* argv[]){
     data_File->GetObject("SVMR_u_SVMF_u_TTbar_purity_all_1", h_purity_all);
     data_File->GetObject("SVMR_u_SVMF_u_TTbar_purity_samebin_1", h_purity_samebin);
   }
-  else if(argv[1] == std::string("svud")){
+  else if(dataset == std::string("svuu2")){
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_matrix_2", mat_response);             // fill response matrix
+    data_File->GetObject("Pseudodata_2", h_data);                     // fill histogram with data which should be unfolded
+    data_File->GetObject("Pseudodata_truth_2", h_truth);
+    data_File->GetObject("Pseudodata_truth_all_2", h_truth_all);
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_gen_2", h_unfold);                    // fill histogram with what data should be unfolded
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_rec_2", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_truth_2", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_truth_all_2", h_trutch_check_all);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_purity_all_2", h_purity_all);
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_purity_samebin_2", h_purity_samebin);
+  }
+  else if(dataset == std::string("svuu3")){
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_matrix_3", mat_response);             // fill response matrix
+    data_File->GetObject("Pseudodata_3", h_data);                     // fill histogram with data which should be unfolded
+    data_File->GetObject("Pseudodata_truth_3", h_truth);
+    data_File->GetObject("Pseudodata_truth_all_3", h_truth_all);
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_gen_3", h_unfold);                    // fill histogram with what data should be unfolded
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_rec_3", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_truth_3", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_truth_all_3", h_trutch_check_all);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_purity_all_3", h_purity_all);
+    data_File->GetObject("SVMR_u_SVMF_u_TTbar_purity_samebin_3", h_purity_samebin);
+  }
+  else if(dataset == std::string("svud1")){
     data_File->GetObject("SVMR_u_SVMF_d_TTbar_matrix_1", mat_response);             // fill response matrix
     data_File->GetObject("Pseudodata_1", h_data);                     // fill histogram with data which should be unfolded
     data_File->GetObject("Pseudodata_truth_1", h_truth);
@@ -99,7 +130,31 @@ int main(int argc, char* argv[]){
     data_File->GetObject("SVMR_u_SVMF_d_TTbar_purity_all_1", h_purity_all);
     data_File->GetObject("SVMR_u_SVMF_d_TTbar_purity_samebin_1", h_purity_samebin);
   }
-  else if(argv[1] == std::string("svdu")){
+  else if(dataset == std::string("svud2")){
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_matrix_2", mat_response);             // fill response matrix
+    data_File->GetObject("Pseudodata_2", h_data);                     // fill histogram with data which should be unfolded
+    data_File->GetObject("Pseudodata_truth_2", h_truth);
+    data_File->GetObject("Pseudodata_truth_all_2", h_truth_all);
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_gen_2", h_unfold);                    // fill histogram with what data should be unfolded
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_rec_2", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_truth_2", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_truth_all_2", h_trutch_check_all);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_purity_all_2", h_purity_all);
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_purity_samebin_2", h_purity_samebin);
+  }
+  else if(dataset == std::string("svud3")){
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_matrix_3", mat_response);             // fill response matrix
+    data_File->GetObject("Pseudodata_3", h_data);                     // fill histogram with data which should be unfolded
+    data_File->GetObject("Pseudodata_truth_3", h_truth);
+    data_File->GetObject("Pseudodata_truth_all_3", h_truth_all);
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_gen_3", h_unfold);                    // fill histogram with what data should be unfolded
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_rec_3", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_truth_3", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_truth_all_3", h_trutch_check_all);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_purity_all_3", h_purity_all);
+    data_File->GetObject("SVMR_u_SVMF_d_TTbar_purity_samebin_3", h_purity_samebin);
+  }
+  else if(dataset == std::string("svdu1")){
     data_File->GetObject("SVMR_d_SVMF_u_TTbar_matrix_1", mat_response);             // fill response matrix
     data_File->GetObject("Pseudodata_1", h_data);                     // fill histogram with data which should be unfolded
     data_File->GetObject("Pseudodata_truth_1", h_truth);
@@ -111,7 +166,31 @@ int main(int argc, char* argv[]){
     data_File->GetObject("SVMR_d_SVMF_u_TTbar_purity_all_1", h_purity_all);
     data_File->GetObject("SVMR_d_SVMF_u_TTbar_purity_samebin_1", h_purity_samebin);
   }
-  else if(argv[1] == std::string("svdd")){
+  else if(dataset == std::string("svdu2")){
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_matrix_2", mat_response);             // fill response matrix
+    data_File->GetObject("Pseudodata_2", h_data);                     // fill histogram with data which should be unfolded
+    data_File->GetObject("Pseudodata_truth_2", h_truth);
+    data_File->GetObject("Pseudodata_truth_all_2", h_truth_all);
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_gen_2", h_unfold);                    // fill histogram with what data should be unfolded
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_rec_2", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_truth_2", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_truth_all_2", h_trutch_check_all);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_purity_all_2", h_purity_all);
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_purity_samebin_2", h_purity_samebin);
+  }
+  else if(dataset == std::string("svdu3")){
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_matrix_3", mat_response);             // fill response matrix
+    data_File->GetObject("Pseudodata_3", h_data);                     // fill histogram with data which should be unfolded
+    data_File->GetObject("Pseudodata_truth_3", h_truth);
+    data_File->GetObject("Pseudodata_truth_all_3", h_truth_all);
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_gen_3", h_unfold);                    // fill histogram with what data should be unfolded
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_rec_3", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_truth_3", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_truth_all_3", h_trutch_check_all);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_purity_all_3", h_purity_all);
+    data_File->GetObject("SVMR_d_SVMF_u_TTbar_purity_samebin_3", h_purity_samebin);
+  }
+  else if(dataset == std::string("svdd1")){
     data_File->GetObject("SVMR_d_SVMF_d_TTbar_matrix_1", mat_response);             // fill response matrix
     data_File->GetObject("Pseudodata_1", h_data);                     // fill histogram with data which should be unfolded
     data_File->GetObject("Pseudodata_truth_1", h_truth);
@@ -123,7 +202,31 @@ int main(int argc, char* argv[]){
     data_File->GetObject("SVMR_d_SVMF_d_TTbar_purity_all_1", h_purity_all);
     data_File->GetObject("SVMR_d_SVMF_d_TTbar_purity_samebin_1", h_purity_samebin);
   }
-  else if(argv[1] == std::string("data")){
+  else if(dataset == std::string("svdd2")){
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_matrix_2", mat_response);             // fill response matrix
+    data_File->GetObject("Pseudodata_2", h_data);                     // fill histogram with data which should be unfolded
+    data_File->GetObject("Pseudodata_truth_2", h_truth);
+    data_File->GetObject("Pseudodata_truth_all_2", h_truth_all);
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_gen_2", h_unfold);                    // fill histogram with what data should be unfolded
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_rec_2", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_truth_2", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_truth_all_2", h_trutch_check_all);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_purity_all_2", h_purity_all);
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_purity_samebin_2", h_purity_samebin);
+  }
+  else if(dataset == std::string("svdd3")){
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_matrix_3", mat_response);             // fill response matrix
+    data_File->GetObject("Pseudodata_3", h_data);                     // fill histogram with data which should be unfolded
+    data_File->GetObject("Pseudodata_truth_3", h_truth);
+    data_File->GetObject("Pseudodata_truth_all_3", h_truth_all);
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_gen_3", h_unfold);                    // fill histogram with what data should be unfolded
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_rec_3", h_mc);                        // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_truth_3", h_trutch_check);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_truth_all_3", h_trutch_check_all);            // fill histogram to check if ratio between data and mc is appropiate
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_purity_all_3", h_purity_all);
+    data_File->GetObject("SVMR_d_SVMF_d_TTbar_purity_samebin_3", h_purity_samebin);
+  }
+  else if(dataset == std::string("data")){
     data_File->GetObject("TTbar_matrix_3", mat_response);             // fill response matrix
     data_File->GetObject("Data", h_data);                             // fill histogram with data which should be unfolded
     data_File->GetObject("TTbar_gen_3", h_unfold);                    // fill histogram with what data should be unfolded
@@ -137,19 +240,18 @@ int main(int argc, char* argv[]){
     throw runtime_error("use pseudo1, pseudo2, pseudo3, svuu, svud, svdu or svdd");
   }
 
-
-
   for(unsigned int i = 0; i < background_names.size(); i++){
     background.push_back((TH1D*) data_File->Get("background_rec_" + background_names.at(i)));
   }
   subtract_background = false;
   TString save_dir = "/afs/desy.de/user/s/skottkej/Plots/Unfolding/";
-  TString dataset = argv[1];
+  // TString dataset = argv[1];
   TString format = ".eps";
   TString regmode = "size";
   TString density_flag = "none";
   TString nscan_word = argv[2];
   int nscan = atoi(argv[2]);
+  cout << "nscan: " << nscan << '\n';
   bool do_lcurve = true;
   bool do_lcurve_2 = false;
   double tau_value = atoi(argv[3]);
@@ -166,6 +268,13 @@ int main(int argc, char* argv[]){
     save_LCurve_TauY = "LCurve/TauY_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
     save_LCurve_crosscheck = "LCurve/crosscheck_" + dataset + format;
     save_LCurve_crosscheck_all = "LCurve/crosscheck_all_" + dataset + format;
+    save_LCurve_input_cov = "LCurve/Covariance_input_" + dataset + format;
+    save_LCurve_input_cov_all = "LCurve/Covariance_input_all_" + dataset + format;
+    save_LCurve_input_cov_matrix = "LCurve/Covariance_matrix_" + dataset + format;
+    save_LCurve_input_cov_matrix_all = "LCurve/Covariance_matrix_all_" + dataset + format;
+    save_LCurve_input_cov_total = "LCurve/Covariance_total_" + dataset + format;
+    save_LCurve_input_cov_total_all = "LCurve/Covariance_total_all_" + dataset + format;
+
     save_TauScan_LCurve = "TauScan/LCurve_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
     save_TauScan_RhoLogTau = "TauScan/RhoLogTau_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
     save_TauScan_Unfolding = "TauScan/Unfolding_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
@@ -176,17 +285,35 @@ int main(int argc, char* argv[]){
     save_TauScan_Unfolding_correlation_all = "TauScan/Unfolding_correlation_all_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
     save_TauScan_crosscheck = "TauScan/crosscheck_" + dataset + format;
     save_TauScan_crosscheck_all = "TauScan/crosscheck_all_" + dataset + format;
+    save_TauScan_input_cov = "TauScan/Covariance_input_" + dataset + format;
+    save_TauScan_input_cov_all = "TauScan/Covariance_input_all_" + dataset + format;
+    save_TauScan_input_cov_matrix = "TauScan/Covariance_matrix_" + dataset + format;
+    save_TauScan_input_cov_matrix_all = "TauScan/Covariance_matrix_all_" + dataset + format;
+    save_TauScan_input_cov_total = "TauScan/Covariance_total_" + dataset + format;
+    save_TauScan_input_cov_total_all = "TauScan/Covariance_total_all_" + dataset + format;
   }
   else{
     save_LCurve_Unfolding = "CustomTau/Unfolding_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + "_" + tau_value_word + format;
+    save_LCurve_Unfolding_all = "CustomTau/Unfolding_all_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
     save_LCurve_Unfolding_norm = "CustomTau/Unfolding_norm_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + "_" + tau_value_word + format;
+    save_LCurve_Unfolding_norm_all = "CustomTau/Unfolding_norm_all_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
     save_LCurve_Unfolding_correlation = "CustomTau/Unfolding_correlation_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + "_" + tau_value_word + format;
+    save_LCurve_Unfolding_correlation_all = "CustomTau/Unfolding_correlation_all_" + dataset + "_" + regmode + "_" + density_flag + "_" + nscan_word + format;
     save_LCurve_crosscheck = "CustomTau/crosscheck_" + dataset  + format;
+    save_LCurve_crosscheck_all = "CustomTau/crosscheck_all_" + dataset + format;
+    save_LCurve_input_cov = "CustomTau/Covariance_input_" + dataset + format;
+    save_LCurve_input_cov_all = "CustomTau/Covariance_input_all_" + dataset + format;
+    save_LCurve_input_cov_matrix = "CustomTau/Covariance_matrix_" + dataset + format;
+    save_LCurve_input_cov_matrix_all = "CustomTau/Covariance_matrix_all_" + dataset + format;
+    save_LCurve_input_cov_total = "CustomTau/Covariance_total_" + dataset + format;
+    save_LCurve_input_cov_total_all = "CustomTau/Covariance_total_all_" + dataset + format;
   }
   save_response_matrix = "Response_Matrix_" + dataset + format;
   save_projection_x = "Projection_X_" + dataset + format;
   save_projection_y = "Projection_Y_" + dataset + format;
   save_purity = "Purity_" + dataset + format;
+  save_input = "Input_" + dataset + format;
+  save_input_dist = "Input_dist_" + dataset + format;
   // what the unfolding class needs:
   // 1.    Set the data which should be unfolded.
   // 2.    Set reco histogram which fills the response matrix.
@@ -206,6 +333,12 @@ int main(int argc, char* argv[]){
   unfolded_data_all = unfold.get_output_all();
   correlation_matrix = unfold.get_correlation();
   correlation_matrix_all = unfold.get_correlation_all();
+  covariance_input = unfold.get_input_statcov();
+  covariance_input_all = unfold.get_input_statcov_all();
+  covariance_matrix = unfold.get_matrix_statcov();
+  covariance_matrix_all = unfold.get_matrix_statcov_all();
+  covariance_total = unfold.get_total_statcov();
+  covariance_total_all = unfold.get_total_statcov_all();
   unfolded_mc_test = unfold.get_output_check();
   unfolded_mc_test_all = unfold.get_output_check_all();
   if(tau_value < 0){
@@ -219,6 +352,14 @@ int main(int argc, char* argv[]){
   outputFile->cd();
 
   Plotter * plot = new Plotter(save_dir);
+  plot->Plot_input(h_data, h_mc, save_input);
+  plot->Plot_input(h_data_dist, h_mc_dist, save_input_dist);
+  plot->Plot_covariance(covariance_input, save_LCurve_input_cov);
+  plot->Plot_covariance(covariance_input_all, save_LCurve_input_cov_all);
+  plot->Plot_covariance(covariance_matrix, save_LCurve_input_cov_matrix);
+  plot->Plot_covariance(covariance_matrix_all, save_LCurve_input_cov_matrix_all);
+  plot->Plot_covariance(covariance_total, save_LCurve_input_cov_total);
+  plot->Plot_covariance(covariance_total_all, save_LCurve_input_cov_total_all);
   plot->Plot_projections(projections.at(0), h_unfold, save_projection_x);
   plot->Plot_projections(projections.at(1), h_mc, save_projection_y);
   plot->Plot_purity(h_purity_samebin, h_purity_all, save_purity);
@@ -244,6 +385,14 @@ int main(int argc, char* argv[]){
     logTau_2 = unfold2.get_logtau();
     if(!do_lcurve_2) rhologTau_2 = unfold2.get_rhologtau();
     unfolded_data_2 = unfold2.get_output();
+    covariance_input_2 = unfold2.get_input_statcov();
+    covariance_input_all_2 = unfold2.get_input_statcov_all();
+    covariance_matrix_2 = unfold2.get_matrix_statcov();
+    covariance_matrix_all_2 = unfold2.get_matrix_statcov_all();
+    covariance_total_2 = unfold2.get_total_statcov();
+    covariance_total_all_2 = unfold2.get_total_statcov_all();
+    unfolded_data_2->Write();
+    h_truth->Write();
     unfolded_data_all_2 = unfold2.get_output_all();
     correlation_matrix_2 = unfold2.get_correlation();
     correlation_matrix_all_2 = unfold2.get_correlation_all();
@@ -252,6 +401,12 @@ int main(int argc, char* argv[]){
 
     plot->Plot_output(unfolded_data_2, h_truth, false, save_TauScan_Unfolding);
     plot->Plot_output(unfolded_data_all_2, h_truth_all, false, save_TauScan_Unfolding_all);
+    plot->Plot_covariance(covariance_input_2, save_TauScan_input_cov);
+    plot->Plot_covariance(covariance_input_all_2, save_TauScan_input_cov_all);
+    plot->Plot_covariance(covariance_matrix_2, save_TauScan_input_cov_matrix);
+    plot->Plot_covariance(covariance_matrix_all_2, save_TauScan_input_cov_matrix_all);
+    plot->Plot_covariance(covariance_total_2, save_TauScan_input_cov_total);
+    plot->Plot_covariance(covariance_total_all_2, save_TauScan_input_cov_total_all);
     plot->Plot_output(unfolded_mc_test_2, h_trutch_check, false, save_TauScan_crosscheck);
     plot->Plot_output(unfolded_mc_test_all_2, h_trutch_check_all, false, save_TauScan_crosscheck_all);
     plot->Plot_output(unfolded_data_2, h_truth, true, save_TauScan_Unfolding_norm);

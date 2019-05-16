@@ -144,12 +144,15 @@ void fill_pseudodata(TTree* tree){
 
   // setup hists
   TH1* h_pseudodata_1           = binning_rec->CreateHistogram("Pseudodata_1");
+  TH1* h_pseudodata_dist_1      = measurement_rec->CreateHistogram("Pseudodata_dist_1",kTRUE,0,0, "tau[C]");
   TH1* h_pseudodata_truth_all_1 = binning_gen->CreateHistogram("Pseudodata_truth_all_1");
   TH1* h_pseudodata_truth_1     = measurement_gen->CreateHistogram("Pseudodata_truth_1",kTRUE,0,0, "tau[C]");
   TH1* h_pseudodata_2           = binning_rec->CreateHistogram("Pseudodata_2");
+  TH1* h_pseudodata_dist_2      = measurement_rec->CreateHistogram("Pseudodata_dist_2",kTRUE,0,0, "tau[C]");
   TH1* h_pseudodata_truth_all_2 = binning_gen->CreateHistogram("Pseudodata_truth_all_2");
   TH1* h_pseudodata_truth_2     = measurement_gen->CreateHistogram("Pseudodata_truth_2",kTRUE,0,0, "tau[C]");
   TH1* h_pseudodata_3           = binning_rec->CreateHistogram("Pseudodata_3");
+  TH1* h_pseudodata_dist_3      = measurement_rec->CreateHistogram("Pseudodata_dist_3",kTRUE,0,0, "tau[C]");
   TH1* h_pseudodata_truth_all_3 = binning_gen->CreateHistogram("Pseudodata_truth_all_3");
   TH1* h_pseudodata_truth_3     = measurement_gen->CreateHistogram("Pseudodata_truth_3",kTRUE,0,0, "tau[C]");
   outputFile->cd();
@@ -194,12 +197,23 @@ void fill_pseudodata(TTree* tree){
     bool rec_info = false;
     if(passed_gen_final || passed_gen_pt_topjet_sideband || passed_gen_mass_sideband) gen_info = true;
     if(passed_rec_final || passed_rec_pt_topjet_sideband || passed_rec_mass_sideband) rec_info = true;
+    // if(passed_gen_final || passed_gen_pt_topjet_sideband) gen_info = true;
+    // if(passed_rec_final || passed_rec_pt_topjet_sideband) rec_info = true;
 
 
     if(rec_info){
-      if(counter == 8)       h_pseudodata_1->Fill(rec_binNumber, w_sig_rec);
-      else if(counter == 9)  h_pseudodata_2->Fill(rec_binNumber, w_sig_rec);
-      else if(counter == 10) h_pseudodata_3->Fill(rec_binNumber, w_sig_rec);
+      if(counter == 8){
+        h_pseudodata_1->Fill(rec_binNumber, w_sig_rec);
+        h_pseudodata_dist_1->Fill(tau32_rec, w_sig_rec);
+      }
+      else if(counter == 9){
+        h_pseudodata_2->Fill(rec_binNumber, w_sig_rec);
+        h_pseudodata_dist_2->Fill(tau32_rec, w_sig_rec);
+      }
+      else if(counter == 10){
+        h_pseudodata_3->Fill(rec_binNumber, w_sig_rec);
+        h_pseudodata_dist_3->Fill(tau32_rec, w_sig_rec);
+      }
     }
     if(gen_info){
       if(counter == 8)  h_pseudodata_truth_all_1->Fill(gen_binNumber, w_gen);
@@ -216,23 +230,29 @@ void fill_pseudodata(TTree* tree){
   }
 
   h_pseudodata_1->Write();
+  h_pseudodata_dist_1->Write();
   h_pseudodata_truth_1->Write();
   h_pseudodata_truth_all_1->Write();
 
   h_pseudodata_2->Write();
+  h_pseudodata_dist_2->Write();
   h_pseudodata_truth_2->Write();
   h_pseudodata_truth_all_2->Write();
 
   h_pseudodata_3->Write();
+  h_pseudodata_dist_3->Write();
   h_pseudodata_truth_3->Write();
   h_pseudodata_truth_all_3->Write();
   delete h_pseudodata_truth_all_1;
   delete h_pseudodata_1;
+  delete h_pseudodata_dist_1;
   delete h_pseudodata_truth_1;
   delete h_pseudodata_2;
+  delete h_pseudodata_dist_2;
   delete h_pseudodata_truth_2;
   delete h_pseudodata_truth_all_2;
   delete h_pseudodata_3;
+  delete h_pseudodata_dist_3;
   delete h_pseudodata_truth_3;
   delete h_pseudodata_truth_all_3;
   cout << "Finished: Filling Pseudodata" << '\n';
@@ -255,6 +275,7 @@ void fill_ttbar(TTree* tree, TString prefix){
 
   // setup hists
   TH1* h_ttbar_rec_1        = binning_rec->CreateHistogram(prefix+"_TTbar_rec_1");
+  TH1* h_ttbar_rec_dist_1   = measurement_rec->CreateHistogram(prefix+"_TTbar_rec_dist_1",kTRUE,0,0);
   TH1* h_ttbar_gen_1        = binning_gen->CreateHistogram(prefix+"_TTbar_gen_1");
   TH1* h_ttbar_truth_all_1  = binning_gen->CreateHistogram(prefix+"_TTbar_truth_all_1");
   TH1* h_ttbar_truth_1      = measurement_gen->CreateHistogram(prefix+"_TTbar_truth_1",kTRUE,0,0);
@@ -262,6 +283,7 @@ void fill_ttbar(TTree* tree, TString prefix){
   TH1* h_purity_samebin_1   = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_samebin_1",kTRUE,0,0);
 
   TH1* h_ttbar_rec_2        = binning_rec->CreateHistogram(prefix+"_TTbar_rec_2");
+  TH1* h_ttbar_rec_dist_2   = measurement_rec->CreateHistogram(prefix+"_TTbar_rec_dist_2",kTRUE,0,0);
   TH1* h_ttbar_gen_2        = binning_gen->CreateHistogram(prefix+"_TTbar_gen_2");
   TH1* h_ttbar_truth_all_2  = binning_gen->CreateHistogram(prefix+"_TTbar_truth_all_2");
   TH1* h_ttbar_truth_2      = measurement_gen->CreateHistogram(prefix+"_TTbar_truth_2",kTRUE,0,0);
@@ -269,6 +291,7 @@ void fill_ttbar(TTree* tree, TString prefix){
   TH1* h_purity_samebin_2   = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_samebin_2",kTRUE,0,0);
 
   TH1* h_ttbar_rec_3        = binning_rec->CreateHistogram(prefix+"_TTbar_rec_3");
+  TH1* h_ttbar_rec_dist_3   = measurement_rec->CreateHistogram(prefix+"_TTbar_rec_dist_3",kTRUE,0,0);
   TH1* h_ttbar_gen_3        = binning_gen->CreateHistogram(prefix+"_TTbar_gen_3");
   TH1* h_ttbar_truth_all_3  = binning_gen->CreateHistogram(prefix+"_TTbar_truth_all_3");
   TH1* h_ttbar_truth_3      = measurement_gen->CreateHistogram(prefix+"_TTbar_truth_3",kTRUE,0,0);
@@ -322,11 +345,22 @@ void fill_ttbar(TTree* tree, TString prefix){
     bool rec_info = false;
     if(passed_gen_final || passed_gen_pt_topjet_sideband || passed_gen_mass_sideband) gen_info = true;
     if(passed_rec_final || passed_rec_pt_topjet_sideband || passed_rec_mass_sideband) rec_info = true;
+    // if(passed_gen_final || passed_gen_pt_topjet_sideband) gen_info = true;
+    // if(passed_rec_final || passed_rec_pt_topjet_sideband) rec_info = true;
 
     if(rec_info){
-      if(counter != 8)  h_ttbar_rec_1->Fill(rec_binNumber, w_sig_rec);
-      if(counter != 9)  h_ttbar_rec_2->Fill(rec_binNumber, w_sig_rec);
-      if(counter != 10) h_ttbar_rec_3->Fill(rec_binNumber, w_sig_rec);
+      if(counter != 8){
+        h_ttbar_rec_1->Fill(rec_binNumber, w_sig_rec);
+        h_ttbar_rec_dist_1->Fill(tau32_rec, w_sig_rec);
+      }
+      if(counter != 9){
+        h_ttbar_rec_2->Fill(rec_binNumber, w_sig_rec);
+        h_ttbar_rec_dist_2->Fill(tau32_rec, w_sig_rec);
+      }
+      if(counter != 10){
+        h_ttbar_rec_3->Fill(rec_binNumber, w_sig_rec);
+        h_ttbar_rec_dist_3->Fill(tau32_rec, w_sig_rec);
+      }
     }
     if(passed_gen_final){
       if(counter != 8)  h_ttbar_truth_1->Fill(tau32_gen, w_gen);
@@ -392,6 +426,7 @@ void fill_ttbar(TTree* tree, TString prefix){
   }
 
   h_ttbar_rec_1->Write();
+  h_ttbar_rec_dist_1->Write();
   h_ttbar_gen_1->Write();
   h_ttbar_truth_1->Write();
   h_mc_matrix_1->Write();
@@ -400,6 +435,7 @@ void fill_ttbar(TTree* tree, TString prefix){
   h_ttbar_truth_all_1->Write();
 
   h_ttbar_rec_2->Write();
+  h_ttbar_rec_dist_2->Write();
   h_ttbar_gen_2->Write();
   h_ttbar_truth_2->Write();
   h_mc_matrix_2->Write();
@@ -408,6 +444,7 @@ void fill_ttbar(TTree* tree, TString prefix){
   h_ttbar_truth_all_2->Write();
 
   h_ttbar_rec_3->Write();
+  h_ttbar_rec_dist_3->Write();
   h_ttbar_gen_3->Write();
   h_ttbar_truth_3->Write();
   h_mc_matrix_3->Write();
@@ -416,16 +453,19 @@ void fill_ttbar(TTree* tree, TString prefix){
   h_ttbar_truth_all_3->Write();
 
   delete h_ttbar_rec_1;
+  delete h_ttbar_rec_dist_1;
   delete h_ttbar_gen_1;
   delete h_ttbar_truth_1;
   delete h_mc_matrix_1;
   delete h_ttbar_truth_all_1;
   delete h_ttbar_rec_2;
+  delete h_ttbar_rec_dist_2;
   delete h_ttbar_gen_2;
   delete h_ttbar_truth_2;
   delete h_mc_matrix_2;
   delete h_ttbar_truth_all_2;
   delete h_ttbar_rec_3;
+  delete h_ttbar_rec_dist_3;
   delete h_ttbar_gen_3;
   delete h_ttbar_truth_3;
   delete h_mc_matrix_3;
@@ -435,9 +475,8 @@ void fill_ttbar(TTree* tree, TString prefix){
 }
 
 
-
 /*
-███████ ██ ██      ██          ██████   █████   ██████ ██   ██  ██████  ██████   ██████  ██    ██ ███    ██ ██████
+███████ ██ ██      ██          ██ ████   █████   ██████ ██   ██  ██████  ██████   ██████  ██    ██ ███    ██ ██████
 ██      ██ ██      ██          ██   ██ ██   ██ ██      ██  ██  ██       ██   ██ ██    ██ ██    ██ ████   ██ ██   ██
 █████   ██ ██      ██          ██████  ███████ ██      █████   ██   ███ ██████  ██    ██ ██    ██ ██ ██  ██ ██   ██
 ██      ██ ██      ██          ██   ██ ██   ██ ██      ██  ██  ██    ██ ██   ██ ██    ██ ██    ██ ██  ██ ██ ██   ██

@@ -15,6 +15,8 @@
 #include <TRandom3.h>
 #include <TStyle.h>
 #include <TMarker.h>
+#include <TStyle.h>
+#include <TLine.h>
 
 class Plotter{
 public:
@@ -27,7 +29,10 @@ public:
   void Plot_RhoLogTau(TSpline* rhologTau, double tau, TString save);
   void Plot_ResponseMatrix(TH2* resp_matrix_, TString save);
   void Plot_purity(TH1* purity_same, TH1* purity_all, TString save);
+  void Plot_input(TH1* data, TH1* mc, TString save);
+  void Plot_covariance(TH2* matrix, TString save);
 
 private:
   TString save_dir_, name, x_axis_title, y_axis_title, dataset;
+  TLine *l_input = 0, *l_input_2 = 0;
 };

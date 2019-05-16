@@ -57,22 +57,34 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
   TString unfolding_result = "Unfolded Pseudodata ";
   TString unfolding_corr = "Correlation Matrix ";
   TString unfolding_check = "Unfolded mc ";
+  TString unfolding_covinput = "Covariance of mc ";
+  TString unfolding_covmatrix = "Covariance of matrix ";
+  TString unfolding_covtotal = "Covariance of total ";
   if(tau_value < 0){
     if(do_lcurve){
       unfolding_result += "LCurve";
       unfolding_corr += "LCurve";
       unfolding_check += "LCurve";
+      unfolding_covinput += "LCurve";
+      unfolding_covmatrix += "LCurve";
+      unfolding_covtotal += "LCurve";
     }
     else{
       unfolding_result += "TauScan";
       unfolding_corr += "TauScan";
       unfolding_check += "TauScan";
+      unfolding_covinput += "TauScan";
+      unfolding_covmatrix += "TauScan";
+      unfolding_covtotal += "TauScan";
     }
   }
   else{
     unfolding_result += "CustomTau";
     unfolding_corr += "CustomTau";
     unfolding_check += "CustomTau";
+    unfolding_covinput += "CustomTau";
+    unfolding_covmatrix += "CustomTau";
+    unfolding_covtotal += "CustomTau";
   }
   l_curve = 0;
   l_curve_check = 0;
@@ -80,7 +92,8 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
   logTauY = 0;
   if(tau_value < 0){
     if(do_lcurve){
-      unfold.ScanLcurve(nscan, 0.000000000000000000000001, 0.9, &l_curve, &logTauX, &logTauY);
+      cout << "unfold.C: nscan = " << nscan << '\n';
+      unfold.ScanLcurve(nscan, 0.0000001, 0.9, &l_curve, &logTauX, &logTauY);
       unfold_check.ScanLcurve(1, 0.000000000000000000000001, 0.9, &l_curve_check);
     }
     else{
@@ -90,21 +103,30 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
       const char *SCAN_AXISSTEERING = 0;
       TUnfoldDensity::EScanTauMode scanMode = TUnfoldDensity::kEScanTauRhoAvgSys;
       unfold.ScanTau(nscan , 0.000000000000000000000001, 0.9, &rhoLogTau, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &l_curve, &logTauX, &logTauY);
-      unfold_check.ScanTau(1 , 0.000000000000000000000001, 0.9, &rhoLogTau_check, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING);
+      unfold_check.ScanTau(1 , 0.000000000000000000000001, 0.9, &rhoLogTau_check, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING); //something goes wrong here!
     }
   }
-  else{
-    unfold.DoUnfold(tau_value);
-    unfold_check.DoUnfold(tau_value);
-  }
+  // else{
+  //   unfold.DoUnfold(tau_value);
+  //   unfold_check.DoUnfold(tau_value);
+  // }
   h_data_output = unfold.GetOutput(unfolding_result, 0, "measurement_gen");
   h_data_output_all = unfold.GetOutput(unfolding_result+"_all", 0, 0,0,kFALSE);
   h_data_rho = unfold.GetRhoIJtotal(unfolding_corr, 0, "measurement_gen");
   h_data_rho_all = unfold.GetRhoIJtotal(unfolding_corr+"_all", 0, 0,0,kFALSE);
   h_check = unfold_check.GetOutput(unfolding_check, 0, "measurement_gen");
   h_check_all = unfold_check.GetOutput(unfolding_check+"_all", 0, 0,0,kFALSE);
-  // unfolding_result += "_all";
-  // h_data_output_all = unfold.GetOutput(unfolding_result, 0, 0, 0, kFALSE);
+
+// Statistical uncertainties of input distribution
+  h_covarianceinputstat = unfold.GetEmatrixInput(unfolding_covinput, 0, "measurement_gen");
+  h_covarianceinputstat_all = unfold.GetEmatrixInput(unfolding_covinput+"_all", 0, 0,0,kFALSE);
+  // Statistical uncertainties of matrix
+  h_covartiancematrixstat = unfold.GetEmatrixSysUncorr(unfolding_covmatrix, 0, "measurement_gen");
+  h_covartiancematrixstat_all = unfold.GetEmatrixSysUncorr(unfolding_covmatrix+"_all", 0, 0,0,kFALSE);
+
+  h_covariancetotal = unfold.GetEmatrixTotal(unfolding_covtotal, 0, "measurement_gen");
+  h_covariancetotal_all = unfold.GetEmatrixTotal(unfolding_covtotal+"_all", 0, 0,0,kFALSE);
+
   if(tau_value < 0){
     logTau.clear();
     logTau.push_back(logTauX);
@@ -133,6 +155,30 @@ TH1* unfolding::get_output(){
 
 TH1* unfolding::get_output_all(){
   return h_data_output_all;
+}
+
+TH2* unfolding::get_input_statcov(){
+  return h_covarianceinputstat;
+}
+
+TH2* unfolding::get_input_statcov_all(){
+  return h_covarianceinputstat_all;
+}
+
+TH2* unfolding::get_matrix_statcov(){
+  return h_covartiancematrixstat;
+}
+
+TH2* unfolding::get_matrix_statcov_all(){
+  return h_covartiancematrixstat_all;
+}
+
+TH2* unfolding::get_total_statcov(){
+  return h_covariancetotal;
+}
+
+TH2* unfolding::get_total_statcov_all(){
+  return h_covariancetotal_all;
 }
 
 TGraph* unfolding::get_lcurve(){
