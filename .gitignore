@@ -5,3 +5,6 @@
 workdir*
 jobTempOutput*
 *workdir
+
+#ignore obj
+obj
