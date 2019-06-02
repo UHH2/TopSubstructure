@@ -101,17 +101,17 @@ bool Matching::passes(const uhh2::Event& event){
     std::vector<TopJet> topjet_cand = event.get(h_topjet_cand);
     if(topjet_cand.size()>0){
       if(event.is_valid(h_ttbargen)){
-	const auto & ttbargen = event.get(h_ttbargen);
+        const auto & ttbargen = event.get(h_ttbargen);
 
-	GenParticle tophad;
-	if(ttbargen.IsTopHadronicDecay()){
-	  tophad = ttbargen.Top();
-	  if(deltaR(tophad, topjet_cand.at(0)) <= 0.8) pass = true;
-	}
-	else if(ttbargen.IsAntiTopHadronicDecay()){
-	  tophad = ttbargen.Antitop();
-	  if(deltaR(tophad, topjet_cand.at(0)) <= 0.8) pass = true;
-	}
+        GenParticle tophad;
+        if(ttbargen.IsTopHadronicDecay()){
+          tophad = ttbargen.Top();
+          if(deltaR(tophad, topjet_cand.at(0)) <= 0.8) pass = true;
+        }
+        else if(ttbargen.IsAntiTopHadronicDecay()){
+          tophad = ttbargen.Antitop();
+          if(deltaR(tophad, topjet_cand.at(0)) <= 0.8) pass = true;
+        }
       }
     }
   }
@@ -130,16 +130,16 @@ bool QuarkCandJetMatching::passes(const uhh2::Event& event){
 
         GenParticle bq, q1, q2;
         if(ttbargen.IsTopHadronicDecay()){
-      	  bq = ttbargen.bTop();
-      	  q1 = ttbargen.Wdecay1();
-      	  q2 = ttbargen.Wdecay2();
-      	  if(deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8) pass = true;
+          bq = ttbargen.bTop();
+          q1 = ttbargen.Wdecay1();
+          q2 = ttbargen.Wdecay2();
+          if(deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8) pass = true;
         }
         else if(ttbargen.IsAntiTopHadronicDecay()){
-      	  bq = ttbargen.bAntitop();
-      	  q1 = ttbargen.WMinusdecay1();
-      	  q2 = ttbargen.WMinusdecay2();
-      	  if(deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8) pass = true;
+          bq = ttbargen.bAntitop();
+          q1 = ttbargen.WMinusdecay1();
+          q2 = ttbargen.WMinusdecay2();
+          if(deltaR(bq, topjet_cand.at(0)) <= 0.8 && deltaR(q1, topjet_cand.at(0)) <= 0.8 && deltaR(q2, topjet_cand.at(0)) <= 0.8) pass = true;
         }
       }
     }
@@ -155,5 +155,14 @@ bool NTopJet::passes(const Event & event){
     std::vector<TopJet> topjet_cand = event.get(h_topjet_cand);
     pass = topjet_cand.size() >= n_min && (topjet_cand.size() <= n_max || n_max < 0);
   }
+  return pass;
+}
+
+MassTopJet::MassTopJet(double mass_min_, double mass_max_):mass_min(mass_min_), mass_max(mass_max_){}
+bool MassTopJet::passes(const Event & event){
+  bool pass = false;
+  double mass_topjet = event.topjets->at(0).v4().M();
+  if(mass_topjet >= mass_min && (mass_topjet < mass_max || mass_max < 0)) pass = true;
+
   return pass;
 }

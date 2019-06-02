@@ -20,7 +20,7 @@
 
 class Plotter{
 public:
-  Plotter(TString);
+  Plotter(TString file, TUnfoldBinning* binning_gen, TUnfoldBinning* binning_rec);
   void Plot_projections(TH1D* projections, TH1* h_input, TString save);
   void Plot_output(TH1* h_unfolded, TH1* h_truth_, bool normalise, TString save);
   void Plot_correlation_matrix(TH2* h_corr_matrix, TString save);
@@ -34,5 +34,7 @@ public:
 
 private:
   TString save_dir_, name, x_axis_title, y_axis_title, dataset;
-  TLine *l_input = 0, *l_input_2 = 0;
+  TLine *l_input, *l_input_2;
+  const TUnfoldBinning *measurement_rec, *measurement_gen, *rec_pt_topjet_sideband, *gen_pt_topjet_sideband, *rec_mass_sideband, *gen_mass_sideband;
+  double n_measurement_rec, n_measurement_gen, n_rec_pt_topjet, n_gen_pt_topjet, n_mass_rec, n_mass_gen, n_mass_split_rec, n_mass_split_gen, n_regions;
 };

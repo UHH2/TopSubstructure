@@ -57,6 +57,7 @@ namespace uhh2examples {
     std::unique_ptr<Selection> mass_sel1, dr_sel;
     std::unique_ptr<Selection> dr_gen_sideband, pt_topjet_gen_sideband, pt_mu_gen_sideband;
     std::unique_ptr<Selection> dr_rec_sideband, pt_topjet_rec_sideband, pt_mu_rec_sideband;
+    std::unique_ptr<Selection> mass_lower, mass_top, mass_higher;
 
     std::unique_ptr<Selection> pt_topjet_gen, ntopjet2_gen, dr_gen, mass_gen, genmatching, pt_mu_gen, pt_mu_sel;
     std::unique_ptr<Selection> recmatching;
@@ -77,6 +78,9 @@ namespace uhh2examples {
     std::unique_ptr<Hists> h_pt_topjet, h_pt_topjet_matched, h_pt_topjet_unmatched;
     std::unique_ptr<Hists> h_dr, h_dr_matched, h_dr_unmatched;
     std::unique_ptr<Hists> h_mass, h_mass_matched, h_mass_unmatched;
+    std::unique_ptr<Hists> h_mass_lower, h_mass_lower_matched, h_mass_lower_unmatched;
+    std::unique_ptr<Hists> h_mass_top, h_mass_top_matched, h_mass_top_unmatched;
+    std::unique_ptr<Hists> h_mass_higher, h_mass_higher_matched, h_mass_higher_unmatched;
     std::unique_ptr<Hists> h_passedgen_rec, h_passedrec_gen;
     std::unique_ptr<Hists> h_ttbar_hist;
 
@@ -98,8 +102,10 @@ namespace uhh2examples {
 
     uhh2::Event::Handle<double> h_pt_rec;
     uhh2::Event::Handle<double> h_tau32_rec;
+    uhh2::Event::Handle<double> h_mass_rec;
     uhh2::Event::Handle<double> h_pt_gen;
     uhh2::Event::Handle<double> h_tau32_gen;
+    uhh2::Event::Handle<double> h_mass_gen;
   };
 
 
@@ -115,8 +121,10 @@ namespace uhh2examples {
     h_passed_gen_final              = ctx.declare_event_output<bool>("h_passed_gen_final");
     h_pt_rec                        = ctx.declare_event_output<double>("h_pt_rec");
     h_tau32_rec                     = ctx.declare_event_output<double>("h_tau32_rec");
+    h_mass_rec                      = ctx.declare_event_output<double>("h_mass_rec");
     h_pt_gen                        = ctx.declare_event_output<double>("h_pt_gen");
     h_tau32_gen                     = ctx.declare_event_output<double>("h_tau32_gen");
+    h_mass_gen                      = ctx.declare_event_output<double>("h_mass_gen");
     h_gen_weight                    = ctx.declare_event_output<double>("h_gen_weight");
     h_rec_weight                    = ctx.declare_event_output<double>("h_rec_weight");
     h_passed_gen_pt_mu_sideband     = ctx.declare_event_output<bool>("h_passed_gen_pt_mu_sideband");
@@ -162,6 +170,9 @@ namespace uhh2examples {
     dr_sel.reset(new RecdRSelection());
     pt_topjet_sel1.reset(new RecPtSelection(400, 200));
     pt_mu_sel.reset(new MuonptSelection(60));
+    mass_lower.reset(new MassTopJet(0., 163.));
+    mass_top.reset(new MassTopJet(163., 183.));
+    mass_higher.reset(new MassTopJet(183.));
 
     pt_mu_rec_sideband.reset(new MuonptSelection(55));
     dr_rec_sideband.reset(new RecdRSelection(1.0));
@@ -216,6 +227,18 @@ namespace uhh2examples {
 
     h_passedgen_rec.reset(new TopSubstructureRecoHists(ctx, "passedgen_rec"));
     h_passedrec_gen.reset(new GenHists(ctx, "passedrec_gen"));
+
+    h_mass_lower.reset(new TopSubstructureRecoHists(ctx, "mass_lower"));
+    h_mass_lower_matched.reset(new TopSubstructureRecoHists(ctx, "mass_lower_matched"));
+    h_mass_lower_unmatched.reset(new TopSubstructureRecoHists(ctx, "mass_lower_unmatched"));
+
+    h_mass_top.reset(new TopSubstructureRecoHists(ctx, "mass_top"));
+    h_mass_top_matched.reset(new TopSubstructureRecoHists(ctx, "mass_top_matched"));
+    h_mass_top_unmatched.reset(new TopSubstructureRecoHists(ctx, "mass_top_unmatched"));
+
+    h_mass_higher.reset(new TopSubstructureRecoHists(ctx, "mass_higher"));
+    h_mass_higher_matched.reset(new TopSubstructureRecoHists(ctx, "mass_higher_matched"));
+    h_mass_higher_unmatched.reset(new TopSubstructureRecoHists(ctx, "mass_higher_unmatched"));
 
     h_rec_pt_mu_sideband.reset(new TopSubstructureRecoHists(ctx, "rec_pt_mu_sideband"));
     h_rec_pt_topjet_sideband.reset(new TopSubstructureRecoHists(ctx, "rec_pt_topjet_sideband"));
@@ -423,7 +446,30 @@ namespace uhh2examples {
       h_rec_mass_sideband->fill(event);
       passed_rec_mass_sideband = true;
     }
-
+    if(passed_rec_final && mass_lower->passes(event)){
+      h_mass_lower->fill(event);
+      if(isTTbar){
+        matched_rec = recmatching->passes(event);
+        if(matched_rec) h_mass_lower_matched->fill(event);
+        else h_mass_lower_unmatched->fill(event);
+      }
+    }
+    if(passed_rec_final && mass_top->passes(event)){
+      h_mass_top->fill(event);
+      if(isTTbar){
+        matched_rec = recmatching->passes(event);
+        if(matched_rec) h_mass_top_matched->fill(event);
+        else h_mass_top_unmatched->fill(event);
+      }
+    }
+    if(passed_rec_final && mass_higher->passes(event)){
+      h_mass_higher->fill(event);
+      if(isTTbar){
+        matched_rec = recmatching->passes(event);
+        if(matched_rec) h_mass_higher_matched->fill(event);
+        else h_mass_higher_unmatched->fill(event);
+      }
+    }
 
     event.set(h_passed_rec_final, passed_rec_final);
     event.set(h_passed_gen_final, passed_gen_final);
@@ -440,19 +486,23 @@ namespace uhh2examples {
       event.set(h_pt_rec, event.topjets->at(0).pt());
       double tau32_rec = event.topjets->at(0).tau3()/event.topjets->at(0).tau2();
       event.set(h_tau32_rec, tau32_rec);
+      event.set(h_mass_rec, event.topjets->at(0).v4().M());
     }
     else{
       event.set(h_pt_rec, -100);
       event.set(h_tau32_rec, -100);
+      event.set(h_mass_rec, -100);
     }
     if(isMC && event.gentopjets->size() > 0){
       event.set(h_pt_gen, event.gentopjets->at(0).pt());
       double tau32_gen = event.gentopjets->at(0).tau3()/event.gentopjets->at(0).tau2();
       event.set(h_tau32_gen, tau32_gen);
+      event.set(h_mass_gen, event.gentopjets->at(0).v4().M());
     }
     else{
       event.set(h_pt_gen, -100);
       event.set(h_tau32_gen, -100);
+      event.set(h_mass_gen, -100);
     }
 
     if(!passed_rec_final && !passed_gen_final && !passed_gen_pt_mu_sideband && !passed_gen_pt_topjet_sideband && !passed_gen_dr_sideband && !passed_gen_mass_sideband && !passed_rec_pt_mu_sideband & !passed_rec_pt_topjet_sideband && !passed_rec_dr_sideband && !passed_rec_mass_sideband) return false;

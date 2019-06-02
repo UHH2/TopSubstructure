@@ -23,7 +23,7 @@ ROOTVERSION  := $(shell $(ROOTCONFIG) --version)
 ROOTMAJORVERSION := $(word 1,$(subst ., ,$(ROOTVERSION)))
 ROOTCINT=$(ROOTSYS)/bin/rootcint
 
-CXXFLAGS=-isystem $(shell $(ROOTCONFIG) --incdir) -I$(ROOTSYS)/htmldoc -I. -O2 -g -Wall -Wshadow -W -Woverloaded-virtual -fPIC $(ROOTCFLAGS)
+CXXFLAGS=-isystem $(shell $(ROOTCONFIG) --incdir) -I$(ROOTSYS)/htmldoc -I. -O0 -g -Wall -Wshadow -W -Woverloaded-virtual -fPIC $(ROOTCFLAGS)
 LDFLAGS=$(ROOTLDFLAGS) -L. -Wl,-rpath .
 CXX=$(shell $(ROOTCONFIG) --cxx)
 

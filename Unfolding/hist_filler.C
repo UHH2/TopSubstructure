@@ -144,22 +144,24 @@ void fill_pseudodata(TTree* tree){
 
   // setup hists
   TH1* h_pseudodata_1           = binning_rec->CreateHistogram("Pseudodata_1");
-  TH1* h_pseudodata_dist_1      = measurement_rec->CreateHistogram("Pseudodata_dist_1",kTRUE,0,0, "tau[C]");
+  TH1* h_pseudodata_dist_1      = measurement_rec->CreateHistogram("Pseudodata_dist_1",kTRUE,0,0, "mass[C]");
   TH1* h_pseudodata_truth_all_1 = binning_gen->CreateHistogram("Pseudodata_truth_all_1");
-  TH1* h_pseudodata_truth_1     = measurement_gen->CreateHistogram("Pseudodata_truth_1",kTRUE,0,0, "tau[C]");
+  TH1* h_pseudodata_truth_1     = measurement_gen->CreateHistogram("Pseudodata_truth_1",kTRUE,0,0, "mass[C]");
   TH1* h_pseudodata_2           = binning_rec->CreateHistogram("Pseudodata_2");
-  TH1* h_pseudodata_dist_2      = measurement_rec->CreateHistogram("Pseudodata_dist_2",kTRUE,0,0, "tau[C]");
+  TH1* h_pseudodata_dist_2      = measurement_rec->CreateHistogram("Pseudodata_dist_2",kTRUE,0,0, "mass[C]");
   TH1* h_pseudodata_truth_all_2 = binning_gen->CreateHistogram("Pseudodata_truth_all_2");
-  TH1* h_pseudodata_truth_2     = measurement_gen->CreateHistogram("Pseudodata_truth_2",kTRUE,0,0, "tau[C]");
+  TH1* h_pseudodata_truth_2     = measurement_gen->CreateHistogram("Pseudodata_truth_2",kTRUE,0,0, "mass[C]");
   TH1* h_pseudodata_3           = binning_rec->CreateHistogram("Pseudodata_3");
-  TH1* h_pseudodata_dist_3      = measurement_rec->CreateHistogram("Pseudodata_dist_3",kTRUE,0,0, "tau[C]");
+  TH1* h_pseudodata_dist_3      = measurement_rec->CreateHistogram("Pseudodata_dist_3",kTRUE,0,0, "mass[C]");
   TH1* h_pseudodata_truth_all_3 = binning_gen->CreateHistogram("Pseudodata_truth_all_3");
-  TH1* h_pseudodata_truth_3     = measurement_gen->CreateHistogram("Pseudodata_truth_3",kTRUE,0,0, "tau[C]");
+  TH1* h_pseudodata_truth_3     = measurement_gen->CreateHistogram("Pseudodata_truth_3",kTRUE,0,0, "mass[C]");
   outputFile->cd();
 
   tree->ResetBranchAddresses();
   tree->SetBranchAddress("h_tau32_rec", &tau32_rec);
   tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
+  tree->SetBranchAddress("h_mass_rec", &mass_rec);
+  tree->SetBranchAddress("h_mass_gen", &mass_gen);
   tree->SetBranchAddress("h_passed_rec_final", &passed_rec_final);
   tree->SetBranchAddress("h_passed_gen_final", &passed_gen_final);
   tree->SetBranchAddress("h_passed_rec_pt_topjet_sideband", &passed_rec_pt_topjet_sideband);
@@ -186,13 +188,13 @@ void fill_pseudodata(TTree* tree){
 
 
     Int_t rec_binNumber = 0, gen_binNumber = 0;
-    if(passed_rec_final)                    rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec);
+    if(passed_rec_final)                    rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec, mass_rec);
     else if(passed_rec_pt_topjet_sideband)  rec_binNumber = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec);
     else if(passed_rec_mass_sideband)       rec_binNumber = rec_mass_sideband->GetGlobalBinNumber(tau32_rec);
-    if(passed_gen_final)                    gen_binNumber = measurement_gen->GetGlobalBinNumber(tau32_gen);
+    if(passed_gen_final)                    gen_binNumber = measurement_gen->GetGlobalBinNumber(tau32_gen, mass_gen);
     else if(passed_gen_pt_topjet_sideband)  gen_binNumber = gen_pt_topjet_sideband->GetGlobalBinNumber(tau32_gen);
     else if(passed_gen_mass_sideband)       gen_binNumber = gen_mass_sideband->GetGlobalBinNumber(tau32_gen);
-
+    // cout << "test: " << measurement_rec->GetTH1xNumberOfBins() << '\n';
     bool gen_info = false;
     bool rec_info = false;
     if(passed_gen_final || passed_gen_pt_topjet_sideband || passed_gen_mass_sideband) gen_info = true;
@@ -274,29 +276,32 @@ void fill_ttbar(TTree* tree, TString prefix){
   else      cout << "Filling Histograms for "+prefix+" ...\n";
 
   // setup hists
-  TH1* h_ttbar_rec_1        = binning_rec->CreateHistogram(prefix+"_TTbar_rec_1");
-  TH1* h_ttbar_rec_dist_1   = measurement_rec->CreateHistogram(prefix+"_TTbar_rec_dist_1",kTRUE,0,0);
-  TH1* h_ttbar_gen_1        = binning_gen->CreateHistogram(prefix+"_TTbar_gen_1");
-  TH1* h_ttbar_truth_all_1  = binning_gen->CreateHistogram(prefix+"_TTbar_truth_all_1");
-  TH1* h_ttbar_truth_1      = measurement_gen->CreateHistogram(prefix+"_TTbar_truth_1",kTRUE,0,0);
-  TH1* h_purity_all_1       = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_all_1",kTRUE,0,0);
-  TH1* h_purity_samebin_1   = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_samebin_1",kTRUE,0,0);
+  TH1* h_ttbar_rec_1            = binning_rec->CreateHistogram(prefix+"_TTbar_rec_1");
+  TH1* h_ttbar_rec_dist_1       = measurement_rec->CreateHistogram(prefix+"_TTbar_rec_dist_1",kTRUE,0,0, "mass[C]");
+  TH1* h_ttbar_gen_1            = binning_gen->CreateHistogram(prefix+"_TTbar_gen_1");
+  TH1* h_ttbar_truth_all_1      = binning_gen->CreateHistogram(prefix+"_TTbar_truth_all_1");
+  TH1* h_ttbar_truth_1          = measurement_gen->CreateHistogram(prefix+"_TTbar_truth_1",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_1           = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_all_1",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_1       = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_samebin_1",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_1  = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_samebin_mass_1",kTRUE,0,0, "mass[C]");
 
-  TH1* h_ttbar_rec_2        = binning_rec->CreateHistogram(prefix+"_TTbar_rec_2");
-  TH1* h_ttbar_rec_dist_2   = measurement_rec->CreateHistogram(prefix+"_TTbar_rec_dist_2",kTRUE,0,0);
-  TH1* h_ttbar_gen_2        = binning_gen->CreateHistogram(prefix+"_TTbar_gen_2");
-  TH1* h_ttbar_truth_all_2  = binning_gen->CreateHistogram(prefix+"_TTbar_truth_all_2");
-  TH1* h_ttbar_truth_2      = measurement_gen->CreateHistogram(prefix+"_TTbar_truth_2",kTRUE,0,0);
-  TH1* h_purity_all_2       = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_all_2",kTRUE,0,0);
-  TH1* h_purity_samebin_2   = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_samebin_2",kTRUE,0,0);
+  TH1* h_ttbar_rec_2            = binning_rec->CreateHistogram(prefix+"_TTbar_rec_2");
+  TH1* h_ttbar_rec_dist_2       = measurement_rec->CreateHistogram(prefix+"_TTbar_rec_dist_2",kTRUE,0,0, "mass[C]");
+  TH1* h_ttbar_gen_2            = binning_gen->CreateHistogram(prefix+"_TTbar_gen_2");
+  TH1* h_ttbar_truth_all_2      = binning_gen->CreateHistogram(prefix+"_TTbar_truth_all_2");
+  TH1* h_ttbar_truth_2          = measurement_gen->CreateHistogram(prefix+"_TTbar_truth_2",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_2           = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_all_2",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_2       = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_samebin_2",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_2  = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_samebin_mass_2",kTRUE,0,0, "mass[C]");
 
-  TH1* h_ttbar_rec_3        = binning_rec->CreateHistogram(prefix+"_TTbar_rec_3");
-  TH1* h_ttbar_rec_dist_3   = measurement_rec->CreateHistogram(prefix+"_TTbar_rec_dist_3",kTRUE,0,0);
-  TH1* h_ttbar_gen_3        = binning_gen->CreateHistogram(prefix+"_TTbar_gen_3");
-  TH1* h_ttbar_truth_all_3  = binning_gen->CreateHistogram(prefix+"_TTbar_truth_all_3");
-  TH1* h_ttbar_truth_3      = measurement_gen->CreateHistogram(prefix+"_TTbar_truth_3",kTRUE,0,0);
-  TH1* h_purity_all_3       = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_all_3",kTRUE,0,0);
-  TH1* h_purity_samebin_3   = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_samebin_3",kTRUE,0,0);
+  TH1* h_ttbar_rec_3            = binning_rec->CreateHistogram(prefix+"_TTbar_rec_3");
+  TH1* h_ttbar_rec_dist_3       = measurement_rec->CreateHistogram(prefix+"_TTbar_rec_dist_3",kTRUE,0,0, "mass[C]");
+  TH1* h_ttbar_gen_3            = binning_gen->CreateHistogram(prefix+"_TTbar_gen_3");
+  TH1* h_ttbar_truth_all_3      = binning_gen->CreateHistogram(prefix+"_TTbar_truth_all_3");
+  TH1* h_ttbar_truth_3          = measurement_gen->CreateHistogram(prefix+"_TTbar_truth_3",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_3           = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_all_3",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_3       = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_samebin_3",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_3  = measurement_gen->CreateHistogram(prefix+"_TTbar_purity_samebin_mass_3",kTRUE,0,0, "mass[C]");
 
   TH2* h_mc_matrix_1 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_TTbar_matrix_1");
   TH2* h_mc_matrix_2 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_TTbar_matrix_2");
@@ -307,6 +312,8 @@ void fill_ttbar(TTree* tree, TString prefix){
   tree->ResetBranchAddresses();
   tree->SetBranchAddress("h_tau32_rec", &tau32_rec);
   tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
+  tree->SetBranchAddress("h_mass_rec", &mass_rec);
+  tree->SetBranchAddress("h_mass_gen", &mass_gen);
   tree->SetBranchAddress("h_passed_rec_final", &passed_rec_final);
   tree->SetBranchAddress("h_passed_gen_final", &passed_gen_final);
   tree->SetBranchAddress("h_passed_rec_pt_topjet_sideband", &passed_rec_pt_topjet_sideband);
@@ -333,11 +340,11 @@ void fill_ttbar(TTree* tree, TString prefix){
 
     Int_t rec_binNumber = 0, gen_binNumber = 0;
 
-    if(passed_rec_final)                    rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec);
+    if(passed_rec_final)                    rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec, mass_rec);
     else if(passed_rec_pt_topjet_sideband)  rec_binNumber = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec);
     else if(passed_rec_mass_sideband)       rec_binNumber = rec_mass_sideband->GetGlobalBinNumber(tau32_rec);
 
-    if(passed_gen_final)                    gen_binNumber = measurement_gen->GetGlobalBinNumber(tau32_gen);
+    if(passed_gen_final)                    gen_binNumber = measurement_gen->GetGlobalBinNumber(tau32_gen, mass_gen);
     else if(passed_gen_pt_topjet_sideband)  gen_binNumber = gen_pt_topjet_sideband->GetGlobalBinNumber(tau32_gen);
     else if(passed_gen_mass_sideband)       gen_binNumber = gen_mass_sideband->GetGlobalBinNumber(tau32_gen);
 
@@ -405,20 +412,25 @@ void fill_ttbar(TTree* tree, TString prefix){
 
     //fill hists for purity
     int genBin_recInfo = 0;
+    int genBin_recInfo_mass = 0;
 
     if(passed_gen_final && rec_info){
-      genBin_recInfo = measurement_gen->GetGlobalBinNumber(tau32_rec);
+      genBin_recInfo      = measurement_gen->GetGlobalBinNumber(tau32_rec,mass_gen);
+      genBin_recInfo_mass = measurement_gen->GetGlobalBinNumber(tau32_rec,mass_rec);
       if(counter != 8){
         h_purity_all_1->Fill(tau32_gen, w_gen);
-        if(genBin_recInfo == gen_binNumber) h_purity_samebin_1->Fill(tau32_gen, w_gen);
+        if(genBin_recInfo == gen_binNumber)      h_purity_samebin_1->Fill(tau32_gen, w_gen);
+        if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass_1->Fill(tau32_gen, w_gen);
       }
       if(counter != 9){
         h_purity_all_2->Fill(tau32_gen, w_gen);
-        if(genBin_recInfo == gen_binNumber) h_purity_samebin_2->Fill(tau32_gen, w_gen);
+        if(genBin_recInfo == gen_binNumber)      h_purity_samebin_2->Fill(tau32_gen, w_gen);
+        if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass_2->Fill(tau32_gen, w_gen);
       }
       if(counter != 10){
         h_purity_all_3->Fill(tau32_gen, w_gen);
-        if(genBin_recInfo == gen_binNumber) h_purity_samebin_3->Fill(tau32_gen, w_gen);
+        if(genBin_recInfo == gen_binNumber)      h_purity_samebin_3->Fill(tau32_gen, w_gen);
+        if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass_3->Fill(tau32_gen, w_gen);
       }
     }
     counter++;

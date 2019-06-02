@@ -5,48 +5,49 @@
 
 using namespace std;
 
-void bin_range(){
+void bin_range_old(){
   gStyle->SetOptStat(0);
   //Load data
   TFile *TTbar = new TFile("/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_cmssw10/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3.root", "READ");
 
   // TH1D* tau32 = (TH1D*)TTbar->Get("mass/tau32_tj1_rebin");
-  // TH1D* tau32 = (TH1D*)TTbar->Get("rec_dr_sideband/tau32_tj1_rebin");
-  TH1D* tau32 = (TH1D*)TTbar->Get("rec_mass_sideband/tau32_tj1_rebin");
+  TH1D* tau32 = (TH1D*)TTbar->Get("rec_pt_topjet_sideband/tau32_tj1_rebin");
+  // TH1D* tau32 = (TH1D*)TTbar->Get("rec_mass_sideband/tau32_tj1_rebin");
 
-  int start = 0;
-  for(int i = 0; i < tau32->GetNbinsX(); i++){
-    if(tau32->Integral(start, i) >= 107){
-      cout << "bin range from: " << start << " to: " << i << '\n';
-      cout << tau32->Integral(start, i) << '\n';
-      start = i;
-    }
-  }
-  // cout << ""  << tau32->Integral(0, 7015) << '\n';
-  cout << "last bin: "  << tau32->Integral(start, 10000) << '\n';
+  // int start = 0;
+  // for(int i = 0; i < tau32->GetNbinsX(); i++){
+  //   if(tau32->Integral(start, i) >= 120){
+  //     cout << "bin range from: " << start << " to: " << i << '\n';
+  //     cout << tau32->Integral(start, i) << '\n';
+  //     start = i+1;
+  //   }
+  // }
+  // // cout << ""  << tau32->Integral(0, 7015) << '\n';
+  // cout << "last bin: "  << tau32->Integral(start, 1000) << '\n';
   //
-  // cout << "1. range:  "  << tau32->Integral(0   , 3624) << '\n';
-  // cout << "2. range:  "  << tau32->Integral(3624, 4053) << '\n';
-  // cout << "3. range:  "  << tau32->Integral(4053, 4369) << '\n';
-  // cout << "4. range:  "  << tau32->Integral(4369, 4641) << '\n';
-  // cout << "5. range:  "  << tau32->Integral(4641, 4904) << '\n';
-  // cout << "6. range:  "  << tau32->Integral(4904, 5150) << '\n';
-  // cout << "7. range:  "  << tau32->Integral(5150, 5383) << '\n';
-  // cout << "8. range:  "  << tau32->Integral(5383, 5625) << '\n';
-  // cout << "9. range:  "  << tau32->Integral(5625, 5853) << '\n';
-  // cout << "10. range: "  << tau32->Integral(5853, 6081) << '\n';
-  // cout << "11. range: "  << tau32->Integral(6081, 6317) << '\n';
-  // cout << "12. range: "  << tau32->Integral(6317, 6559) << '\n';
-  // cout << "13. range: "  << tau32->Integral(6559, 6790) << '\n';
-  // cout << "14. range: "  << tau32->Integral(6790, 7028) << '\n';
-  // cout << "15. range: "  << tau32->Integral(7028, 7260) << '\n';
-  // cout << "16. range: "  << tau32->Integral(7260, 7508) << '\n';
-  // cout << "17. range: "  << tau32->Integral(7508, 7758) << '\n';
-  // cout << "18. range: "  << tau32->Integral(7758, 7998) << '\n';
-  // cout << "19. range: "  << tau32->Integral(7998, 8224) << '\n';
-  // cout << "20. range: "  << tau32->Integral(8224, 8456) << '\n';
-  // cout << "21. range: "  << tau32->Integral(8456, 8698) << '\n';
-  // cout << "22. range: "  << tau32->Integral(8698, 8989) << '\n';
+  //0.463, 0.620, 0.752, 0.861
+  cout << "1. range:  "  << tau32->Integral(0  , 520) << '\n';
+  cout << "2. range:  "  << tau32->Integral(521, 626) << '\n';
+  cout << "3. range:  "  << tau32->Integral(627, 704) << '\n';
+  cout << "4. range:  "  << tau32->Integral(705, 761) << '\n';
+  cout << "5. range:  "  << tau32->Integral(762, 806) << '\n';
+  cout << "6. range:  "  << tau32->Integral(807, 845) << '\n';
+  cout << "7. range:  "  << tau32->Integral(848, 885) << '\n';
+  cout << "8. range:  "  << tau32->Integral(886, 1000) << '\n';
+  // cout << "9. range:  "  << tau32->Integral(576, 599) << '\n';
+  // cout << "10. range: "  << tau32->Integral(600, 623) << '\n';
+  // cout << "11. range: "  << tau32->Integral(624, 647) << '\n';
+  // cout << "12. range: "  << tau32->Integral(648, 672) << '\n';
+  // cout << "13. range: "  << tau32->Integral(673, 697) << '\n';
+  // cout << "14. range: "  << tau32->Integral(698, 721) << '\n';
+  // cout << "15. range: "  << tau32->Integral(722, 746) << '\n';
+  // cout << "16. range: "  << tau32->Integral(747, 772) << '\n';
+  // cout << "17. range: "  << tau32->Integral(773, 797) << '\n';
+  // cout << "18. range: "  << tau32->Integral(798, 820) << '\n';
+  // cout << "19. range: "  << tau32->Integral(821, 844) << '\n';
+  // cout << "20. range: "  << tau32->Integral(845, 868) << '\n';
+  // cout << "21. range: "  << tau32->Integral(869, 898) << '\n';
+  // cout << "22. range: "  << tau32->Integral(899, 1000) << '\n';
   // cout << "23. range: "  << tau32->Integral(8989, 10000) << '\n';
   // cout << "24. range: "  << tau32->Integral(, ) << '\n';
   // cout << "25. range: "  << tau32->Integral(5952, 6038) << '\n';

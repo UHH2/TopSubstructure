@@ -31,6 +31,7 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   // TopJets
   // first candidate
   book<TH1D>("M_tj1", "M_{had. TopJet candidate} [GeV^{2}]", 40, 0, 400);
+  book<TH1D>("M_tj1_rebin", "M_{had. TopJet candidate} [GeV^{2}]", 80, 0, 400);
   book<TH1D>("pt_tj1", "p_{T} had. TopJet candidate [GeV]", 120, 0, 1200);
   book<TH1D>("eta_tj1", "#eta had. TopJet candidate", 40, -2.5, 2.5);
   book<TH1D>("Nsubjet_tjs", "N_{subjets} all candidates", 4, -0.5, 3.5);
@@ -40,15 +41,16 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   book<TH1D>("m_subjet1_tj1", "M_{subjet1} had. TopJet candidate [GeV^{2}]", 30, 0, 300);
   book<TH1D>("m_subjet2_tj1", "M_{subjet2} had. TopJet candidate [GeV^{2}]", 30, 0, 300);
   book<TH1D>("tau1_tj1", "#tau_{1} had. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau1_tj1_rebin", "#tau_{1} had. TopJet candidate", 10000, 0, 1.);
+  book<TH1D>("tau1_tj1_rebin", "#tau_{1} had. TopJet candidate", 1000, 0, 1.);
   book<TH1D>("tau2_tj1", "#tau_{2} had. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau2_tj1_rebin", "#tau_{2} had. TopJet candidate", 10000, 0, 1.);
+  book<TH1D>("tau2_tj1_rebin", "#tau_{2} had. TopJet candidate", 1000, 0, 1.);
   book<TH1D>("tau3_tj1", "#tau_{3} had. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau3_tj1_rebin", "#tau_{3} had. TopJet candidate", 10000, 0, 1.);
+  book<TH1D>("tau3_tj1_rebin", "#tau_{3} had. TopJet candidate", 1000, 0, 1.);
   book<TH1D>("tau32_tj1", "#tau_{3}/#tau_{2} had. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau32_tj1_rebin", "#tau_{3}/#tau_{2} had. TopJet candidate", 10000, 0, 1.);
+  book<TH1D>("tau32_tj1_rebin1", "#tau_{3}/#tau_{2} had. TopJet candidate", 100, 0, 1.);
+  book<TH1D>("tau32_tj1_rebin2", "#tau_{3}/#tau_{2} had. TopJet candidate", 1000, 0, 1.);
   book<TH1D>("tau21_tj1", "#tau_{2}/#tau_{1} had. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau21_tj1_rebin", "#tau_{2}/#tau_{1} had. TopJet candidate", 10000, 0, 1.);
+  book<TH1D>("tau21_tj1_rebin", "#tau_{2}/#tau_{1} had. TopJet candidate", 1000, 0, 1.);
 
   book<TH1D>("dR_mu_tj1", "#Delta R(#mu, had. TopJet candidate)", 50, 0, 5.);
   book<TH1D>("dPhi_mu_tj1", "#Delta #Phi (#mu, had. TopJet candidate)", 40, 0, 4.);
@@ -56,6 +58,7 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
 
   //  second candidate
   book<TH1D>("M_tj2", "M_{lep. TopJet candidate} [GeV^{2}]", 40, 0, 400);
+  book<TH1D>("M_tj2_rebin", "M_{lep. TopJet candidate} [GeV^{2}]", 80, 0, 400);
   book<TH1D>("pt_tj2", "p_{T} lep. TopJet candidate [GeV]", 120, 0, 1200);
   book<TH1D>("eta_tj2", "#eta lep. TopJet candidate", 40, -2.5, 2.5);
   book<TH1D>("Nsubjet_tj2", "N_{subjets} lep. TopJet candidate", 4, -0.5, 3.5);
@@ -64,15 +67,16 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   book<TH1D>("m_subjet1_tj2", "M_{subjet1} lep. TopJet candidate [GeV^{2}]", 30, 0, 300);
   book<TH1D>("m_subjet2_tj2", "M_{subjet2} lep. TopJet candidate [GeV^{2}]", 30, 0, 300);
   book<TH1D>("tau1_tj2", "#tau_{1} lep. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau1_tj2_rebin", "#tau_{1} lep. TopJet candidate", 10000, 0, 1.);
+  book<TH1D>("tau1_tj2_rebin", "#tau_{1} lep. TopJet candidate", 1000, 0, 1.);
   book<TH1D>("tau2_tj2", "#tau_{2} lep. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau2_tj2_rebin", "#tau_{2} lep. TopJet candidate", 10000, 0, 1.);
+  book<TH1D>("tau2_tj2_rebin", "#tau_{2} lep. TopJet candidate", 1000, 0, 1.);
   book<TH1D>("tau3_tj2", "#tau_{3} lep. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau3_tj2_rebin", "#tau_{3} lep. TopJet candidate", 10000, 0, 1.);
+  book<TH1D>("tau3_tj2_rebin", "#tau_{3} lep. TopJet candidate", 1000, 0, 1.);
   book<TH1D>("tau32_tj2", "#tau_{3}/#tau_{2} lep. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau32_tj2_rebin", "#tau_{3}/#tau_{2} lep. TopJet candidate", 10000, 0, 1.);
+  book<TH1D>("tau32_tj2_rebin1", "#tau_{3}/#tau_{2} lep. TopJet candidate", 100, 0, 1.);
+  book<TH1D>("tau32_tj2_rebin2", "#tau_{3}/#tau_{2} lep. TopJet candidate", 1000, 0, 1.);
   book<TH1D>("tau21_tj2", "#tau_{2}/#tau_{1} lep. TopJet candidate", 40, 0, 1.);
-  book<TH1D>("tau21_tj2_rebin", "#tau_{2}/#tau_{1} lep. TopJet candidate", 10000, 0, 1.);
+  book<TH1D>("tau21_tj2_rebin", "#tau_{2}/#tau_{1} lep. TopJet candidate", 1000, 0, 1.);
 
   book<TH1D>("dR_mu_tj2", "#Delta R(#mu, lep. TopJet candidate)", 50, 0, 5.);
   book<TH1D>("dPhi_mu_tj2", "#Delta #Phi (#mu, lep. TopJet candidate)", 40, 0, 4.);
@@ -167,6 +171,7 @@ void TopSubstructureRecoHists::fill(const Event & event){
     }
 
     hist("M_tj1")->Fill(topjet->at(0).v4().M(), weight);
+    hist("M_tj1_rebin")->Fill(topjet->at(0).v4().M(), weight);
     hist("pt_tj1")->Fill(topjet->at(0).pt(), weight);
     hist("eta_tj1")->Fill(topjet->at(0).eta(), weight);
     hist("Nsubjet_tj1")->Fill(topjet->at(0).subjets().size(), weight);
@@ -181,7 +186,8 @@ void TopSubstructureRecoHists::fill(const Event & event){
     hist("tau3_tj1")->Fill(topjet->at(0).tau3(), weight);
     hist("tau3_tj1_rebin")->Fill(topjet->at(0).tau3(), weight);
     hist("tau32_tj1")->Fill(topjet->at(0).tau3()/topjet->at(0).tau2(), weight);
-    hist("tau32_tj1_rebin")->Fill(topjet->at(0).tau3()/topjet->at(0).tau2(), weight);
+    hist("tau32_tj1_rebin1")->Fill(topjet->at(0).tau3()/topjet->at(0).tau2(), weight);
+    hist("tau32_tj1_rebin2")->Fill(topjet->at(0).tau3()/topjet->at(0).tau2(), weight);
     hist("tau21_tj1")->Fill(topjet->at(0).tau2()/topjet->at(0).tau1(), weight);
     hist("tau21_tj1_rebin")->Fill(topjet->at(0).tau2()/topjet->at(0).tau1(), weight);
 
@@ -195,6 +201,7 @@ void TopSubstructureRecoHists::fill(const Event & event){
       if(event.muons->size() > 0) hist("dPhi_mu_tj2")->Fill(deltaPhi(event.muons->at(0), topjet->at(1)), weight);
 
       hist("M_tj2")->Fill(topjet->at(1).v4().M(), weight);
+      hist("M_tj2_rebin")->Fill(topjet->at(1).v4().M(), weight);
       hist("pt_tj2")->Fill(topjet->at(1).pt(), weight);
       hist("eta_tj2")->Fill(topjet->at(1).eta(), weight);
       hist("Nsubjet_tj2")->Fill(topjet->at(1).subjets().size(), weight);
@@ -209,7 +216,8 @@ void TopSubstructureRecoHists::fill(const Event & event){
       hist("tau3_tj2")->Fill(topjet->at(1).tau3(), weight);
       hist("tau3_tj2_rebin")->Fill(topjet->at(1).tau3(), weight);
       hist("tau32_tj2")->Fill(topjet->at(1).tau3()/topjet->at(1).tau2(), weight);
-      hist("tau32_tj2_rebin")->Fill(topjet->at(1).tau3()/topjet->at(1).tau2(), weight);
+      hist("tau32_tj2_rebin1")->Fill(topjet->at(1).tau3()/topjet->at(1).tau2(), weight);
+      hist("tau32_tj2_rebin2")->Fill(topjet->at(1).tau3()/topjet->at(1).tau2(), weight);
       hist("tau21_tj2")->Fill(topjet->at(1).tau2()/topjet->at(1).tau1(), weight);
       hist("tau21_tj2_rebin")->Fill(topjet->at(1).tau2()/topjet->at(1).tau1(), weight);
 

@@ -17,10 +17,10 @@
 namespace uhh2examples {
 
   /* Select events with at least two jets in which the leading two jets have deltaphi > 2.7 and the third jet pt is
-   * below 20% of the average of the leading two jets, where the minimum deltaphi and
-   * maximum third jet pt fraction can be changed in the constructor.
-   * The jets are assumed to be sorted in pt.
-   */
+  * below 20% of the average of the leading two jets, where the minimum deltaphi and
+  * maximum third jet pt fraction can be changed in the constructor.
+  * The jets are assumed to be sorted in pt.
+  */
 
   class METSelection : public uhh2::Selection{
   public:
@@ -82,7 +82,7 @@ namespace uhh2examples {
 
   private:
     uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
-      uhh2::Event::Handle<TTbarGen> h_ttbargen;
+    uhh2::Event::Handle<TTbarGen> h_ttbargen;
   };
 
   class NTopJet : public uhh2::Selection{
@@ -95,4 +95,11 @@ namespace uhh2examples {
     double n_min, n_max;
   };
 
+  class MassTopJet : public uhh2::Selection{
+  public:
+    explicit MassTopJet(double mass_min = 0, double mass_max = -1);
+    virtual bool passes(const uhh2::Event &) override;
+  private:
+    double mass_min, mass_max;
+  };
 }

@@ -8,12 +8,13 @@ using namespace std;
 void Pseudo_unfolding(){
   gStyle->SetOptStat(0);
   gStyle->SetPadLeftMargin(0.14);
+  gStyle->SetPadRightMargin(0.04);
   // gStyle->SetPadRightMargin(0.1);
   // gStyle->SetErrorX(0);
   //Load data
-  TFile *pseudo1 = new TFile("Unfolding_pseudo1.root", "READ");
-  TFile *pseudo2 = new TFile("Unfolding_pseudo2.root", "READ");
-  TFile *pseudo3 = new TFile("Unfolding_pseudo3.root", "READ");
+  TFile *pseudo1 = new TFile("Unfolding_pseudo1_bu.root", "READ");
+  TFile *pseudo2 = new TFile("Unfolding_pseudo2_bu.root", "READ");
+  TFile *pseudo3 = new TFile("Unfolding_pseudo3_bu.root", "READ");
 
   TH1D* unfolded_pseudo1 = (TH1D*)pseudo1->Get("Unfolded Pseudodata TauScan");
   TH1D* truth_pseudo1 = (TH1D*)pseudo1->Get("Pseudodata_truth_1");
@@ -26,14 +27,16 @@ void Pseudo_unfolding(){
     double content_1 = unfolded_pseudo1->GetBinContent(i);
     double error_bin_1 = unfolded_pseudo1->GetBinError(i);
     double bin_width_1 = unfolded_pseudo1->GetBinWidth(i);
-    double new_content_1 = content_1/bin_width_1;
-    double new_error_1 = error_bin_1/bin_width_1;
-
+    double bin_width_2 = unfolded_pseudo2->GetBinWidth(i);
+    double new_content_1 = content_1/bin_width_2;
+    double new_error_1 = error_bin_1/bin_width_2;
+cout << bin_width_1 << '\n';
     double content_2 = unfolded_pseudo2->GetBinContent(i);
     double error_bin_2 = unfolded_pseudo2->GetBinError(i);
-    double bin_width_2 = unfolded_pseudo2->GetBinWidth(i);
+    // double bin_width_2 = unfolded_pseudo2->GetBinWidth(i);
     double new_content_2 = content_2/bin_width_2;
     double new_error_2 = error_bin_2/bin_width_2;
+cout << bin_width_2 << '\n';
 
     double content_3 = unfolded_pseudo3->GetBinContent(i);
     double error_bin_3 = unfolded_pseudo3->GetBinError(i);
@@ -136,21 +139,23 @@ void Pseudo_unfolding(){
     unfold3->SetBinError((3*i), unfolded_pseudo3->GetBinError(i));
   }
 
-  TCanvas* c1 = new TCanvas("test", "tests", 1000,800);
+  TCanvas* c1 = new TCanvas("test", "tests", 1000, 800);
   c1->cd();
   gr->SetTitle("");
   gr->GetXaxis()->SetRangeUser(0, 1);
   gr->GetYaxis()->SetRangeUser(0, 12000);
   gr->GetXaxis()->SetTitle("#tau_{3/2}");
-  gr->GetYaxis()->SetTitle("#frac{events}{binwidth}");
+  gr->GetYaxis()->SetTitle("#frac{Events}{Bin width}");
   gr->GetYaxis()->SetTitleSize(0.04);
   gr->GetYaxis()->SetTitleOffset(1.7);
   gr->GetXaxis()->SetTitleSize(0.06);
   gr->GetXaxis()->SetTitleOffset(0.7);
+  gr->SetFillColor(kRed);
+  // gr->SetFillStyle(0);
   gr->SetLineColor(kRed);
   gr->SetMarkerColor(kRed);
-  gr->SetMarkerStyle(20);
-  gr->Draw("AP");
+  // gr->SetMarkerStyle(20);
+  gr->Draw("AP e2");
   unfold1->SetLineColor(kBlue+2);
   unfold1->SetMarkerColor(kBlue+2);
   unfold1->SetMarkerStyle(21);
@@ -167,10 +172,10 @@ void Pseudo_unfolding(){
   TLegend *t1 = new TLegend(0.15, 0.42, 0.45, 0.62, "");
   t1->SetBorderSize(0);
   t1->SetFillStyle(0);
-  t1->AddEntry(gr, "Averaged Truth", "lp");
-  t1->AddEntry(unfold1, "Pseudodata 1", "lp");
-  t1->AddEntry(unfold2, "Pseudodata 2", "lp");
-  t1->AddEntry(unfold3, "Pseudodata 3", "lp");
+  t1->AddEntry(gr, "Pseudo data Truth", "lp");
+  t1->AddEntry(unfold1, "Pseudo data 1", "lp");
+  t1->AddEntry(unfold2, "Pseudo data 2", "lp");
+  t1->AddEntry(unfold3, "Pseudo data 3", "lp");
   t1->Draw();
-  c1->SaveAs("/afs/desy.de/user/s/skottkej/Plots/Unfolding/Test.eps");
+  c1->SaveAs("/afs/desy.de/user/s/skottkej/Plots/Unfolding/result.eps");
 }

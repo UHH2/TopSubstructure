@@ -1,0 +1,7 @@
+#ignore root files
+*.root
+
+#ignore workdir & jobTempOutput
+workdir*
+jobTempOutput*
+*workdir

@@ -4,6 +4,12 @@ using namespace std;
 int counter = 1;
 int main(int argc, char* argv[]){
   // switch on histogram errors
+  if(argc < 4){
+    throw runtime_error("Use: ./do_unfolding <dataset> <number of scans> <value of tau>; if you don't want to use a custom value of tau, then set it to -1");
+  }
+  if(argv[1] != std::string("pseudo1") && argv[1] != std::string("pseudo2") && argv[1] != std::string("pseudo3") && argv[1] != std::string("svuu") && argv[1] != std::string("svud") && argv[1] != std::string("svdu") && argv[1] != std::string("svdd")){
+    throw runtime_error("use pseudo1, pseudo2, pseudo3, svuu, svud, svdu or svdd");
+  }
   TH1::SetDefaultSumw2();
 
   string filename;
@@ -20,7 +26,6 @@ int main(int argc, char* argv[]){
   binning_gen = TUnfoldBinningXML::ImportXML(XMLdocument, "binning_gen");
   binning_rec->Write();
   binning_gen->Write();
-
   /*
   ███████ ██ ██      ██          ██   ██ ██ ███████ ████████  ██████   ██████  ██████   █████  ███    ███ ███████
   ██      ██ ██      ██          ██   ██ ██ ██         ██    ██    ██ ██       ██   ██ ██   ██ ████  ████ ██
@@ -37,10 +42,7 @@ int main(int argc, char* argv[]){
   background_names = {"DYJets", "QCD", "ST", "WJets", "Diboson_WW", "Diboson_WZ", "Diboson_ZZ"};
 
   // Setup everything for unfolding!
-  if(argc < 4){
-    throw runtime_error("Use: ./do_unfolding <dataset> <number of scans> <value of tau>; if you don't want to use a custom value of tau, then set it to -1");
-  }
-  else if(dataset == std::string("pseudo1")){
+  if(dataset == std::string("pseudo1")){
     data_File->GetObject("mc_TTbar_matrix_1", mat_response);             // fill response matrix
     data_File->GetObject("Pseudodata_1", h_data);                     // fill histogram with data which should be unfolded
     data_File->GetObject("Pseudodata_dist_1", h_data_dist);                     // fill histogram with data which should be unfolded
@@ -236,9 +238,6 @@ int main(int argc, char* argv[]){
     data_File->GetObject("TTbar_purity_all_3", h_purity_all);
     data_File->GetObject("TTbar_purity_samebin_3", h_purity_samebin);
   }
-  else{
-    throw runtime_error("use pseudo1, pseudo2, pseudo3, svuu, svud, svdu or svdd");
-  }
 
   for(unsigned int i = 0; i < background_names.size(); i++){
     background.push_back((TH1D*) data_File->Get("background_rec_" + background_names.at(i)));
@@ -327,31 +326,71 @@ int main(int argc, char* argv[]){
   // 12.   Should  the L-Curve scan be done? Otherwise do the TauScan!
   // 13.   Should the background be subtracted?
   // 14.   Set a Tau value if wanted (default = -1 --> don't use a custom value)
+  outputFile->cd();
   unfolding unfold(h_data, h_mc, mat_response, h_truth, binning_gen, binning_rec, background, background_names, nscan, regmode, density_flag, do_lcurve, subtract_background, tau_value);
 
+  // unfold.get_output();
+  // unfold.get_output_all();
+  // unfold.get_correlation();
+  //  unfold.get_output();
+  //  unfold.get_correlation_all();
+  //  unfold.get_input_statcov();
+  //  unfold.get_input_statcov_all();
+  //  unfold.get_matrix_statcov();
+  //  unfold.get_matrix_statcov_all();
+  //  unfold.get_total_statcov();
+  //  unfold.get_total_statcov_all();
+  //  unfold.get_output_check();
+  //  unfold.get_output_check_all();
+  // if(tau_value < 0){
+  //    unfold.get_lcurve();
+  //    unfold.get_coordinates();
+  //    unfold.get_tau();
+  //    unfold.get_logtau();
+  //   if(!do_lcurve) unfold.get_rhologtau();
+  // }
+  // unfold.check_projection();
   unfolded_data = unfold.get_output();
+
+  unfolded_data->Write();
   unfolded_data_all = unfold.get_output_all();
+  unfolded_data_all->Write();
   correlation_matrix = unfold.get_correlation();
+  correlation_matrix->Write();
   correlation_matrix_all = unfold.get_correlation_all();
+  correlation_matrix_all->Write();
   covariance_input = unfold.get_input_statcov();
+  covariance_input->Write();
   covariance_input_all = unfold.get_input_statcov_all();
+  covariance_input_all->Write();
   covariance_matrix = unfold.get_matrix_statcov();
+  covariance_matrix->Write();
   covariance_matrix_all = unfold.get_matrix_statcov_all();
+  covariance_matrix_all->Write();
   covariance_total = unfold.get_total_statcov();
+  covariance_total->Write();
   covariance_total_all = unfold.get_total_statcov_all();
+  covariance_total_all->Write();
   unfolded_mc_test = unfold.get_output_check();
+  unfolded_mc_test->Write();
   unfolded_mc_test_all = unfold.get_output_check_all();
+  unfolded_mc_test_all->Write();
   if(tau_value < 0){
     lcurve = unfold.get_lcurve();
+    lcurve->Write();
     coordinates = unfold.get_coordinates();
     tau = unfold.get_tau();
     logTau = unfold.get_logtau();
-    if(!do_lcurve) rhologTau = unfold.get_rhologtau();
+    logTau.at(0)->Write();
+    logTau.at(1)->Write();
+    if(!do_lcurve) {rhologTau = unfold.get_rhologtau();
+  rhologTau->Write();}
   }
   std::vector<TH1D*> projections = unfold.check_projection();
-  outputFile->cd();
+  projections.at(0)->Write();
+  projections.at(1)->Write();
 
-  Plotter * plot = new Plotter(save_dir);
+  Plotter * plot = new Plotter(save_dir, binning_gen, binning_rec);
   plot->Plot_input(h_data, h_mc, save_input);
   plot->Plot_input(h_data_dist, h_mc_dist, save_input_dist);
   plot->Plot_covariance(covariance_input, save_LCurve_input_cov);
@@ -410,12 +449,15 @@ int main(int argc, char* argv[]){
     plot->Plot_output(unfolded_mc_test_2, h_trutch_check, false, save_TauScan_crosscheck);
     plot->Plot_output(unfolded_mc_test_all_2, h_trutch_check_all, false, save_TauScan_crosscheck_all);
     plot->Plot_output(unfolded_data_2, h_truth, true, save_TauScan_Unfolding_norm);
+    // unfolded_data_2->Write("Unfolded Pseudodata TauScan");
     plot->Plot_output(unfolded_data_all_2, h_truth_all, true, save_TauScan_Unfolding_norm_all);
     plot->Plot_correlation_matrix(correlation_matrix_2, save_TauScan_Unfolding_correlation);
     plot->Plot_correlation_matrix(correlation_matrix_all_2, save_TauScan_Unfolding_correlation_all);
     plot->Plot_LCurve(lcurve_2, coordinates, coordinates_2, save_TauScan_LCurve);
     if(!do_lcurve_2) plot->Plot_RhoLogTau(rhologTau_2, tau_2, save_TauScan_RhoLogTau);
   }
+  // delete binning_rec;
+  // delete binning_gen;
   outputFile->Close();
   return 0;
 }

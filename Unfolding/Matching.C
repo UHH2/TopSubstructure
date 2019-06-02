@@ -13,9 +13,12 @@ void Matching(){
   //Load data
   TFile *tt = new TFile("/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_cmssw10/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3.root", "READ");
 
-  TH1D* test = (TH1D*)tt->Get("gen_mass/tau32_gtj1");
-  TH1D* matched = (TH1D*)tt->Get("gen_mass_matched/tau32_gtj1");
-  TH1D* unmatched = (TH1D*)tt->Get("gen_mass_unmatched/tau32_gtj1");
+  TH1D* test = (TH1D*)tt->Get("gen_mass/M_gtj1_rebin");
+  TH1D* matched = (TH1D*)tt->Get("gen_mass_matched/M_gtj1_rebin");
+  TH1D* unmatched = (TH1D*)tt->Get("gen_mass_unmatched/M_gtj1_rebin");
+  // TH1D* test = (TH1D*)tt->Get("gen_mass/tau32_gtj1");
+  // TH1D* matched = (TH1D*)tt->Get("gen_mass_matched/tau32_gtj1");
+  // TH1D* unmatched = (TH1D*)tt->Get("gen_mass_unmatched/tau32_gtj1");
 
   TCanvas *matching_fraction = new TCanvas("matching_fraction", "", 800, 600);
   matching_fraction->cd();
@@ -29,7 +32,7 @@ void Matching(){
   test->GetYaxis()->SetTitleSize(0.06);
   test->GetYaxis()->SetTitleOffset(0.9);
   test->GetYaxis()->SetTitle("Events");
-  test->GetYaxis()->SetRangeUser(0, 260);
+  // test->GetYaxis()->SetRangeUser(0, 260);
   test->SetTitle("");
   test->DrawCopy("hist e0");
   matched->SetLineColor(kGreen+2);
@@ -45,5 +48,5 @@ void Matching(){
   legend_fraction->AddEntry(matched, "TTbar matched", "l");
   legend_fraction->AddEntry(unmatched, "TTbar unmatched", "l");
   legend_fraction->Draw();
-  matching_fraction->SaveAs("/afs/desy.de/user/s/skottkej/Plots/Unfolding/matching_fraction.eps");
+  // matching_fraction->SaveAs("/afs/desy.de/user/s/skottkej/Plots/Unfolding/matching_fraction.eps");
 }
