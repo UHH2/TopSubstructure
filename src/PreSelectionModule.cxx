@@ -103,7 +103,7 @@ namespace uhh2examples {
     cout << "PreSelectionModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
 
     h_start->fill(event);
-    h_gen_start->fill(event);
+    if(isMC) h_gen_start->fill(event);
 
     // 1. run all modules other modules.
     passed_gen = false;

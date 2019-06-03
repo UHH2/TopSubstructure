@@ -40,6 +40,7 @@ namespace uhh2examples {
     std::unique_ptr<ElectronCleaner> eleSR_cleaner;
 
     bool isMC, isTTbar;
+    std::unique_ptr<AnalysisModule> jetcorrector, jersmearing;
 
     //declare generator booleans
     bool passed_gen_pre, passed_rec_pre;
@@ -91,6 +92,9 @@ namespace uhh2examples {
     // lumiweight.reset(new MCLumiWeight(ctx));
     // TODO: configure common here, e.g. by
     // calling common->set_*_id or common->disable_*
+
+    // jetcorrector.reset(new JetCorrector(ctx));
+    // jersmearing.reset(new JetResolutionSmearer(ctx));
 
     common->disable_mclumiweight();
     common->switch_jetlepcleaner();
