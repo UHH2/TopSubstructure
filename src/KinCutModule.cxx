@@ -24,6 +24,7 @@
 #include "UHH2/TopSubstructure/include/GenHists.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureGenSelections.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureUtils.h"
+#include "UHH2/TopSubstructure/include/TopJetCorrections.h"
 
 using namespace std;
 using namespace uhh2;
@@ -40,7 +41,7 @@ namespace uhh2examples {
     std::unique_ptr<ElectronCleaner> eleSR_cleaner;
 
     bool isMC, isTTbar;
-    std::unique_ptr<AnalysisModule> jetcorrector, jersmearing;
+    std::unique_ptr<TopJetCorrections> topjetCorr;
 
     //declare generator booleans
     bool passed_gen_pre, passed_rec_pre;
@@ -70,7 +71,7 @@ namespace uhh2examples {
     std::unique_ptr<Hists> h_gen_pt_mu;
 
     //declare reconstruction histograms
-    std::unique_ptr<Hists> h_start, h_common, h_jetcleaner, h_muoncleaner, h_elecleaner, h_trigger, h_pv, h_nmu, h_tjlc, h_tjc, h_met, h_pt_mu, h_nele, h_twodcut, h_nbtag_medium;
+    std::unique_ptr<Hists> h_start, h_common, h_topjetcorrections, h_topjetjer_smearing, h_jetcleaner, h_muoncleaner, h_elecleaner, h_trigger, h_pv, h_nmu, h_tjlc, h_tjc, h_met, h_pt_mu, h_nele, h_twodcut, h_nbtag_medium;
 
     //declare handles
     uhh2::Event::Handle<double> h_rec_weight_kin;
@@ -93,8 +94,8 @@ namespace uhh2examples {
     // TODO: configure common here, e.g. by
     // calling common->set_*_id or common->disable_*
 
-    // jetcorrector.reset(new JetCorrector(ctx));
-    // jersmearing.reset(new JetResolutionSmearer(ctx));
+    topjetCorr.reset(new TopJetCorrections());
+    topjetCorr->init(ctx);
 
     common->disable_mclumiweight();
     common->switch_jetlepcleaner();
@@ -146,6 +147,7 @@ namespace uhh2examples {
 
     h_start.reset(new TopSubstructureRecoHists(ctx, "start"));
     h_common.reset(new TopSubstructureRecoHists(ctx, "common"));
+    h_topjetcorrections.reset(new TopSubstructureRecoHists(ctx, "topjetcorrections"));
     h_jetcleaner.reset(new TopSubstructureRecoHists(ctx, "jetcleaner"));
     h_muoncleaner.reset(new TopSubstructureRecoHists(ctx, "muoncleaner"));
     h_elecleaner.reset(new TopSubstructureRecoHists(ctx, "elecleaner"));
@@ -207,8 +209,11 @@ namespace uhh2examples {
     passed_nbtag_medium = false;
     passed_rec          = false;  // passed full rec selection
 
-    common->process(event);
+    if(!common->process(event)) return false;
     h_common->fill(event);
+
+    topjetCorr->process(event);
+    h_topjetcorrections->fill(event);
 
     jetcleaner->process(event);
     h_jetcleaner->fill(event);

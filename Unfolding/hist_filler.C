@@ -63,11 +63,11 @@ int main(int argc, char* argv[]){
   // define directory
   TString dir = "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_cmssw10";
   TString prefix = "/uhh2.AnalysisModuleRunner.";
-  vector<TString> sv = {"SVMR_u_SVMF_u", "SVMR_u_SVMF_d", "SVMR_d_SVMF_u", "SVMR_d_SVMF_d"};
+  // vector<TString> sv = {"SVMR_u_SVMF_u", "SVMR_u_SVMF_d", "SVMR_d_SVMF_u", "SVMR_d_SVMF_d"};
 
   // fill data
-  // TFile *data_File = new TFile(dir + prefix + "DATA.DATA.root");
-  // fill_data((TTree *) data_File->Get("AnalysisTree"));
+  TFile *data_File = new TFile(dir + prefix + "DATA.DATA.root");
+  fill_data((TTree *) data_File->Get("AnalysisTree"));
 
   // fill pseudodata
   TFile *pseudodata_matrix_File = new TFile(dir+prefix+"MC.TTbar_2016v3.root");
@@ -78,16 +78,17 @@ int main(int argc, char* argv[]){
   fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "mc");
 
   // fill scales
-  for(unsigned int i = 0; i < sv.size(); i++){
-    TFile *sv_matrix_file =  new TFile(dir+"_"+sv[i]+prefix+"MC.TTbar_2016v3.root");
-    fill_ttbar((TTree *) sv_matrix_file->Get("AnalysisTree"), sv[i]);
-  }
+  // for(unsigned int i = 0; i < sv.size(); i++){
+  //   TFile *sv_matrix_file =  new TFile(dir+"_"+sv[i]+prefix+"MC.TTbar_2016v3.root");
+  //   fill_ttbar((TTree *) sv_matrix_file->Get("AnalysisTree"), sv[i]);
+  // }
+
   // fill background
   // std::vector<TString> background = {"DYJets", "QCD", "ST", "WJets", "WW", "WZ", "ZZ"};
-  std::vector<TString> background = {};
+  std::vector<TString> background = {"DYJets", "ST", "Diboson"};
 
   for(unsigned int i = 0; i < background.size(); i++){
-    TFile *background_File = new TFile(dir+prefix+"MC."+background[i]+".root");
+    TFile *background_File = new TFile(dir+prefix+"MC."+background[i]+"_2016v3.root");
     fill_background((TTree *) background_File->Get("AnalysisTree"), background[i]);
   }
   return 0;
@@ -110,17 +111,23 @@ void fill_data(TTree* tree){
   outputFile->cd();
 
   tree->ResetBranchAddresses();
-  tree->SetBranchAddress("h_tau32_rec", &tau32_rec);
   tree->SetBranchAddress("h_passed_rec_final", &passed_rec_final);
-
+  tree->SetBranchAddress("h_tau32_rec", &tau32_rec);
+  tree->SetBranchAddress("h_mass_rec", &mass_rec);
+  tree->SetBranchAddress("h_passed_rec_final", &passed_rec_final);
+  tree->SetBranchAddress("h_passed_rec_pt_topjet_sideband", &passed_rec_pt_topjet_sideband);
+  tree->SetBranchAddress("h_passed_rec_mass_sideband", &passed_rec_mass_sideband);
+  tree->SetBranchAddress("h_rec_weight", &rec_weight);
   tree->SetBranchStatus("*", 1);
 
   for(Int_t ievent = 0; ievent < tree->GetEntriesFast(); ievent++){
     if(tree->GetEntry(ievent) <= 0) break;
 
     Int_t binNumber = 0;
-    if(passed_rec_final) binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec);
-    if(passed_rec_final) h_data->Fill(binNumber);
+    if(passed_rec_final)                    binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec, mass_rec);
+    else if(passed_rec_pt_topjet_sideband)  binNumber = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec);
+    else if(passed_rec_mass_sideband)       binNumber = rec_mass_sideband->GetGlobalBinNumber(tau32_rec);
+    if(passed_rec_final || passed_rec_pt_topjet_sideband || passed_rec_mass_sideband) h_data->Fill(binNumber);
   }
 
   h_data->Write();
@@ -170,8 +177,8 @@ void fill_pseudodata(TTree* tree){
   tree->SetBranchAddress("h_passed_gen_mass_sideband", &passed_gen_mass_sideband);
   tree->SetBranchAddress("h_rec_weight", &rec_weight);
   tree->SetBranchAddress("h_gen_weight", &gen_weight);
-
   tree->SetBranchStatus("*", 1);
+
   int counter = 1;
   for(Int_t ievent = 0; ievent < tree->GetEntriesFast(); ievent++){
     if(tree->GetEntry(ievent) <= 0) break;
@@ -194,13 +201,11 @@ void fill_pseudodata(TTree* tree){
     if(passed_gen_final)                    gen_binNumber = measurement_gen->GetGlobalBinNumber(tau32_gen, mass_gen);
     else if(passed_gen_pt_topjet_sideband)  gen_binNumber = gen_pt_topjet_sideband->GetGlobalBinNumber(tau32_gen);
     else if(passed_gen_mass_sideband)       gen_binNumber = gen_mass_sideband->GetGlobalBinNumber(tau32_gen);
-    // cout << "test: " << measurement_rec->GetTH1xNumberOfBins() << '\n';
+
     bool gen_info = false;
     bool rec_info = false;
     if(passed_gen_final || passed_gen_pt_topjet_sideband || passed_gen_mass_sideband) gen_info = true;
     if(passed_rec_final || passed_rec_pt_topjet_sideband || passed_rec_mass_sideband) rec_info = true;
-    // if(passed_gen_final || passed_gen_pt_topjet_sideband) gen_info = true;
-    // if(passed_rec_final || passed_rec_pt_topjet_sideband) rec_info = true;
 
 
     if(rec_info){
@@ -352,8 +357,6 @@ void fill_ttbar(TTree* tree, TString prefix){
     bool rec_info = false;
     if(passed_gen_final || passed_gen_pt_topjet_sideband || passed_gen_mass_sideband) gen_info = true;
     if(passed_rec_final || passed_rec_pt_topjet_sideband || passed_rec_mass_sideband) rec_info = true;
-    // if(passed_gen_final || passed_gen_pt_topjet_sideband) gen_info = true;
-    // if(passed_rec_final || passed_rec_pt_topjet_sideband) rec_info = true;
 
     if(rec_info){
       if(counter != 8){
@@ -488,7 +491,7 @@ void fill_ttbar(TTree* tree, TString prefix){
 
 
 /*
-███████ ██ ██      ██          ██ ████   █████   ██████ ██   ██  ██████  ██████   ██████  ██    ██ ███    ██ ██████
+███████ ██ ██      ██          ██████   █████   ██████ ██   ██  ██████  ██████   ██████  ██    ██ ███    ██ ██████
 ██      ██ ██      ██          ██   ██ ██   ██ ██      ██  ██  ██       ██   ██ ██    ██ ██    ██ ████   ██ ██   ██
 █████   ██ ██      ██          ██████  ███████ ██      █████   ██   ███ ██████  ██    ██ ██    ██ ██ ██  ██ ██   ██
 ██      ██ ██      ██          ██   ██ ██   ██ ██      ██  ██  ██    ██ ██   ██ ██    ██ ██    ██ ██  ██ ██ ██   ██
@@ -508,9 +511,11 @@ void fill_background(TTree* tree, TString prefix){
 
   tree->ResetBranchAddresses();
   tree->SetBranchAddress("h_tau32_rec", &tau32_rec);
+  tree->SetBranchAddress("h_mass_rec", &mass_rec);
   tree->SetBranchAddress("h_passed_rec_final", &passed_rec_final);
+  tree->SetBranchAddress("h_passed_rec_pt_topjet_sideband", &passed_rec_pt_topjet_sideband);
+  tree->SetBranchAddress("h_passed_rec_mass_sideband", &passed_rec_mass_sideband);
   tree->SetBranchAddress("h_rec_weight", &rec_weight);
-
   tree->SetBranchStatus("*", 1);
 
   for(Int_t ievent = 0; ievent < tree->GetEntriesFast(); ievent++){
@@ -520,9 +525,11 @@ void fill_background(TTree* tree, TString prefix){
     w_central = rec_weight;
 
     Int_t rec_binNumber = 0;
-    if(passed_rec_final) rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec);
 
-    if(passed_rec_final) h_background_rec->Fill(rec_binNumber, w_central);
+    if(passed_rec_final)                    rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec, mass_rec);
+    else if(passed_rec_pt_topjet_sideband)  rec_binNumber = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec);
+    else if(passed_rec_mass_sideband)       rec_binNumber = rec_mass_sideband->GetGlobalBinNumber(tau32_rec);
+    if(passed_rec_final || passed_rec_pt_topjet_sideband || passed_rec_mass_sideband) h_background_rec->Fill(rec_binNumber, w_central);
   }
 
   h_background_rec->Write();
