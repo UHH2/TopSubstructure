@@ -211,7 +211,6 @@ namespace uhh2examples {
 
     if(!common->process(event)) return false;
     h_common->fill(event);
-
     topjetCorr->process(event);
     h_topjetcorrections->fill(event);
 

@@ -3,24 +3,24 @@
 
 <!ENTITY NEVT "-1">
 
-<!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/kin_cut_TDC40_btm_cmssw10">
-<!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_cmssw10">
+<!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/kin_cut_TDC40_btm_cmssw10_data">
+<!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_cmssw10_data">
 
 <!-- =============================================== DATA =========================================================================== -->
-<!ENTITY SingleMuonB_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonB.root">
-<!ENTITY SingleMuonC_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonC.root">
-<!ENTITY SingleMuonD_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonD.root">
+<!ENTITY SingleMuonB_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonB_2016v3.root">
+<!ENTITY SingleMuonC_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonC_2016v3.root">
+<!ENTITY SingleMuonD_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonD_2016v3.root">
 <!-- <!ENTITY SingleMuonE    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonE.root"> -->
-<!ENTITY SingleMuonF_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonF.root">
-<!ENTITY SingleMuonG_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonG.root">
+<!ENTITY SingleMuonF_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonF_2016v3.root">
+<!ENTITY SingleMuonG_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonG_2016v3.root">
 <!-- <!ENTITY SingleMuonH    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonH.root"> -->
 
 <!-- =============================================== Single Top ===================================================================== -->
-<!ENTITY ST_t-channel_antitop_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_t-channel_antitop.root">
-<!ENTITY ST_t-channel_top_2016v3        "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_t-channel_top.root">
-<!ENTITY ST_s-channel_2016v3            "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_s-channel.root">
-<!ENTITY ST_tW_antitop_2016v3           "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_tW_antitop.root">
-<!ENTITY ST_tW_top_2016v3               "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_tW_top.root">
+<!ENTITY ST_t-channel_antitop_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_t-channel_antitop_2016v3.root">
+<!ENTITY ST_t-channel_top_2016v3        "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_t-channel_top_2016v3.root">
+<!ENTITY ST_s-channel_2016v3            "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_s-channel_2016v3.root">
+<!ENTITY ST_tW_antitop_2016v3           "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_tW_antitop_2016v3.root">
+<!ENTITY ST_tW_top_2016v3               "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_tW_top_2016v3.root">
 
 <!-- =============================================== ttbar =========================================================================== -->
 <!ENTITY TTbar_Mtt0000to0700_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt0000to0700_2016v3.root">
@@ -28,9 +28,9 @@
 <!ENTITY TTbar_Mtt1000toInft_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_2016v3.root">
 
 <!-- =============================================== DiBoson =========================================================================== -->
-<!ENTITY  WW_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.WW.root">
-<!ENTITY  WZ_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.WZ.root">
-<!ENTITY  ZZ_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.ZZ.root">
+<!ENTITY  Diboson_WW_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.Diboson_WW_2016v3.root">
+<!ENTITY  Diboson_WZ_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.Diboson_WZ_2016v3.root">
+<!ENTITY  Diboson_ZZ_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.Diboson_ZZ_2016v3.root">
 <!-- =============================================== QCD Mu =========================================================================== -->
 <!-- <!ENTITY  QCD_Pt-0015to0020_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-0015to0020_MuEnrichedPt5.root">
 <!ENTITY  QCD_Pt-0020to0030_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-0020to0030_MuEnrichedPt5.root">
@@ -50,14 +50,14 @@
 <!ENTITY  WJetsToLNu_Pt0400to0600   "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_Pt0400to0600.root">
 <!ENTITY  WJetsToLNu_Pt0600toInft   "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_Pt0600toInft.root"> -->
 <!-- =============================================== Z+jets =========================================================================== -->
-<!ENTITY DYJetsToLL_LO_M50_HT0070to0100_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0070to0100.root">
-<!ENTITY DYJetsToLL_LO_M50_HT0100to0200_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0100to0200.root">
-<!ENTITY DYJetsToLL_LO_M50_HT0200to0400_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0200to0400.root">
-<!ENTITY DYJetsToLL_LO_M50_HT0400to0600_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0400to0600.root">
-<!ENTITY DYJetsToLL_LO_M50_HT0600to0800_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0600to0800.root">
-<!ENTITY DYJetsToLL_LO_M50_HT0800to1200_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0800to1200.root">
-<!ENTITY DYJetsToLL_LO_M50_HT1200to2500_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT1200to2500.root">
-<!ENTITY DYJetsToLL_LO_M50_HT2500toInft_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT2500toInft.root">
+<!ENTITY DYJetsToLL_LO_M50_HT0070to0100_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0070to0100_2016v3.root">
+<!ENTITY DYJetsToLL_LO_M50_HT0100to0200_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0100to0200_2016v3.root">
+<!ENTITY DYJetsToLL_LO_M50_HT0200to0400_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0200to0400_2016v3.root">
+<!ENTITY DYJetsToLL_LO_M50_HT0400to0600_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0400to0600_2016v3.root">
+<!ENTITY DYJetsToLL_LO_M50_HT0600to0800_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0600to0800_2016v3.root">
+<!ENTITY DYJetsToLL_LO_M50_HT0800to1200_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT0800to1200_2016v3.root">
+<!ENTITY DYJetsToLL_LO_M50_HT1200to2500_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT1200to2500_2016v3.root">
+<!ENTITY DYJetsToLL_LO_M50_HT2500toInft_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_LO_M50_HT2500toInft_2016v3.root">
 
 ]>
 
@@ -135,13 +135,13 @@
 -->
 
 <InputData Version="Diboson_WW_2016v3" Lumi="126280.3354" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&WW;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+  <In FileName="&Diboson_WW;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="Diboson_WZ_2016v3" Lumi="175178.3961" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&WZ;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+  <In FileName="&Diboson_WZ;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="Diboson_ZZ_2016v3" Lumi="192645.155" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&ZZ;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+  <In FileName="&Diboson_ZZ;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 
 <!--
@@ -192,28 +192,28 @@
 -->
 
 <InputData Version="DYJetsToLL_LO_M50_HT0070to0100_2016v3" Lumi="3441640.625" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&DYJetsToLL_LO_M50_HT0070to0100;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+  <In FileName="&DYJetsToLL_LO_M50_HT0070to0100_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="DYJetsToLL_LO_M50_HT0100to0200_2016v3" Lumi="10977326" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&DYJetsToLL_LO_M50_HT0100to0200;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+  <In FileName="&DYJetsToLL_LO_M50_HT0100to0200_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="DYJetsToLL_LO_M50_HT0200to0400_2016v3" Lumi="9589193" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&DYJetsToLL_LO_M50_HT0200to0400;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+  <In FileName="&DYJetsToLL_LO_M50_HT0200to0400_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="DYJetsToLL_LO_M50_HT0400to0600_2016v3" Lumi="9725661" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&DYJetsToLL_LO_M50_HT0400to0600;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+  <In FileName="&DYJetsToLL_LO_M50_HT0400to0600_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="DYJetsToLL_LO_M50_HT0600to0800_2016v3" Lumi="8253178" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&DYJetsToLL_LO_M50_HT0600to0800;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+  <In FileName="&DYJetsToLL_LO_M50_HT0600to0800_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="DYJetsToLL_LO_M50_HT0800to1200_2016v3" Lumi="2673066" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&DYJetsToLL_LO_M50_HT0800to1200;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+  <In FileName="&DYJetsToLL_LO_M50_HT0800to1200_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="DYJetsToLL_LO_M50_HT1200to2500_2016v3" Lumi="596079" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&DYJetsToLL_LO_M50_HT1200to2500;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+  <In FileName="&DYJetsToLL_LO_M50_HT1200to2500_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="DYJetsToLL_LO_M50_HT2500toInft_2016v3" Lumi="399492" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&DYJetsToLL_LO_M50_HT2500toInft;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+  <In FileName="&DYJetsToLL_LO_M50_HT2500toInft_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 
 <!--
