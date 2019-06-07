@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd" [
 
-<!ENTITY NEVT "1000">
+<!ENTITY NEVT "-1">
 
-<!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/kin_cut_TDC40_btm_cmssw10_data">
+<!ENTITY INdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/kin_cut_TDC40_btm_cmssw10_data">
 <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_cmssw10_data">
 
+
 <!-- =============================================== DATA =========================================================================== -->
-<!ENTITY SingleMuonB_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonB_2016v3.root">
-<!ENTITY SingleMuonC_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonC_2016v3.root">
-<!ENTITY SingleMuonD_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonD_2016v3.root">
-<!-- <!ENTITY SingleMuonE    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonE.root"> -->
-<!ENTITY SingleMuonF_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonF_2016v3.root">
-<!ENTITY SingleMuonG_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.DATA.DATA_SingleMuonG_2016v3.root">
-<!-- <!ENTITY SingleMuonH    "&INdir;/uhh2.AnalysisModuleRunner.Data.SingleMuonH.root"> -->
+<!ENTITY SingleMuonB_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.DATA.SingleMuonB_2016v3.root">
+<!ENTITY SingleMuonC_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.DATA.SingleMuonC_2016v3.root">
+<!ENTITY SingleMuonD_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.DATA.SingleMuonD_2016v3.root">
+<!ENTITY SingleMuonE_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.DATA.SingleMuonE_2016v3.root">
+<!ENTITY SingleMuonF_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.DATA.SingleMuonF_2016v3.root">
+<!ENTITY SingleMuonG_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.DATA.SingleMuonG_2016v3.root">
+<!ENTITY SingleMuonH_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.DATA.SingleMuonH_2016v3.root">
 
 <!-- =============================================== Single Top ===================================================================== -->
 <!ENTITY ST_t-channel_antitop_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.ST_t-channel_antitop_2016v3.root">
@@ -63,7 +64,7 @@
 
 <!--
 <ConfigParse NEventsBreak="250000" LastBreak="0" FileSplit="0"/>
-<ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="workdir_PostSel"/>
+<ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="workdir_PostKincut_data"/>
 -->
 
 <JobConfiguration JobName="TopSubstructureJob" OutputLevel="INFO">
@@ -78,7 +79,7 @@
     <!-- ********DATA**************************************** -->
 
 
-    <!-- <InputData Version="DATA_SingleMuonB_2016v3" Lumi="36814" Type="DATA" NEventsMax="&NEVT;" Cacheable="False">
+    <InputData Version="DATA_SingleMuonB_2016v3" Lumi="36814" Type="DATA" NEventsMax="&NEVT;" Cacheable="False">
       <In FileName="&SingleMuonB_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
     </InputData>
     <InputData Version="DATA_SingleMuonC_2016v3" Lumi="36814" Type="DATA" NEventsMax="&NEVT;" Cacheable="False">
@@ -86,44 +87,44 @@
     </InputData>
     <InputData Version="DATA_SingleMuonD_2016v3" Lumi="36814" Type="DATA" NEventsMax="&NEVT;" Cacheable="False">
       <In FileName="&SingleMuonD_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-    </InputData> -->
-    <!-- <InputData Version="DATA_SingleMuonE_2016v3" Lumi="36814" Type="DATA" NEventsMax="&NEVT;" Cacheable="False">
-    <In FileName="&SingleMuonE;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-  </InputData> -->
-  <!-- <InputData Version="DATA_SingleMuonF_2016v3" Lumi="36814" Type="DATA" NEventsMax="&NEVT;" Cacheable="False">
-    <In FileName="&SingleMuonF_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-  </InputData>
-  <InputData Version="DATA_SingleMuonG_2016v3" Lumi="36814" Type="DATA" NEventsMax="&NEVT;" Cacheable="False">
-    <In FileName="&SingleMuonG_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-  </InputData> -->
-  <!-- <InputData Version="DATA_SingleMuonH_2016v3" Lumi="36814" Type="DATA" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&SingleMuonH;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-</InputData> -->
+    </InputData>
+    <InputData Version="DATA_SingleMuonE_2016v3" Lumi="36814" Type="DATA" NEventsMax="&NEVT;" Cacheable="False">
+      <In FileName="&SingleMuonE_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+    </InputData>
+    <InputData Version="DATA_SingleMuonF_2016v3" Lumi="36814" Type="DATA" NEventsMax="&NEVT;" Cacheable="False">
+      <In FileName="&SingleMuonF_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+    </InputData>
+    <InputData Version="DATA_SingleMuonG_2016v3" Lumi="36814" Type="DATA" NEventsMax="&NEVT;" Cacheable="False">
+      <In FileName="&SingleMuonG_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+    </InputData>
+    <InputData Version="DATA_SingleMuonH_2016v3" Lumi="36814" Type="DATA" NEventsMax="&NEVT;" Cacheable="False">
+      <In FileName="&SingleMuonH_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+    </InputData>
 
 
-<!--
-███████ ██ ███    ██  ██████  ██      ███████     ████████  ██████  ██████
-██      ██ ████   ██ ██       ██      ██             ██    ██    ██ ██   ██
-███████ ██ ██ ██  ██ ██   ███ ██      █████          ██    ██    ██ ██████
-     ██ ██ ██  ██ ██ ██    ██ ██      ██             ██    ██    ██ ██
-███████ ██ ██   ████  ██████  ███████ ███████        ██     ██████  ██
--->
+    <!--
+    ███████ ██ ███    ██  ██████  ██      ███████     ████████  ██████  ██████
+    ██      ██ ████   ██ ██       ██      ██             ██    ██    ██ ██   ██
+    ███████ ██ ██ ██  ██ ██   ███ ██      █████          ██    ██    ██ ██████
+         ██ ██ ██  ██ ██ ██    ██ ██      ██             ██    ██    ██ ██
+    ███████ ██ ██   ████  ██████  ███████ ███████        ██     ██████  ██
+  -->
 
 
-<!-- <InputData Version="ST_t-channel_antitop_2016v3" Lumi="477080.5312" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+  <!-- <InputData Version="ST_t-channel_antitop_2016v3" Lumi="477080.5312" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&ST_t-channel_antitop_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="ST_t-channel_top_2016v3" Lumi="477843.6995" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&ST_t-channel_top_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+<In FileName="&ST_t-channel_top_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="ST_s-channel_2016v3" Lumi="9818810.853" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&ST_s-channel_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+<In FileName="&ST_s-channel_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="ST_tW_antitop_2016v3" Lumi="163766.9676" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&ST_tW_antitop_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+<In FileName="&ST_tW_antitop_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="ST_tW_top_2016v3" Lumi="153348.7108" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&ST_tW_top_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+<In FileName="&ST_tW_top_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData> -->
 
 <!--
@@ -135,13 +136,13 @@
 -->
 
 <!-- <InputData Version="Diboson_WW_2016v3" Lumi="126280.3354" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&Diboson_WW_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+<In FileName="&Diboson_WW_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="Diboson_WZ_2016v3" Lumi="175178.3961" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&Diboson_WZ_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+<In FileName="&Diboson_WZ_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="Diboson_ZZ_2016v3" Lumi="192645.155" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
-  <In FileName="&Diboson_ZZ_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+<In FileName="&Diboson_ZZ_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData> -->
 
 <!--
@@ -167,7 +168,7 @@
 ██     ██      ██ ██         ██    ██
 ██  █  ██      ██ █████      ██    ███████
 ██ ███ ██ ██   ██ ██         ██         ██
-███ ███   █████  ███████    ██    ███████
+ ███ ███   █████  ███████    ██    ███████
 -->
 
 <!-- <InputData Version="WJetsToLNu_Pt0100to0250_2016v3" Lumi="263484952.900" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
@@ -191,7 +192,7 @@
 ██████     ██
 -->
 
-<!-- <InputData Version="DYJetsToLL_LO_M50_HT0070to0100_2016v3" Lumi="3441640.625" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+<InputData Version="DYJetsToLL_LO_M50_HT0070to0100_2016v3" Lumi="3441640.625" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&DYJetsToLL_LO_M50_HT0070to0100_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="DYJetsToLL_LO_M50_HT0100to0200_2016v3" Lumi="10977326" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
@@ -214,7 +215,7 @@
 </InputData>
 <InputData Version="DYJetsToLL_LO_M50_HT2500toInft_2016v3" Lumi="399492" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&DYJetsToLL_LO_M50_HT2500toInft_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-</InputData> -->
+</InputData>
 
 <!--
  ██████   ██████ ██████
@@ -222,7 +223,7 @@
 ██    ██ ██      ██   ██
 ██ ▄▄ ██ ██      ██   ██
  ██████   ██████ ██████
-     ▀▀
+    ▀▀
 -->
 
 <!-- <InputData Version="QCD_Pt-0015to0020_MuEnrichedPt5_2016v3" Lumi="1.074" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
@@ -266,8 +267,11 @@
   <Item Name="GenJetCollection"        Value="slimmedGenJets"/>
   <Item Name="TopJetCollection"        Value="jetsAk8CHSSubstructure_SoftDropCHS"/>
   <Item Name="GenTopJetCollection"     Value="genjetsAk8SubstructureSoftDrop" />
+  <Item Name="PFParticleCollection"    Value="PFParticles"/>
 
-  <Item Name="additionalBranches" Value="h_rec_weight_kin h_gen_weight_kin h_passed_gen h_passed_rec"/>
+  <Item Name="additionalBranches" Value="jetsAk8PuppiSubstructure_SoftDropPuppi h_passed_rec_pre h_passed_gen_pre"/>
+  <!-- jetsAk8CHSSubstructure_SoftDropPuppi -->
+  <Item Name="year" Value=""/>
 
   <Item Name="METName"                 Value="slimmedMETs"/>
 
@@ -282,10 +286,11 @@
   <Item Name="pileup_directory" Value="/nfs/dust/cms/user/skottkej/CMSSW_10_2_X_v1/CMSSW_10_2_10/src/UHH2/common/data/2016/MyMCPileupHistogram.root" />
   <Item Name="pileup_directory_data_up" Value="/nfs/dust/cms/user/skottkej/CMSSW_10_2_X_v1/CMSSW_10_2_10/src/UHH2/common/data/2016/MyDataPileupHistogram_72383.root" />
   <Item Name="pileup_directory_data_down" Value="/nfs/dust/cms/user/skottkej/CMSSW_10_2_X_v1/CMSSW_10_2_10/src/UHH2/common/data/2016/MyDataPileupHistogram_66017.root" />
-  <Item Name="AnalysisModule" Value="PostKinCutModule"/>
 
-  <Item Name="ScaleVariationMuR" Value=""/>
-  <Item Name="ScaleVariationMuF" Value=""/>
+  <Item Name="jecsmear_direction" Value="nominal" />        <!-- has to be: nominal, up or down! -->
+  <Item Name="jersmear_direction" Value="nominal" />        <!-- has to be: nominal, up or down! -->
+
+  <Item Name="AnalysisModule" Value="KinCutModule"/>
 </UserConfig>
 
 </Cycle>

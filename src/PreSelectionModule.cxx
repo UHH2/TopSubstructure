@@ -53,7 +53,6 @@ namespace uhh2examples {
     std::unique_ptr<Selection> nmu_gen, pt_mu_gen, pt_topjet_gen;
 
     std::unique_ptr<AnalysisModule> ttgenprod;
-    std::unique_ptr<calc_Nsubjettiness> calculator_tau;
 
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
     std::unique_ptr<Hists> h_gen_start, h_gen_nmu, h_gen_pt_mu, h_gen_pt_topjet;
@@ -103,9 +102,6 @@ namespace uhh2examples {
 
   bool PreSelectionModule::process(Event & event) {
     cout << "PreSelectionModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
-    double test1 = calculator_tau->tau_one(event);
-    double test2 = calculator_tau->tau_two(event);
-    double test3 = calculator_tau->tau_three(event);
 
     h_start->fill(event);
     if(isMC) h_gen_start->fill(event);

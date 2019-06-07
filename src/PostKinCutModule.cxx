@@ -375,7 +375,7 @@ namespace uhh2examples {
     ██   ██ ███████  ██████  ██████
     */
 
-    calculator_tau->tau_one(event);
+    // calculator_tau->tau_one(event);
     passed_rec_pt_mu = pt_mu_sel->passes(event);
     if(passed_rec && passed_rec_pt_mu){
       h_pt_mu->fill(event);

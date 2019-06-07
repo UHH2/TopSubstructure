@@ -26,7 +26,10 @@ using namespace contrib;
 class calc_Nsubjettiness{
  public:
   explicit calc_Nsubjettiness();
-  double tau_one(uhh2::Event & event);
-  double tau_two(uhh2::Event & event);
-  double tau_three(uhh2::Event & event);
+  double PF_tau1(uhh2::Event & event);
+  double PF_tau2(uhh2::Event & event);
+  double PF_tau3(uhh2::Event & event);
+  double Gen_tau1(uhh2::Event & event);
+  double Gen_tau2(uhh2::Event & event);
+  double Gen_tau3(uhh2::Event & event);
 };
