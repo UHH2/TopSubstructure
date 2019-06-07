@@ -27,4 +27,6 @@ class calc_Nsubjettiness{
  public:
   explicit calc_Nsubjettiness();
   double tau_one(uhh2::Event & event);
+  double tau_two(uhh2::Event & event);
+  double tau_three(uhh2::Event & event);
 };

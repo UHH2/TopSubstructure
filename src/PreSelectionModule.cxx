@@ -103,7 +103,9 @@ namespace uhh2examples {
 
   bool PreSelectionModule::process(Event & event) {
     cout << "PreSelectionModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
-    calculator_tau->tau_one(event);
+    double test1 = calculator_tau->tau_one(event);
+    double test2 = calculator_tau->tau_two(event);
+    double test3 = calculator_tau->tau_three(event);
 
     h_start->fill(event);
     if(isMC) h_gen_start->fill(event);
