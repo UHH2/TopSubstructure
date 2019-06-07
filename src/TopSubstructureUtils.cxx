@@ -293,16 +293,3 @@ bool GenTopJetSortDPhiPt::process(uhh2::Event& event){
 
   return true;
 }
-
-int NumberGenJets(uhh2::Event& event){
-  std::vector<GenTopJet>* topjets = event.gentopjets;
-  std::vector<GenJet>* jets = event.genjets;
-  int number = jets->size();
-
-  for(unsigned int i = 0; i < jets->size(); i++){
-    for(unsigned int j = 0; j < topjets->size(); j++){
-      if(deltaR(jets->at(i), topjets->at(j)) < 0.8) number--;
-    }
-  }
-  return number;
-}

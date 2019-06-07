@@ -25,6 +25,7 @@
 #include "UHH2/TopSubstructure/include/GenHists.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureGenSelections.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureUtils.h"
+#include "UHH2/TopSubstructure/include/VariablesCalculator.h"
 
 using namespace std;
 using namespace uhh2;
@@ -65,6 +66,7 @@ namespace uhh2examples {
     std::unique_ptr<AnalysisModule> scale_variation;
     std::unique_ptr<AnalysisModule> PUreweight, lumiweight;
     std::unique_ptr<AnalysisModule> ttgenprod;
+    std::unique_ptr<calc_Nsubjettiness> calculator_tau;
 
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
     std::unique_ptr<Hists> h_gen_pt_topjet, h_gen_pt_topjet_matched, h_gen_pt_topjet_unmatched;
@@ -111,7 +113,7 @@ namespace uhh2examples {
 
   PostKinCutModule::PostKinCutModule(Context & ctx){
     // Btag_tight        = CSVBTag(CSVBTag::WP_TIGHT);
-    ctx.undeclare_all_event_output();
+    // ctx.undeclare_all_event_output();
 
     h_passed_rec                    = ctx.get_handle<bool>("h_passed_rec");
     h_passed_gen                    = ctx.get_handle<bool>("h_passed_gen");
@@ -164,7 +166,7 @@ namespace uhh2examples {
       genmatching.reset(new GenMatching(ctx));
       recmatching.reset(new RecMatching(ctx));
     }
-
+    // calculator_tau.reset(new calc_Nsubjettiness());
     ntopjet2_sel.reset(new NTopJetSelection(2,2));
     mass_sel1.reset(new RecMassSelection(1));   // 1: added 4-vector of lepton and second topjet, then compare masses
     dr_sel.reset(new RecdRSelection());
@@ -251,6 +253,10 @@ namespace uhh2examples {
 
   bool PostKinCutModule::process(Event & event) {
     cout << "PostKinCutModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
+    // cout << "test1" << '\n';
+    // auto test = event.pfparticles->size();
+    // cout << "test2: " << test << '\n';
+
     if(event.is_valid(h_gen_weight_kin)) event.weight = event.get(h_gen_weight_kin);
     lumiweight->process(event);
     scale_variation->process(event); // here, it is only executed to be filled into the gen weight is has to be done again to appear in the event.weight
@@ -369,6 +375,7 @@ namespace uhh2examples {
     ██   ██ ███████  ██████  ██████
     */
 
+    calculator_tau->tau_one(event);
     passed_rec_pt_mu = pt_mu_sel->passes(event);
     if(passed_rec && passed_rec_pt_mu){
       h_pt_mu->fill(event);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd" [
-<!ENTITY NEVT "-1">
+<!ENTITY NEVT "100">
 
 
 <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/PreSelection">
@@ -101,7 +101,7 @@
 
 
 
-  <InputData Version="SingleMuonB_2016v3" Lumi="1" Type="Data" NEventsMax="&NEVT;" Cacheable="False">
+  <!-- <InputData Version="SingleMuonB_2016v3" Lumi="1" Type="Data" NEventsMax="&NEVT;" Cacheable="False">
     &SingleMUON_Run2016B_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
   </InputData>
   <InputData Version="SingleMuonC_2016v3" Lumi="1" Type="Data" NEventsMax="&NEVT;" Cacheable="False">
@@ -109,16 +109,16 @@
   </InputData>
   <InputData Version="SingleMuonD_2016v3" Lumi="1" Type="Data" NEventsMax="&NEVT;" Cacheable="False">
     &SingleMUON_Run2016D_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-  </InputData>
+  </InputData> -->
   <!-- <InputData Version="SingleMuonE" Lumi="1" Type="Data" NEventsMax="&NEVT;" Cacheable="False">
   &SingleMUON_Run2016E; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData> -->
-<InputData Version="SingleMuonF_2016v3" Lumi="1" Type="Data" NEventsMax="&NEVT;" Cacheable="False">
+<!-- <InputData Version="SingleMuonF_2016v3" Lumi="1" Type="Data" NEventsMax="&NEVT;" Cacheable="False">
   &SingleMUON_Run2016F_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="SingleMuonG_2016v3" Lumi="1" Type="Data" NEventsMax="&NEVT;" Cacheable="False">
   &SingleMUON_Run2016G_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-</InputData>
+</InputData> -->
 <!-- <InputData Version="SingleMuonH" Lumi="1" Type="Data" NEventsMax="&NEVT;" Cacheable="False">
 &SingleMUON_Run2016H; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData> -->
@@ -132,7 +132,7 @@
 -->
 
 
-<InputData Version="ST_t-channel_antitop_2016v3" Lumi="477080.5312" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+<!-- <InputData Version="ST_t-channel_antitop_2016v3" Lumi="477080.5312" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   &ST_t-channel_antitop_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="ST_t-channel_top_2016v3" Lumi="477843.6995" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
@@ -146,7 +146,7 @@
 </InputData>
 <InputData Version="ST_tW_top_2016v3" Lumi="153348.7108" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   &ST_tW_top_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-</InputData>
+</InputData> -->
 
 <!--
 ██     ██      ██ ███████ ████████ ███████
@@ -179,7 +179,7 @@
 -->
 
 
-<InputData Version="Diboson_WW_2016v3" Lumi="126280.3354" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+<!-- <InputData Version="Diboson_WW_2016v3" Lumi="126280.3354" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   &WW_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="Diboson_WZ_2016v3" Lumi="175178.3961" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
@@ -187,7 +187,7 @@
 </InputData>
 <InputData Version="Diboson_ZZ_2016v3" Lumi="192645.155" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   &ZZ_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-</InputData>
+</InputData> -->
 
 <!--
 ████████ ████████
@@ -196,7 +196,7 @@
    ██       ██
    ██       ██
 -->
-<InputData Version="TTbar_Mtt0000to0700_2016v3" Lumi="92260.16399" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+<!-- <InputData Version="TTbar_Mtt0000to0700_2016v3" Lumi="92260.16399" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   &TTbar_Mtt0000to0700_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="TTbar_Mtt0700to1000_2016v3" Lumi="501742.7061" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
@@ -204,7 +204,7 @@
 </InputData>
 <InputData Version="TTbar_Mtt1000toInft_2016v3" Lumi="1193967.198" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   &TTbar_Mtt1000toInft_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-</InputData>
+</InputData> -->
 
 <!--
 ██████  ██    ██
@@ -214,7 +214,7 @@
 ██████     ██
 -->
 
-<InputData Version="DYJetsToLL_LO_M50_HT0070to0100_2016v3" Lumi="3441640.625" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+<!-- <InputData Version="DYJetsToLL_LO_M50_HT0070to0100_2016v3" Lumi="3441640.625" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   &DYJetsToLL_LO_M50_HT0070to0100_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="DYJetsToLL_LO_M50_HT0100to0200_2016v3" Lumi="10977326" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
@@ -234,7 +234,7 @@
 </InputData>
 <InputData Version="DYJetsToLL_LO_M50_HT1200to2500_2016v3" Lumi="596079" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   &DYJetsToLL_LO_M50_HT1200to2500_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-</InputData>
+</InputData> -->
 <InputData Version="DYJetsToLL_LO_M50_HT2500toInft_2016v3" Lumi="399492" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   &DYJetsToLL_LO_M50_HT2500toInft_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
@@ -301,6 +301,7 @@
   <Item Name="GenJetCollection"        Value="slimmedGenJets"/>
   <Item Name="TopJetCollection"        Value="jetsAk8CHSSubstructure_SoftDropCHS"/>
   <Item Name="GenTopJetCollection"     Value="genjetsAk8SubstructureSoftDrop" />
+  <Item Name="PFParticleCollection"    Value="PFParticles"/>
 
   <Item Name="additionalBranches" Value=""/>
 

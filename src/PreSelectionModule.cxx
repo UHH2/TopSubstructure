@@ -31,6 +31,7 @@
 #include "UHH2/TopSubstructure/include/GenHists.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureGenSelections.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureUtils.h"
+#include "UHH2/TopSubstructure/include/VariablesCalculator.h"
 
 using namespace std;
 using namespace uhh2;
@@ -52,6 +53,7 @@ namespace uhh2examples {
     std::unique_ptr<Selection> nmu_gen, pt_mu_gen, pt_topjet_gen;
 
     std::unique_ptr<AnalysisModule> ttgenprod;
+    std::unique_ptr<calc_Nsubjettiness> calculator_tau;
 
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
     std::unique_ptr<Hists> h_gen_start, h_gen_nmu, h_gen_pt_mu, h_gen_pt_topjet;
@@ -101,6 +103,7 @@ namespace uhh2examples {
 
   bool PreSelectionModule::process(Event & event) {
     cout << "PreSelectionModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
+    calculator_tau->tau_one(event);
 
     h_start->fill(event);
     if(isMC) h_gen_start->fill(event);

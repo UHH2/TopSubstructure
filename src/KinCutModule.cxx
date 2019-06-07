@@ -197,6 +197,7 @@ namespace uhh2examples {
     ██   ██ ███████  ██████  ██████
     */
 
+
     if(event.is_valid(h_passed_rec_pre)) passed_rec_pre = event.get(h_passed_rec_pre);
     else passed_rec_pre = false;
     passed_trigger      = false;
