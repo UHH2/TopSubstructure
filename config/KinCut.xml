@@ -29,9 +29,9 @@
 <!ENTITY TTbar_Mtt1000toInft_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt1000toInft_2016v3.root">
 
 <!-- =============================================== DiBoson =========================================================================== -->
-<!ENTITY  Diboson_WW_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.Diboson_WW_2016v3.root">
+<!-- <!ENTITY  Diboson_WW_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.Diboson_WW_2016v3.root">
 <!ENTITY  Diboson_WZ_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.Diboson_WZ_2016v3.root">
-<!ENTITY  Diboson_ZZ_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.Diboson_ZZ_2016v3.root">
+<!ENTITY  Diboson_ZZ_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.Diboson_ZZ_2016v3.root"> -->
 <!-- =============================================== QCD Mu =========================================================================== -->
 <!-- <!ENTITY  QCD_Pt-0015to0020_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-0015to0020_MuEnrichedPt5.root">
 <!ENTITY  QCD_Pt-0020to0030_MuEnrichedPt5    "&INdir;/uhh2.AnalysisModuleRunner.MC.QCD_Pt-0020to0030_MuEnrichedPt5.root">
@@ -111,7 +111,7 @@
   -->
 
 
-  <!-- <InputData Version="ST_t-channel_antitop_2016v3" Lumi="477080.5312" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+  <InputData Version="ST_t-channel_antitop_2016v3" Lumi="477080.5312" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&ST_t-channel_antitop_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="ST_t-channel_top_2016v3" Lumi="477843.6995" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
@@ -125,7 +125,7 @@
 </InputData>
 <InputData Version="ST_tW_top_2016v3" Lumi="153348.7108" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
 <In FileName="&ST_tW_top_2016v3;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-</InputData> -->
+</InputData>
 
 <!--
 ██████  ██ ██████   ██████  ███████  ██████  ███    ██

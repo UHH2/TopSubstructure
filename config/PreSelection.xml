@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd" [
 <!ENTITY NEVT "-1">
-
-
 <!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/PreSelection">
-
 
 <!-- ================================================================================================================================ -->
 <!-- ========================================================== DATA =============================================================== -->
-
 <!-- MUON DATA -->
 <!ENTITY  SingleMUON_Run2016B_2016v3       SYSTEM  "../../common/datasets/RunII_102X_v1/2016v3/DATA_SingleMuon2016_RunB.xml">
 <!ENTITY  SingleMUON_Run2016C_2016v3       SYSTEM  "../../common/datasets/RunII_102X_v1/2016v3/DATA_SingleMuon2016_RunC.xml">
@@ -39,9 +35,9 @@
 
 
 <!-- =============================================== DiBoson =========================================================================== -->
-<!ENTITY  WW_2016v3 SYSTEM  "../../common/datasets/RunII_102X_v1/2016v3/MC_WW_TuneCUETP8M1_13TeV-pythia8.xml">
+<!-- <!ENTITY  WW_2016v3 SYSTEM  "../../common/datasets/RunII_102X_v1/2016v3/MC_WW_TuneCUETP8M1_13TeV-pythia8.xml">
 <!ENTITY  WZ_2016v3 SYSTEM  "../../common/datasets/RunII_102X_v1/2016v3/MC_WZ_TuneCUETP8M1_13TeV-pythia8.xml">
-<!ENTITY  ZZ_2016v3 SYSTEM  "../../common/datasets/RunII_102X_v1/2016v3/MC_ZZ_TuneCUETP8M1_13TeV-pythia8.xml">
+<!ENTITY  ZZ_2016v3 SYSTEM  "../../common/datasets/RunII_102X_v1/2016v3/MC_ZZ_TuneCUETP8M1_13TeV-pythia8.xml"> -->
 
 <!-- =============================================== QCD Mu =========================================================================== -->
 <!-- <!ENTITY  QCD_Pt-0015to0020_MuEnrichedPt5 SYSTEM  "../../common/datasets/RunII_102X_v1/2016v3/MC_QCD_Pt-15to20_MuEnrichedPt5.xml">
@@ -176,8 +172,7 @@
 ██████  ██ ██████   ██████  ███████  ██████  ██   ████
 -->
 
-
-<InputData Version="Diboson_WW_2016v3" Lumi="126280.3354" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+<!-- <InputData Version="Diboson_WW_2016v3" Lumi="126280.3354" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   &WW_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="Diboson_WZ_2016v3" Lumi="175178.3961" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
@@ -185,7 +180,7 @@
 </InputData>
 <InputData Version="Diboson_ZZ_2016v3" Lumi="192645.155" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   &ZZ_2016v3; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-</InputData>
+</InputData> -->
 
 <!--
 ████████ ████████
