@@ -45,11 +45,16 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
   book<TH1D>("tau1_gtj1_rebin", "#tau_{1} had. GenTopJet", 1000, 0, 1.);
   book<TH1D>("tau2_gtj1", "#tau_{2} had. GenTopJet", 40, 0, 1.);
   book<TH1D>("tau2_gtj1_rebin", "#tau_{2} had. GenTopJet", 1000, 0, 1.);
+  book<TH1D>("tau2_gtj1_calc", "#tau_{2} had. GenTopJet calculated", 40, 0, 1.);
   book<TH1D>("tau3_gtj1", "#tau_{3} had. GenTopJet", 40, 0, 1.);
   book<TH1D>("tau3_gtj1_rebin", "#tau_{3} had. GenTopJet", 1000, 0, 1.);
+  book<TH1D>("tau3_gtj1_calc", "#tau_{3} had. GenTopJet calculated", 40, 0, 1.);
   book<TH1D>("tau32_gtj1", "#tau_{3}/#tau_{2} had. GenTopJet", 40, 0, 1.);
   book<TH1D>("tau32_gtj1_rebin1", "#tau_{3}/#tau_{2} had. GenTopJet", 100, 0, 1.);
   book<TH1D>("tau32_gtj1_rebin2", "#tau_{3}/#tau_{2} had. GenTopJet", 1000, 0, 1.);
+  book<TH1D>("tau32_gtj1_calc", "#tau_{3}/#tau_{2} had. GenTopJet calculated", 40, 0, 1.);
+  book<TH1D>("tau32_gtj1_rebin1_calc", "#tau_{3}/#tau_{2} had. GenTopJet calculated", 100, 0, 1.);
+  book<TH1D>("tau32_gtj1_rebin2_calc", "#tau_{3}/#tau_{2} had. GenTopJet calculated", 1000, 0, 1.);
   book<TH1D>("tau21_gtj1", "#tau_{2}/#tau_{1} had. GenTopJet", 40, 0, 1.);
   book<TH1D>("tau21_gtj1_rebin", "#tau_{2}/#tau_{1} had. GenTopJet", 1000, 0, 1.);
 
@@ -161,6 +166,8 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
   h_ttbargen = ctx.get_handle<TTbarGen>("ttbargen");
   h_weight = ctx.get_handle<double>("h_gen_weight");
   h_weight_kin = ctx.get_handle<double>("h_gen_weight_kin");
+  h_tau2 = ctx.get_handle<double>("h_gen_tau2");
+  h_tau3 = ctx.get_handle<double>("h_gen_tau3");
 }
 
 
@@ -170,7 +177,10 @@ void GenHists::fill(const Event & event){
   if(event.is_valid(h_weight))  weight = event.get(h_weight);
   else if(event.is_valid(h_weight_kin))  weight = event.get(h_weight_kin);
   else weight = event.weight;
-
+  double gen_tau3 = -100;
+  if(event.is_valid(h_tau3)) gen_tau3 = event.get(h_tau3);
+  double gen_tau2 = -100;
+  if(event.is_valid(h_tau2)) gen_tau2 = event.get(h_tau2);
   //general
   hist("sum_event_weights")->Fill(1, weight);
 
@@ -209,11 +219,16 @@ void GenHists::fill(const Event & event){
       hist("tau1_gtj1_rebin")->Fill(event.gentopjets->at(0).tau1(), weight);
       hist("tau2_gtj1")->Fill(event.gentopjets->at(0).tau2(), weight);
       hist("tau2_gtj1_rebin")->Fill(event.gentopjets->at(0).tau2(), weight);
+      if(gen_tau2 >= 0.) hist("tau2_gtj1_calc")->Fill(gen_tau2, weight);
       hist("tau3_gtj1")->Fill(event.gentopjets->at(0).tau3(), weight);
       hist("tau3_gtj1_rebin")->Fill(event.gentopjets->at(0).tau3(), weight);
+      if(gen_tau3 >= 0.) hist("tau3_gtj1_calc")->Fill(gen_tau3, weight);
       hist("tau32_gtj1")->Fill(event.gentopjets->at(0).tau3()/event.gentopjets->at(0).tau2(), weight);
       hist("tau32_gtj1_rebin1")->Fill(event.gentopjets->at(0).tau3()/event.gentopjets->at(0).tau2(), weight);
       hist("tau32_gtj1_rebin2")->Fill(event.gentopjets->at(0).tau3()/event.gentopjets->at(0).tau2(), weight);
+      if(gen_tau2 >= 0. && gen_tau3 >= 0.) hist("tau32_gtj1_calc")->Fill(gen_tau3/gen_tau2, weight);
+      if(gen_tau2 >= 0. && gen_tau3 >= 0.) hist("tau32_gtj1_rebin1_calc")->Fill(gen_tau3/gen_tau2, weight);
+      if(gen_tau2 >= 0. && gen_tau3 >= 0.) hist("tau32_gtj1_rebin2_calc")->Fill(gen_tau3/gen_tau2, weight);
       hist("tau21_gtj1")->Fill(event.gentopjets->at(0).tau2()/event.gentopjets->at(0).tau1(), weight);
       hist("tau21_gtj1_rebin")->Fill(event.gentopjets->at(0).tau2()/event.gentopjets->at(0).tau1(), weight);
 

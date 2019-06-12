@@ -24,6 +24,7 @@ namespace uhh2examples {
   protected:
     TH2* TwoDCut;
     uhh2::Event::Handle<double> h_weight, h_weight_kin;
+    uhh2::Event::Handle<double> h_tau3_before, h_tau2_before, h_tau3_after, h_tau2_after;
     bool isTTbar;
   };
 

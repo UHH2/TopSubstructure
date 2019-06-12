@@ -31,7 +31,6 @@
 #include "UHH2/TopSubstructure/include/GenHists.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureGenSelections.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureUtils.h"
-#include "UHH2/TopSubstructure/include/VariablesCalculator.h"
 
 using namespace std;
 using namespace uhh2;
@@ -48,7 +47,7 @@ namespace uhh2examples {
     bool passed_rec, passed_gen;
 
     // declare the Selections to use. Use unique_ptr to ensure automatic call of delete in the destructor, to avoid memory leaks.
-    std::unique_ptr<uhh2::Selection> genmttbar_sel;
+    std::unique_ptr<Selection> genmttbar_sel;
     std::unique_ptr<Selection> met_sel, nmu_sel, njet_sel;
     std::unique_ptr<Selection> nmu_gen, pt_mu_gen, pt_topjet_gen;
 
@@ -69,9 +68,9 @@ namespace uhh2examples {
     h_passed_gen_pre = ctx.declare_event_output<bool>("h_passed_gen_pre");
 
     isMC = (ctx.get("dataset_type") == "MC");
-    isTTbar = (ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt0700to1000_2016v3" || ctx.get("dataset_version") == "TTbar_Mtt1000toInft_2016v3");
+    isTTbar = (ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_2016v3_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_2016v3_Mtt1000toInft");
 
-    if(ctx.get("dataset_version") == "TTbar_Mtt0000to0700_2016v3") genmttbar_sel.reset(new MttbarGenSelection(0., 700.));
+    if(ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700") genmttbar_sel.reset(new MttbarGenSelection(0., 700.));
     else genmttbar_sel.reset(new uhh2::AndSelection(ctx));
 
     // 2. set up selections
@@ -104,7 +103,7 @@ namespace uhh2examples {
     cout << "PreSelectionModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
 
     h_start->fill(event);
-    if(isMC) h_gen_start->fill(event);
+    if(isTTbar) h_gen_start->fill(event);
 
     // 1. run all modules other modules.
     passed_gen = false;

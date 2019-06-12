@@ -25,6 +25,7 @@ namespace uhh2examples {
     TH2* TwoDCut;
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
     uhh2::Event::Handle<double> h_weight, h_weight_kin;
+    uhh2::Event::Handle<double> h_tau3, h_tau2;
   };
 
 }

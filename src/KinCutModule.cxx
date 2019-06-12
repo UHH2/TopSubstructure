@@ -25,6 +25,7 @@
 #include "UHH2/TopSubstructure/include/TopSubstructureGenSelections.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureUtils.h"
 #include "UHH2/TopSubstructure/include/TopJetCorrections.h"
+#include "UHH2/TopSubstructure/include/VariablesCalculator.h"
 
 using namespace std;
 using namespace uhh2;
@@ -39,9 +40,12 @@ namespace uhh2examples {
     std::unique_ptr<CommonModules>   common;
     std::unique_ptr<MuonCleaner>     muoSR_cleaner;
     std::unique_ptr<ElectronCleaner> eleSR_cleaner;
+    calc_Nsubjettiness calc_pf_tau3_before, calc_pf_tau3_after, calc_gen_tau3;
+    calc_Nsubjettiness calc_pf_tau2_before, calc_pf_tau2_after, calc_gen_tau2;
 
     bool isMC, isTTbar;
     std::unique_ptr<TopJetCorrections> topjetCorr;
+    bool error_test;
 
     //declare generator booleans
     bool passed_gen_pre, passed_rec_pre;
@@ -76,11 +80,14 @@ namespace uhh2examples {
     //declare handles
     uhh2::Event::Handle<double> h_rec_weight_kin;
     uhh2::Event::Handle<double> h_gen_weight_kin;
+    // uhh2::Event::Handle<double> h_gen_tau3, h_pf_tau3_before, h_pf_tau3_after;
+    // uhh2::Event::Handle<double> h_gen_tau2, h_pf_tau2_before, h_pf_tau2_after;
     uhh2::Event::Handle<bool> h_passed_gen_pre, h_passed_rec_pre, h_passed_gen, h_passed_rec;
   };
 
 
   KinCutModule::KinCutModule(Context & ctx){
+    error_test = false;
     // 1. setup other modules. CommonModules and the JetCleaner:
     h_gen_weight_kin = ctx.declare_event_output<double>("h_gen_weight_kin");
     h_rec_weight_kin = ctx.declare_event_output<double>("h_rec_weight_kin");
@@ -88,6 +95,13 @@ namespace uhh2examples {
     h_passed_rec_pre = ctx.get_handle<bool>("h_passed_rec_pre");
     h_passed_rec = ctx.declare_event_output<bool>("h_passed_rec");
     h_passed_gen = ctx.declare_event_output<bool>("h_passed_gen");
+    // h_gen_tau3 = ctx.declare_event_output<double>("h_gen_tau3");
+    // h_pf_tau3_before = ctx.declare_event_output<double>("h_pf_tau3_before");
+    // h_pf_tau3_after = ctx.declare_event_output<double>("h_pf_tau3_after");
+    // h_gen_tau2 = ctx.declare_event_output<double>("h_gen_tau2");
+    // h_pf_tau2_before = ctx.declare_event_output<double>("h_pf_tau2_before");
+    // h_pf_tau2_after = ctx.declare_event_output<double>("h_pf_tau2_after");
+
 
     common.reset(new CommonModules());
     // lumiweight.reset(new MCLumiWeight(ctx));
@@ -188,7 +202,6 @@ namespace uhh2examples {
         passed_gen = true;
       }
     }
-
     /*
     ██████  ███████  ██████  ██████
     ██   ██ ██      ██      ██    ██
@@ -196,7 +209,6 @@ namespace uhh2examples {
     ██   ██ ██      ██      ██    ██
     ██   ██ ███████  ██████  ██████
     */
-
 
     if(event.is_valid(h_passed_rec_pre)) passed_rec_pre = event.get(h_passed_rec_pre);
     else passed_rec_pre = false;

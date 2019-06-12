@@ -66,7 +66,8 @@ namespace uhh2examples {
     std::unique_ptr<AnalysisModule> scale_variation;
     std::unique_ptr<AnalysisModule> PUreweight, lumiweight;
     std::unique_ptr<AnalysisModule> ttgenprod;
-    std::unique_ptr<calc_Nsubjettiness> calculator_tau;
+    calc_Nsubjettiness calc_pf_tau3, calc_gen_tau3;
+    calc_Nsubjettiness calc_pf_tau2, calc_gen_tau2;
 
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
     std::unique_ptr<Hists> h_gen_pt_topjet, h_gen_pt_topjet_matched, h_gen_pt_topjet_unmatched;
@@ -108,12 +109,16 @@ namespace uhh2examples {
     uhh2::Event::Handle<double> h_pt_gen;
     uhh2::Event::Handle<double> h_tau32_gen;
     uhh2::Event::Handle<double> h_mass_gen;
+    uhh2::Event::Handle<double> h_calc_tau32_gen, h_calc_tau32_rec;
+
+    bool derror;
   };
 
 
   PostKinCutModule::PostKinCutModule(Context & ctx){
     // Btag_tight        = CSVBTag(CSVBTag::WP_TIGHT);
     // ctx.undeclare_all_event_output();
+    derror = true;
 
     h_passed_rec                    = ctx.get_handle<bool>("h_passed_rec");
     h_passed_gen                    = ctx.get_handle<bool>("h_passed_gen");
@@ -137,6 +142,8 @@ namespace uhh2examples {
     h_passed_rec_mass_sideband      = ctx.declare_event_output<bool>("h_passed_rec_mass_sideband");
     h_passed_rec_pt_mu_sideband     = ctx.declare_event_output<bool>("h_passed_rec_pt_mu_sideband");
     h_passed_rec_pt_topjet_sideband = ctx.declare_event_output<bool>("h_passed_rec_pt_topjet_sideband");
+    h_calc_tau32_gen                = ctx.declare_event_output<double>("h_calc_tau32_gen");
+    h_calc_tau32_rec                = ctx.declare_event_output<double>("h_calc_tau32_rec");
 
     //scale variation
     scale_variation.reset(new MCScaleVariation(ctx));
@@ -253,16 +260,19 @@ namespace uhh2examples {
 
   bool PostKinCutModule::process(Event & event) {
     cout << "PostKinCutModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
-    // cout << "test1" << '\n';
-    // auto test = event.pfparticles->size();
-    // cout << "test2: " << test << '\n';
 
     if(event.is_valid(h_gen_weight_kin)) event.weight = event.get(h_gen_weight_kin);
+    if(derror) cout << "test1" << '\n';
     lumiweight->process(event);
+    if(derror) cout << "test2" << '\n';
     scale_variation->process(event); // here, it is only executed to be filled into the gen weight is has to be done again to appear in the event.weight
 
+    if(derror) cout << "test3" << '\n';
+
     event.set(h_gen_weight, event.weight);
+    if(derror) cout << "test4" << '\n';
     if(event.is_valid(h_rec_weight_kin)) event.weight *= event.get(h_rec_weight_kin);
+    if(derror) cout << "test5" << '\n';
 
     // 1. run all modules other modules.
     if(event.is_valid(h_passed_gen)) passed_gen = event.get(h_passed_gen);
@@ -278,6 +288,7 @@ namespace uhh2examples {
     passed_gen_pt_topjet_sideband      = false;
     passed_gen_final                   = false;
     matched_gen                        = false;
+    if(derror) cout << "test6" << '\n';
 
     if(event.is_valid(h_passed_rec)) passed_rec = event.get(h_passed_rec);
     else passed_rec                    = false;
@@ -294,78 +305,131 @@ namespace uhh2examples {
     passed_rec_pt_topjet_sideband      = false;
     passed_rec_final                   = false;
     matched_rec                        = false;
+    if(derror) cout << "test7" << '\n';
 
     /** PU Reweighting *********************/
-    PUreweight->process(event); //evtl spaeter fuer unsicherheit
+    if(isMC) PUreweight->process(event); //evtl spaeter fuer unsicherheit
+    if(derror) cout << "test8" << '\n';
 
     event.set(h_rec_weight, event.weight);
+    if(derror) cout << "test9" << '\n';
 
 
     if(isTTbar) {
       ttgenprod->process(event);
+      if(derror) cout << "test10" << '\n';
 
       passed_gen_pt_mu = pt_mu_gen->passes(event);
+      if(derror) cout << "test11" << '\n';
       if(passed_gen && passed_gen_pt_mu){
+        if(derror) cout << "test12" << '\n';
         h_gen_pt_mu->fill(event);
+        if(derror) cout << "test13" << '\n';
         matched_gen = genmatching->passes(event);
+        if(derror) cout << "test14" << '\n';
         if(matched_gen) h_gen_pt_mu_matched->fill(event);
         else h_gen_pt_mu_unmatched->fill(event);
+        if(derror) cout << "test15" << '\n';
       }
 
+      if(derror) cout << "test16" << '\n';
       passed_gen_pt_topjet = pt_topjet_gen->passes(event);
+      if(derror) cout << "test17" << '\n';
       if(passed_gen && passed_gen_pt_mu && passed_gen_pt_topjet){
+        if(derror) cout << "test18" << '\n';
         h_gen_pt_topjet->fill(event);
+        if(derror) cout << "test19" << '\n';
         matched_gen = genmatching->passes(event);
+        if(derror) cout << "test20" << '\n';
         if(matched_gen) h_gen_pt_topjet_matched->fill(event);
         else h_gen_pt_topjet_unmatched->fill(event);
+        if(derror) cout << "test21" << '\n';
       }
 
+      if(derror) cout << "test22" << '\n';
       passed_gen_ntopjet = ntopjet2_gen->passes(event);
+      if(derror) cout << "test23" << '\n';
       if(passed_gen && passed_gen_pt_mu && passed_gen_pt_topjet && passed_gen_ntopjet){
+        if(derror) cout << "test24" << '\n';
         h_gen_ntopjet2->fill(event);
+        if(derror) cout << "test25" << '\n';
         matched_gen = genmatching->passes(event);
+        if(derror) cout << "test26" << '\n';
         if(matched_gen) h_gen_ntopjet2_matched->fill(event);
         else h_gen_ntopjet2_unmatched->fill(event);
+        if(derror) cout << "test27" << '\n';
       }
 
+      if(derror) cout << "test28" << '\n';
       passed_gen_dr = dr_gen->passes(event);
+      if(derror) cout << "test29" << '\n';
       if(passed_gen && passed_gen_pt_mu && passed_gen_pt_topjet && passed_gen_ntopjet && passed_gen_dr){
+        if(derror) cout << "test30" << '\n';
         h_gen_dr->fill(event);
+        if(derror) cout << "test31" << '\n';
         matched_gen = genmatching->passes(event);
+        if(derror) cout << "test32" << '\n';
         if(matched_gen) h_gen_dr_matched->fill(event);
         else h_gen_dr_unmatched->fill(event);
+        if(derror) cout << "test33" << '\n';
       }
 
+      if(derror) cout << "test34" << '\n';
       passed_gen_mass = mass_gen->passes(event);
+      if(derror) cout << "test35" << '\n';
       if(passed_gen && passed_gen_pt_mu && passed_gen_pt_topjet && passed_gen_ntopjet && passed_gen_dr && passed_gen_mass){
+        if(derror) cout << "test36" << '\n';
         h_gen_mass->fill(event);
+        if(derror) cout << "test37" << '\n';
         h_passedgen_rec->fill(event);
+        if(derror) cout << "test38" << '\n';
         passed_gen_final = true;
+        if(derror) cout << "test39" << '\n';
         matched_gen = genmatching->passes(event);
+        if(derror) cout << "test40" << '\n';
         if(matched_gen) h_gen_mass_matched->fill(event);
         else h_gen_mass_unmatched->fill(event);
+        if(derror) cout << "test41" << '\n';
       }
+      if(derror) cout << "test42" << '\n';
 
       if(passed_gen && !passed_gen_pt_mu && passed_gen_pt_topjet && passed_gen_ntopjet && passed_gen_dr && passed_gen_mass && pt_mu_gen_sideband->passes(event)){
+        if(derror) cout << "test43" << '\n';
         h_gen_pt_mu_sideband->fill(event);
+        if(derror) cout << "test44" << '\n';
         passed_gen_pt_mu_sideband = true;
+        if(derror) cout << "test45" << '\n';
       }
 
+      if(derror) cout << "test46" << '\n';
       if(passed_gen && passed_gen_pt_mu && !passed_gen_pt_topjet && passed_gen_ntopjet && passed_gen_dr && passed_gen_mass && pt_topjet_gen_sideband->passes(event)){
+        if(derror) cout << "test47" << '\n';
         h_gen_pt_topjet_sideband->fill(event);
+        if(derror) cout << "test48" << '\n';
         passed_gen_pt_topjet_sideband = true;
+        if(derror) cout << "test49" << '\n';
       }
+      if(derror) cout << "test50" << '\n';
 
       if(passed_gen && passed_gen_pt_mu && passed_gen_pt_topjet && passed_gen_ntopjet && !passed_gen_dr && passed_gen_mass && dr_gen_sideband->passes(event)){
+        if(derror) cout << "test51" << '\n';
         h_gen_dr_sideband->fill(event);
+        if(derror) cout << "test52" << '\n';
         passed_gen_dr_sideband = true;
+        if(derror) cout << "test53" << '\n';
       }
+      if(derror) cout << "test54" << '\n';
 
       if(passed_gen && passed_gen_pt_topjet && passed_gen_ntopjet && passed_gen_dr && !passed_gen_mass){
+        if(derror) cout << "test55" << '\n';
         h_gen_mass_sideband->fill(event);
+        if(derror) cout << "test56" << '\n';
         passed_gen_mass_sideband = true;
+        if(derror) cout << "test57" << '\n';
       }
+      if(derror) cout << "test58" << '\n';
     }
+    if(derror) cout << "test59" << '\n';
 
     /*
     ██████  ███████  ██████  ██████
@@ -377,142 +441,261 @@ namespace uhh2examples {
 
     // calculator_tau->tau_one(event);
     passed_rec_pt_mu = pt_mu_sel->passes(event);
+    if(derror) cout << "test60" << '\n';
     if(passed_rec && passed_rec_pt_mu){
+      if(derror) cout << "test61" << '\n';
       h_pt_mu->fill(event);
+      if(derror) cout << "test62" << '\n';
       if(isTTbar){
+        if(derror) cout << "test63" << '\n';
         matched_rec = recmatching->passes(event);
+        if(derror) cout << "test64" << '\n';
         if(matched_rec) h_pt_mu_matched->fill(event);
         else h_pt_mu_unmatched->fill(event);
+        if(derror) cout << "test65" << '\n';
       }
+      if(derror) cout << "test66" << '\n';
     }
+    if(derror) cout << "test67" << '\n';
 
 
     // pT(first Topjet) > 400
     passed_rec_pt_topjet = pt_topjet_sel1->passes(event);
+    if(derror) cout << "test68" << '\n';
     if(passed_rec && passed_rec_pt_mu && passed_rec_pt_topjet){
+      if(derror) cout << "test69" << '\n';
       h_pt_topjet->fill(event);
+      if(derror) cout << "test70" << '\n';
       if(isTTbar){
+        if(derror) cout << "test71" << '\n';
         matched_rec = recmatching->passes(event);
+        if(derror) cout << "test72" << '\n';
         if(matched_rec) h_pt_topjet_matched->fill(event);
         else h_pt_topjet_unmatched->fill(event);
+        if(derror) cout << "test73" << '\n';
       }
+      if(derror) cout << "test74" << '\n';
     }
+    if(derror) cout << "test75" << '\n';
 
     // >= 2 TopJets
     passed_rec_ntopjet = ntopjet2_sel->passes(event);
+    if(derror) cout << "test76" << '\n';
     if(passed_rec && passed_rec_pt_mu && passed_rec_pt_topjet && passed_rec_ntopjet){
+      if(derror) cout << "test77" << '\n';
       h_ntopjet2->fill(event);
+      if(derror) cout << "test78" << '\n';
       if(isTTbar){
+        if(derror) cout << "test79" << '\n';
         matched_rec = recmatching->passes(event);
+        if(derror) cout << "test80" << '\n';
         if(matched_rec) h_ntopjet2_matched->fill(event);
         else h_ntopjet2_unmatched->fill(event);
+        if(derror) cout << "test81" << '\n';
       }
+      if(derror) cout << "test82" << '\n';
     }
+    if(derror) cout << "test83" << '\n';
 
     // dR(muon, second TopJet) < 0.8
     passed_rec_dr = dr_sel->passes(event);
+    if(derror) cout << "test84" << '\n';
     if(passed_rec && passed_rec_pt_mu && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr){
+      if(derror) cout << "test85" << '\n';
       h_dr->fill(event);
+      if(derror) cout << "test86" << '\n';
       if(isTTbar){
+        if(derror) cout << "test87" << '\n';
         matched_rec = recmatching->passes(event);
+        if(derror) cout << "test88" << '\n';
         if(matched_rec) h_dr_matched->fill(event);
         else h_dr_unmatched->fill(event);
+        if(derror) cout << "test89" << '\n';
       }
+      if(derror) cout << "test90" << '\n';
     }
+    if(derror) cout << "test91" << '\n';
 
     // M(first TopJet) > M(second TopJet + Muon)
     passed_rec_mass = mass_sel1->passes(event);
+    if(derror) cout << "test92" << '\n';
     if(passed_rec && passed_rec_pt_mu && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && passed_rec_mass){
+      if(derror) cout << "test93" << '\n';
       h_mass->fill(event);
+      if(derror) cout << "test94" << '\n';
       passed_rec_final = true;
+      if(derror) cout << "test95" << '\n';
       if(isTTbar){
+        if(derror) cout << "test96" << '\n';
         h_passedrec_gen->fill(event);
+        if(derror) cout << "test97" << '\n';
         h_ttbar_hist->fill(event);
+        if(derror) cout << "test98" << '\n';
         matched_rec = recmatching->passes(event);
+        if(derror) cout << "test99" << '\n';
         if(matched_rec) h_mass_matched->fill(event);
         else h_mass_unmatched->fill(event);
+        if(derror) cout << "test100" << '\n';
       }
+      if(derror) cout << "test101" << '\n';
     }
+    if(derror) cout << "test102" << '\n';
 
     if(passed_rec && !passed_rec_pt_mu && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && passed_rec_mass && pt_mu_rec_sideband->passes(event)){
+      if(derror) cout << "test103" << '\n';
       h_rec_pt_mu_sideband->fill(event);
+      if(derror) cout << "test104" << '\n';
       passed_rec_pt_mu_sideband = true;
+      if(derror) cout << "test105" << '\n';
     }
 
+    if(derror) cout << "test106" << '\n';
     if(passed_rec && passed_rec_pt_mu && !passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && passed_rec_mass && pt_topjet_rec_sideband->passes(event)){
+      if(derror) cout << "test107" << '\n';
       h_rec_pt_topjet_sideband->fill(event);
+      if(derror) cout << "test108" << '\n';
       passed_rec_pt_topjet_sideband = true;
+      if(derror) cout << "test109" << '\n';
     }
 
+    if(derror) cout << "test110" << '\n';
     if(passed_rec && passed_rec_pt_mu && passed_rec_pt_topjet && passed_rec_ntopjet && !passed_rec_dr && passed_rec_mass && dr_rec_sideband->passes(event)){
+      if(derror) cout << "test111" << '\n';
       h_rec_dr_sideband->fill(event);
+      if(derror) cout << "test112" << '\n';
       passed_rec_dr_sideband = true;
+      if(derror) cout << "test113" << '\n';
     }
+    if(derror) cout << "test114" << '\n';
 
     if(passed_rec && passed_rec_pt_mu && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && !passed_rec_mass){
+      if(derror) cout << "test115" << '\n';
       h_rec_mass_sideband->fill(event);
+      if(derror) cout << "test116" << '\n';
       passed_rec_mass_sideband = true;
+      if(derror) cout << "test117" << '\n';
     }
+    if(derror) cout << "test118" << '\n';
     if(passed_rec_final && mass_lower->passes(event)){
+      if(derror) cout << "test119" << '\n';
       h_mass_lower->fill(event);
+      if(derror) cout << "test120" << '\n';
       if(isTTbar){
+        if(derror) cout << "test121" << '\n';
         matched_rec = recmatching->passes(event);
+        if(derror) cout << "test122" << '\n';
         if(matched_rec) h_mass_lower_matched->fill(event);
         else h_mass_lower_unmatched->fill(event);
+        if(derror) cout << "test123" << '\n';
       }
+      if(derror) cout << "test124" << '\n';
     }
+    if(derror) cout << "test125" << '\n';
     if(passed_rec_final && mass_top->passes(event)){
+      if(derror) cout << "test126" << '\n';
       h_mass_top->fill(event);
+      if(derror) cout << "test127" << '\n';
       if(isTTbar){
+        if(derror) cout << "test128" << '\n';
         matched_rec = recmatching->passes(event);
+        if(derror) cout << "test129" << '\n';
         if(matched_rec) h_mass_top_matched->fill(event);
         else h_mass_top_unmatched->fill(event);
+        if(derror) cout << "test130" << '\n';
       }
+      if(derror) cout << "test131" << '\n';
     }
+    if(derror) cout << "test132" << '\n';
     if(passed_rec_final && mass_higher->passes(event)){
+      if(derror) cout << "test133" << '\n';
       h_mass_higher->fill(event);
+      if(derror) cout << "test134" << '\n';
       if(isTTbar){
+        if(derror) cout << "test135" << '\n';
         matched_rec = recmatching->passes(event);
+        if(derror) cout << "test136" << '\n';
         if(matched_rec) h_mass_higher_matched->fill(event);
         else h_mass_higher_unmatched->fill(event);
+        if(derror) cout << "test137" << '\n';
       }
+      if(derror) cout << "test138" << '\n';
     }
+    if(derror) cout << "test139" << '\n';
 
     event.set(h_passed_rec_final, passed_rec_final);
+    if(derror) cout << "test140" << '\n';
     event.set(h_passed_gen_final, passed_gen_final);
+    if(derror) cout << "test141" << '\n';
     event.set(h_passed_gen_pt_mu_sideband, passed_gen_pt_mu_sideband);
+    if(derror) cout << "test142" << '\n';
     event.set(h_passed_gen_dr_sideband, passed_gen_dr_sideband);
+    if(derror) cout << "test143" << '\n';
     event.set(h_passed_gen_mass_sideband, passed_gen_mass_sideband);
+    if(derror) cout << "test144" << '\n';
     event.set(h_passed_gen_pt_topjet_sideband, passed_gen_pt_topjet_sideband);
+    if(derror) cout << "test145" << '\n';
     event.set(h_passed_rec_dr_sideband, passed_rec_dr_sideband);
+    if(derror) cout << "test146" << '\n';
     event.set(h_passed_rec_mass_sideband, passed_rec_mass_sideband);
+    if(derror) cout << "test147" << '\n';
     event.set(h_passed_rec_pt_mu_sideband, passed_rec_pt_mu_sideband);
+    if(derror) cout << "test148" << '\n';
     event.set(h_passed_rec_pt_topjet_sideband, passed_rec_pt_topjet_sideband);
+    if(derror) cout << "test149" << '\n';
 
     if(event.topjets->size() > 0){
+      if(derror) cout << "test150" << '\n';
       event.set(h_pt_rec, event.topjets->at(0).pt());
+      if(derror) cout << "test151" << '\n';
       double tau32_rec = event.topjets->at(0).tau3()/event.topjets->at(0).tau2();
+      if(derror) cout << "test152" << '\n';
       event.set(h_tau32_rec, tau32_rec);
+      if(derror) cout << "test153" << '\n';
       event.set(h_mass_rec, event.topjets->at(0).v4().M());
+      if(derror) cout << "test154" << '\n';
+      event.set(h_calc_tau32_rec, calc_pf_tau3.PF_tau3(event)/calc_pf_tau2.PF_tau2(event));
+      if(derror) cout << "test155" << '\n';
     }
     else{
+      if(derror) cout << "test156" << '\n';
       event.set(h_pt_rec, -100);
+      if(derror) cout << "test157" << '\n';
       event.set(h_tau32_rec, -100);
+      if(derror) cout << "test158" << '\n';
       event.set(h_mass_rec, -100);
+      if(derror) cout << "test159" << '\n';
+      event.set(h_calc_tau32_rec, -100);
+      if(derror) cout << "test160" << '\n';
     }
+    if(derror) cout << "test161" << '\n';
     if(isMC && event.gentopjets->size() > 0){
+      if(derror) cout << "test162" << '\n';
       event.set(h_pt_gen, event.gentopjets->at(0).pt());
+      if(derror) cout << "test163" << '\n';
       double tau32_gen = event.gentopjets->at(0).tau3()/event.gentopjets->at(0).tau2();
+      if(derror) cout << "test164" << '\n';
       event.set(h_tau32_gen, tau32_gen);
+      if(derror) cout << "test165" << '\n';
       event.set(h_mass_gen, event.gentopjets->at(0).v4().M());
+      if(derror) cout << "test166" << '\n';
+      event.set(h_calc_tau32_gen, calc_gen_tau3.Gen_tau3(event)/calc_gen_tau2.Gen_tau2(event));
+      if(derror) cout << "test167" << '\n';
     }
     else{
+      if(derror) cout << "test168" << '\n';
       event.set(h_pt_gen, -100);
+      if(derror) cout << "test169" << '\n';
       event.set(h_tau32_gen, -100);
+      if(derror) cout << "test170" << '\n';
       event.set(h_mass_gen, -100);
+      if(derror) cout << "test171" << '\n';
+      event.set(h_calc_tau32_gen, -100);
+      if(derror) cout << "test172" << '\n';
     }
 
+    if(derror) cout << "test173" << '\n';
     if(!passed_rec_final && !passed_gen_final && !passed_gen_pt_mu_sideband && !passed_gen_pt_topjet_sideband && !passed_gen_dr_sideband && !passed_gen_mass_sideband && !passed_rec_pt_mu_sideband & !passed_rec_pt_topjet_sideband && !passed_rec_dr_sideband && !passed_rec_mass_sideband) return false;
+    if(derror) cout << "test174" << '\n';
 
     // 3. decide whether or not to keep the current event in the output:
     return true;

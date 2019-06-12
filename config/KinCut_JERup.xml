@@ -14,7 +14,7 @@
 
 <!--
 <ConfigParse NEventsBreak="250000" LastBreak="0" FileSplit="0"/>
-<ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="workdir_Kincut_data"/>
+<ConfigSGE RAM="4" DISK="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="workdir_Kincut_JERup"/>
 -->
 
 <JobConfiguration JobName="TopSubstructureJob" OutputLevel="INFO">

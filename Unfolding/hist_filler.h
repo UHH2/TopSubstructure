@@ -37,7 +37,7 @@ const TUnfoldBinning *gen_mass_sideband;
 
 
 // variables to store gen or rec info
-Double_t tau32_rec, tau32_gen, mass_rec, mass_gen;             // variables
+Double_t tau32_rec, tau32_gen, mass_rec, mass_gen, tau32_calc_gen, tau32_calc_rec;             // variables
 Bool_t passed_rec_final, passed_gen_final; // bools
 Bool_t passed_rec_pt_topjet_sideband, passed_gen_pt_topjet_sideband, passed_rec_mass_sideband, passed_gen_mass_sideband; // bools
 Double_t gen_weight, rec_weight;           //weights
@@ -45,3 +45,4 @@ Double_t gen_weight, rec_weight;           //weights
 
 //weights
 Double_t w_gen, w_rec, w_sig_rec, w_central, w_nogen, w_norec, w_correction;
+Double_t w_gen_calc, w_rec_calc, w_sig_rec_calc, w_central_calc, w_nogen_calc, w_norec_calc, w_correction_calc;
