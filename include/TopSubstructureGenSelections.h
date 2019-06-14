@@ -111,4 +111,12 @@ namespace uhh2examples {
     double pt_min, pt_max;
   };
 
+  class GenMassTopJet : public uhh2::Selection{
+  public:
+    explicit GenMassTopJet(double mass_min = 0, double mass_max = -1);
+    virtual bool passes(const uhh2::Event &) override;
+  private:
+    double mass_min, mass_max;
+  };
+
 }

@@ -187,3 +187,12 @@ bool GenMuonPtSelection::passes(const Event & event){
   }
   return pass;
 }
+
+GenMassTopJet::GenMassTopJet(double mass_min_, double mass_max_):mass_min(mass_min_), mass_max(mass_max_){}
+bool GenMassTopJet::passes(const Event & event){
+  bool pass = false;
+  double mass_topjet = event.gentopjets->at(0).v4().M();
+  if(mass_topjet >= mass_min && (mass_topjet < mass_max || mass_max < 0)) pass = true;
+
+  return pass;
+}

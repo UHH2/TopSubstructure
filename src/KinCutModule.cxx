@@ -75,7 +75,7 @@ namespace uhh2examples {
     std::unique_ptr<Hists> h_gen_pt_mu;
 
     //declare reconstruction histograms
-    std::unique_ptr<Hists> h_start, h_common, h_topjetcorrections, h_topjetjer_smearing, h_jetcleaner, h_muoncleaner, h_elecleaner, h_trigger, h_pv, h_nmu, h_tjlc, h_tjc, h_met, h_pt_mu, h_nele, h_twodcut, h_nbtag_medium;
+    std::unique_ptr<Hists> h_test, h_common, h_topjetcorrections, h_topjetjer_smearing, h_jetcleaner, h_muoncleaner, h_elecleaner, h_trigger, h_pv, h_nmu, h_tjlc, h_tjc, h_met, h_pt_mu, h_nele, h_twodcut, h_nbtag_medium;
 
     //declare handles
     uhh2::Event::Handle<double> h_rec_weight_kin;
@@ -159,7 +159,7 @@ namespace uhh2examples {
     // 3. Set up Hists classes:
     h_gen_pt_mu.reset(new GenHists(ctx, "gen_pt_mu"));
 
-    h_start.reset(new TopSubstructureRecoHists(ctx, "start"));
+    h_test.reset(new TopSubstructureRecoHists(ctx, "test"));
     h_common.reset(new TopSubstructureRecoHists(ctx, "common"));
     h_topjetcorrections.reset(new TopSubstructureRecoHists(ctx, "topjetcorrections"));
     h_jetcleaner.reset(new TopSubstructureRecoHists(ctx, "jetcleaner"));
@@ -222,7 +222,9 @@ namespace uhh2examples {
     passed_nbtag_medium = false;
     passed_rec          = false;  // passed full rec selection
 
-    if(!common->process(event)) return false;
+    bool common_passed = common->process(event);
+    h_test->fill(event);
+    if(!common_passed) return false;
     h_common->fill(event);
     topjetCorr->process(event);
     h_topjetcorrections->fill(event);

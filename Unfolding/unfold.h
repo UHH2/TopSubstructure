@@ -15,7 +15,7 @@
 
 class unfolding{
 public:
-  unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TUnfoldBinning* binning_gen, TUnfoldBinning* binning_rec, std::vector<TH1D*> background, std::vector<TString> background_names, int nscan = 100, TString regmode_ = "curvature", TString density_flag = "none", bool do_lcurve = true, bool subtract_background = true, double tau_value = -1);
+  unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TUnfoldBinning* binning_gen, TUnfoldBinning* binning_rec, std::vector<std::vector<TH2*>> sys_matrix, std::vector<std::vector<TString>> sys_name, std::vector<TH1D*> background, std::vector<TString> background_names, int nscan = 100, TString regmode_ = "curvature", TString density_flag = "none", bool do_lcurve = true, bool subtract_background = true, double tau_value = -1);
   // void get_output_check();
   // void get_output_check_all();
   // void get_output();
@@ -52,10 +52,16 @@ public:
   TSpline* get_rhologtau();
   double get_tau();
   std::vector<TH1D*> check_projection();
+  std::vector<std::vector<TH2*>> get_sys_covariance();
+  std::vector<std::vector<TH1*>> get_sys_delta();
+  TH2* CreateCovMatrixFromDelta(TH1*);
 
 private:
   TUnfold::ERegMode regMode;
   TUnfoldDensity::EDensityMode densityFlags;
+  std::vector<std::vector<TH1*>> sys_delta;
+  std::vector<std::vector<TH2*>> sys_covariance;
+
   TH1 *h_check;
   TH1 *h_check_all;
   TH1 *h_data_output;

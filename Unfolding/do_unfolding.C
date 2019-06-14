@@ -7,7 +7,7 @@ int main(int argc, char* argv[]){
   if(argc < 4){
     throw runtime_error("Use: ./do_unfolding <dataset> <number of scans> <value of tau>; if you don't want to use a custom value of tau, then set it to -1");
   }
-  if(argv[1] != std::string("pseudo1") && argv[1] != std::string("pseudo2") && argv[1] != std::string("pseudo3") && argv[1] != std::string("svuu") && argv[1] != std::string("svud") && argv[1] != std::string("svdu") && argv[1] != std::string("svdd")){
+  if(argv[1] != std::string("data") && argv[1] != std::string("pseudo1") && argv[1] != std::string("pseudo2") && argv[1] != std::string("pseudo3") && argv[1] != std::string("svuu") && argv[1] != std::string("svud") && argv[1] != std::string("svdu") && argv[1] != std::string("svdd")){
     throw runtime_error("use pseudo1, pseudo2, pseudo3, svuu, svud, svdu or svdd");
   }
   TH1::SetDefaultSumw2();
@@ -39,7 +39,8 @@ int main(int argc, char* argv[]){
   TFile *data_File = new TFile(dir + "Histograms.root");
 
   // fill background hists -- add further or remove unnecassary backgrounds in background_names
-  background_names = {"DYJets", "QCD", "ST", "WJets", "Diboson_WW", "Diboson_WZ", "Diboson_ZZ"};
+  // background_names = {"DYJets", "QCD", "ST", "WJets", "Diboson_WW", "Diboson_WZ", "Diboson_ZZ"};
+  background_names = {"DYJets", "ST"};
 
   // Setup everything for unfolding!
   if(dataset == std::string("pseudo1")){
@@ -327,7 +328,9 @@ int main(int argc, char* argv[]){
   // 13.   Should the background be subtracted?
   // 14.   Set a Tau value if wanted (default = -1 --> don't use a custom value)
   outputFile->cd();
-  unfolding unfold(h_data, h_mc, mat_response, h_truth, binning_gen, binning_rec, background, background_names, nscan, regmode, density_flag, do_lcurve, subtract_background, tau_value);
+  vector<vector<TH2*>> sys_matrix;
+  vector<std::vector<TString>> sys_name;
+  unfolding unfold(h_data, h_mc, mat_response, h_truth, binning_gen, binning_rec, sys_matrix, sys_name, background, background_names, nscan, regmode, density_flag, do_lcurve, subtract_background, tau_value);
 
   // unfold.get_output();
   // unfold.get_output_all();
@@ -416,7 +419,7 @@ int main(int argc, char* argv[]){
     plot->Plot_LogTau(logTau.at(1), tau, coordinates.at(1), save_LCurve_TauY);
 
 
-    unfolding unfold2(h_data, h_mc, mat_response, h_truth, binning_gen, binning_rec, background, background_names, nscan, regmode, density_flag, do_lcurve_2, subtract_background, tau_value);
+    unfolding unfold2(h_data, h_mc, mat_response, h_truth, binning_gen, binning_rec, sys_matrix, sys_name, background, background_names, nscan, regmode, density_flag, do_lcurve_2, subtract_background, tau_value);
 
     coordinates_2 = unfold2.get_coordinates();
     lcurve_2 = unfold2.get_lcurve();

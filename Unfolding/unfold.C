@@ -2,7 +2,7 @@
 
 using namespace std;
 
-unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TUnfoldBinning* binning_gen, TUnfoldBinning* binning_rec, std::vector<TH1D*> background, std::vector<TString> background_names, int nscan, TString regmode_, TString density_flag, bool do_lcurve, bool subtract_background, double tau_value){
+unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TUnfoldBinning* binning_gen, TUnfoldBinning* binning_rec, std::vector<std::vector<TH2*>> sys_matrix, std::vector<std::vector<TString>> sys_name, std::vector<TH1D*> background, std::vector<TString> background_names, int nscan, TString regmode_, TString density_flag, bool do_lcurve, bool subtract_background, double tau_value){
   response_matrix = response;
   hist_truth = h_truth;
   hist_mc = h_mc;
@@ -148,6 +148,24 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
     coords.clear();
     coords.push_back(logTauX->Eval(logTaud));
     coords.push_back(logTauY->Eval(logTaud));
+  }
+
+
+  // treat sys uncertainties
+    for(unsigned int i = 0; i < sys_name.size(); i++){
+      // vector<TH1*> dummy;
+      // sys_delta.push_back(dummy);
+      for(unsigned int j = 0; j < sys_name[i].size(); j++){
+        unfold.AddSysError(sys_matrix[i][j], sys_name[i][j], TUnfold::kHistMapOutputHoriz, TUnfoldDensity::kSysErrModeMatrix);
+        sys_delta[i].push_back(unfold.GetDeltaSysSource(sys_name[i][j], "",0,"measurement_gen","mass[C]",kTRUE));
+      }
+    }
+    for(unsigned int i=0; i<sys_delta.size(); i++){
+      // vector<TH2*> dummy2;
+      // SysCov.push_back(dummy2);
+      for(unsigned int j=0; j<sys_delta[i].size(); j++){
+        sys_covariance[i].push_back(CreateCovMatrixFromDelta(sys_delta[i][j]));
+      }
   }
   return;
 }
@@ -419,4 +437,25 @@ std::vector<TH1D*> unfolding::check_projection(){
   std::cout << "Finished. \n";
   std::cout << '\n';
   return projections;
+}
+
+vector< vector<TH2*>> unfolding::get_sys_covariance(){
+  return sys_covariance;
+}
+
+vector< vector<TH1*>> unfolding::get_sys_delta(){
+  return sys_delta;
+}
+
+TH2* unfolding::CreateCovMatrixFromDelta(TH1* delta){
+  TH2* cov = (TH2*) h_covarianceinputstat->Clone();
+  cov->Reset();
+  int nbins = delta->GetXaxis()->GetNbins();
+  for(int i=1; i<=nbins; i++){
+    for(int j=1; j<=nbins; j++){
+      double entry = delta->GetBinContent(i) * delta->GetBinContent(j);
+      cov->SetBinContent(i,j,entry);
+    }
+  }
+  return cov;
 }

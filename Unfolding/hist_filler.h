@@ -45,4 +45,4 @@ Double_t gen_weight, rec_weight;           //weights
 
 //weights
 Double_t w_gen, w_rec, w_sig_rec, w_central, w_nogen, w_norec, w_correction;
-Double_t w_gen_calc, w_rec_calc, w_sig_rec_calc, w_central_calc, w_nogen_calc, w_norec_calc, w_correction_calc;
+Double_t w_gen_scaled, w_rec_scaled, w_sig_rec_scaled, w_central_scaled, w_nogen_scaled, w_norec_scaled, w_correction_scaled;
