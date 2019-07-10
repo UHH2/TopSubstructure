@@ -93,17 +93,17 @@ void TopJetCorrections::init(Context & ctx){
   else{
     tjec_switcher_16.reset(new RunSwitcher(ctx, "2016"));
     for (const auto & runItr : runPeriods2016) { // runPeriods defined in common/include/Utils.h
-      tjec_switcher_16->setupRun(runItr, std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesDATA(tjec_tag_2016, tjec_ver_2016, tjec_tjet_coll, runItr)));
+      tjec_switcher_16->setupRun(runItr, std::make_shared<TopJetCorrector>(ctx, JERFiles::JECFilesDATA(tjec_tag_2016, tjec_ver_2016, tjec_tjet_coll, runItr)));
     }
 
     tjec_switcher_17.reset(new RunSwitcher(ctx, "2017"));
     for (const auto & runItr : runPeriods2017) {
-      tjec_switcher_17->setupRun(runItr, std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesDATA(tjec_tag_2017, tjec_ver_2017, tjec_tjet_coll, runItr)));
+      tjec_switcher_17->setupRun(runItr, std::make_shared<TopJetCorrector>(ctx, JERFiles::JECFilesDATA(tjec_tag_2017, tjec_ver_2017, tjec_tjet_coll, runItr)));
     }
 
     tjec_switcher_18.reset(new RunSwitcher(ctx, "2018"));
     for (const auto & runItr : runPeriods2018) {
-      tjec_switcher_18->setupRun(runItr, std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesDATA(tjec_tag_2018, tjec_ver_2018, tjec_tjet_coll, runItr)));
+      tjec_switcher_18->setupRun(runItr, std::make_shared<TopJetCorrector>(ctx, JERFiles::JECFilesDATA(tjec_tag_2018, tjec_ver_2018, tjec_tjet_coll, runItr)));
     }
 
     tjet_corrector_data.reset(new YearSwitcher(ctx));

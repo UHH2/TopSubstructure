@@ -5,6 +5,7 @@
 
 using namespace uhh2examples;
 using namespace uhh2;
+using namespace std;
 
 GenDPhiSelection::GenDPhiSelection(uhh2::Context& ctx, double dphi_min_, double dphi_max_): h_gentopjet_cand(ctx.get_handle<std::vector<GenTopJet>>("gentopjet_cand")), dphi_min(dphi_min_), dphi_max(dphi_max_){}
 bool GenDPhiSelection::passes(const Event & event){
@@ -24,7 +25,7 @@ bool GenDPhiSelection::passes(const Event & event){
     std::vector<GenParticle> gen;
     for(unsigned int i=0; i < event.genparticles->size(); i++){
       if (abs(event.genparticles->at(i).pdgId()) == 13) {
-	      gen.push_back(event.genparticles->at(i));
+        gen.push_back(event.genparticles->at(i));
       }
     }
     double dphi = deltaPhi(gentopjet, gen.at(0));
@@ -59,16 +60,16 @@ bool GenQuarkGenJetMatching::passes(const uhh2::Event& event){
 
         GenParticle bq, q1, q2;
         if(ttbargen.IsTopHadronicDecay()){
-      	  bq = ttbargen.bTop();
-      	  q1 = ttbargen.Wdecay1();
-      	  q2 = ttbargen.Wdecay2();
-      	  if(deltaR(bq, gentopjet_cand.at(0)) <= 0.8 && deltaR(q1, gentopjet_cand.at(0)) <= 0.8 && deltaR(q2, gentopjet_cand.at(0)) <= 0.8) pass = true;
+          bq = ttbargen.bTop();
+          q1 = ttbargen.Wdecay1();
+          q2 = ttbargen.Wdecay2();
+          if(deltaR(bq, gentopjet_cand.at(0)) <= 0.8 && deltaR(q1, gentopjet_cand.at(0)) <= 0.8 && deltaR(q2, gentopjet_cand.at(0)) <= 0.8) pass = true;
         }
         else if(ttbargen.IsAntiTopHadronicDecay()){
-      	  bq = ttbargen.bAntitop();
-      	  q1 = ttbargen.WMinusdecay1();
-      	  q2 = ttbargen.WMinusdecay2();
-	        if(deltaR(bq, gentopjet_cand.at(0)) <= 0.8 && deltaR(q1, gentopjet_cand.at(0)) <= 0.8 && deltaR(q2, gentopjet_cand.at(0)) <= 0.8) pass = true;
+          bq = ttbargen.bAntitop();
+          q1 = ttbargen.WMinusdecay1();
+          q2 = ttbargen.WMinusdecay2();
+          if(deltaR(bq, gentopjet_cand.at(0)) <= 0.8 && deltaR(q1, gentopjet_cand.at(0)) <= 0.8 && deltaR(q2, gentopjet_cand.at(0)) <= 0.8) pass = true;
         }
       }
     }
@@ -87,11 +88,13 @@ bool GenNTopJetCand::passes(const Event & event){
   return pass;
 }
 
-GenNTopJet::GenNTopJet(double n_min_, double n_max_):n_min(n_min_), n_max(n_max_){}
+GenNTopJet::GenNTopJet(uhh2::Context & ctx, double n_min_, double n_max_, string const & label_):h_gentopjet(ctx.get_handle<std::vector<GenTopJet>>(label_)), n_min(n_min_), n_max(n_max_){}
 bool GenNTopJet::passes(const Event & event){
-
   bool pass = false;
-  pass = event.gentopjets->size() >= n_min && (event.gentopjets->size() <= n_max || n_max < 0);
+  if(event.is_valid(h_gentopjet)){
+    std::vector<GenTopJet> gentopjets = event.get(h_gentopjet);
+    pass = gentopjets.size() >= n_min && (gentopjets.size() <= n_max || n_max < 0);
+  }
 
   return pass;
 }
@@ -108,70 +111,108 @@ bool TTbarSemilep::passes(const uhh2::Event& event){
   return semilep;
 }
 
-MassSelection::MassSelection(uhh2::Context& ctx, int n_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), n(n_){}
-bool MassSelection::passes(const Event & event){
+GenMassCompare::GenMassCompare(uhh2::Context& ctx, int mode_, string const & label_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), h_gentopjet(ctx.get_handle<std::vector<GenTopJet>>(label_)), mode(mode_){}
+bool GenMassCompare::passes(const Event & event){
 
   bool pass = false;
-  switch (n) {
-    case 0:
-    if(event.is_valid(h_ttbargen)){
-      if(event.gentopjets->size() > 1){
-        double mass, mass_lep;
-        sort_by_pt<GenTopJet>(*event.gentopjets);
-        mass = event.gentopjets->at(0).v4().M();
-        mass_lep = event.gentopjets->at(1).v4().M();
-        if(mass > (mass_lep)) pass = true;
-      }
-    }
-    break;
+  // 0: w/o SoftDrop; 1: w/ SoftDrop
+  if(event.is_valid(h_gentopjet)){
+    std::vector<GenTopJet> gentopjets = event.get(h_gentopjet);
 
-    case 1:
-    if(event.is_valid(h_ttbargen)){
-      const auto ttbargen = event.get(h_ttbargen);
-      if(event.gentopjets->size() > 1 && ttbargen.IsSemiLeptonicDecay()){
-        double mass;
-        sort_by_pt<GenTopJet>(*event.gentopjets);
-        mass = event.gentopjets->at(0).v4().M();
-        const auto dummy = event.gentopjets->at(1).v4() + ttbargen.ChargedLepton().v4();
-        if(mass > (dummy.M())) pass = true;
+    switch(mode){
+      case 0:
+      if(event.is_valid(h_ttbargen)){
+        const auto & ttbargen = event.get(h_ttbargen);
+        if(gentopjets.size() > 1 && ttbargen.IsSemiLeptonicDecay()){
+          double mass;
+          mass = gentopjets.at(0).v4().M();
+          const auto dummy = gentopjets.at(1).v4() + ttbargen.ChargedLepton().v4();
+          if(mass > (dummy.M())) pass = true;
+        }
       }
-    }
-    break;
+      break;
 
-    case 2:
-    if(event.is_valid(h_ttbargen)){
-      const auto ttbargen = event.get(h_ttbargen);
-      if(event.gentopjets->size() > 1 && ttbargen.IsSemiLeptonicDecay()){
-        double mass;
-        sort_by_pt<GenTopJet>(*event.gentopjets);
-        mass = event.gentopjets->at(0).v4().M();
-        const auto dummy = event.gentopjets->at(1).v4() + ttbargen.ChargedLepton().v4();
-        double diff = mass - dummy.M();
-        if(diff > -50) pass = true;
+      case 1:
+      if(event.is_valid(h_ttbargen)){
+        const auto & ttbargen = event.get(h_ttbargen);
+        if(gentopjets.size() > 1 && ttbargen.IsSemiLeptonicDecay()){
+          LorentzVector subjet_sum1;
+          for (const auto s : gentopjets.at(0).subjets()) {
+            subjet_sum1 += s.v4();
+          }
+          double mass1 = subjet_sum1.M();
+
+          LorentzVector subjet_sum2;
+          for (const auto s : gentopjets.at(1).subjets()) {
+            subjet_sum2 += s.v4();
+          }
+          subjet_sum2 += ttbargen.ChargedLepton().v4();
+          double mass2 = subjet_sum2.M();
+          if(mass1 > mass2) pass = true;
+        }
       }
+      break;
     }
-    break;
   }
   return pass;
 }
 
-PtSelection::PtSelection(double pt_jet1_min_, double pt_jet2_min_):pt_jet1_min(pt_jet1_min_), pt_jet2_min(pt_jet2_min_){}
+PtSelection::PtSelection(uhh2::Context& ctx, double pt_jet1_min_, double pt_jet2_min_, int mode_, string const & label_):h_gentopjet(ctx.get_handle<std::vector<GenTopJet>>(label_)), pt_jet1_min(pt_jet1_min_), pt_jet2_min(pt_jet2_min_), mode(mode_){}
 bool PtSelection::passes(const Event & event){
   bool pass = false;
-  if(event.gentopjets->size() >= 2){
-    pass = (event.gentopjets->at(0).pt() > pt_jet1_min || pt_jet1_min < 0) && (event.gentopjets->at(1).pt() > pt_jet2_min || pt_jet2_min < 0);
-}
+
+  if(event.is_valid(h_gentopjet)){
+    std::vector<GenTopJet> gentopjets = event.get(h_gentopjet);
+
+    switch (mode) {
+      case 0:
+      if(gentopjets.size() >= 2){
+        pass = (gentopjets.at(0).pt() > pt_jet1_min || pt_jet1_min < 0) && (gentopjets.at(1).pt() > pt_jet2_min || pt_jet2_min < 0);
+      }
+      break;
+
+      case 1:
+      if(gentopjets.size() >= 2){
+        LorentzVector subjet_sum1;
+        for (const auto s : gentopjets.at(0).subjets()) {
+          subjet_sum1 += s.v4();
+        }
+        double pt1 = subjet_sum1.pt();
+
+        LorentzVector subjet_sum2;
+        for (const auto s : gentopjets.at(1).subjets()) {
+          subjet_sum2 += s.v4();
+        }
+        double pt2 = subjet_sum2.pt();
+        pass = (pt1 > pt_jet1_min || pt_jet1_min < 0) && (pt2 > pt_jet2_min || pt_jet2_min < 0);
+      }
+      break;
+    }
+  }
   return pass;
 }
 
-dRSelection::dRSelection(uhh2::Context& ctx, double dr_min_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), dr_min(dr_min_){}
+dRSelection::dRSelection(uhh2::Context& ctx, double dr_min_, int mode_, string const & label_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), h_gentopjet(ctx.get_handle<std::vector<GenTopJet>>(label_)), dr_min(dr_min_), mode(mode_){}
 bool dRSelection::passes(const Event & event){
   bool pass = false;
-  if(event.is_valid(h_ttbargen)){
+  if(event.is_valid(h_ttbargen) && event.is_valid(h_gentopjet)){
+    std::vector<GenTopJet> gentopjets = event.get(h_gentopjet);
     const auto ttbargen = event.get(h_ttbargen);
-    if(!ttbargen.IsSemiLeptonicDecay()) return false;
-    if(event.gentopjets->size() > 1){
-      pass = deltaR(event.gentopjets->at(1), ttbargen.ChargedLepton()) < dr_min;
+    if(!ttbargen.IsSemiLeptonicDecay()) return pass;
+
+    if(gentopjets.size() <= 1) return pass;
+    switch (mode) {
+      case 0:
+      pass = deltaR(gentopjets.at(1), ttbargen.ChargedLepton()) < dr_min;
+      break;
+
+      case 1:
+      LorentzVector subjet_sum2;
+      for (const auto s : gentopjets.at(1).subjets()) {
+        subjet_sum2 += s.v4();
+      }
+      pass = deltaR(subjet_sum2, ttbargen.ChargedLepton()) < dr_min;
+      break;
     }
   }
   return pass;
@@ -182,17 +223,35 @@ bool GenMuonPtSelection::passes(const Event & event){
   bool pass = false;
   if(event.is_valid(h_ttbargen)){
     const auto ttbargen = event.get(h_ttbargen);
-    if(!ttbargen.IsSemiLeptonicDecay()) return false;
+    if(ttbargen.DecayChannel() != TTbarGen::e_muhad) return false;
     if((ttbargen.ChargedLepton().pt() < pt_max || pt_max < 0) && ttbargen.ChargedLepton().pt() > pt_min) pass = true;
   }
   return pass;
 }
 
-GenMassTopJet::GenMassTopJet(double mass_min_, double mass_max_):mass_min(mass_min_), mass_max(mass_max_){}
+GenMassTopJet::GenMassTopJet(uhh2::Context& ctx, double mass_min_, double mass_max_, int mode_, string const & label_):h_gentopjet(ctx.get_handle<std::vector<GenTopJet>>(label_)), mass_min(mass_min_), mass_max(mass_max_), mode(mode_){}
 bool GenMassTopJet::passes(const Event & event){
   bool pass = false;
-  double mass_topjet = event.gentopjets->at(0).v4().M();
-  if(mass_topjet >= mass_min && (mass_topjet < mass_max || mass_max < 0)) pass = true;
-
+  if(event.is_valid(h_gentopjet)){
+    std::vector<GenTopJet> gentopjets = event.get(h_gentopjet);
+    switch (mode) {
+      case 0:
+      if(gentopjets.size() > 0){
+        double mass_topjet = gentopjets.at(0).v4().M();
+        if(mass_topjet >= mass_min && (mass_topjet < mass_max || mass_max < 0)) pass = true;
+      }
+      break;
+      case 1:
+      if(gentopjets.size() > 0){
+        LorentzVector subjet_sum;
+        for (const auto s : gentopjets.at(0).subjets()) {
+          subjet_sum += s.v4();
+        }
+        double mass_topjet = subjet_sum.M();
+        if(mass_topjet >= mass_min && (mass_topjet < mass_max || mass_max < 0)) pass = true;
+      }
+      break;
+    }
+  }
   return pass;
 }

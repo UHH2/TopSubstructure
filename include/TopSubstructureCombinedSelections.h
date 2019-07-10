@@ -17,16 +17,17 @@
 namespace uhh2examples {
   class RecPtSelection:public uhh2::Selection{
   public:
-    explicit RecPtSelection(double pt_jet1_min = 0, double pt_jet2_min = 0);
+    explicit RecPtSelection(double pt_jet1_min = 0, double pt_jet2_min = 0, int mode = 0);
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
     double pt_jet1_min, pt_jet2_min;
+    int mode;
   };
 
-  class RecMassSelection : public uhh2::Selection{
+  class RecMassCompare : public uhh2::Selection{
   public:
-    explicit RecMassSelection(int n);
+    explicit RecMassCompare(int n);
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
@@ -35,11 +36,12 @@ namespace uhh2examples {
 
   class RecdRSelection:public uhh2::Selection{
   public:
-    explicit RecdRSelection(double dr_min = 0.8);
+    explicit RecdRSelection(double dr_min = 0.8, int mode = 0);
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
     double dr_min;
+    int mode;
   };
 
   class RecMatching : public uhh2::Selection{
@@ -53,10 +55,11 @@ namespace uhh2examples {
 
   class GenMatching : public uhh2::Selection{
   public:
-    explicit GenMatching(uhh2::Context &);
+    explicit GenMatching(uhh2::Context& ctx, std::string const & label_ = "gentopjets");
     virtual bool passes(const uhh2::Event &) override;
 
   private:
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
+    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet;
   };
 }

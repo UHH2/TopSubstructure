@@ -55,10 +55,11 @@ namespace uhh2examples {
 
   class GenNTopJet : public uhh2::Selection{
   public:
-    explicit GenNTopJet(double n_min = 0, double n_max = -1);
+    explicit GenNTopJet(uhh2::Context &, double n_min = 0, double n_max = -1, std::string const & label_ = "gentopjets");
     virtual bool passes(const uhh2::Event &) override;
 
   private:
+    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet;
     double n_min, n_max;
   };
 
@@ -72,33 +73,38 @@ namespace uhh2examples {
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
   };
 
-  class MassSelection : public uhh2::Selection{
+  class GenMassCompare : public uhh2::Selection{
   public:
-    explicit MassSelection(uhh2::Context& ctx, int n);
+    explicit GenMassCompare(uhh2::Context& ctx, int mode, std::string const & label_ = "gentopjets");
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
-    int n;
+    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet;
+    int mode;
   };
 
   class PtSelection:public uhh2::Selection{
   public:
-    explicit PtSelection(double pt_jet1_min = 0, double pt_jet2_min = 0);
+    explicit PtSelection(uhh2::Context& ctx, double pt_jet1_min = 0, double pt_jet2_min = 0, int mode = 0, std::string const & label_ = "gentopjets");
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
+    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet;
     double pt_jet1_min, pt_jet2_min;
+    int mode;
   };
 
   class dRSelection:public uhh2::Selection{
   public:
-    explicit dRSelection(uhh2::Context& ctx, double dr_min = 0.8);
+    explicit dRSelection(uhh2::Context& ctx, double dr_min = 0.8, int mode = 0, std::string const & label_ = "gentopjets");
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
+    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet;
     double dr_min;
+    int mode;
   };
 
   class GenMuonPtSelection:public uhh2::Selection{
@@ -113,10 +119,12 @@ namespace uhh2examples {
 
   class GenMassTopJet : public uhh2::Selection{
   public:
-    explicit GenMassTopJet(double mass_min = 0, double mass_max = -1);
+    explicit GenMassTopJet(uhh2::Context& ctx, double mass_min = 0, double mass_max = -1, int mode = 0, std::string const & label_ = "gentopjets");
     virtual bool passes(const uhh2::Event &) override;
   private:
+    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet;
     double mass_min, mass_max;
+    int mode;
   };
 
 }

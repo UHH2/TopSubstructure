@@ -14,106 +14,96 @@
 #include <vector>
 
 class TopJetSortDPhi: public uhh2::AnalysisModule{
- public:
+public:
   explicit TopJetSortDPhi(uhh2::Context &);
   virtual bool process(uhh2::Event &) override;
 
- private:
+private:
   uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
 
 };
 
 class TopJetSortMass: public uhh2::AnalysisModule{
- public:
+public:
   explicit TopJetSortMass(uhh2::Context &);
   virtual bool process(uhh2::Event &) override;
 
- private:
+private:
   uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
 
 };
 
 class RecTopJetLeptonCleaner: public uhh2::AnalysisModule{
- public:
+public:
   explicit RecTopJetLeptonCleaner();
   virtual bool process(uhh2::Event &) override;
 };
 
-class GenParticleRemover : public uhh2::AnalysisModule {
-  public:
+class ParticleRemover : public uhh2::AnalysisModule {
+public:
 
-    explicit GenParticleRemover(uhh2::Context & ctx, std::string const & label_ = "genparticles");
-    virtual bool process(uhh2::Event & event) override;
+  explicit ParticleRemover(bool isMC);
+  virtual bool process(uhh2::Event & event) override;
 
-  private:
-    uhh2::Event::Handle<std::vector<GenParticle>> hndl;
-    uhh2::Event::Handle<TTbarGen> h_ttbargen;
-};
-
-class PFParticleRemover : public uhh2::AnalysisModule {
-  public:
-
-    explicit PFParticleRemover(uhh2::Context & ctx, std::string const & label_ = "pfparticles");
-    virtual bool process(uhh2::Event & event) override;
-
-  private:
-    uhh2::Event::Handle<std::vector<PFParticle>> hndl;
+private:
+  bool isMC;
 };
 
 class GenTopJetLeptonCleaner: public uhh2::AnalysisModule{
- public:
-  explicit GenTopJetLeptonCleaner(uhh2::Context &);
+public:
+  explicit GenTopJetLeptonCleaner(uhh2::Context &, std::string const & label_ = "gentopjets");
   virtual bool process(uhh2::Event &) override;
 
- private:
+private:
+  uhh2::Event::Handle<std::vector<GenTopJet>> hndl;
   uhh2::Event::Handle<TTbarGen> h_ttbargen;
 };
 
 class GenTopJetCleaner : public uhh2::AnalysisModule {
 public:
 
-    explicit GenTopJetCleaner(uhh2::Context & ctx, std::string const & label_ = "gentopjets", double pt_min = 170., double eta_max = 2.5);
-    virtual bool process(uhh2::Event & event) override;
+  explicit GenTopJetCleaner(uhh2::Context & ctx, std::string const & label_ = "gentopjets", double pt_min = 170., double eta_max = 2.5);
+  virtual bool process(uhh2::Event & event) override;
 
 private:
-    uhh2::Event::Handle<std::vector<GenTopJet>> hndl;
-    double pt_min, eta_max;
+  uhh2::Event::Handle<std::vector<GenTopJet>> hndl;
+  double pt_min, eta_max;
 };
 
 class GenTopJetSortDPhi: public uhh2::AnalysisModule{
- public:
+public:
   explicit GenTopJetSortDPhi(uhh2::Context &);
   virtual bool process(uhh2::Event &) override;
 
- private:
+private:
   uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
 
 };
 
 class GenTopJetSortMass: public uhh2::AnalysisModule{
- public:
+public:
   explicit GenTopJetSortMass(uhh2::Context &);
   virtual bool process(uhh2::Event &) override;
 
- private:
+private:
   uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
 };
 
 class GenTopJetSortPt: public uhh2::AnalysisModule{
- public:
+public:
   explicit GenTopJetSortPt(uhh2::Context &);
   virtual bool process(uhh2::Event &) override;
 
- private:
+private:
   uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
 };
 
 class GenTopJetSortDPhiMass: public uhh2::AnalysisModule{
- public:
+public:
   explicit GenTopJetSortDPhiMass(uhh2::Context &, double dphi_max = -1);
   virtual bool process(uhh2::Event &) override;
 
- private:
+private:
   uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_lep_cand;
   uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
   uhh2::Event::Handle<TTbarGen> h_ttbargen;
@@ -121,11 +111,11 @@ class GenTopJetSortDPhiMass: public uhh2::AnalysisModule{
 };
 
 class GenTopJetSortDPhiPt: public uhh2::AnalysisModule{
- public:
+public:
   explicit GenTopJetSortDPhiPt(uhh2::Context &, double dphi_max = -1);
   virtual bool process(uhh2::Event &) override;
 
- private:
+private:
   uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_lep_cand;
   uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet_cand;
   uhh2::Event::Handle<TTbarGen> h_ttbargen;

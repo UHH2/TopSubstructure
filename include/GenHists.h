@@ -17,15 +17,16 @@
 namespace uhh2examples {
   class GenHists: public uhh2::Hists {
   public:
-    GenHists(uhh2::Context & ctx, const std::string & dirname);
+    GenHists(uhh2::Context & ctx, const std::string & dirname, std::string const & label = "gentopjets");
 
     virtual void fill(const uhh2::Event & ev) override;
 
   protected:
+    uhh2::Event::Handle<std::vector<GenTopJet>> hndl;
     TH2* TwoDCut;
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
     uhh2::Event::Handle<double> h_weight, h_weight_kin;
-    uhh2::Event::Handle<double> h_tau3, h_tau2;
+    uhh2::Event::Handle<double> h_tau2_start, h_tau2_lepcleaner, h_tau2_cleaner, h_tau3_start, h_tau3_lepcleaner, h_tau3_cleaner;
   };
 
 }

@@ -19,8 +19,8 @@ bool TopJetSortDPhi::process(uhh2::Event& event){
     for(unsigned int i=0; i < candidates.size(); i++){
       double res = fabs(M_PI - deltaPhi(candidates.at(i), event.muons->at(0)));
       if(res<diff){
-      	diff = res;
-      	pos = i;
+        diff = res;
+        pos = i;
       }
     }
     if(pos >= 0) std::swap(candidates.at(0), candidates.at(pos));
@@ -91,70 +91,60 @@ int NumberJets(uhh2::Event& event){
 */
 
 
-GenParticleRemover::GenParticleRemover(Context & ctx, string const & label_):hndl(ctx.get_handle<vector<GenParticle>>(label_)){}
-bool GenParticleRemover::process(uhh2::Event & event){
-    if (!event.is_valid(hndl)) {
-        cerr << "In GenParticleRemover: Handle not valid!\n";
-        assert(false);
-    }
-    if(event.genparticles->size() > 0){
-      vector<GenParticle> genparticle_new;
-
-      event.set(hndl, genparticle_new);
-    }
-    return true;
-}
-
-PFParticleRemover::PFParticleRemover(Context & ctx, string const & label_):hndl(ctx.get_handle<vector<PFParticle>>(label_)){}
-bool PFParticleRemover::process(uhh2::Event & event){
-    if (!event.is_valid(hndl)) {
-        cerr << "In PFParticleRemover: Handle not valid!\n";
-        assert(false);
-    }
-    if(event.pfparticles->size() > 0){
-      vector<PFParticle> pfparticle_new;
-
-      event.set(hndl, pfparticle_new);
-    }
-    return true;
+ParticleRemover::ParticleRemover(bool isMC_): isMC(isMC_){}
+bool ParticleRemover::process(uhh2::Event & event){
+  vector<PFParticle> pf_particle_new;
+  std::swap(*event.pfparticles, pf_particle_new);
+  if(isMC){
+    vector<GenParticle> genparticle_new;
+    std::swap(*event.genparticles, genparticle_new);
+  }
+  return true;
 }
 
 
-
-GenTopJetLeptonCleaner::GenTopJetLeptonCleaner(uhh2::Context & ctx): h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
+GenTopJetLeptonCleaner::GenTopJetLeptonCleaner(uhh2::Context & ctx, string const & label_):hndl(ctx.get_handle<vector<GenTopJet>>(label_)), h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
 bool GenTopJetLeptonCleaner::process(uhh2::Event& event){
 
-  if(event.is_valid(h_ttbargen) && event.gentopjets->size() > 0){
+  if (!event.is_valid(hndl)) {
+    cerr << "In GenTopJetLeptonCleaner: Handle not valid!\n";
+    assert(false);
+  }
+
+  vector<GenTopJet> & gentopjet = event.get(hndl);
+
+  if(event.is_valid(h_ttbargen) && gentopjet.size() > 0){
     const auto & ttbargen = event.get(h_ttbargen);
-    for (unsigned int j = 0; j < event.gentopjets->size(); j++) {
-      if (deltaR(ttbargen.ChargedLepton(), event.gentopjets->at(j)) < 0.8) {
-        event.gentopjets->at(j).set_v4(event.gentopjets->at(j).v4() - ttbargen.ChargedLepton().v4());
+    for (unsigned int j = 0; j < gentopjet.size(); j++) {
+      if (deltaR(ttbargen.ChargedLepton(), gentopjet.at(j)) < 0.8) {
+        gentopjet.at(j).set_v4(gentopjet.at(j).v4() - ttbargen.ChargedLepton().v4());
       }
     }
   }
-  sort_by_pt<GenTopJet> (*event.gentopjets);
+
+  sort_by_pt<GenTopJet> (gentopjet);
   return true;
 }
 
 GenTopJetCleaner::GenTopJetCleaner(Context & ctx, string const & label_, double pt_min_, double eta_max_):hndl(ctx.get_handle<vector<GenTopJet>>(label_)), pt_min(pt_min_), eta_max(eta_max_){}
 bool GenTopJetCleaner::process(uhh2::Event & event){
-    if (!event.is_valid(hndl)) {
-        cerr << "In GenTopJetCleaner: Handle not valid!\n";
-        assert(false);
-    }
-    if(event.gentopjets->size() > 0){
-      vector<GenTopJet> & gentopjet_old = event.get(hndl);
-      vector<GenTopJet> gentopjet_new;
+  if (!event.is_valid(hndl)) {
+    cerr << "In GenTopJetCleaner: Handle not valid!\n";
+    assert(false);
+  }
+  // if(event.gentopjets->size() > 0){
+  vector<GenTopJet> & gentopjet_old = event.get(hndl);
+  vector<GenTopJet> gentopjet_new;
 
-      for (unsigned int i = 0; i < gentopjet_old.size(); i++) {
-        if((gentopjet_old.at(i).pt() > pt_min) && (gentopjet_old.at(i).eta() < eta_max)){
-          gentopjet_new.push_back(gentopjet_old.at(i));
-        }
-      }
-
-      event.set(hndl, gentopjet_new);
+  for (unsigned int i = 0; i < gentopjet_old.size(); i++) {
+    if((gentopjet_old.at(i).pt() > pt_min) && (gentopjet_old.at(i).eta() < eta_max)){
+      gentopjet_new.push_back(gentopjet_old.at(i));
     }
-    return true;
+  }
+
+  event.set(hndl, gentopjet_new);
+  // }
+  return true;
 }
 
 GenTopJetSortDPhi::GenTopJetSortDPhi(uhh2::Context & ctx):h_gentopjet_cand(ctx.declare_event_output<std::vector<GenTopJet>>("gentopjet_cand")){}
@@ -173,8 +163,8 @@ bool GenTopJetSortDPhi::process(uhh2::Event& event){
     for(unsigned int i=0; i < candidates.size(); i++){
       double res = fabs(M_PI - deltaPhi(candidates.at(i), event.muons->at(0)));
       if(res<diff){
-	      diff = res;
-	      pos = i;
+        diff = res;
+        pos = i;
       }
     }
     if(pos >= 0) std::swap(candidates.at(0), candidates.at(pos));
@@ -235,22 +225,22 @@ bool GenTopJetSortDPhiMass::process(uhh2::Event& event){
 
     if(event.gentopjets->size() > 0){
       for(unsigned int i=0; i<event.gentopjets->size(); i++){
-      	if(event.gentopjets->at(i).pt() > 400 && (deltaPhi(event.gentopjets->at(i), ttbargen.ChargedLepton()) > dphi_max || dphi_max < 0)){
+        if(event.gentopjets->at(i).pt() > 400 && (deltaPhi(event.gentopjets->at(i), ttbargen.ChargedLepton()) > dphi_max || dphi_max < 0)){
           candidates.push_back(event.gentopjets->at(i));
         }
-      	else if(event.gentopjets->at(i).pt() > 200 && deltaPhi(event.gentopjets->at(i), ttbargen.ChargedLepton()) < dphi_max){
+        else if(event.gentopjets->at(i).pt() > 200 && deltaPhi(event.gentopjets->at(i), ttbargen.ChargedLepton()) < dphi_max){
           candidates_lep.push_back(event.gentopjets->at(i));
         }
       }
       for(unsigned int i=1; i < candidates.size(); i++){
-      	if(candidates.at(0).v4().M() < candidates.at(i).v4().M()){
-      	  std::swap(candidates.at(0), candidates.at(i));
-      	}
+        if(candidates.at(0).v4().M() < candidates.at(i).v4().M()){
+          std::swap(candidates.at(0), candidates.at(i));
+        }
       }
       for(unsigned int i=1; i < candidates_lep.size(); i++){
-      	if(candidates_lep.at(0).v4().M() < candidates_lep.at(i).v4().M()){
-      	  std::swap(candidates_lep.at(0), candidates_lep.at(i));
-      	}
+        if(candidates_lep.at(0).v4().M() < candidates_lep.at(i).v4().M()){
+          std::swap(candidates_lep.at(0), candidates_lep.at(i));
+        }
       }
     }
   }

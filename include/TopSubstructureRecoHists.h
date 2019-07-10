@@ -17,14 +17,16 @@
 namespace uhh2examples {
   class TopSubstructureRecoHists: public uhh2::Hists {
   public:
-    TopSubstructureRecoHists(uhh2::Context & ctx, const std::string & dirname);
+    TopSubstructureRecoHists(uhh2::Context & ctx, const std::string & dirname, std::string const & label = "topjets");
 
     virtual void fill(const uhh2::Event & ev) override;
 
   protected:
+    uhh2::Event::Handle<std::vector<TopJet>> hndl;
     TH2* TwoDCut;
     uhh2::Event::Handle<double> h_weight, h_weight_kin;
-    uhh2::Event::Handle<double> h_tau3_before, h_tau2_before, h_tau3_after, h_tau2_after;
+    uhh2::Event::Handle<double> h_tau2_start, h_tau2_common, h_tau2_corrector, h_tau2_lepcleaner, h_tau2_cleaner;
+    uhh2::Event::Handle<double> h_tau3_start, h_tau3_common, h_tau3_corrector, h_tau3_lepcleaner, h_tau3_cleaner;
     bool isTTbar;
   };
 

@@ -23,13 +23,19 @@ using namespace std;
 using namespace fastjet;
 using namespace contrib;
 
-class calc_Nsubjettiness{
+class Calculator{
  public:
-  // explicit calc_Nsubjettiness();
+  explicit Calculator(uhh2::Context &, std::string const & label_);
+
   double PF_tau1(uhh2::Event & event);
   double PF_tau2(uhh2::Event & event);
   double PF_tau3(uhh2::Event & event);
   double Gen_tau1(uhh2::Event & event);
   double Gen_tau2(uhh2::Event & event);
   double Gen_tau3(uhh2::Event & event);
+
+private:
+  uhh2::Event::Handle<std::vector<GenTopJet>> hndl_gen;
+  uhh2::Event::Handle<std::vector<TopJet>> hndl;
+  string label;
 };

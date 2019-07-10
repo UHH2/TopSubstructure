@@ -95,11 +95,12 @@ namespace uhh2examples {
     double n_min, n_max;
   };
 
-  class MassTopJet : public uhh2::Selection{
+  class MassTopJetSelection : public uhh2::Selection{
   public:
-    explicit MassTopJet(double mass_min = 0, double mass_max = -1);
+    explicit MassTopJetSelection(int n, double mass_min = 0, double mass_max = -1);
     virtual bool passes(const uhh2::Event &) override;
   private:
+    int n;
     double mass_min, mass_max;
   };
 }

@@ -60,6 +60,7 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
   TString unfolding_covinput = "Covariance of mc ";
   TString unfolding_covmatrix = "Covariance of matrix ";
   TString unfolding_covtotal = "Covariance of total ";
+
   if(tau_value < 0){
     if(do_lcurve){
       unfolding_input += "LCurve";
@@ -89,14 +90,20 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
     unfolding_covmatrix += "CustomTau";
     unfolding_covtotal += "CustomTau";
   }
+
   l_curve = 0;
   l_curve_check = 0;
   logTauX = 0;
   logTauY = 0;
+
   if(tau_value < 0){
     if(do_lcurve){
       unfold.ScanLcurve(nscan, 0.000001, 0.9, &l_curve, &logTauX, &logTauY);
       unfold_check.ScanLcurve(1, 0.000001, 0.9, &l_curve_check);
+      logTauX->SetName("Spline logTauX LCurve");
+      logTauY->SetName("Spline logTauY LCurve");
+      l_curve->SetName("LCurve of LCurve");
+      l_curve_check->SetName("LCurve Check of LCurve");
     }
     else{
       rhoLogTau = 0;
@@ -112,6 +119,11 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
       // TUnfoldDensity::EScanTauMode scanMode = TUnfoldDensity::kEScanTauRhoSquareAvgSys;
       unfold.ScanTau(nscan, 0.000000000000000001, 0.9, &rhoLogTau, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &l_curve, &logTauX, &logTauY);
       unfold_check.ScanTau(1, 0.000000000000000001, 0.9, &rhoLogTau_check, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING);
+      logTauX->SetName("Spline logTauX TauScan");
+      logTauY->SetName("Spline logTauY TauScan");
+      l_curve->SetName("LCurve of TauScan");
+      rhoLogTau->SetName("RhoLogTau TauScan");
+      rhoLogTau_check->SetName("RhoLogTau Check TauScan");
     }
   }
   else{
@@ -126,275 +138,217 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
   h_check_all       = unfold_check.GetOutput(unfolding_check+"_all", 0, 0,0,kFALSE);
 
   // Statistical uncertainties of input distribution
-  h_covarianceinputstat = unfold.GetEmatrixInput(unfolding_covinput, 0, "measurement_gen", "mass[C]", kTRUE);
+  h_covarianceinputstat     = unfold.GetEmatrixInput(unfolding_covinput, 0, "measurement_gen", "mass[C]", kTRUE);
   h_covarianceinputstat_all = unfold.GetEmatrixInput(unfolding_covinput+"_all", 0, 0,0,kFALSE);
+
   // Statistical uncertainties of matrix
-  h_covartiancematrixstat = unfold.GetEmatrixSysUncorr(unfolding_covmatrix, 0, "measurement_gen", "mass[C]", kTRUE);
+  h_covartiancematrixstat     = unfold.GetEmatrixSysUncorr(unfolding_covmatrix, 0, "measurement_gen", "mass[C]", kTRUE);
   h_covartiancematrixstat_all = unfold.GetEmatrixSysUncorr(unfolding_covmatrix+"_all", 0, 0,0,kFALSE);
 
-  h_covariancetotal = unfold.GetEmatrixTotal(unfolding_covtotal, 0, "measurement_gen", "mass[C]", kTRUE);
-  h_covariancetotal_all = unfold.GetEmatrixTotal(unfolding_covtotal+"_all", 0, 0,0,kFALSE);
+  h_covariancetotal     = unfold.GetEmatrixTotal(unfolding_covtotal, 0, "measurement_gen", "mass[C]", kTRUE);
+  h_covariancetotal_all = unfold.GetEmatrixTotal(unfolding_covtotal+"_all", 0, 0, 0, kFALSE);
 
   if(tau_value < 0){
-    logTau.clear();
-    logTauX->SetTitle("test1");
-    logTauY->SetTitle("test2");
+    // logTau.clear();
     logTau.push_back(logTauX);
     logTau.push_back(logTauY);
 
-    tau = unfold.GetTau();
-    double logTaud = TMath::Log10(tau);
+    tau_result = unfold.GetTau();
+
+    tau.SetUniqueID(tau_result);
+    if(do_lcurve) tau.SetName("Tauvalue of LCurve");
+    else          tau.SetName("Tauvalue of TauScan");
+
+    double logTaud = TMath::Log10(tau_result);
     cout << "logtau = " << logTaud << '\n';
-    coords.clear();
-    coords.push_back(logTauX->Eval(logTaud));
-    coords.push_back(logTauY->Eval(logTaud));
+
+    x_value.SetUniqueID(logTauX->Eval(logTaud));
+    y_value.SetUniqueID(logTauY->Eval(logTaud));
+    if(do_lcurve){
+      x_value.SetName("Coordinate X LCurve");
+      y_value.SetName("Coordinate Y LCurve");
+    }
+    else{
+      x_value.SetName("Coordinate X TauScan");
+      y_value.SetName("Coordinate Y TauScan");
+    }
   }
 
 
-  // treat sys uncertainties
-    for(unsigned int i = 0; i < sys_name.size(); i++){
-      // vector<TH1*> dummy;
-      // sys_delta.push_back(dummy);
-      for(unsigned int j = 0; j < sys_name[i].size(); j++){
-        unfold.AddSysError(sys_matrix[i][j], sys_name[i][j], TUnfold::kHistMapOutputHoriz, TUnfoldDensity::kSysErrModeMatrix);
-        sys_delta[i].push_back(unfold.GetDeltaSysSource(sys_name[i][j], "",0,"measurement_gen","mass[C]",kTRUE));
+  if(subtract_background){
+    for(unsigned int i=0; i<background_names.size(); i++){
+      // Statistical uncertainties from Background
+      CovBgrStat.push_back(unfold.GetEmatrixSysBackgroundUncorr(background_names.at(i), "", 0, "measurement_gen", "mass[C]", kTRUE));
+      if(do_lcurve){
+        TString temp_name = "Covariance of " + background_names.at(i) + " LCurve";
+        CovBgrStat[i]->SetName(temp_name);
+      }
+      else{
+        TString temp_name = "Covariance of " + background_names.at(i) + " TauScan";
+        CovBgrStat[i]->SetName(temp_name);
+      }
+      // Sys uncertainties from background scale (delta)
+      BgrDelta.push_back(unfold.GetDeltaSysBackgroundScale(background_names.at(i), "", 0, "measurement_gen", "mass[C]",kTRUE));
+      if(do_lcurve){
+        TString temp_name = "Delta of " + background_names.at(i) + " LCurve";
+        BgrDelta[i]->SetName(temp_name);
+      }
+      else{
+        TString temp_name = "Delta of " + background_names.at(i) + " TauScan";
+        BgrDelta[i]->SetName(temp_name);
       }
     }
-    for(unsigned int i=0; i<sys_delta.size(); i++){
-      // vector<TH2*> dummy2;
-      // SysCov.push_back(dummy2);
-      for(unsigned int j=0; j<sys_delta[i].size(); j++){
-        sys_covariance[i].push_back(CreateCovMatrixFromDelta(sys_delta[i][j]));
+    for(unsigned int i=0; i<BgrDelta.size(); i++){
+      // Sys uncertainties from background scale (cov matrix)
+      CovBgrScale.push_back(CreateCovMatrixFromDelta(BgrDelta[i]));
+      if(do_lcurve){
+        TString temp_name = "Scale of " + background_names.at(i) + " LCurve";
+        CovBgrScale[i]->SetName(temp_name);
       }
+      else{
+        TString temp_name = "Scale of " + background_names.at(i) + " TauScan";
+        CovBgrScale[i]->SetName(temp_name);
+      }
+    }
   }
+
+  // treat sys uncertainties
+  for(unsigned int i = 0; i < sys_name.size(); i++){
+    vector<TH1*> dummy;
+    sys_delta.push_back(dummy);
+    for(unsigned int j = 0; j < sys_name[i].size(); j++){
+      unfold.AddSysError(sys_matrix[i][j], sys_name[i][j], TUnfold::kHistMapOutputHoriz, TUnfoldDensity::kSysErrModeMatrix);
+      sys_delta[i].push_back(unfold.GetDeltaSysSource(sys_name[i][j], "",0,"measurement_gen","mass[C]",kTRUE));
+      if(do_lcurve){
+        TString temp_name = "Delta of " + sys_name[i][j] + " LCurve";
+        sys_delta[i][j]->SetName(temp_name);
+      }
+      else{
+        TString temp_name = "Delta of " + sys_name[i][j] + " TauScan";
+        sys_delta[i][j]->SetName(temp_name);
+      }
+    }
+  }
+  for(unsigned int i=0; i<sys_delta.size(); i++){
+    vector<TH2*> dummy2;
+    sys_covariance.push_back(dummy2);
+    for(unsigned int j=0; j<sys_delta[i].size(); j++){
+      sys_covariance[i].push_back(CreateCovMatrixFromDelta(sys_delta[i][j]));
+      TString temp_name = "Covariance of "+ sys_name[i][j] + "TauScan";
+      sys_covariance[i][j]->SetName(temp_name);
+    }
+  }
+
   return;
 }
 
-// void unfolding::get_output_check(){
-//   h_check->Write();
-//   // h_check = NULL;
-//   return ;
-// }
-//
-// void unfolding::get_output_check_all(){
-//   h_check_all->Write();
-//   // h_check_all = NULL;
-//   return ;
-// }
-//
-// void unfolding::get_output(){
-//   h_data_output->Write();
-//   // h_data_output = NULL;
-//   return ;
-// }
-//
-// void unfolding::get_output_all(){
-//   h_data_output_all->Write();
-//   // h_data_output_all = NULL;
-//   return ;
-// }
-//
-// void unfolding::get_input_statcov(){
-//   h_covarianceinputstat->Write();
-//   // h_covarianceinputstat = NULL;
-//   return ;
-// }
-//
-// void unfolding::get_input_statcov_all(){
-//   h_covarianceinputstat_all->Write();
-//   // h_covarianceinputstat_all = NULL;
-//   return ;
-// }
-//
-// void unfolding::get_matrix_statcov(){
-//   h_covartiancematrixstat->Write();
-//   // h_covartiancematrixstat = NULL;
-//   return ;
-// }
-//
-// void unfolding::get_matrix_statcov_all(){
-//   h_covartiancematrixstat_all->Write();
-//   // h_covartiancematrixstat_all = NULL;
-//   return ;
-// }
-//
-// void unfolding::get_total_statcov(){
-//   h_covariancetotal->Write();
-//   // h_covariancetotal = NULL;
-//   return ;
-// }
-//
-// void unfolding::get_total_statcov_all(){
-//   h_covariancetotal_all->Write();
-//   // h_covariancetotal_all = NULL;
-//   return ;
-// }
-//
-// void unfolding::get_lcurve(){
-//   l_curve->Write();
-//   // l_curve = NULL;
-//   return ;
-// }
-//
-// void unfolding::get_coordinates(){
-//   TObject integer, integer2;
-//   integer.SetUniqueID(coords.at(0));
-//   integer2.SetUniqueID(coords.at(1));
-//   integer.Write("coord1");
-//   integer2.Write("coord1");
-//   coords.clear();
-//   return ;
-// }
-//
-// void unfolding::get_logtau(){
-//   logTau.at(0)->Write(logTau.at(0)->GetTitle());
-//   logTau.at(1)->Write(logTau.at(1)->GetTitle());
-//   logTau.clear();
-//   return ;
-// }
-//
-// void unfolding::get_tau(){
-//   TObject integer;
-//   integer.SetUniqueID(tau);
-//   integer.Write("tau");
-//   return ;
-// }
-//
-// void unfolding::get_rhologtau(){
-//   rhoLogTau->Write(rhoLogTau->GetTitle());
-//   // rhoLogTau = NULL;
-//   return ;
-// }
-//
-// void unfolding::get_correlation(){
-//   h_data_rho->Write();
-//   // h_data_rho = NULL;
-//   return ;
-// }
-//
-// void unfolding::get_correlation_all(){
-//   h_data_rho_all->Write();
-//   // h_data_rho_all = NULL;
-//   return ;
-// }
-//
-// void unfolding::check_projection(){
-//
-//   std::cout << "starting to check projections \n";
-//
-//   // TH1D* hist_data_rec = (TH1D*)hist_truth->Clone("hist_data_rec");
-//   // TRandom3 rnd;
-//   // for(int iRec=1; iRec <= hist_data_rec->GetSize(); iRec++) {
-//   //   double c0 = hist_data_rec->GetBinContent(iRec);
-//   //   double e0 = hist_data_rec->GetBinError(iRec);
-//   //   double n0 = c0*c0/(e0*e0);
-//   //   double a = e0*e0/c0;
-//   //   double ni = rnd.Poisson(n0);
-//   //   double ci = a*ni;
-//   //   double ei = a*TMath::Sqrt(ni);
-//   //   hist_data_rec->SetBinContent(iRec, ci);
-//   //   hist_data_rec->SetBinError(iRec, ei);
-//   // }
-//   TString title_proj_y = "Projection of rec distribution ";
-//   TString title_proj_x = "Projection of gen distribution ";
-//   title_proj_y += response_matrix->GetTitle();
-//   title_proj_x += response_matrix->GetTitle();
-//
-//   TH1D* projection_y = new TH1D(title_proj_y, "", response_matrix->GetNbinsY(), 0.5, response_matrix->GetNbinsY()+0.5);
-//   TH1D* projection_x = new TH1D(title_proj_x, "", response_matrix->GetNbinsX(), 0.5, response_matrix->GetNbinsX()+0.5);
-//
-//   for(int i = 0; i <= response_matrix->GetNbinsY() + 1; i++){
-//     double content_y = 0;
-//     for(int j = 0; j <= response_matrix->GetNbinsX() + 1; j++){
-//       content_y += response_matrix->GetBinContent(j, i);
-//     }
-//     projection_y->SetBinContent(i, content_y);
-//   }
-//   for(int i = 0; i <= response_matrix->GetNbinsX() + 1; i++){
-//     double content_x = 0;
-//     for(int j = 0; j <= response_matrix->GetNbinsY() + 1; j++){
-//       content_x += response_matrix->GetBinContent(i, j);
-//     }
-//     projection_x->SetBinContent(i, content_x);
-//   }
-//   projection_x->Write();
-//   projection_y->Write();
-//   // delete projection_x;
-//   // delete projection_y;
-//   std::cout << "Finished. \n";
-//   std::cout << '\n';
-//   return ;
-// }
-TH1* unfolding::get_output_check(){
-  return h_check;
+void unfolding::get_output_check(){
+  h_check->Write();
+  h_check->Clear();
+  return ;
 }
 
-TH1* unfolding::get_output_check_all(){
-  return h_check_all;
+void unfolding::get_output_check_all(){
+  h_check_all->Write();
+  h_check_all->Clear();
+  return ;
 }
 
-TH1* unfolding::get_output(){
-  return h_data_output;
+void unfolding::get_output(){
+  h_data_output->Write();
+  h_data_output->Clear();
+  return ;
 }
 
-TH1* unfolding::get_output_all(){
-  return h_data_output_all;
+void unfolding::get_output_all(){
+  h_data_output_all->Write();
+  h_data_output_all->Clear();
+  return ;
 }
 
-TH2* unfolding::get_input_statcov(){
-  return h_covarianceinputstat;
+void unfolding::get_input_statcov(){
+  h_covarianceinputstat->Write();
+  h_covarianceinputstat->Clear();
+  return ;
 }
 
-TH2* unfolding::get_input_statcov_all(){
-  return h_covarianceinputstat_all;
+void unfolding::get_input_statcov_all(){
+  h_covarianceinputstat_all->Write();
+  h_covarianceinputstat_all->Clear();
+  return ;
 }
 
-TH2* unfolding::get_matrix_statcov(){
-  return h_covartiancematrixstat;
+void unfolding::get_matrix_statcov(){
+  h_covartiancematrixstat->Write();
+  h_covartiancematrixstat->Clear();
+  return ;
 }
 
-TH2* unfolding::get_matrix_statcov_all(){
-  return h_covartiancematrixstat_all;
+void unfolding::get_matrix_statcov_all(){
+  h_covartiancematrixstat_all->Write();
+  h_covartiancematrixstat_all->Clear();
+  return ;
 }
 
-TH2* unfolding::get_total_statcov(){
-  return h_covariancetotal;
+void unfolding::get_total_statcov(){
+  h_covariancetotal->Write();
+  h_covariancetotal->Clear();
+  return ;
 }
 
-TH2* unfolding::get_total_statcov_all(){
-  return h_covariancetotal_all;
+void unfolding::get_total_statcov_all(){
+  h_covariancetotal_all->Write();
+  h_covariancetotal_all->Clear();
+  return ;
 }
 
-TGraph* unfolding::get_lcurve(){
-  return l_curve;
+void unfolding::get_lcurve(){
+  l_curve->Write();
+  l_curve->Clear();
+  return ;
 }
 
-std::vector<double> unfolding::get_coordinates(){
-  return coords;
+void unfolding::get_coordinates(){
+  x_value.Write();
+  y_value.Write();
+  x_value.Clear();
+  y_value.Clear();
+  return ;
 }
 
-std::vector<TSpline*> unfolding::get_logtau(){
-  return logTau;
+void unfolding::get_logtau(){
+  logTau.at(0)->Write();
+  logTau.at(1)->Write();
+  logTau.clear();
+  return ;
 }
 
-double unfolding::get_tau(){
-  return tau;
+void unfolding::get_tau(){
+  tau.Write();
+  tau.Clear();
+  return ;
 }
 
-TSpline* unfolding::get_rhologtau(){
-  return rhoLogTau;
+void unfolding::get_rhologtau(){
+  rhoLogTau->Write();
+  rhoLogTau->Clear();
+  return ;
 }
 
-TH2* unfolding::get_correlation(){
-  return h_data_rho;
+void unfolding::get_correlation(){
+  h_data_rho->Write();
+  h_data_rho->Clear();
+  return ;
 }
 
-TH2* unfolding::get_correlation_all(){
-  return h_data_rho_all;
+void unfolding::get_correlation_all(){
+  h_data_rho_all->Write();
+  h_data_rho_all->Clear();
+  return ;
 }
 
+void unfolding::check_projection(){
 
-std::vector<TH1D*> unfolding::check_projection(){
   std::cout << "starting to check projections \n";
 
   // TH1D* hist_data_rec = (TH1D*)hist_truth->Clone("hist_data_rec");
@@ -432,29 +386,67 @@ std::vector<TH1D*> unfolding::check_projection(){
     }
     projection_x->SetBinContent(i, content_x);
   }
-
-  vector<TH1D*> projections = {projection_x, projection_y};
+  projection_x->Write();
+  projection_y->Write();
+  projection_x->Clear();
+  projection_y->Clear();
   std::cout << "Finished. \n";
   std::cout << '\n';
-  return projections;
+  return ;
 }
 
-vector< vector<TH2*>> unfolding::get_sys_covariance(){
-  return sys_covariance;
+void unfolding::get_sys_covariance(){
+  for(unsigned int i = 0; i < sys_covariance.size(); i++){
+    for(unsigned int j = 0; j < sys_covariance[i].size(); j++){
+      sys_covariance[i][j]->Write();
+      sys_covariance[i][j]->Clear();
+    }
+  }
+  return ;
 }
 
-vector< vector<TH1*>> unfolding::get_sys_delta(){
-  return sys_delta;
+void unfolding::get_sys_delta(){
+  for(unsigned int i = 0; i < sys_delta.size(); i++){
+    for(unsigned int j = 0; j < sys_delta[i].size(); j++){
+      sys_delta[i][j]->Write();
+      sys_delta[i][j]->Clear();
+    }
+  }
+  return ;
+}
+
+void unfolding::GetBgrStatCov(){
+  for(unsigned int i = 0; i < CovBgrStat.size(); i++){
+    CovBgrStat[i]->Write();
+    CovBgrStat[i]->Clear();
+  }
+  return ;
+}
+
+void unfolding::GetBgrScaleCov(){
+  for(unsigned int i = 0; i < CovBgrScale.size(); i++){
+    CovBgrScale[i]->Write();
+    CovBgrScale[i]->Clear();
+  }
+  return ;
+}
+
+void unfolding::get_bgr_delta(){
+  for(unsigned int i = 0; i < BgrDelta.size(); i++){
+    BgrDelta[i]->Write();
+    BgrDelta[i]->Clear();
+  }
+  return ;
 }
 
 TH2* unfolding::CreateCovMatrixFromDelta(TH1* delta){
   TH2* cov = (TH2*) h_covarianceinputstat->Clone();
   cov->Reset();
   int nbins = delta->GetXaxis()->GetNbins();
-  for(int i=1; i<=nbins; i++){
-    for(int j=1; j<=nbins; j++){
-      double entry = delta->GetBinContent(i) * delta->GetBinContent(j);
-      cov->SetBinContent(i,j,entry);
+  for(int i=1; i <= nbins; i++){
+    for(int j=1; j <= nbins; j++){
+      double covariance = delta->GetBinContent(i) * delta->GetBinContent(j);
+      cov->SetBinContent(i, j, covariance);
     }
   }
   return cov;

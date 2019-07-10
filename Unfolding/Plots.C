@@ -18,16 +18,22 @@ Plotter::Plotter(TString file, TUnfoldBinning* binning_gen, TUnfoldBinning* binn
   const TVectorD *mass_split_gen = measurement_gen->GetDistributionBinning(1);
 
   n_measurement_rec = measurement_rec->GetTH1xNumberOfBins();
+  dim_measurement_rec = measurement_rec->GetDistributionDimension();
   n_measurement_gen = measurement_gen->GetTH1xNumberOfBins();
+  dim_measurement_gen = measurement_gen->GetDistributionDimension();
 
   n_mass_split_rec = mass_split_rec->GetNoElements() - 1;
   n_mass_split_gen = mass_split_gen->GetNoElements() - 1;
 
   n_rec_pt_topjet = rec_pt_topjet_sideband->GetTH1xNumberOfBins();
+  dim_rec_pt_topjet = rec_pt_topjet_sideband->GetDistributionDimension();
   n_gen_pt_topjet = gen_pt_topjet_sideband->GetTH1xNumberOfBins();
+  dim_gen_pt_topjet = gen_pt_topjet_sideband->GetDistributionDimension();
 
   n_mass_rec = rec_mass_sideband->GetTH1xNumberOfBins();
+  dim_mass_rec = rec_mass_sideband->GetDistributionDimension();
   n_mass_gen = gen_mass_sideband->GetTH1xNumberOfBins();
+  dim_mass_gen = gen_mass_sideband->GetDistributionDimension();
 
   gStyle->SetOptStat(kFALSE);
   gStyle->SetPadTickY(1);
@@ -108,6 +114,7 @@ void Plotter::Plot_output(TH1* h_unfolded, TH1* h_truth_, bool normalise, TStrin
   gStyle->SetPadLeftMargin(0.12);
   gStyle->SetPadRightMargin(0.06);
   c_unfolding->cd();
+  c_unfolding->UseCurrentStyle();
   if(!normalise){
     h_unfolded_clone->SetMarkerStyle(20);
     h_unfolded_clone->SetLineColor(kRed);
@@ -414,14 +421,22 @@ void Plotter::Plot_RhoLogTau(TSpline* rhologTau, double tau, TString save){
 void Plotter::Plot_ResponseMatrix(TH2* resp_matrix_, TString save){
 
   TCanvas* c_response = new TCanvas("Response Matrix", "", 1000, 800);
-  gStyle->SetPadLeftMargin(0.1);
-  gStyle->SetPadRightMargin(0.12);
-  c_response->SetLogz();
+  gStyle->SetPadLeftMargin(0.12);
+  gStyle->SetPadRightMargin(0.11);
+  // resp_matrix_->SetNdivisions(510, kFALSE);
+  // gStyle->SetTickLength(5.9, "Y");
   c_response->cd();
+  c_response->UseCurrentStyle();
+  c_response->SetLogz();
+  // if(dim_measurement_rec > 1) resp_matrix_->GetYaxis()->SetBinLabel(floor(sub_region_rec/2), "test");
+  // if(dim_measurement_gen > 1) resp_matrix_->GetXaxis()->SetBinLabel(floor(sub_region_gen/2), "test");
+  // cout << "GetNdivisions: " << resp_matrix_->GetXaxis()->GetNdivisions() << '\n';
   resp_matrix_->SetTitle("Migration Matrix");
+  resp_matrix_->GetYaxis()->SetLabelSize(0);
+  resp_matrix_->GetXaxis()->SetLabelSize(0);
   resp_matrix_->GetYaxis()->SetTitle("detector binning");
   resp_matrix_->GetYaxis()->SetTitleSize(0.045);
-  resp_matrix_->GetYaxis()->SetTitleOffset(0.7);
+  resp_matrix_->GetYaxis()->SetTitleOffset(1.2);
   resp_matrix_->GetXaxis()->SetTitle("generator binning");
   resp_matrix_->GetXaxis()->SetTitleSize(0.045);
   resp_matrix_->GetXaxis()->SetTitleOffset(0.9);
@@ -433,9 +448,82 @@ void Plotter::Plot_ResponseMatrix(TH2* resp_matrix_, TString save){
     TLine *line = new TLine(n_measurement_gen+0.5, 0.5, n_measurement_gen+0.5, ymax+0.5);
     line->SetLineColor(kRed);
     line->Draw("same");
+
+    TLatex text1;
+    text1.SetTextFont(43);
+    text1.SetTextSize(18);
+    // text1.SetTextAngle(-20);
+    text1.SetTextAlign(12);
+    double position1 = n_measurement_gen+n_gen_pt_topjet/2-2;
+    // TString label = labels_rec[i-1];
+    text1.DrawLatex(position1, -2.5, "300 GeV #leq p_{T}^{} < 400 GeV");
+
+    if(dim_measurement_gen > 1){
+      double sub_region_gen = (n_measurement_gen/dim_measurement_gen);
+      TLine *line_dashed = new TLine(sub_region_gen+0.5, 0.5, sub_region_gen+0.5, ymax+0.5);
+      line_dashed->SetLineColor(kRed);
+      line_dashed->SetLineStyle(4);
+      line_dashed->Draw("same");
+
+      TLatex text;
+      text.SetTextFont(43);
+      text.SetTextSize(20);
+      // text.SetTextAngle(90);
+      text.SetTextAlign(12);
+      double position = sub_region_gen/2-1.5;
+      // TString label = labels_rec[i-1];
+      text.DrawLatex(position, -2.5, "m_{TopJet}^{} < 152 GeV");
+
+      TLatex text2;
+      text2.SetTextFont(43);
+      text2.SetTextSize(20);
+      // text.SetTextAngle(90);
+      text2.SetTextAlign(12);
+      double position2 = n_measurement_gen-sub_region_gen+1;
+      // TString label = labels_rec[i-1];
+      text2.DrawLatex(position2, -2.5, "152 GeV < m_{TopJet}");
+    }
+
     TLine *line2 = new TLine(0.5, n_measurement_rec+0.5, xmax+0.5, n_measurement_rec+0.5);
     line2->SetLineColor(kRed);
     line2->Draw("same");
+
+    TLatex text11;
+    text11.SetTextFont(43);
+    text11.SetTextSize(18);
+    text11.SetTextAngle(105);
+    text11.SetTextAlign(12);
+    double position11 = n_measurement_rec+n_rec_pt_topjet/2-2;
+    // TString label = labels_rec[i-1];
+    text11.DrawLatex(0.1, position11, "300 GeV #leq p_{T}^{} < 400 GeV");
+
+    if(dim_measurement_rec > 1){
+
+      double sub_region_rec = (n_measurement_rec/dim_measurement_rec);
+      TLine *line_dashed = new TLine(0.5, sub_region_rec+0.5, xmax+0.5, sub_region_rec+0.5);
+      line_dashed->SetLineColor(kRed);
+      line_dashed->SetLineStyle(4);
+      line_dashed->Draw("same");
+
+      TLatex text;
+      text.SetTextFont(43);
+      text.SetTextSize(20);
+      text.SetTextAngle(90);
+      text.SetTextAlign(12);
+      double position = sub_region_rec/2-sub_region_rec/2+2;
+      // TString label = labels_rec[i-1];
+      text.DrawLatex(0.1, position, "m_{TopJet}^{} < 152 GeV");
+
+      TLatex text2;
+      text2.SetTextFont(43);
+      text2.SetTextSize(20);
+      text2.SetTextAngle(90);
+      text2.SetTextAlign(12);
+      double position2 = n_measurement_rec-sub_region_rec+2;
+      // TString label = labels_rec[i-1];
+      text2.DrawLatex(0.1, position2, "152 GeV < m_{TopJet}");
+    }
+
     if(xmax/3 >= 2){
       TLine *line3 = new TLine(n_measurement_gen+n_gen_pt_topjet+0.5, 0.5, n_measurement_gen+n_gen_pt_topjet+0.5, ymax+0.5);
       line3->SetLineColor(kRed);
@@ -443,6 +531,24 @@ void Plotter::Plot_ResponseMatrix(TH2* resp_matrix_, TString save){
       TLine *line4 = new TLine(0.5, n_measurement_rec+n_rec_pt_topjet+0.5, xmax+0.5, n_measurement_rec+n_rec_pt_topjet+0.5);
       line4->SetLineColor(kRed);
       line4->Draw("same");
+
+      TLatex text4;
+      text4.SetTextFont(43);
+      text4.SetTextSize(18);
+      // text4.SetTextAngle(-20);
+      text4.SetTextAlign(12);
+      double position4 = n_measurement_gen+n_gen_pt_topjet+1;
+      // TString label = labels_rec[i-1];
+      text4.DrawLatex(position4, -2.5, "M_{first TopJet}^{} < M_{second TopJet + #mu}^{}");
+
+      TLatex text44;
+      text44.SetTextFont(43);
+      text44.SetTextSize(18);
+      text44.SetTextAngle(90);
+      text44.SetTextAlign(12);
+      double position44 = n_measurement_rec+n_rec_pt_topjet+1;
+      // TString label = labels_rec[i-1];
+      text44.DrawLatex(0.1, position44, "M_{first TopJet}^{} < M_{second TopJet + #mu}^{}");
     }
   }
   c_response->SaveAs(save_dir_ + save);
@@ -626,8 +732,6 @@ void Plotter::Plot_covariance(TH2* matrix, TString save){
       l_region_gen_h2->Draw("same");
     }
   }
-
-
 
   c_cov->SaveAs(save_dir_+save);
   c_cov->Write();

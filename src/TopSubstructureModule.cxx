@@ -27,9 +27,9 @@ using namespace uhh2;
 
 namespace uhh2examples {
   /*
-   * This is the central class which calls other AnalysisModules, Hists or Selection classes.
-   * This AnalysisModule, in turn, is called (via AnalysisModuleRunner) by SFrame.
-   */
+  * This is the central class which calls other AnalysisModules, Hists or Selection classes.
+  * This AnalysisModule, in turn, is called (via AnalysisModuleRunner) by SFrame.
+  */
 
   class TopSubstructureModule: public AnalysisModule {
   public:

@@ -17,6 +17,7 @@
 #include <TMarker.h>
 #include <TStyle.h>
 #include <TLine.h>
+#include <TLatex.h>
 
 class Plotter{
 public:
@@ -37,4 +38,6 @@ private:
   TLine *l_input, *l_input_2;
   const TUnfoldBinning *measurement_rec, *measurement_gen, *rec_pt_topjet_sideband, *gen_pt_topjet_sideband, *rec_mass_sideband, *gen_mass_sideband;
   double n_measurement_rec, n_measurement_gen, n_rec_pt_topjet, n_gen_pt_topjet, n_mass_rec, n_mass_gen, n_mass_split_rec, n_mass_split_gen, n_regions;
+  double dim_measurement_rec, dim_measurement_gen, dim_rec_pt_topjet, dim_gen_pt_topjet, dim_mass_rec, dim_mass_gen;
+
 };
