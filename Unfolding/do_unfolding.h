@@ -13,7 +13,6 @@
 #include <TRandom3.h>
 #include <TLegend.h>
 #include "unfold.h"
-#include "Plots.h"
 #include "TFile.h"
 #include "TTree.h"
 #include <TH1F.h>
@@ -34,7 +33,6 @@ std::vector<TSpline*> logTau_2;
 
 
 TString binning_xml;
-TString save_LCurve_Unfolding, save_LCurve_Unfolding_norm, save_LCurve_Unfolding_correlation, save_LCurve_TauX,  save_LCurve_TauY, save_TauScan_LCurve, save_TauScan_RhoLogTau, save_TauScan_Unfolding, save_TauScan_Unfolding_norm, save_TauScan_Unfolding_correlation, save_TauScan_crosscheck, save_LCurve_Unfolding_all, save_LCurve_Unfolding_norm_all, save_LCurve_Unfolding_correlation_all, save_LCurve_crosscheck_all, save_TauScan_Unfolding_all, save_TauScan_Unfolding_norm_all, save_TauScan_Unfolding_correlation_all, save_TauScan_crosscheck_all, save_LCurve_crosscheck, save_projection_x, save_projection_y, save_response_matrix, save_purity, save_input, save_input_dist, save_LCurve_input_cov, save_LCurve_input_cov_all, save_LCurve_input_cov_matrix, save_LCurve_input_cov_matrix_all, save_TauScan_input, save_TauScan_input_dist, save_TauScan_input_cov, save_TauScan_input_cov_all, save_TauScan_input_cov_matrix, save_TauScan_input_cov_matrix_all, save_LCurve_input_cov_total, save_LCurve_input_cov_total_all, save_TauScan_input_cov_total, save_TauScan_input_cov_total_all;
 TDOMParser parser;
 TUnfoldBinning *binning_rec, *binning_gen;
 TH1D *h_data, *h_data_dist, *h_unfold, *h_truth, *h_truth_all, *h_mc, *h_mc_dist, *h_trutch_check, *h_trutch_check_all, *h_purity_all, *h_purity_samebin;

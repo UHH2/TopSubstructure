@@ -191,7 +191,7 @@ namespace uhh2examples {
     trigger_sel_B = uhh2::make_unique<TriggerSelection>("HLT_TkMu50_v*");
 
     isMC    = (ctx.get("dataset_type") == "MC");
-    isTTbar = (ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_2016v3_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_2016v3_Mtt1000toInft" || ctx.get("dataset_version") == "TTbar_2016v3" || ctx.get("dataset_version") == "TTbar_2016v3_mtop1695" || ctx.get("dataset_version") == "TTbar_2016v3_mtop1715" || ctx.get("dataset_version") == "TTbar_2016v3_mtop1735"  || ctx.get("dataset_version") == "TTbar_2016v3_mtop1755");
+    isTTbar = (ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_2016v3_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_2016v3_Mtt1000toInft" || ctx.get("dataset_version") == "TTbar_2016v3" || ctx.get("dataset_version") == "TTbar_2016v3_mtop1695" || ctx.get("dataset_version") == "TTbar_2016v3_mtop1715" || ctx.get("dataset_version") == "TTbar_2016v3_mtop1735" || ctx.get("dataset_version") == "TTbar_2016v3_mtop1755" || ctx.get("dataset_version") == "TTbar_2016v3_madgraph");
 
     // 2. set up selections
 
@@ -517,7 +517,6 @@ namespace uhh2examples {
 
     event.set(h_passed_rec, passed_rec);
     event.set(h_passed_gen, passed_gen);
-    if(!isTTbar) rm_particle->process(event);
     return true;
   }
   // as we want to run the ExampleCycleNew directly with AnalysisModuleRunner,

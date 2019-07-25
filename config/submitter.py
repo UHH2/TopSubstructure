@@ -8,9 +8,8 @@ option = sys.argv[len(sys.argv)-1]+' '
 
 if 'non ' in option:
     option = ' '
-elif option not in ['-f ', '-s ', '-r ']:
+elif option not in ['-f ', '-s ', '-r ', '-l ']:
     sys.exit("How to use: ./submitter.py <XML files> <true/false (test output or not)> <option ('-s', '-f', '-r', 'non')>")
-
 
 if 'true' in sys.argv:
     c_test = 'echo '
@@ -22,10 +21,6 @@ elif 'False' in sys.argv:
     c_test = ''
 else:
     sys.exit("How to use: ./submitter.py <XML files> <true/false (test output or not)> <option ('-s', '-f', '-r', 'non')>")
-
-
-# if sys.argv[len(sys.argv)-2] == 'true':
-#     c_test = 'echo '
 
 file_list = []
 

@@ -77,8 +77,14 @@ int main(int argc, char* argv[]){
   TFile *mc_matrix_File = new TFile(dir+prefix+"MC.TTbar.root");
   fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "mc");
 
+  // fill other mass samples
+  vector<TString> diff_masses = {"mtop1695", "mtop1715", "mtop1735", "mtop1755", "madgraph"};
+  for(unsigned int i = 0; i < diff_masses.size(); i++){
+    TFile *masses_File = new TFile(dir+prefix+"MC.TTbar_"+diff_masses.at(i)+".root");
+    fill_ttbar((TTree *) masses_File->Get("AnalysisTree"), diff_masses.at(i));
+  }
   // fill variation
-  vector<TString> jetcorrections = {"JECup", "JECdown", "JERup", "JERdown"};
+  vector<TString> jetcorrections = {"JECup", "JECdown", "JERup", "JERdown", "BTagup", "BTagdown", "MUScaleup", "MUScaledown", "MUTriggerup", "MUTriggerdown", "PUup", "PUdown"};
   for(unsigned int i = 0; i < jetcorrections.size(); i++){
     TFile *jc_matrix_file =  new TFile(dir+"/"+jetcorrections.at(i)+prefix+"MC.TTbar.root");
     fill_ttbar((TTree *) jc_matrix_file->Get("AnalysisTree"), jetcorrections.at(i));
@@ -93,7 +99,7 @@ int main(int argc, char* argv[]){
 
   // fill background
   // std::vector<TString> background = {"DYJets", "QCD", "ST", "WJets", "WW", "WZ", "ZZ"};
-  std::vector<TString> background = {"DYJets", "ST"};
+  std::vector<TString> background = {"DYJets", "ST", "Diboson"};
 
   for(unsigned int i = 0; i < background.size(); i++){
     TFile *background_File = new TFile(dir+prefix+"MC."+background[i]+".root");
@@ -282,7 +288,7 @@ void fill_pseudodata(TTree* tree){
   outputFile->cd();
 
   tree->ResetBranchAddresses();
-  // tree->SetBranchAddress("h_tau32_gen_sd", &tau32_gen);
+  tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
   tree->SetBranchAddress("h_tau32_gen_sd", &tau32_gen_sd);
   tree->SetBranchAddress("h_mass_gen", &mass_gen);
   tree->SetBranchAddress("h_mass_gen_sd", &mass_gen_sd);
@@ -320,7 +326,6 @@ void fill_pseudodata(TTree* tree){
   int counter = 1;
   for(Int_t ievent = 0; ievent < tree->GetEntriesFast(); ievent++){
     if(tree->GetEntry(ievent) <= 0) break;
-    tau32_gen = tau32_gen_sd;
 
     double scale = 5;
     // get weights for migration matrix
@@ -458,9 +463,9 @@ void fill_pseudodata(TTree* tree){
     else if(passed_rec_pt_topjet_sideband_puppi_sd)  rec_binNumber_puppi_sd = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec_puppi_sd);
     else if(passed_rec_mass_sideband_puppi_sd)       rec_binNumber_puppi_sd = rec_mass_sideband->GetGlobalBinNumber(tau32_rec_puppi_sd);
 
-    if(passed_gen_final_sd)                    gen_binNumber_sd = measurement_gen->GetGlobalBinNumber(tau32_gen_sd, mass_gen_sd);
-    else if(passed_gen_pt_topjet_sideband_sd)  gen_binNumber_sd = gen_pt_topjet_sideband->GetGlobalBinNumber(tau32_gen_sd);
-    else if(passed_gen_mass_sideband_sd)       gen_binNumber_sd = gen_mass_sideband->GetGlobalBinNumber(tau32_gen_sd);
+    if(passed_gen_final_sd)                    gen_binNumber_puppi_sd = measurement_gen->GetGlobalBinNumber(tau32_gen_sd, mass_gen_sd);
+    else if(passed_gen_pt_topjet_sideband_sd)  gen_binNumber_puppi_sd = gen_pt_topjet_sideband->GetGlobalBinNumber(tau32_gen_sd);
+    else if(passed_gen_mass_sideband_sd)       gen_binNumber_puppi_sd = gen_mass_sideband->GetGlobalBinNumber(tau32_gen_sd);
 
     bool rec_info_puppi_sd = false, gen_info_puppi_sd = false;
     if(passed_gen_final_sd || passed_gen_pt_topjet_sideband_sd || passed_gen_mass_sideband_sd)                   gen_info_puppi_sd = true;
@@ -482,13 +487,13 @@ void fill_pseudodata(TTree* tree){
     }
     if(gen_info_puppi_sd){
       if(counter == 1 || counter == 2)  h_pseudodata_truth_all_puppi_sd_1->Fill(gen_binNumber_puppi_sd, w_gen);
-      if(counter == 3 || counter == 4)  h_pseudodata_truth_all_puppi_sd_2->Fill(gen_binNumber_puppi_sd, w_gen);
-      if(counter == 5 || counter == 6) h_pseudodata_truth_all_puppi_sd_3->Fill(gen_binNumber_puppi_sd, w_gen);
+      else if(counter == 3 || counter == 4)  h_pseudodata_truth_all_puppi_sd_2->Fill(gen_binNumber_puppi_sd, w_gen);
+      else if(counter == 5 || counter == 6)  h_pseudodata_truth_all_puppi_sd_3->Fill(gen_binNumber_puppi_sd, w_gen);
     }
     if(passed_gen_final_sd){
       if(counter == 1 || counter == 2)       h_pseudodata_truth_puppi_sd_1->Fill(tau32_gen_sd, w_gen);
       else if(counter == 3 || counter == 4)  h_pseudodata_truth_puppi_sd_2->Fill(tau32_gen_sd, w_gen);
-      else if(counter == 5 || counter == 6) h_pseudodata_truth_puppi_sd_3->Fill(tau32_gen_sd, w_gen);
+      else if(counter == 5 || counter == 6)  h_pseudodata_truth_puppi_sd_3->Fill(tau32_gen_sd, w_gen);
     }
     if(counter != 10) counter++;
     else counter = 1;
@@ -610,6 +615,8 @@ void fill_pseudodata(TTree* tree){
 void fill_ttbar(TTree* tree, TString prefix){
   if(!tree) cout << "could not read 'mc signal' tree\n";
   else      cout << "Filling Histograms for "+prefix+" ...\n";
+  bool pseudo = true;
+  if(!prefix.Contains("mc")) pseudo = false;
 
   // setup hists
   TH1* h_rec                              = binning_rec->CreateHistogram(prefix+"_rec");
@@ -644,6 +651,10 @@ void fill_ttbar(TTree* tree, TString prefix){
   TH1* h_purity_samebin_mass_sd           = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_sd",kTRUE,0,0, "mass[C]");
   TH1* h_purity_samebin_mass_puppi        = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_puppi",kTRUE,0,0, "mass[C]");
   TH1* h_purity_samebin_mass_puppi_sd     = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_puppi_sd",kTRUE,0,0, "mass[C]");
+  TH2* h_mc_matrix          = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix");
+  TH2* h_mc_matrix_sd       = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_sd");
+  TH2* h_mc_matrix_puppi    = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi");
+  TH2* h_mc_matrix_puppi_sd = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi_sd");
 
   TH1* h_rec_1                            = binning_rec->CreateHistogram(prefix+"_rec_1");
   TH1* h_rec_sd_1                         = binning_rec->CreateHistogram(prefix+"_rec_sd_1");
@@ -744,11 +755,6 @@ void fill_ttbar(TTree* tree, TString prefix){
   TH1* h_purity_samebin_mass_puppi_3      = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_puppi_3",kTRUE,0,0, "mass[C]");
   TH1* h_purity_samebin_mass_puppi_sd_3   = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_puppi_sd_3",kTRUE,0,0, "mass[C]");
 
-  TH2* h_mc_matrix          = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix");
-  TH2* h_mc_matrix_sd       = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_sd");
-  TH2* h_mc_matrix_puppi    = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi");
-  TH2* h_mc_matrix_puppi_sd = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi_sd");
-
   TH2* h_mc_matrix_1          = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_1");
   TH2* h_mc_matrix_sd_1       = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_sd_1");
   TH2* h_mc_matrix_puppi_1    = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi_1");
@@ -767,7 +773,7 @@ void fill_ttbar(TTree* tree, TString prefix){
   outputFile->cd();
 
   tree->ResetBranchAddresses();
-  // tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
+  tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
   tree->SetBranchAddress("h_tau32_gen_sd", &tau32_gen_sd);
   tree->SetBranchAddress("h_mass_gen", &mass_gen);
   tree->SetBranchAddress("h_mass_gen_sd", &mass_gen_sd);
@@ -805,7 +811,6 @@ void fill_ttbar(TTree* tree, TString prefix){
   int counter = 1;
   for(Int_t ievent = 0; ievent < tree->GetEntriesFast(); ievent++){
     if(tree->GetEntry(ievent) <= 0) break;
-    tau32_gen = tau32_gen_sd;
     // std::cout << "tau32_gen: " << tau32_gen << '\n';
     // std::cout << "tau32_gen_sd: " << tau32_gen_sd << '\n';
     double scale = 10/8;
@@ -846,66 +851,80 @@ void fill_ttbar(TTree* tree, TString prefix){
       h_rec->Fill(rec_binNumber, w_sig_rec);
       h_rec_dist->Fill(tau32_rec, w_sig_rec);
 
-      if(counter != 1 || counter != 2){
-        h_rec_1->Fill(rec_binNumber, w_sig_rec_scaled);
-        h_rec_dist_1->Fill(tau32_rec, w_sig_rec_scaled);
-      }
-      if(counter != 3 || counter != 4){
-        h_rec_2->Fill(rec_binNumber, w_sig_rec_scaled);
-        h_rec_dist_2->Fill(tau32_rec, w_sig_rec_scaled);
-      }
-      if(counter != 5 || counter != 6){
-        h_rec_3->Fill(rec_binNumber, w_sig_rec_scaled);
-        h_rec_dist_3->Fill(tau32_rec, w_sig_rec_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2){
+          h_rec_1->Fill(rec_binNumber, w_sig_rec_scaled);
+          h_rec_dist_1->Fill(tau32_rec, w_sig_rec_scaled);
+        }
+        if(counter != 3 || counter != 4){
+          h_rec_2->Fill(rec_binNumber, w_sig_rec_scaled);
+          h_rec_dist_2->Fill(tau32_rec, w_sig_rec_scaled);
+        }
+        if(counter != 5 || counter != 6){
+          h_rec_3->Fill(rec_binNumber, w_sig_rec_scaled);
+          h_rec_dist_3->Fill(tau32_rec, w_sig_rec_scaled);
+        }
       }
     }
     if(passed_gen_final){
       h_truth->Fill(tau32_gen, w_gen);
-      if(counter != 1 || counter != 2)  h_truth_1->Fill(tau32_gen, w_gen_scaled);
-      if(counter != 3 || counter != 4)  h_truth_2->Fill(tau32_gen, w_gen_scaled);
-      if(counter != 5 || counter != 6) h_truth_3->Fill(tau32_gen, w_gen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_truth_1->Fill(tau32_gen, w_gen_scaled);
+        if(counter != 3 || counter != 4)  h_truth_2->Fill(tau32_gen, w_gen_scaled);
+        if(counter != 5 || counter != 6) h_truth_3->Fill(tau32_gen, w_gen_scaled);
+      }
     }
     if(gen_info){
       h_gen->Fill(gen_binNumber, w_gen);
       h_truth_all->Fill(gen_binNumber, w_gen);
 
-      if(counter != 1 || counter != 2){
-        h_gen_1->Fill(gen_binNumber, w_gen_scaled);
-        h_truth_all_1->Fill(gen_binNumber, w_gen_scaled);
-      }
-      if(counter != 3 || counter != 4){
-        h_gen_2->Fill(gen_binNumber, w_gen_scaled);
-        h_truth_all_2->Fill(gen_binNumber, w_gen_scaled);
-      }
-      if(counter != 5 || counter != 6){
-        h_gen_3->Fill(gen_binNumber, w_gen_scaled);
-        h_truth_all_3->Fill(gen_binNumber, w_gen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2){
+          h_gen_1->Fill(gen_binNumber, w_gen_scaled);
+          h_truth_all_1->Fill(gen_binNumber, w_gen_scaled);
+        }
+        if(counter != 3 || counter != 4){
+          h_gen_2->Fill(gen_binNumber, w_gen_scaled);
+          h_truth_all_2->Fill(gen_binNumber, w_gen_scaled);
+        }
+        if(counter != 5 || counter != 6){
+          h_gen_3->Fill(gen_binNumber, w_gen_scaled);
+          h_truth_all_3->Fill(gen_binNumber, w_gen_scaled);
+        }
       }
     }
 
     if( rec_info &&  gen_info){
       h_mc_matrix->Fill(gen_binNumber, rec_binNumber, w_central);
-      if(counter != 1 || counter != 2)  h_mc_matrix_1->Fill(gen_binNumber, rec_binNumber, w_central_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_2->Fill(gen_binNumber, rec_binNumber, w_central_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_3->Fill(gen_binNumber, rec_binNumber, w_central_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_1->Fill(gen_binNumber, rec_binNumber, w_central_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_2->Fill(gen_binNumber, rec_binNumber, w_central_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_3->Fill(gen_binNumber, rec_binNumber, w_central_scaled);
+      }
     }
     if(!rec_info &&  gen_info){
       h_mc_matrix->Fill(gen_binNumber, rec_binNumber, w_norec);
-      if(counter != 1 || counter != 2)  h_mc_matrix_1->Fill(gen_binNumber, rec_binNumber, w_norec_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_2->Fill(gen_binNumber, rec_binNumber, w_norec_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_3->Fill(gen_binNumber, rec_binNumber, w_norec_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_1->Fill(gen_binNumber, rec_binNumber, w_norec_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_2->Fill(gen_binNumber, rec_binNumber, w_norec_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_3->Fill(gen_binNumber, rec_binNumber, w_norec_scaled);
+      }
     }
     if( rec_info && !gen_info){
       h_mc_matrix->Fill(gen_binNumber, rec_binNumber, w_nogen);
-      if(counter != 1 || counter != 2)  h_mc_matrix_1->Fill(gen_binNumber, rec_binNumber, w_nogen_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_2->Fill(gen_binNumber, rec_binNumber, w_nogen_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_3->Fill(gen_binNumber, rec_binNumber, w_nogen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_1->Fill(gen_binNumber, rec_binNumber, w_nogen_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_2->Fill(gen_binNumber, rec_binNumber, w_nogen_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_3->Fill(gen_binNumber, rec_binNumber, w_nogen_scaled);
+      }
     }
     if( rec_info &&  gen_info){
       h_mc_matrix->Fill(gen_binNumber, 0., w_correction);
-      if(counter != 1 || counter != 2)  h_mc_matrix_1->Fill(gen_binNumber, 0., w_correction_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_2->Fill(gen_binNumber, 0., w_correction_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_3->Fill(gen_binNumber, 0., w_correction_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_1->Fill(gen_binNumber, 0., w_correction_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_2->Fill(gen_binNumber, 0., w_correction_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_3->Fill(gen_binNumber, 0., w_correction_scaled);
+      }
     }
 
     //fill hists for purity
@@ -920,20 +939,22 @@ void fill_ttbar(TTree* tree, TString prefix){
       if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass->Fill(tau32_gen, w_gen);
 
 
-      if(counter != 1 || counter != 2){
-        h_purity_all_1->Fill(tau32_gen, w_gen_scaled);
-        if(genBin_recInfo == gen_binNumber)      h_purity_samebin_1->Fill(tau32_gen, w_gen_scaled);
-        if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass_1->Fill(tau32_gen, w_gen_scaled);
-      }
-      if(counter != 3 || counter != 4){
-        h_purity_all_2->Fill(tau32_gen, w_gen_scaled);
-        if(genBin_recInfo == gen_binNumber)      h_purity_samebin_2->Fill(tau32_gen, w_gen_scaled);
-        if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass_2->Fill(tau32_gen, w_gen_scaled);
-      }
-      if(counter != 5 || counter != 6){
-        h_purity_all_3->Fill(tau32_gen, w_gen_scaled);
-        if(genBin_recInfo == gen_binNumber)      h_purity_samebin_3->Fill(tau32_gen, w_gen_scaled);
-        if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass_3->Fill(tau32_gen, w_gen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2){
+          h_purity_all_1->Fill(tau32_gen, w_gen_scaled);
+          if(genBin_recInfo == gen_binNumber)      h_purity_samebin_1->Fill(tau32_gen, w_gen_scaled);
+          if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass_1->Fill(tau32_gen, w_gen_scaled);
+        }
+        if(counter != 3 || counter != 4){
+          h_purity_all_2->Fill(tau32_gen, w_gen_scaled);
+          if(genBin_recInfo == gen_binNumber)      h_purity_samebin_2->Fill(tau32_gen, w_gen_scaled);
+          if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass_2->Fill(tau32_gen, w_gen_scaled);
+        }
+        if(counter != 5 || counter != 6){
+          h_purity_all_3->Fill(tau32_gen, w_gen_scaled);
+          if(genBin_recInfo == gen_binNumber)      h_purity_samebin_3->Fill(tau32_gen, w_gen_scaled);
+          if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass_3->Fill(tau32_gen, w_gen_scaled);
+        }
       }
     }
 
@@ -955,66 +976,80 @@ void fill_ttbar(TTree* tree, TString prefix){
       h_rec_sd->Fill(rec_binNumber_sd, w_sig_rec);
       h_rec_dist_sd->Fill(tau32_rec_sd, w_sig_rec);
 
-      if(counter != 1 || counter != 2){
-        h_rec_sd_1->Fill(rec_binNumber_sd, w_sig_rec_scaled);
-        h_rec_dist_sd_1->Fill(tau32_rec_sd, w_sig_rec_scaled);
-      }
-      if(counter != 3 || counter != 4){
-        h_rec_sd_2->Fill(rec_binNumber_sd, w_sig_rec_scaled);
-        h_rec_dist_sd_2->Fill(tau32_rec_sd, w_sig_rec_scaled);
-      }
-      if(counter != 5 || counter != 6){
-        h_rec_sd_3->Fill(rec_binNumber_sd, w_sig_rec_scaled);
-        h_rec_dist_sd_3->Fill(tau32_rec_sd, w_sig_rec_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2){
+          h_rec_sd_1->Fill(rec_binNumber_sd, w_sig_rec_scaled);
+          h_rec_dist_sd_1->Fill(tau32_rec_sd, w_sig_rec_scaled);
+        }
+        if(counter != 3 || counter != 4){
+          h_rec_sd_2->Fill(rec_binNumber_sd, w_sig_rec_scaled);
+          h_rec_dist_sd_2->Fill(tau32_rec_sd, w_sig_rec_scaled);
+        }
+        if(counter != 5 || counter != 6){
+          h_rec_sd_3->Fill(rec_binNumber_sd, w_sig_rec_scaled);
+          h_rec_dist_sd_3->Fill(tau32_rec_sd, w_sig_rec_scaled);
+        }
       }
     }
     if(passed_gen_final_sd){
       h_truth_sd->Fill(tau32_gen_sd, w_gen);
-      if(counter != 1 || counter != 2)  h_truth_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
-      if(counter != 3 || counter != 4)  h_truth_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
-      if(counter != 5 || counter != 6) h_truth_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_truth_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
+        if(counter != 3 || counter != 4)  h_truth_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
+        if(counter != 5 || counter != 6) h_truth_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+      }
     }
     if(gen_info_sd){
       h_gen_sd->Fill(gen_binNumber_sd, w_gen);
       h_truth_all_sd->Fill(gen_binNumber_sd, w_gen);
 
-      if(counter != 1 || counter != 2){
-        h_gen_sd_1->Fill(gen_binNumber_sd, w_gen_scaled);
-        h_truth_all_sd_1->Fill(gen_binNumber_sd, w_gen_scaled);
-      }
-      if(counter != 3 || counter != 4){
-        h_gen_sd_2->Fill(gen_binNumber_sd, w_gen_scaled);
-        h_truth_all_sd_2->Fill(gen_binNumber_sd, w_gen_scaled);
-      }
-      if(counter != 5 || counter != 6){
-        h_gen_sd_3->Fill(gen_binNumber_sd, w_gen_scaled);
-        h_truth_all_sd_3->Fill(gen_binNumber_sd, w_gen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2){
+          h_gen_sd_1->Fill(gen_binNumber_sd, w_gen_scaled);
+          h_truth_all_sd_1->Fill(gen_binNumber_sd, w_gen_scaled);
+        }
+        if(counter != 3 || counter != 4){
+          h_gen_sd_2->Fill(gen_binNumber_sd, w_gen_scaled);
+          h_truth_all_sd_2->Fill(gen_binNumber_sd, w_gen_scaled);
+        }
+        if(counter != 5 || counter != 6){
+          h_gen_sd_3->Fill(gen_binNumber_sd, w_gen_scaled);
+          h_truth_all_sd_3->Fill(gen_binNumber_sd, w_gen_scaled);
+        }
       }
     }
 
     if( rec_info_sd &&  gen_info_sd){
       h_mc_matrix_sd->Fill(gen_binNumber_sd, rec_binNumber_sd, w_central);
-      if(counter != 1 || counter != 2)  h_mc_matrix_sd_1->Fill(gen_binNumber_sd, rec_binNumber_sd, w_central_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_sd_2->Fill(gen_binNumber_sd, rec_binNumber_sd, w_central_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_sd_3->Fill(gen_binNumber_sd, rec_binNumber_sd, w_central_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_sd_1->Fill(gen_binNumber_sd, rec_binNumber_sd, w_central_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_sd_2->Fill(gen_binNumber_sd, rec_binNumber_sd, w_central_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_sd_3->Fill(gen_binNumber_sd, rec_binNumber_sd, w_central_scaled);
+      }
     }
     if(!rec_info_sd &&  gen_info_sd){
       h_mc_matrix_sd->Fill(gen_binNumber_sd, rec_binNumber_sd, w_norec);
-      if(counter != 1 || counter != 2)  h_mc_matrix_sd_1->Fill(gen_binNumber_sd, rec_binNumber_sd, w_norec_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_sd_2->Fill(gen_binNumber_sd, rec_binNumber_sd, w_norec_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_sd_3->Fill(gen_binNumber_sd, rec_binNumber_sd, w_norec_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_sd_1->Fill(gen_binNumber_sd, rec_binNumber_sd, w_norec_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_sd_2->Fill(gen_binNumber_sd, rec_binNumber_sd, w_norec_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_sd_3->Fill(gen_binNumber_sd, rec_binNumber_sd, w_norec_scaled);
+      }
     }
     if( rec_info_sd && !gen_info_sd){
       h_mc_matrix_sd->Fill(gen_binNumber_sd, rec_binNumber_sd, w_nogen);
-      if(counter != 1 || counter != 2)  h_mc_matrix_sd_1->Fill(gen_binNumber_sd, rec_binNumber_sd, w_nogen_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_sd_2->Fill(gen_binNumber_sd, rec_binNumber_sd, w_nogen_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_sd_3->Fill(gen_binNumber_sd, rec_binNumber_sd, w_nogen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_sd_1->Fill(gen_binNumber_sd, rec_binNumber_sd, w_nogen_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_sd_2->Fill(gen_binNumber_sd, rec_binNumber_sd, w_nogen_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_sd_3->Fill(gen_binNumber_sd, rec_binNumber_sd, w_nogen_scaled);
+      }
     }
     if( rec_info_sd &&  gen_info_sd){
       h_mc_matrix_sd->Fill(gen_binNumber_sd, 0., w_correction);
-      if(counter != 1 || counter != 2)  h_mc_matrix_sd_1->Fill(gen_binNumber_sd, 0., w_correction_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_sd_2->Fill(gen_binNumber_sd, 0., w_correction_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_sd_3->Fill(gen_binNumber_sd, 0., w_correction_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_sd_1->Fill(gen_binNumber_sd, 0., w_correction_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_sd_2->Fill(gen_binNumber_sd, 0., w_correction_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_sd_3->Fill(gen_binNumber_sd, 0., w_correction_scaled);
+      }
     }
 
     //fill hists for purity
@@ -1029,20 +1064,22 @@ void fill_ttbar(TTree* tree, TString prefix){
       if(genBin_recInfo_mass_sd == gen_binNumber_sd) h_purity_samebin_mass_sd->Fill(tau32_gen_sd, w_gen);
 
 
-      if(counter != 1 || counter != 2){
-        h_purity_all_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
-        if(genBin_recInfo_sd == gen_binNumber_sd)      h_purity_samebin_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
-        if(genBin_recInfo_mass_sd == gen_binNumber_sd) h_purity_samebin_mass_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
-      }
-      if(counter != 3 || counter != 4){
-        h_purity_all_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
-        if(genBin_recInfo_sd == gen_binNumber_sd)      h_purity_samebin_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
-        if(genBin_recInfo_mass_sd == gen_binNumber_sd) h_purity_samebin_mass_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
-      }
-      if(counter != 5 || counter != 6){
-        h_purity_all_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
-        if(genBin_recInfo_sd == gen_binNumber_sd)      h_purity_samebin_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
-        if(genBin_recInfo_mass_sd == gen_binNumber_sd) h_purity_samebin_mass_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2){
+          h_purity_all_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
+          if(genBin_recInfo_sd == gen_binNumber_sd)      h_purity_samebin_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
+          if(genBin_recInfo_mass_sd == gen_binNumber_sd) h_purity_samebin_mass_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
+        }
+        if(counter != 3 || counter != 4){
+          h_purity_all_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
+          if(genBin_recInfo_sd == gen_binNumber_sd)      h_purity_samebin_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
+          if(genBin_recInfo_mass_sd == gen_binNumber_sd) h_purity_samebin_mass_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
+        }
+        if(counter != 5 || counter != 6){
+          h_purity_all_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+          if(genBin_recInfo_sd == gen_binNumber_sd)      h_purity_samebin_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+          if(genBin_recInfo_mass_sd == gen_binNumber_sd) h_purity_samebin_mass_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+        }
       }
     }
 
@@ -1064,66 +1101,80 @@ void fill_ttbar(TTree* tree, TString prefix){
       h_rec_puppi->Fill(rec_binNumber_puppi, w_sig_rec);
       h_rec_dist_puppi->Fill(tau32_rec_puppi, w_sig_rec);
 
-      if(counter != 1 || counter != 2){
-        h_rec_puppi_1->Fill(rec_binNumber_puppi, w_sig_rec_scaled);
-        h_rec_dist_puppi_1->Fill(tau32_rec_puppi, w_sig_rec_scaled);
-      }
-      if(counter != 3 || counter != 4){
-        h_rec_puppi_2->Fill(rec_binNumber_puppi, w_sig_rec_scaled);
-        h_rec_dist_puppi_2->Fill(tau32_rec_puppi, w_sig_rec_scaled);
-      }
-      if(counter != 5 || counter != 6){
-        h_rec_puppi_3->Fill(rec_binNumber_puppi, w_sig_rec_scaled);
-        h_rec_dist_puppi_3->Fill(tau32_rec_puppi, w_sig_rec_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2){
+          h_rec_puppi_1->Fill(rec_binNumber_puppi, w_sig_rec_scaled);
+          h_rec_dist_puppi_1->Fill(tau32_rec_puppi, w_sig_rec_scaled);
+        }
+        if(counter != 3 || counter != 4){
+          h_rec_puppi_2->Fill(rec_binNumber_puppi, w_sig_rec_scaled);
+          h_rec_dist_puppi_2->Fill(tau32_rec_puppi, w_sig_rec_scaled);
+        }
+        if(counter != 5 || counter != 6){
+          h_rec_puppi_3->Fill(rec_binNumber_puppi, w_sig_rec_scaled);
+          h_rec_dist_puppi_3->Fill(tau32_rec_puppi, w_sig_rec_scaled);
+        }
       }
     }
     if(passed_gen_final){
       h_truth_puppi->Fill(tau32_gen, w_gen);
-      if(counter != 1 || counter != 2)  h_truth_puppi_1->Fill(tau32_gen, w_gen_scaled);
-      if(counter != 3 || counter != 4)  h_truth_puppi_2->Fill(tau32_gen, w_gen_scaled);
-      if(counter != 5 || counter != 6) h_truth_puppi_3->Fill(tau32_gen, w_gen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_truth_puppi_1->Fill(tau32_gen, w_gen_scaled);
+        if(counter != 3 || counter != 4)  h_truth_puppi_2->Fill(tau32_gen, w_gen_scaled);
+        if(counter != 5 || counter != 6) h_truth_puppi_3->Fill(tau32_gen, w_gen_scaled);
+      }
     }
     if(gen_info_puppi){
       h_gen_puppi->Fill(gen_binNumber_puppi, w_gen);
       h_truth_all_puppi->Fill(gen_binNumber_puppi, w_gen);
 
-      if(counter != 1 || counter != 2){
-        h_gen_puppi_1->Fill(gen_binNumber_puppi, w_gen_scaled);
-        h_truth_all_puppi_1->Fill(gen_binNumber_puppi, w_gen_scaled);
-      }
-      if(counter != 3 || counter != 4){
-        h_gen_puppi_2->Fill(gen_binNumber_puppi, w_gen_scaled);
-        h_truth_all_puppi_2->Fill(gen_binNumber_puppi, w_gen_scaled);
-      }
-      if(counter != 5 || counter != 6){
-        h_gen_puppi_3->Fill(gen_binNumber_puppi, w_gen_scaled);
-        h_truth_all_puppi_3->Fill(gen_binNumber_puppi, w_gen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2){
+          h_gen_puppi_1->Fill(gen_binNumber_puppi, w_gen_scaled);
+          h_truth_all_puppi_1->Fill(gen_binNumber_puppi, w_gen_scaled);
+        }
+        if(counter != 3 || counter != 4){
+          h_gen_puppi_2->Fill(gen_binNumber_puppi, w_gen_scaled);
+          h_truth_all_puppi_2->Fill(gen_binNumber_puppi, w_gen_scaled);
+        }
+        if(counter != 5 || counter != 6){
+          h_gen_puppi_3->Fill(gen_binNumber_puppi, w_gen_scaled);
+          h_truth_all_puppi_3->Fill(gen_binNumber_puppi, w_gen_scaled);
+        }
       }
     }
 
     if( rec_info_puppi &&  gen_info_puppi){
       h_mc_matrix_puppi->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_central);
-      if(counter != 1 || counter != 2)  h_mc_matrix_puppi_1->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_central_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_puppi_2->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_central_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_puppi_3->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_central_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_puppi_1->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_central_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_puppi_2->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_central_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_puppi_3->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_central_scaled);
+      }
     }
     if(!rec_info_puppi &&  gen_info_puppi){
       h_mc_matrix_puppi->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_norec);
-      if(counter != 1 || counter != 2)  h_mc_matrix_puppi_1->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_norec_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_puppi_2->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_norec_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_puppi_3->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_norec_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_puppi_1->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_norec_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_puppi_2->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_norec_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_puppi_3->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_norec_scaled);
+      }
     }
     if( rec_info_puppi && !gen_info_puppi){
       h_mc_matrix_puppi->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_nogen);
-      if(counter != 1 || counter != 2)  h_mc_matrix_puppi_1->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_nogen_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_puppi_2->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_nogen_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_puppi_3->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_nogen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_puppi_1->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_nogen_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_puppi_2->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_nogen_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_puppi_3->Fill(gen_binNumber_puppi, rec_binNumber_puppi, w_nogen_scaled);
+      }
     }
     if( rec_info_puppi &&  gen_info_puppi){
       h_mc_matrix_puppi->Fill(gen_binNumber_puppi, 0., w_correction);
-      if(counter != 1 || counter != 2)  h_mc_matrix_puppi_1->Fill(gen_binNumber_puppi, 0., w_correction_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_puppi_2->Fill(gen_binNumber_puppi, 0., w_correction_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_puppi_3->Fill(gen_binNumber_puppi, 0., w_correction_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_puppi_1->Fill(gen_binNumber_puppi, 0., w_correction_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_puppi_2->Fill(gen_binNumber_puppi, 0., w_correction_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_puppi_3->Fill(gen_binNumber_puppi, 0., w_correction_scaled);
+      }
     }
 
     //fill hists for purity
@@ -1138,20 +1189,22 @@ void fill_ttbar(TTree* tree, TString prefix){
       if(genBin_recInfo_mass_puppi == gen_binNumber_puppi) h_purity_samebin_mass_puppi->Fill(tau32_gen, w_gen);
 
 
-      if(counter != 1 || counter != 2){
-        h_purity_all_puppi_1->Fill(tau32_gen, w_gen_scaled);
-        if(genBin_recInfo_puppi == gen_binNumber_puppi)      h_purity_samebin_puppi_1->Fill(tau32_gen, w_gen_scaled);
-        if(genBin_recInfo_mass_puppi == gen_binNumber_puppi) h_purity_samebin_mass_puppi_1->Fill(tau32_gen, w_gen_scaled);
-      }
-      if(counter != 3 || counter != 4){
-        h_purity_all_puppi_2->Fill(tau32_gen, w_gen_scaled);
-        if(genBin_recInfo_puppi == gen_binNumber_puppi)      h_purity_samebin_puppi_2->Fill(tau32_gen, w_gen_scaled);
-        if(genBin_recInfo_mass_puppi == gen_binNumber_puppi) h_purity_samebin_mass_puppi_2->Fill(tau32_gen, w_gen_scaled);
-      }
-      if(counter != 5 || counter != 6){
-        h_purity_all_puppi_3->Fill(tau32_gen, w_gen_scaled);
-        if(genBin_recInfo_puppi == gen_binNumber_puppi)      h_purity_samebin_puppi_3->Fill(tau32_gen, w_gen_scaled);
-        if(genBin_recInfo_mass_puppi == gen_binNumber_puppi) h_purity_samebin_mass_puppi_3->Fill(tau32_gen, w_gen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2){
+          h_purity_all_puppi_1->Fill(tau32_gen, w_gen_scaled);
+          if(genBin_recInfo_puppi == gen_binNumber_puppi)      h_purity_samebin_puppi_1->Fill(tau32_gen, w_gen_scaled);
+          if(genBin_recInfo_mass_puppi == gen_binNumber_puppi) h_purity_samebin_mass_puppi_1->Fill(tau32_gen, w_gen_scaled);
+        }
+        if(counter != 3 || counter != 4){
+          h_purity_all_puppi_2->Fill(tau32_gen, w_gen_scaled);
+          if(genBin_recInfo_puppi == gen_binNumber_puppi)      h_purity_samebin_puppi_2->Fill(tau32_gen, w_gen_scaled);
+          if(genBin_recInfo_mass_puppi == gen_binNumber_puppi) h_purity_samebin_mass_puppi_2->Fill(tau32_gen, w_gen_scaled);
+        }
+        if(counter != 5 || counter != 6){
+          h_purity_all_puppi_3->Fill(tau32_gen, w_gen_scaled);
+          if(genBin_recInfo_puppi == gen_binNumber_puppi)      h_purity_samebin_puppi_3->Fill(tau32_gen, w_gen_scaled);
+          if(genBin_recInfo_mass_puppi == gen_binNumber_puppi) h_purity_samebin_mass_puppi_3->Fill(tau32_gen, w_gen_scaled);
+        }
       }
     }
 
@@ -1173,66 +1226,80 @@ void fill_ttbar(TTree* tree, TString prefix){
       h_rec_puppi_sd->Fill(rec_binNumber_puppi_sd, w_sig_rec);
       h_rec_dist_puppi_sd->Fill(tau32_rec_puppi_sd, w_sig_rec);
 
-      if(counter != 1 || counter != 2){
-        h_rec_puppi_sd_1->Fill(rec_binNumber_puppi_sd, w_sig_rec_scaled);
-        h_rec_dist_puppi_sd_1->Fill(tau32_rec_puppi_sd, w_sig_rec_scaled);
-      }
-      if(counter != 3 || counter != 4){
-        h_rec_puppi_sd_2->Fill(rec_binNumber_puppi_sd, w_sig_rec_scaled);
-        h_rec_dist_puppi_sd_2->Fill(tau32_rec_puppi_sd, w_sig_rec_scaled);
-      }
-      if(counter != 5 || counter != 6){
-        h_rec_puppi_sd_3->Fill(rec_binNumber_puppi_sd, w_sig_rec_scaled);
-        h_rec_dist_puppi_sd_3->Fill(tau32_rec_puppi_sd, w_sig_rec_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2){
+          h_rec_puppi_sd_1->Fill(rec_binNumber_puppi_sd, w_sig_rec_scaled);
+          h_rec_dist_puppi_sd_1->Fill(tau32_rec_puppi_sd, w_sig_rec_scaled);
+        }
+        if(counter != 3 || counter != 4){
+          h_rec_puppi_sd_2->Fill(rec_binNumber_puppi_sd, w_sig_rec_scaled);
+          h_rec_dist_puppi_sd_2->Fill(tau32_rec_puppi_sd, w_sig_rec_scaled);
+        }
+        if(counter != 5 || counter != 6){
+          h_rec_puppi_sd_3->Fill(rec_binNumber_puppi_sd, w_sig_rec_scaled);
+          h_rec_dist_puppi_sd_3->Fill(tau32_rec_puppi_sd, w_sig_rec_scaled);
+        }
       }
     }
     if(passed_gen_final_sd){
       h_truth_puppi_sd->Fill(tau32_gen_sd, w_gen);
-      if(counter != 1 || counter != 2)  h_truth_puppi_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
-      if(counter != 3 || counter != 4)  h_truth_puppi_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
-      if(counter != 5 || counter != 6) h_truth_puppi_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_truth_puppi_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
+        if(counter != 3 || counter != 4)  h_truth_puppi_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
+        if(counter != 5 || counter != 6) h_truth_puppi_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+      }
     }
     if(gen_info_puppi_sd){
       h_gen_puppi_sd->Fill(gen_binNumber_puppi_sd, w_gen);
       h_truth_all_puppi_sd->Fill(gen_binNumber_puppi_sd, w_gen);
 
-      if(counter != 1 || counter != 2){
-        h_gen_puppi_sd_1->Fill(gen_binNumber_puppi_sd, w_gen_scaled);
-        h_truth_all_puppi_sd_1->Fill(gen_binNumber_puppi_sd, w_gen_scaled);
-      }
-      if(counter != 3 || counter != 4){
-        h_gen_puppi_sd_2->Fill(gen_binNumber_puppi_sd, w_gen_scaled);
-        h_truth_all_puppi_sd_2->Fill(gen_binNumber_puppi_sd, w_gen_scaled);
-      }
-      if(counter != 5 || counter != 6){
-        h_gen_puppi_sd_3->Fill(gen_binNumber_puppi_sd, w_gen_scaled);
-        h_truth_all_puppi_sd_3->Fill(gen_binNumber_puppi_sd, w_gen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2){
+          h_gen_puppi_sd_1->Fill(gen_binNumber_puppi_sd, w_gen_scaled);
+          h_truth_all_puppi_sd_1->Fill(gen_binNumber_puppi_sd, w_gen_scaled);
+        }
+        if(counter != 3 || counter != 4){
+          h_gen_puppi_sd_2->Fill(gen_binNumber_puppi_sd, w_gen_scaled);
+          h_truth_all_puppi_sd_2->Fill(gen_binNumber_puppi_sd, w_gen_scaled);
+        }
+        if(counter != 5 || counter != 6){
+          h_gen_puppi_sd_3->Fill(gen_binNumber_puppi_sd, w_gen_scaled);
+          h_truth_all_puppi_sd_3->Fill(gen_binNumber_puppi_sd, w_gen_scaled);
+        }
       }
     }
 
     if( rec_info_puppi_sd &&  gen_info_puppi_sd){
       h_mc_matrix_puppi_sd->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_central);
-      if(counter != 1 || counter != 2)  h_mc_matrix_puppi_sd_1->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_central_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_puppi_sd_2->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_central_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_puppi_sd_3->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_central_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_puppi_sd_1->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_central_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_puppi_sd_2->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_central_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_puppi_sd_3->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_central_scaled);
+      }
     }
     if(!rec_info_puppi_sd &&  gen_info_puppi_sd){
       h_mc_matrix_puppi_sd->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_norec);
-      if(counter != 1 || counter != 2)  h_mc_matrix_puppi_sd_1->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_norec_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_puppi_sd_2->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_norec_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_puppi_sd_3->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_norec_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_puppi_sd_1->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_norec_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_puppi_sd_2->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_norec_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_puppi_sd_3->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_norec_scaled);
+      }
     }
     if( rec_info_puppi_sd && !gen_info_puppi_sd){
       h_mc_matrix_puppi_sd->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_nogen);
-      if(counter != 1 || counter != 2)  h_mc_matrix_puppi_sd_1->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_nogen_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_puppi_sd_2->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_nogen_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_puppi_sd_3->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_nogen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_puppi_sd_1->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_nogen_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_puppi_sd_2->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_nogen_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_puppi_sd_3->Fill(gen_binNumber_puppi_sd, rec_binNumber_puppi_sd, w_nogen_scaled);
+      }
     }
     if( rec_info_puppi_sd &&  gen_info_puppi_sd){
       h_mc_matrix_puppi_sd->Fill(gen_binNumber_puppi_sd, 0., w_correction);
-      if(counter != 1 || counter != 2)  h_mc_matrix_puppi_sd_1->Fill(gen_binNumber_puppi_sd, 0., w_correction_scaled);
-      if(counter != 3 || counter != 4)  h_mc_matrix_puppi_sd_2->Fill(gen_binNumber_puppi_sd, 0., w_correction_scaled);
-      if(counter != 5 || counter != 6) h_mc_matrix_puppi_sd_3->Fill(gen_binNumber_puppi_sd, 0., w_correction_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2)  h_mc_matrix_puppi_sd_1->Fill(gen_binNumber_puppi_sd, 0., w_correction_scaled);
+        if(counter != 3 || counter != 4)  h_mc_matrix_puppi_sd_2->Fill(gen_binNumber_puppi_sd, 0., w_correction_scaled);
+        if(counter != 5 || counter != 6) h_mc_matrix_puppi_sd_3->Fill(gen_binNumber_puppi_sd, 0., w_correction_scaled);
+      }
     }
 
     //fill hists for purity
@@ -1247,20 +1314,22 @@ void fill_ttbar(TTree* tree, TString prefix){
       if(genBin_recInfo_mass_puppi_sd == gen_binNumber_puppi_sd) h_purity_samebin_mass_puppi_sd->Fill(tau32_gen_sd, w_gen);
 
 
-      if(counter != 1 || counter != 2){
-        h_purity_all_puppi_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
-        if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      h_purity_samebin_puppi_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
-        if(genBin_recInfo_mass_puppi_sd == gen_binNumber_puppi_sd) h_purity_samebin_mass_puppi_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
-      }
-      if(counter != 3 || counter != 4){
-        h_purity_all_puppi_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
-        if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      h_purity_samebin_puppi_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
-        if(genBin_recInfo_mass_puppi_sd == gen_binNumber_puppi_sd) h_purity_samebin_mass_puppi_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
-      }
-      if(counter != 5 || counter != 6){
-        h_purity_all_puppi_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
-        if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      h_purity_samebin_puppi_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
-        if(genBin_recInfo_mass_puppi_sd == gen_binNumber_puppi_sd) h_purity_samebin_mass_puppi_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+      if(pseudo){
+        if(counter != 1 || counter != 2){
+          h_purity_all_puppi_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
+          if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      h_purity_samebin_puppi_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
+          if(genBin_recInfo_mass_puppi_sd == gen_binNumber_puppi_sd) h_purity_samebin_mass_puppi_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
+        }
+        if(counter != 3 || counter != 4){
+          h_purity_all_puppi_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
+          if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      h_purity_samebin_puppi_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
+          if(genBin_recInfo_mass_puppi_sd == gen_binNumber_puppi_sd) h_purity_samebin_mass_puppi_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
+        }
+        if(counter != 5 || counter != 6){
+          h_purity_all_puppi_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+          if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      h_purity_samebin_puppi_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+          if(genBin_recInfo_mass_puppi_sd == gen_binNumber_puppi_sd) h_purity_samebin_mass_puppi_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+        }
       }
     }
 
@@ -1305,117 +1374,6 @@ void fill_ttbar(TTree* tree, TString prefix){
   h_purity_samebin_mass_puppi->Write();
   h_purity_samebin_mass_puppi_sd->Write();
 
-  h_rec_1->Write();
-  h_rec_sd_1->Write();
-  h_rec_puppi_1->Write();
-  h_rec_puppi_sd_1->Write();
-  h_rec_dist_1->Write();
-  h_rec_dist_sd_1->Write();
-  h_rec_dist_puppi_1->Write();
-  h_rec_dist_puppi_sd_1->Write();
-  h_gen_1->Write();
-  h_gen_sd_1->Write();
-  h_gen_puppi_1->Write();
-  h_gen_puppi_sd_1->Write();
-  h_truth_all_1->Write();
-  h_truth_all_sd_1->Write();
-  h_truth_all_puppi_1->Write();
-  h_truth_all_puppi_sd_1->Write();
-  h_truth_1->Write();
-  h_truth_sd_1->Write();
-  h_truth_puppi_1->Write();
-  h_truth_puppi_sd_1->Write();
-  h_mc_matrix_1->Write();
-  h_mc_matrix_sd_1->Write();
-  h_mc_matrix_puppi_1->Write();
-  h_mc_matrix_puppi_sd_1->Write();
-  h_purity_all_1->Write();
-  h_purity_all_sd_1->Write();
-  h_purity_all_puppi_1->Write();
-  h_purity_all_puppi_sd_1->Write();
-  h_purity_samebin_1->Write();
-  h_purity_samebin_sd_1->Write();
-  h_purity_samebin_puppi_1->Write();
-  h_purity_samebin_puppi_sd_1->Write();
-  h_purity_samebin_mass_1->Write();
-  h_purity_samebin_mass_sd_1->Write();
-  h_purity_samebin_mass_puppi_1->Write();
-  h_purity_samebin_mass_puppi_sd_1->Write();
-
-  h_rec_2->Write();
-  h_rec_sd_2->Write();
-  h_rec_puppi_2->Write();
-  h_rec_puppi_sd_2->Write();
-  h_rec_dist_2->Write();
-  h_rec_dist_sd_2->Write();
-  h_rec_dist_puppi_2->Write();
-  h_rec_dist_puppi_sd_2->Write();
-  h_gen_2->Write();
-  h_gen_sd_2->Write();
-  h_gen_puppi_2->Write();
-  h_gen_puppi_sd_2->Write();
-  h_truth_all_2->Write();
-  h_truth_all_sd_2->Write();
-  h_truth_all_puppi_2->Write();
-  h_truth_all_puppi_sd_2->Write();
-  h_truth_2->Write();
-  h_truth_sd_2->Write();
-  h_truth_puppi_2->Write();
-  h_truth_puppi_sd_2->Write();
-  h_mc_matrix_2->Write();
-  h_mc_matrix_sd_2->Write();
-  h_mc_matrix_puppi_2->Write();
-  h_mc_matrix_puppi_sd_2->Write();
-  h_purity_all_2->Write();
-  h_purity_all_sd_2->Write();
-  h_purity_all_puppi_2->Write();
-  h_purity_all_puppi_sd_2->Write();
-  h_purity_samebin_2->Write();
-  h_purity_samebin_sd_2->Write();
-  h_purity_samebin_puppi_2->Write();
-  h_purity_samebin_puppi_sd_2->Write();
-  h_purity_samebin_mass_2->Write();
-  h_purity_samebin_mass_sd_2->Write();
-  h_purity_samebin_mass_puppi_2->Write();
-  h_purity_samebin_mass_puppi_sd_2->Write();
-
-  h_rec_3->Write();
-  h_rec_sd_3->Write();
-  h_rec_puppi_3->Write();
-  h_rec_puppi_sd_3->Write();
-  h_rec_dist_3->Write();
-  h_rec_dist_sd_3->Write();
-  h_rec_dist_puppi_3->Write();
-  h_rec_dist_puppi_sd_3->Write();
-  h_gen_3->Write();
-  h_gen_sd_3->Write();
-  h_gen_puppi_3->Write();
-  h_gen_puppi_sd_3->Write();
-  h_truth_all_3->Write();
-  h_truth_all_sd_3->Write();
-  h_truth_all_puppi_3->Write();
-  h_truth_all_puppi_sd_3->Write();
-  h_truth_3->Write();
-  h_truth_sd_3->Write();
-  h_truth_puppi_3->Write();
-  h_truth_puppi_sd_3->Write();
-  h_mc_matrix_3->Write();
-  h_mc_matrix_sd_3->Write();
-  h_mc_matrix_puppi_3->Write();
-  h_mc_matrix_puppi_sd_3->Write();
-  h_purity_all_3->Write();
-  h_purity_all_sd_3->Write();
-  h_purity_all_puppi_3->Write();
-  h_purity_all_puppi_sd_3->Write();
-  h_purity_samebin_3->Write();
-  h_purity_samebin_sd_3->Write();
-  h_purity_samebin_puppi_3->Write();
-  h_purity_samebin_puppi_sd_3->Write();
-  h_purity_samebin_mass_3->Write();
-  h_purity_samebin_mass_sd_3->Write();
-  h_purity_samebin_mass_puppi_3->Write();
-  h_purity_samebin_mass_puppi_sd_3->Write();
-
   delete h_rec;
   delete h_rec_sd;
   delete h_rec_puppi;
@@ -1453,116 +1411,229 @@ void fill_ttbar(TTree* tree, TString prefix){
   delete h_purity_samebin_mass_puppi;
   delete h_purity_samebin_mass_puppi_sd;
 
-  delete h_rec_1;
-  delete h_rec_sd_1;
-  delete h_rec_puppi_1;
-  delete h_rec_puppi_sd_1;
-  delete h_rec_dist_1;
-  delete h_rec_dist_sd_1;
-  delete h_rec_dist_puppi_1;
-  delete h_rec_dist_puppi_sd_1;
-  delete h_gen_1;
-  delete h_gen_sd_1;
-  delete h_gen_puppi_1;
-  delete h_gen_puppi_sd_1;
-  delete h_truth_all_1;
-  delete h_truth_all_sd_1;
-  delete h_truth_all_puppi_1;
-  delete h_truth_all_puppi_sd_1;
-  delete h_truth_1;
-  delete h_truth_sd_1;
-  delete h_truth_puppi_1;
-  delete h_truth_puppi_sd_1;
-  delete h_mc_matrix_1;
-  delete h_mc_matrix_sd_1;
-  delete h_mc_matrix_puppi_1;
-  delete h_mc_matrix_puppi_sd_1;
-  delete h_purity_all_1;
-  delete h_purity_all_sd_1;
-  delete h_purity_all_puppi_1;
-  delete h_purity_all_puppi_sd_1;
-  delete h_purity_samebin_1;
-  delete h_purity_samebin_sd_1;
-  delete h_purity_samebin_puppi_1;
-  delete h_purity_samebin_puppi_sd_1;
-  delete h_purity_samebin_mass_1;
-  delete h_purity_samebin_mass_sd_1;
-  delete h_purity_samebin_mass_puppi_1;
-  delete h_purity_samebin_mass_puppi_sd_1;
+  if(pseudo){
+    h_rec_1->Write();
+    h_rec_sd_1->Write();
+    h_rec_puppi_1->Write();
+    h_rec_puppi_sd_1->Write();
+    h_rec_dist_1->Write();
+    h_rec_dist_sd_1->Write();
+    h_rec_dist_puppi_1->Write();
+    h_rec_dist_puppi_sd_1->Write();
+    h_gen_1->Write();
+    h_gen_sd_1->Write();
+    h_gen_puppi_1->Write();
+    h_gen_puppi_sd_1->Write();
+    h_truth_all_1->Write();
+    h_truth_all_sd_1->Write();
+    h_truth_all_puppi_1->Write();
+    h_truth_all_puppi_sd_1->Write();
+    h_truth_1->Write();
+    h_truth_sd_1->Write();
+    h_truth_puppi_1->Write();
+    h_truth_puppi_sd_1->Write();
+    h_mc_matrix_1->Write();
+    h_mc_matrix_sd_1->Write();
+    h_mc_matrix_puppi_1->Write();
+    h_mc_matrix_puppi_sd_1->Write();
+    h_purity_all_1->Write();
+    h_purity_all_sd_1->Write();
+    h_purity_all_puppi_1->Write();
+    h_purity_all_puppi_sd_1->Write();
+    h_purity_samebin_1->Write();
+    h_purity_samebin_sd_1->Write();
+    h_purity_samebin_puppi_1->Write();
+    h_purity_samebin_puppi_sd_1->Write();
+    h_purity_samebin_mass_1->Write();
+    h_purity_samebin_mass_sd_1->Write();
+    h_purity_samebin_mass_puppi_1->Write();
+    h_purity_samebin_mass_puppi_sd_1->Write();
 
-  delete h_rec_2;
-  delete h_rec_sd_2;
-  delete h_rec_puppi_2;
-  delete h_rec_puppi_sd_2;
-  delete h_rec_dist_2;
-  delete h_rec_dist_sd_2;
-  delete h_rec_dist_puppi_2;
-  delete h_rec_dist_puppi_sd_2;
-  delete h_gen_2;
-  delete h_gen_sd_2;
-  delete h_gen_puppi_2;
-  delete h_gen_puppi_sd_2;
-  delete h_truth_all_2;
-  delete h_truth_all_sd_2;
-  delete h_truth_all_puppi_2;
-  delete h_truth_all_puppi_sd_2;
-  delete h_truth_2;
-  delete h_truth_sd_2;
-  delete h_truth_puppi_2;
-  delete h_truth_puppi_sd_2;
-  delete h_mc_matrix_2;
-  delete h_mc_matrix_sd_2;
-  delete h_mc_matrix_puppi_2;
-  delete h_mc_matrix_puppi_sd_2;
-  delete h_purity_all_2;
-  delete h_purity_all_sd_2;
-  delete h_purity_all_puppi_2;
-  delete h_purity_all_puppi_sd_2;
-  delete h_purity_samebin_2;
-  delete h_purity_samebin_sd_2;
-  delete h_purity_samebin_puppi_2;
-  delete h_purity_samebin_puppi_sd_2;
-  delete h_purity_samebin_mass_2;
-  delete h_purity_samebin_mass_sd_2;
-  delete h_purity_samebin_mass_puppi_2;
-  delete h_purity_samebin_mass_puppi_sd_2;
+    h_rec_2->Write();
+    h_rec_sd_2->Write();
+    h_rec_puppi_2->Write();
+    h_rec_puppi_sd_2->Write();
+    h_rec_dist_2->Write();
+    h_rec_dist_sd_2->Write();
+    h_rec_dist_puppi_2->Write();
+    h_rec_dist_puppi_sd_2->Write();
+    h_gen_2->Write();
+    h_gen_sd_2->Write();
+    h_gen_puppi_2->Write();
+    h_gen_puppi_sd_2->Write();
+    h_truth_all_2->Write();
+    h_truth_all_sd_2->Write();
+    h_truth_all_puppi_2->Write();
+    h_truth_all_puppi_sd_2->Write();
+    h_truth_2->Write();
+    h_truth_sd_2->Write();
+    h_truth_puppi_2->Write();
+    h_truth_puppi_sd_2->Write();
+    h_mc_matrix_2->Write();
+    h_mc_matrix_sd_2->Write();
+    h_mc_matrix_puppi_2->Write();
+    h_mc_matrix_puppi_sd_2->Write();
+    h_purity_all_2->Write();
+    h_purity_all_sd_2->Write();
+    h_purity_all_puppi_2->Write();
+    h_purity_all_puppi_sd_2->Write();
+    h_purity_samebin_2->Write();
+    h_purity_samebin_sd_2->Write();
+    h_purity_samebin_puppi_2->Write();
+    h_purity_samebin_puppi_sd_2->Write();
+    h_purity_samebin_mass_2->Write();
+    h_purity_samebin_mass_sd_2->Write();
+    h_purity_samebin_mass_puppi_2->Write();
+    h_purity_samebin_mass_puppi_sd_2->Write();
 
-  delete h_rec_3;
-  delete h_rec_sd_3;
-  delete h_rec_puppi_3;
-  delete h_rec_puppi_sd_3;
-  delete h_rec_dist_3;
-  delete h_rec_dist_sd_3;
-  delete h_rec_dist_puppi_3;
-  delete h_rec_dist_puppi_sd_3;
-  delete h_gen_3;
-  delete h_gen_sd_3;
-  delete h_gen_puppi_3;
-  delete h_gen_puppi_sd_3;
-  delete h_truth_all_3;
-  delete h_truth_all_sd_3;
-  delete h_truth_all_puppi_3;
-  delete h_truth_all_puppi_sd_3;
-  delete h_truth_3;
-  delete h_truth_sd_3;
-  delete h_truth_puppi_3;
-  delete h_truth_puppi_sd_3;
-  delete h_mc_matrix_3;
-  delete h_mc_matrix_sd_3;
-  delete h_mc_matrix_puppi_3;
-  delete h_mc_matrix_puppi_sd_3;
-  delete h_purity_all_3;
-  delete h_purity_all_sd_3;
-  delete h_purity_all_puppi_3;
-  delete h_purity_all_puppi_sd_3;
-  delete h_purity_samebin_3;
-  delete h_purity_samebin_sd_3;
-  delete h_purity_samebin_puppi_3;
-  delete h_purity_samebin_puppi_sd_3;
-  delete h_purity_samebin_mass_3;
-  delete h_purity_samebin_mass_sd_3;
-  delete h_purity_samebin_mass_puppi_3;
-  delete h_purity_samebin_mass_puppi_sd_3;
+    h_rec_3->Write();
+    h_rec_sd_3->Write();
+    h_rec_puppi_3->Write();
+    h_rec_puppi_sd_3->Write();
+    h_rec_dist_3->Write();
+    h_rec_dist_sd_3->Write();
+    h_rec_dist_puppi_3->Write();
+    h_rec_dist_puppi_sd_3->Write();
+    h_gen_3->Write();
+    h_gen_sd_3->Write();
+    h_gen_puppi_3->Write();
+    h_gen_puppi_sd_3->Write();
+    h_truth_all_3->Write();
+    h_truth_all_sd_3->Write();
+    h_truth_all_puppi_3->Write();
+    h_truth_all_puppi_sd_3->Write();
+    h_truth_3->Write();
+    h_truth_sd_3->Write();
+    h_truth_puppi_3->Write();
+    h_truth_puppi_sd_3->Write();
+    h_mc_matrix_3->Write();
+    h_mc_matrix_sd_3->Write();
+    h_mc_matrix_puppi_3->Write();
+    h_mc_matrix_puppi_sd_3->Write();
+    h_purity_all_3->Write();
+    h_purity_all_sd_3->Write();
+    h_purity_all_puppi_3->Write();
+    h_purity_all_puppi_sd_3->Write();
+    h_purity_samebin_3->Write();
+    h_purity_samebin_sd_3->Write();
+    h_purity_samebin_puppi_3->Write();
+    h_purity_samebin_puppi_sd_3->Write();
+    h_purity_samebin_mass_3->Write();
+    h_purity_samebin_mass_sd_3->Write();
+    h_purity_samebin_mass_puppi_3->Write();
+    h_purity_samebin_mass_puppi_sd_3->Write();
+
+    delete h_rec_1;
+    delete h_rec_sd_1;
+    delete h_rec_puppi_1;
+    delete h_rec_puppi_sd_1;
+    delete h_rec_dist_1;
+    delete h_rec_dist_sd_1;
+    delete h_rec_dist_puppi_1;
+    delete h_rec_dist_puppi_sd_1;
+    delete h_gen_1;
+    delete h_gen_sd_1;
+    delete h_gen_puppi_1;
+    delete h_gen_puppi_sd_1;
+    delete h_truth_all_1;
+    delete h_truth_all_sd_1;
+    delete h_truth_all_puppi_1;
+    delete h_truth_all_puppi_sd_1;
+    delete h_truth_1;
+    delete h_truth_sd_1;
+    delete h_truth_puppi_1;
+    delete h_truth_puppi_sd_1;
+    delete h_mc_matrix_1;
+    delete h_mc_matrix_sd_1;
+    delete h_mc_matrix_puppi_1;
+    delete h_mc_matrix_puppi_sd_1;
+    delete h_purity_all_1;
+    delete h_purity_all_sd_1;
+    delete h_purity_all_puppi_1;
+    delete h_purity_all_puppi_sd_1;
+    delete h_purity_samebin_1;
+    delete h_purity_samebin_sd_1;
+    delete h_purity_samebin_puppi_1;
+    delete h_purity_samebin_puppi_sd_1;
+    delete h_purity_samebin_mass_1;
+    delete h_purity_samebin_mass_sd_1;
+    delete h_purity_samebin_mass_puppi_1;
+    delete h_purity_samebin_mass_puppi_sd_1;
+
+    delete h_rec_2;
+    delete h_rec_sd_2;
+    delete h_rec_puppi_2;
+    delete h_rec_puppi_sd_2;
+    delete h_rec_dist_2;
+    delete h_rec_dist_sd_2;
+    delete h_rec_dist_puppi_2;
+    delete h_rec_dist_puppi_sd_2;
+    delete h_gen_2;
+    delete h_gen_sd_2;
+    delete h_gen_puppi_2;
+    delete h_gen_puppi_sd_2;
+    delete h_truth_all_2;
+    delete h_truth_all_sd_2;
+    delete h_truth_all_puppi_2;
+    delete h_truth_all_puppi_sd_2;
+    delete h_truth_2;
+    delete h_truth_sd_2;
+    delete h_truth_puppi_2;
+    delete h_truth_puppi_sd_2;
+    delete h_mc_matrix_2;
+    delete h_mc_matrix_sd_2;
+    delete h_mc_matrix_puppi_2;
+    delete h_mc_matrix_puppi_sd_2;
+    delete h_purity_all_2;
+    delete h_purity_all_sd_2;
+    delete h_purity_all_puppi_2;
+    delete h_purity_all_puppi_sd_2;
+    delete h_purity_samebin_2;
+    delete h_purity_samebin_sd_2;
+    delete h_purity_samebin_puppi_2;
+    delete h_purity_samebin_puppi_sd_2;
+    delete h_purity_samebin_mass_2;
+    delete h_purity_samebin_mass_sd_2;
+    delete h_purity_samebin_mass_puppi_2;
+    delete h_purity_samebin_mass_puppi_sd_2;
+
+    delete h_rec_3;
+    delete h_rec_sd_3;
+    delete h_rec_puppi_3;
+    delete h_rec_puppi_sd_3;
+    delete h_rec_dist_3;
+    delete h_rec_dist_sd_3;
+    delete h_rec_dist_puppi_3;
+    delete h_rec_dist_puppi_sd_3;
+    delete h_gen_3;
+    delete h_gen_sd_3;
+    delete h_gen_puppi_3;
+    delete h_gen_puppi_sd_3;
+    delete h_truth_all_3;
+    delete h_truth_all_sd_3;
+    delete h_truth_all_puppi_3;
+    delete h_truth_all_puppi_sd_3;
+    delete h_truth_3;
+    delete h_truth_sd_3;
+    delete h_truth_puppi_3;
+    delete h_truth_puppi_sd_3;
+    delete h_mc_matrix_3;
+    delete h_mc_matrix_sd_3;
+    delete h_mc_matrix_puppi_3;
+    delete h_mc_matrix_puppi_sd_3;
+    delete h_purity_all_3;
+    delete h_purity_all_sd_3;
+    delete h_purity_all_puppi_3;
+    delete h_purity_all_puppi_sd_3;
+    delete h_purity_samebin_3;
+    delete h_purity_samebin_sd_3;
+    delete h_purity_samebin_puppi_3;
+    delete h_purity_samebin_puppi_sd_3;
+    delete h_purity_samebin_mass_3;
+    delete h_purity_samebin_mass_sd_3;
+    delete h_purity_samebin_mass_puppi_3;
+    delete h_purity_samebin_mass_puppi_sd_3;
+  }
   cout << "Finished: Filling " << prefix << "!" << '\n';
   return;
 }
@@ -1599,7 +1670,7 @@ void fill_scale(TTree* tree, TString prefix){
   outputFile->cd();
 
   tree->ResetBranchAddresses();
-  // tree->SetBranchAddress("h_tau32_gen_sd", &tau32_gen);
+  tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
   tree->SetBranchAddress("h_tau32_gen_sd", &tau32_gen_sd);
   tree->SetBranchAddress("h_mass_gen", &mass_gen);
   tree->SetBranchAddress("h_mass_gen_sd", &mass_gen_sd);
@@ -1636,7 +1707,6 @@ void fill_scale(TTree* tree, TString prefix){
 
   for(Int_t ievent = 0; ievent < tree->GetEntriesFast(); ievent++){
     if(tree->GetEntry(ievent) <= 0) break;
-    tau32_gen = tau32_gen_sd;
 
     // get weights for migration matrix
     w_central = rec_weight;
@@ -1664,8 +1734,8 @@ void fill_scale(TTree* tree, TString prefix){
 
 
     if(rec_info){
-        h_pseudodata->Fill(rec_binNumber, w_sig_rec);
-        h_pseudodata_dist->Fill(tau32_rec, w_sig_rec);
+      h_pseudodata->Fill(rec_binNumber, w_sig_rec);
+      h_pseudodata_dist->Fill(tau32_rec, w_sig_rec);
     }
     if(gen_info)         h_pseudodata_truth_all->Fill(gen_binNumber, w_gen);
     if(passed_gen_final) h_pseudodata_truth->Fill(tau32_gen, w_gen);
@@ -1685,8 +1755,8 @@ void fill_scale(TTree* tree, TString prefix){
     if(passed_rec_final_sd || passed_rec_pt_topjet_sideband_sd || passed_rec_mass_sideband_sd) rec_info_sd = true;
 
     if(rec_info_sd){
-        h_pseudodata_sd->Fill(rec_binNumber_sd, w_sig_rec);
-        h_pseudodata_dist_sd->Fill(tau32_rec_sd, w_sig_rec);
+      h_pseudodata_sd->Fill(rec_binNumber_sd, w_sig_rec);
+      h_pseudodata_dist_sd->Fill(tau32_rec_sd, w_sig_rec);
     }
     if(gen_info_sd)         h_pseudodata_truth_all_sd->Fill(gen_binNumber_sd, w_gen);
     if(passed_gen_final_sd) h_pseudodata_truth_sd->Fill(tau32_gen_sd, w_gen);
@@ -1707,8 +1777,8 @@ void fill_scale(TTree* tree, TString prefix){
 
 
     if(rec_info_puppi){
-        h_pseudodata_puppi->Fill(rec_binNumber_puppi, w_sig_rec);
-        h_pseudodata_dist_puppi->Fill(tau32_rec_puppi, w_sig_rec);
+      h_pseudodata_puppi->Fill(rec_binNumber_puppi, w_sig_rec);
+      h_pseudodata_dist_puppi->Fill(tau32_rec_puppi, w_sig_rec);
     }
     if(gen_info_puppi)   h_pseudodata_truth_all_puppi->Fill(gen_binNumber_puppi, w_gen);
     if(passed_gen_final) h_pseudodata_truth_puppi->Fill(tau32_gen, w_gen);
@@ -1719,17 +1789,17 @@ void fill_scale(TTree* tree, TString prefix){
     else if(passed_rec_pt_topjet_sideband_puppi_sd)  rec_binNumber_puppi_sd = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec_puppi_sd);
     else if(passed_rec_mass_sideband_puppi_sd)       rec_binNumber_puppi_sd = rec_mass_sideband->GetGlobalBinNumber(tau32_rec_puppi_sd);
 
-    if(passed_gen_final_sd)                    gen_binNumber_sd = measurement_gen->GetGlobalBinNumber(tau32_gen_sd, mass_gen_sd);
-    else if(passed_gen_pt_topjet_sideband_sd)  gen_binNumber_sd = gen_pt_topjet_sideband->GetGlobalBinNumber(tau32_gen_sd);
-    else if(passed_gen_mass_sideband_sd)       gen_binNumber_sd = gen_mass_sideband->GetGlobalBinNumber(tau32_gen_sd);
+    if(passed_gen_final_sd)                    gen_binNumber_puppi_sd = measurement_gen->GetGlobalBinNumber(tau32_gen_sd, mass_gen_sd);
+    else if(passed_gen_pt_topjet_sideband_sd)  gen_binNumber_puppi_sd = gen_pt_topjet_sideband->GetGlobalBinNumber(tau32_gen_sd);
+    else if(passed_gen_mass_sideband_sd)       gen_binNumber_puppi_sd = gen_mass_sideband->GetGlobalBinNumber(tau32_gen_sd);
 
     bool rec_info_puppi_sd = false, gen_info_puppi_sd = false;
     if(passed_gen_final_sd || passed_gen_pt_topjet_sideband_sd || passed_gen_mass_sideband_sd)                   gen_info_puppi_sd = true;
     if(passed_rec_final_puppi_sd || passed_rec_pt_topjet_sideband_puppi_sd || passed_rec_mass_sideband_puppi_sd) rec_info_puppi_sd = true;
 
     if(rec_info_puppi_sd){
-        h_pseudodata_puppi_sd->Fill(rec_binNumber_puppi_sd, w_sig_rec);
-        h_pseudodata_dist_puppi_sd->Fill(tau32_rec_puppi_sd, w_sig_rec);
+      h_pseudodata_puppi_sd->Fill(rec_binNumber_puppi_sd, w_sig_rec);
+      h_pseudodata_dist_puppi_sd->Fill(tau32_rec_puppi_sd, w_sig_rec);
     }
     if(gen_info_puppi_sd)   h_pseudodata_truth_all_puppi_sd->Fill(gen_binNumber_puppi_sd, w_gen);
     if(passed_gen_final_sd) h_pseudodata_truth_puppi_sd->Fill(tau32_gen_sd, w_gen);
@@ -1849,50 +1919,50 @@ void fill_background(TTree* tree, TString prefix){
     else if(passed_rec_mass_sideband_sd)      rec_binNumber_sd = rec_mass_sideband->GetGlobalBinNumber(tau32_rec_sd);
 
     if(passed_rec_final_sd || passed_rec_pt_topjet_sideband_sd || passed_rec_mass_sideband_sd){
-    h_background_sd->Fill(rec_binNumber_sd, w_central);
-    h_background_dist_sd->Fill(tau32_rec_sd);
+      h_background_sd->Fill(rec_binNumber_sd, w_central);
+      h_background_dist_sd->Fill(tau32_rec_sd);
+    }
+
+    // fill background histograms for PUPPI Jets w/o SoftDrop
+    Int_t rec_binNumber_puppi = 0;
+    if(passed_rec_final_puppi)                   rec_binNumber_puppi = measurement_rec->GetGlobalBinNumber(tau32_rec_puppi, mass_rec_puppi);
+    else if(passed_rec_pt_topjet_sideband_puppi) rec_binNumber_puppi = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec_puppi);
+    else if(passed_rec_mass_sideband_puppi)      rec_binNumber_puppi = rec_mass_sideband->GetGlobalBinNumber(tau32_rec_puppi);
+
+    if(passed_rec_final_puppi || passed_rec_pt_topjet_sideband_puppi || passed_rec_mass_sideband_puppi){
+      h_background_puppi->Fill(rec_binNumber_puppi, w_central);
+      h_background_dist_puppi->Fill(tau32_rec_puppi);
+    }
+
+    // fill background histograms for PUPPI Jets w/ SoftDrop
+    Int_t rec_binNumber_puppi_sd = 0;
+    if(passed_rec_final_puppi_sd)                   rec_binNumber_puppi_sd = measurement_rec->GetGlobalBinNumber(tau32_rec_puppi_sd, mass_rec_puppi_sd);
+    else if(passed_rec_pt_topjet_sideband_puppi_sd) rec_binNumber_puppi_sd = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec_puppi_sd);
+    else if(passed_rec_mass_sideband_puppi_sd)      rec_binNumber_puppi_sd = rec_mass_sideband->GetGlobalBinNumber(tau32_rec_puppi_sd);
+
+    if(passed_rec_final_puppi_sd || passed_rec_pt_topjet_sideband_puppi_sd || passed_rec_mass_sideband_puppi_sd){
+      h_background_puppi_sd->Fill(rec_binNumber_puppi_sd, w_central);
+      h_background_dist_puppi_sd->Fill(tau32_rec_puppi_sd);
+    }
+
   }
 
-  // fill background histograms for PUPPI Jets w/o SoftDrop
-  Int_t rec_binNumber_puppi = 0;
-  if(passed_rec_final_puppi)                   rec_binNumber_puppi = measurement_rec->GetGlobalBinNumber(tau32_rec_puppi, mass_rec_puppi);
-  else if(passed_rec_pt_topjet_sideband_puppi) rec_binNumber_puppi = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec_puppi);
-  else if(passed_rec_mass_sideband_puppi)      rec_binNumber_puppi = rec_mass_sideband->GetGlobalBinNumber(tau32_rec_puppi);
-
-  if(passed_rec_final_puppi || passed_rec_pt_topjet_sideband_puppi || passed_rec_mass_sideband_puppi){
-  h_background_puppi->Fill(rec_binNumber_puppi, w_central);
-  h_background_dist_puppi->Fill(tau32_rec_puppi);
-}
-
-// fill background histograms for PUPPI Jets w/ SoftDrop
-Int_t rec_binNumber_puppi_sd = 0;
-if(passed_rec_final_puppi_sd)                   rec_binNumber_puppi_sd = measurement_rec->GetGlobalBinNumber(tau32_rec_puppi_sd, mass_rec_puppi_sd);
-else if(passed_rec_pt_topjet_sideband_puppi_sd) rec_binNumber_puppi_sd = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec_puppi_sd);
-else if(passed_rec_mass_sideband_puppi_sd)      rec_binNumber_puppi_sd = rec_mass_sideband->GetGlobalBinNumber(tau32_rec_puppi_sd);
-
-if(passed_rec_final_puppi_sd || passed_rec_pt_topjet_sideband_puppi_sd || passed_rec_mass_sideband_puppi_sd){
-  h_background_puppi_sd->Fill(rec_binNumber_puppi_sd, w_central);
-  h_background_dist_puppi_sd->Fill(tau32_rec_puppi_sd);
-}
-
-}
-
-h_background->Write();
-h_background_sd->Write();
-h_background_puppi->Write();
-h_background_puppi_sd->Write();
-h_background_dist->Write();
-h_background_dist_sd->Write();
-h_background_dist_puppi->Write();
-h_background_dist_puppi_sd->Write();
-delete h_background;
-delete h_background_sd;
-delete h_background_puppi;
-delete h_background_puppi_sd;
-delete h_background_dist;
-delete h_background_dist_sd;
-delete h_background_dist_puppi;
-delete h_background_dist_puppi_sd;
-cout << "finished: filling background" << '\n';
-return;
+  h_background->Write();
+  h_background_sd->Write();
+  h_background_puppi->Write();
+  h_background_puppi_sd->Write();
+  h_background_dist->Write();
+  h_background_dist_sd->Write();
+  h_background_dist_puppi->Write();
+  h_background_dist_puppi_sd->Write();
+  delete h_background;
+  delete h_background_sd;
+  delete h_background_puppi;
+  delete h_background_puppi_sd;
+  delete h_background_dist;
+  delete h_background_dist_sd;
+  delete h_background_dist_puppi;
+  delete h_background_dist_puppi_sd;
+  cout << "finished: filling background" << '\n';
+  return;
 }

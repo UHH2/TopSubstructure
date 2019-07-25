@@ -56,7 +56,8 @@ SRC=$(shell ls TUnfold*$(TUNFOLDCODEVER).cxx)
 MY_MACRO=$(shell ls unfold_code*.C) # include my macros
 OBJ_binning = binning.o
 OBJ_hist = hist_filler.o
-OBJ_do_unfolding = do_unfolding.o unfold.o Plots.o TestPlotter.o
+OBJ_do_unfolding = do_unfolding.o unfold.o
+OBJ_Plotter = TestPlotter.o Plots.o
 
 ## this is for changing the code version
 TUNFOLDNEWVERSION:=V17.6
@@ -148,7 +149,7 @@ tar: $(VERSIONTAR)
 roottar: $(ROOTTAR)
 
 
-topsub: binning hist_filler do_unfolding
+topsub: binning hist_filler do_unfolding Plotter
 
 binning: $(OBJ_binning)
 	$(CXX) $(CXXFLAGS) -o binning $(OBJ_binning) $(DICT) $(LDFLAGS) -l$(LIB) $(ROOTLIBS)
@@ -158,6 +159,9 @@ hist_filler: $(OBJ_hist)
 
 do_unfolding: $(OBJ_do_unfolding)
 	$(CXX) $(CXXFLAGS) -o do_unfolding $(OBJ_do_unfolding) $(DICT) $(LDFLAGS) -l$(LIB) $(ROOTLIBS)
+
+Plotter: $(OBJ_Plotter)
+	$(CXX) $(CXXFLAGS) -o Plotter $(OBJ_Plotter) $(DICT) $(LDFLAGS) -l$(LIB) $(ROOTLIBS)
 
 
 

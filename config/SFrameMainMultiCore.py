@@ -14,33 +14,54 @@ def main():
         print 'Usage: ./SFrameMainMultiCore.py <Name Workdir> <Number of Jobs>'
         exit(0)
 
-    workdir = sys.argv[1]
-    nworkers = int(sys.argv[2])
+    # workdir = sys.argv[1]
+    workdir = []
+    for dir in sys.argv[1:]:
+        if 'workdir' in dir:
+            workdir.append(dir)
+            os.system('echo found workdir: %s ' %dir)
+
+    nworkers = int(sys.argv[len(sys.argv)-1])
 
     print '==============================='
     print '====== SFrame Multi Core ======'
     print '==============================='
 
-    print '  -- Workdir: '+workdir
+    for dir in workdir:
+        print '  -- Workdir: '+dir
     print '  -- Number of Jobs:',nworkers
 
-    if not os.path.isdir(workdir):
-        print '[ERROR] workdir ('+workdir+') does not exist!'
-        exit(0)
+    for dir in workdir:
+        if not os.path.isdir(dir):
+            print '[ERROR] workdir ('+dir+') does not exist!'
+            exit(0)
 
-    if not os.path.exists(workdir+"/missing_files.txt"):
-        print '[ERROR] not a proper sframe_batch workdir, missing_files.txt not found!'
-        exit(0)
+    for dir in workdir:
+        if not os.path.exists(dir+"/missing_files.txt"):
+            print '[ERROR] not a proper sframe_batch workdir, missing_files.txt not found!'
+            exit(0)
 
     # read missing_files.
-    lines = read_missing_files(workdir)
+    lines =  []
+    for dir in workdir:
+        lines.append(read_missing_files(dir))
+
+    lines2 = []
+    for sublist in lines:
+        for xml in sublist:
+            lines2.append(xml)
+
+
 
     # remove everything but the name of the xml file
+
     xmls = []
-    for line in lines:
+    for line in lines2:
         if "  sframe_main " in line:
-            root, xml = line.split("  sframe_main ",1)
-            xmls.append(workdir+'/'+xml)
+            rest, xml = line.split("  sframe_main ",1)
+            dir, root = line.split("/")
+            xmls.append(dir+'/'+xml)
+            # print(xmls)
 
     # get number of xmls and calculate xmls per job
     nxmls = len(xmls)
