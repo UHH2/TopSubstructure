@@ -22,8 +22,9 @@ void fill_ttbar(TTree *, TString prefix);
 void fill_scale(TTree *, TString prefix);
 void fill_background(TTree *, TString prefix);
 
+bool Muon_done;
 
-TFile *outputFile;
+TFile *outputFile, *outputFile2;
 TFile *outputFile_bins;
 
 // binning schemes

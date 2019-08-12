@@ -43,22 +43,33 @@ bool RecPtSelection::passes(const Event & event){
 }
 
 
-RecMassCompare::RecMassCompare(int n_): n(n_){}
+RecMassCompare::RecMassCompare(int mode1_, int mode2_): mode1(mode1_), mode2(mode2_){}
 bool RecMassCompare::passes(const Event & event){
-
   bool pass = false;
-  switch(n){
-    case 0:
-    if(event.topjets->size() > 1 && event.muons->size() > 0){
+  if(!(event.topjets->size() > 1)) return pass;
+  switch(mode1){
+    case 0:{
       double mass;
       mass = event.topjets->at(0).v4().M();
-      const auto dummy = event.topjets->at(1).v4() + event.muons->at(0).v4();
+      LorentzVector dummy;
+      switch (mode2) {
+        case 0:{
+          if(!(event.muons->size() > 0)) return pass;
+          dummy = event.topjets->at(1).v4() + event.muons->at(0).v4();
+        }
+        break;
+
+        case 1:{
+          if(!(event.electrons->size() > 0)) return pass;
+          dummy = event.topjets->at(1).v4() + event.electrons->at(0).v4();
+        }
+        break;
+      }
       if(mass > (dummy.M())) pass = true;
     }
     break;
 
-    case 1:
-    if(event.topjets->size() > 1 && event.muons->size() > 0){
+    case 1:{
       LorentzVector subjet_sum1;
       for (const auto s : event.topjets->at(0).subjets()) {
         subjet_sum1 += s.v4();
@@ -69,8 +80,20 @@ bool RecMassCompare::passes(const Event & event){
       for (const auto s : event.topjets->at(1).subjets()) {
         subjet_sum2 += s.v4();
       }
-      subjet_sum2 += event.muons->at(0).v4();
-      double mass2 = subjet_sum2.M();
+      double mass2 = 0;
+      switch (mode2) {
+        case 0:
+        if(!(event.muons->size() > 0)) return pass;
+        subjet_sum2 += event.muons->at(0).v4();
+        mass2 = subjet_sum2.M();
+        break;
+
+        case 1:
+        if(!(event.electrons->size() > 0)) return pass;
+        subjet_sum2 += event.electrons->at(0).v4();
+        mass2 = subjet_sum2.M();
+        break;
+      }
       if(mass1 > mass2) pass = true;
     }
     break;
@@ -78,14 +101,22 @@ bool RecMassCompare::passes(const Event & event){
   return pass;
 }
 
-RecdRSelection::RecdRSelection(double dr_min_, int mode_):dr_min(dr_min_), mode(mode_){}
+RecdRSelection::RecdRSelection(double dr_min_, int mode1_, int mode2_):dr_min(dr_min_), mode1(mode1_), mode2(mode2_){}
 bool RecdRSelection::passes(const Event & event){
   bool pass = false;
-  if(!(event.muons->size() > 0)) return pass;
   if(!(event.topjets->size() > 1)) return pass;
-  switch (mode) {
+  switch (mode1) {
     case 0:
-    pass = deltaR(event.topjets->at(1), event.muons->at(0)) < dr_min;
+    switch (mode2) {
+      case 0:
+      if(!(event.muons->size() > 0)) return pass;
+      pass = deltaR(event.topjets->at(1), event.muons->at(0)) < dr_min;
+      break;
+      case 1:
+      if(!(event.electrons->size() > 0)) return pass;
+      pass = deltaR(event.topjets->at(1), event.electrons->at(0)) < dr_min;
+      break;
+    }
     break;
 
     case 1:
@@ -93,7 +124,16 @@ bool RecdRSelection::passes(const Event & event){
     for (const auto s : event.topjets->at(1).subjets()) {
       subjet_sum2 += s.v4();
     }
-    pass = deltaR(subjet_sum2, event.muons->at(0)) < dr_min;
+    switch (mode2) {
+      case 0:
+      if(!(event.muons->size() > 0)) return pass;
+      pass = deltaR(subjet_sum2, event.muons->at(0)) < dr_min;
+      break;
+      case 1:
+      if(!(event.electrons->size() > 0)) return pass;
+      pass = deltaR(subjet_sum2, event.electrons->at(0)) < dr_min;
+      break;
+    }
     break;
   }
   return pass;

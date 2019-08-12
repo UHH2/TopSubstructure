@@ -23,6 +23,7 @@ GenHists::GenHists(Context & ctx, const string & dirname, std::string const & la
   // TopJets
   book<TH1D>("M_diff1", "M_{first GenTopJet} - M_{second GenTopJet} [GeV^{2}]", 80, -400, 400);
   book<TH1D>("M_diff2", "M_{first GenTopJet} - M_{second GenTopJet + Muon} [GeV^{2}]", 80, -400, 400);
+  book<TH1D>("M_diff2_ele", "M_{first GenTopJet} - M_{second GenTopJet + Electron} [GeV^{2}]", 80, -400, 400);
 
   book<TH1D>("top_pt", "p_{T} top-quark [GeV]", 120, 0, 1200);
   book<TH1D>("top1_pt", "p_{T} top-quark (first) [GeV]", 120, 0, 1200);
@@ -136,9 +137,8 @@ GenHists::GenHists(Context & ctx, const string & dirname, std::string const & la
   book<TH1D>("dPhi_bqlep_gtj2", "#Delta #Phi (b-quark (lep), second GenTopJet)", 40, 0, 4.);
   book<TH1D>("dPhi_wlep_gtj2", "#Delta #Phi (Wlep, second GenTopJet)", 40, 0, 4.);
 
+
   book<TH1D>("dR8_top_gtj1", "#Delta R(top, first GenTopJet)", 50, 0, 5.);
-
-
 
   book<TH1D>("dR_q1_q2", "#Delta R(quark1, quark2)", 50, 0, 5.);
   book<TH1D>("dR_bqhad_q1", "#Delta R(b-quark, quark1)", 50, 0, 5.);
@@ -155,7 +155,6 @@ GenHists::GenHists(Context & ctx, const string & dirname, std::string const & la
   book<TH1D>("dPhi_bqlep_nu", "#Delta #Phi (b-quark (lep), #nu_{#mu})", 40, 0, 4.);
 
 
-
   book<TH1D>("dR_whad_bqhad", "#Delta R(Whad, b-quark had)", 50, 0, 5.);
   book<TH1D>("dR_whad_bqlep", "#Delta R(Whad, b-quark lep)", 50, 0, 5.);
   book<TH1D>("dR_whad_wlep", "#Delta R(Whad, Wlep)", 50, 0, 5.);
@@ -167,10 +166,35 @@ GenHists::GenHists(Context & ctx, const string & dirname, std::string const & la
   book<TH1D>("dPhi_wlep_bqhad", "#Delta #Phi (Wlep, b-quark had)", 40, 0, 4.);
   book<TH1D>("dPhi_wlep_bqlep", "#Delta #Phi (Wlep, b-quark lep)", 40, 0, 4.);
 
+  book<TH1D>("dR_electron_gtj1_ele", "#Delta R(electron, first GenTopJet) (ele)", 50, 0, 5.);
+  book<TH1D>("dR_nu_gtj1_ele", "#Delta R(#nu_{electron}, first GenTopJet) (ele)", 50, 0, 5.);
+  book<TH1D>("dPhi_electron_gtj1_ele", "#Delta #Phi (electron, first GenTopJet) (ele)", 40, 0, 4.);
+  book<TH1D>("dPhi_nu_gtj1_ele", "#Delta #Phi (#nu_{electron}, first GenTopJet) (ele)", 40, 0, 4.);
+
+  book<TH1D>("dR_electron_gtj2_ele", "#Delta R(electron, second GenTopJet) (ele)", 50, 0, 5.);
+  book<TH1D>("dR_nu_gtj2_ele", "#Delta R(#nu_{electron}, second GenTopJet) (ele)", 50, 0, 5.);
+  book<TH1D>("dPhi_electron_gtj2_ele", "#Delta #Phi (electron, second GenTopJet) (ele)", 40, 0, 4.);
+  book<TH1D>("dPhi_nu_gtj2_ele", "#Delta #Phi (#nu_{electron}, second GenTopJet) (ele)", 40, 0, 4.);
+
+  book<TH1D>("dR_electron_nu_ele", "#Delta R(electron, #nu_{electron}) (ele)", 50, 0, 5.);
+  book<TH1D>("dR_bqlep_electron_ele", "#Delta R(b-quark (lep), electron) (ele)", 50, 0, 5.);
+  book<TH1D>("dR_bqlep_nu_ele", "#Delta R(b-quark (lep), #nu_{electron}) (ele)", 50, 0, 5.);
+  book<TH1D>("dPhi_electron_nu_ele", "#Delta #Phi (electron, #nu_{electron}) (ele)", 40, 0, 4.);
+  book<TH1D>("dPhi_bqlep_electron_ele", "#Delta #Phi (b-quark (lep), electron) (ele)", 40, 0, 4.);
+  book<TH1D>("dPhi_bqlep_nu_ele", "#Delta #Phi (b-quark (lep), #nu_{electron}) (ele)", 40, 0, 4.);
+
+
+
+
   // leptons
   book<TH1D>("pt_mu", "p_{T}^{#mu} [GeV]", 100, 0, 1000);
   book<TH1D>("eta_mu", "#eta^{#mu}", 40, -2.5, 2.5);
   book<TH1D>("mass_mu", "M^{#mu} [GeV]", 50, 0, 0.5);
+
+  book<TH1D>("pt_ele", "p_{T}^{electron} [GeV]", 100, 0, 1000);
+  book<TH1D>("eta_ele", "#eta^{electron}", 40, -2.5, 2.5);
+  book<TH1D>("mass_ele", "M^{electron} [GeV]", 50, 0, 0.5);
+
 
   //general
   book<TH1D>("E_Tmiss", "missing E_{T} [GeV]", 75, 0, 1500);
@@ -303,8 +327,11 @@ void GenHists::fill(const Event & event){
 
     if(event.is_valid(h_ttbargen)){
       const auto & ttbargen = event.get(h_ttbargen);
-      if(ttbargen.DecayChannel() == TTbarGen::e_muhad){
-        GenParticle tophad, toplep, q1, q2, bhad, blep, mu, nu, whad, wlep;
+      bool isMu  = ttbargen.DecayChannel() == TTbarGen::e_muhad;
+      bool isEle = ttbargen.DecayChannel() == TTbarGen::e_ehad;
+
+      if(isMu || isEle){
+        GenParticle tophad, toplep, q1, q2, bhad, blep, lep, nu, whad, wlep;
 
         tophad = ttbargen.TopHad();
         toplep = ttbargen.TopLep();
@@ -312,7 +339,7 @@ void GenHists::fill(const Event & event){
         q2 = ttbargen.Q2();
         bhad = ttbargen.BHad();
         blep = ttbargen.BLep();
-        mu = ttbargen.ChargedLepton();
+        lep = ttbargen.ChargedLepton();
         nu = ttbargen.Neutrino();
         whad = ttbargen.WHad();
         wlep = ttbargen.WLep();
@@ -332,15 +359,23 @@ void GenHists::fill(const Event & event){
         hist("top2_pt")->Fill(top.at(1).pt(), weight);
         hist("M_ttbar")->Fill((top.at(0).v4()+top.at(1).v4()).M(), weight);
 
-        hist("pt_mu")->Fill(mu.pt(), weight);
-        hist("eta_mu")->Fill(mu.eta(), weight);
-        hist("mass_mu")->Fill(mu.v4().M(), weight);
+        if(isMu){
+                hist("pt_mu")->Fill(lep.pt(), weight);
+                hist("eta_mu")->Fill(lep.eta(), weight);
+                hist("mass_mu")->Fill(lep.v4().M(), weight);
+        }
+        else if(isEle){
+                hist("pt_ele")->Fill(lep.pt(), weight);
+                hist("eta_ele")->Fill(lep.eta(), weight);
+                hist("mass_ele")->Fill(lep.v4().M(), weight);
 
+        }
         if(gentopjet.size() > 1){
           hist("M_diff1")->Fill(gentopjet.at(0).v4().M() - gentopjet.at(1).v4().M(), weight);
 
-          const auto dummy_mass = gentopjet.at(1).v4() + mu.v4();
-          hist("M_diff2")->Fill(gentopjet.at(0).v4().M() - dummy_mass.M(), weight);
+          const auto dummy_mass = gentopjet.at(1).v4() + lep.v4();
+          if(isMu) hist("M_diff2")->Fill(gentopjet.at(0).v4().M() - dummy_mass.M(), weight);
+          else if(isEle) hist("M_diff2_ele")->Fill(gentopjet.at(0).v4().M() - dummy_mass.M(), weight);
         }
 
         hist("E_Tmiss")->Fill(nu.pt(), weight);
@@ -358,12 +393,15 @@ void GenHists::fill(const Event & event){
         hist("dPhi_bqhad_gtj1")->Fill(deltaPhi(bhad, gentopjet.at(0)), weight);
         hist("dPhi_whad_gtj1")->Fill(deltaPhi(whad, gentopjet.at(0)), weight);
 
-        hist("dR_mu_gtj1")->Fill(deltaR(mu, gentopjet.at(0)), weight);
-        hist("dR_nu_gtj1")->Fill(deltaR(nu, gentopjet.at(0)), weight);
+        hist("dR_mu_gtj1")->Fill(deltaR(lep, gentopjet.at(0)), weight);
+        if(isMu) hist("dR_nu_gtj1")->Fill(deltaR(nu, gentopjet.at(0)), weight);
+        else if(isEle) hist("dR_nu_gtj1_ele")->Fill(deltaR(nu, gentopjet.at(0)), weight);
         hist("dR_bqlep_gtj1")->Fill(deltaR(blep, gentopjet.at(0)), weight);
         hist("dR_wlep_gtj1")->Fill(deltaR(wlep, gentopjet.at(0)), weight);
-        hist("dPhi_mu_gtj1")->Fill(deltaPhi(mu, gentopjet.at(0)), weight);
-        hist("dPhi_nu_gtj1")->Fill(deltaPhi(nu, gentopjet.at(0)), weight);
+        if(isMu) hist("dPhi_mu_gtj1")->Fill(deltaPhi(lep, gentopjet.at(0)), weight);
+        else if(isEle) hist("dPhi_electron_gtj1_ele")->Fill(deltaPhi(lep, gentopjet.at(0)), weight);
+        if(isMu) hist("dPhi_nu_gtj1")->Fill(deltaPhi(nu, gentopjet.at(0)), weight);
+        else if(isEle) hist("dPhi_nu_gtj1_ele")->Fill(deltaPhi(nu, gentopjet.at(0)), weight);
         hist("dPhi_bqlep_gtj1")->Fill(deltaPhi(blep, gentopjet.at(0)), weight);
         hist("dPhi_wlep_gtj1")->Fill(deltaPhi(wlep, gentopjet.at(0)), weight);
 
@@ -377,12 +415,16 @@ void GenHists::fill(const Event & event){
           hist("dPhi_bqhad_gtj2")->Fill(deltaPhi(bhad, gentopjet.at(1)), weight);
           hist("dPhi_whad_gtj2")->Fill(deltaPhi(whad, gentopjet.at(1)), weight);
 
-          hist("dR_mu_gtj2")->Fill(deltaR(mu, gentopjet.at(1)), weight);
-          hist("dR_nu_gtj2")->Fill(deltaR(nu, gentopjet.at(1)), weight);
+          if(isMu) hist("dR_mu_gtj2")->Fill(deltaR(lep, gentopjet.at(1)), weight);
+          else if(isEle) hist("dR_electron_gtj2_ele")->Fill(deltaR(lep, gentopjet.at(1)), weight);
+          if(isMu) hist("dR_nu_gtj2")->Fill(deltaR(nu, gentopjet.at(1)), weight);
+          else if(isEle) hist("dR_nu_gtj2_ele")->Fill(deltaR(nu, gentopjet.at(1)), weight);
           hist("dR_bqlep_gtj2")->Fill(deltaR(blep, gentopjet.at(1)), weight);
           hist("dR_wlep_gtj2")->Fill(deltaR(wlep, gentopjet.at(1)), weight);
-          hist("dPhi_mu_gtj2")->Fill(deltaPhi(mu, gentopjet.at(1)), weight);
-          hist("dPhi_nu_gtj2")->Fill(deltaPhi(nu, gentopjet.at(1)), weight);
+          if(isMu) hist("dPhi_mu_gtj2")->Fill(deltaPhi(lep, gentopjet.at(1)), weight);
+          else if(isEle) hist("dPhi_electron_gtj2_ele")->Fill(deltaPhi(lep, gentopjet.at(1)), weight);
+          if(isMu) hist("dPhi_nu_gtj2")->Fill(deltaPhi(nu, gentopjet.at(1)), weight);
+          else if(isEle) hist("dPhi_nu_gtj2_ele")->Fill(deltaPhi(nu, gentopjet.at(1)), weight);
           hist("dPhi_bqlep_gtj2")->Fill(deltaPhi(blep, gentopjet.at(1)), weight);
           hist("dPhi_wlep_gtj2")->Fill(deltaPhi(wlep, gentopjet.at(1)), weight);
         }
@@ -396,13 +438,19 @@ void GenHists::fill(const Event & event){
         hist("dPhi_bqhad_q2")->Fill(deltaPhi(bhad, q2), weight);
         hist("dPhi_whad_bqhad")->Fill(deltaPhi(whad, bhad), weight);
 
-        hist("dR_mu_nu")->Fill(deltaR(mu, nu), weight);
-        hist("dR_bqlep_mu")->Fill(deltaR(blep, mu), weight);
-        hist("dR_bqlep_nu")->Fill(deltaR(blep, nu), weight);
+        if(isMu) hist("dR_mu_nu")->Fill(deltaR(lep, nu), weight);
+        else if(isEle) hist("dR_electron_nu_ele")->Fill(deltaR(lep, nu), weight);
+        if(isMu) hist("dR_bqlep_mu")->Fill(deltaR(blep, lep), weight);
+        else if(isEle) hist("dR_bqlep_electron_ele")->Fill(deltaR(blep, lep), weight);
+        if(isMu) hist("dR_bqlep_nu")->Fill(deltaR(blep, nu), weight);
+        else if(isEle) hist("dR_bqlep_nu_ele")->Fill(deltaR(blep, nu), weight);
         hist("dR_wlep_bqlep")->Fill(deltaR(wlep, blep), weight);
-        hist("dPhi_mu_nu")->Fill(deltaPhi(mu, nu), weight);
-        hist("dPhi_bqlep_mu")->Fill(deltaPhi(blep, mu), weight);
-        hist("dPhi_bqlep_nu")->Fill(deltaPhi(blep, nu), weight);
+        if(isMu) hist("dPhi_mu_nu")->Fill(deltaPhi(lep, nu), weight);
+        else if(isEle) hist("dPhi_electron_nu_ele")->Fill(deltaPhi(lep, nu), weight);
+        if(isMu) hist("dPhi_bqlep_mu")->Fill(deltaPhi(blep, lep), weight);
+        else if(isEle) hist("dPhi_bqlep_electron_ele")->Fill(deltaPhi(blep, lep), weight);
+        if(isMu) hist("dPhi_bqlep_nu")->Fill(deltaPhi(blep, nu), weight);
+        else if(isEle) hist("dPhi_bqlep_nu_ele")->Fill(deltaPhi(blep, nu), weight);
         hist("dPhi_wlep_bqlep")->Fill(deltaPhi(wlep, blep), weight);
 
         hist("dR_whad_bqlep")->Fill(deltaR(whad, blep), weight);

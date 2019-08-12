@@ -35,8 +35,11 @@ private:
 
 class RecTopJetLeptonCleaner: public uhh2::AnalysisModule{
 public:
-  explicit RecTopJetLeptonCleaner();
+  explicit RecTopJetLeptonCleaner(int mode);
   virtual bool process(uhh2::Event &) override;
+
+private:
+  int mode;
 };
 
 class ParticleRemover : public uhh2::AnalysisModule {

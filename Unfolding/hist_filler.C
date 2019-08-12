@@ -13,9 +13,12 @@ int main(int argc, char* argv[]){
   ██      ██   ██ ██      ██   ██    ██    ██          ██    ██ ██    ██    ██    ██      ██    ██    ██        ██      ██ ██      ██
   ██████  ██   ██ ███████ ██   ██    ██    ███████      ██████   ██████     ██    ██       ██████     ██        ██      ██ ███████ ███████
   */
+  Muon_done = false;
+  std::string filename, filename2;
+  filename = "Histograms_Muon.root";
+  filename2 = "Histograms_Electron.root";
 
-  std::string filename;
-  filename = "Histograms.root";
+
   outputFile=new TFile(filename.c_str(),"recreate");
   outputFile->cd();
 
@@ -37,8 +40,8 @@ int main(int argc, char* argv[]){
   TXMLDocument const *XMLdocument = parser.GetXMLDocument();
   binning_rec = TUnfoldBinningXML::ImportXML(XMLdocument, "binning_rec");
   binning_gen = TUnfoldBinningXML::ImportXML(XMLdocument, "binning_gen");
-  binning_rec->Write();
-  binning_gen->Write();
+  // binning_rec->Write();
+  // binning_gen->Write();
 
   if(!binning_rec) cout << "could not read 'rec' binning\n";
   if(!binning_gen) cout << "could not read 'gen' binning\n";
@@ -66,34 +69,47 @@ int main(int argc, char* argv[]){
   // vector<TString> sv = {"SVMR_u_SVMF_u", "SVMR_u_SVMF_d", "SVMR_d_SVMF_u", "SVMR_d_SVMF_d"};
 
   // fill data
-  TFile *data_File = new TFile(dir + prefix + "DATA.DATA.root");
+  TFile *data_File;
+  data_File = new TFile(dir + "/Muon" + prefix + "DATA.DATA.root");
   fill_data((TTree *) data_File->Get("AnalysisTree"));
 
   // fill pseudodata
-  TFile *pseudodata_matrix_File = new TFile(dir+prefix+"MC.TTbar.root");
+  TFile *pseudodata_matrix_File = new TFile(dir+"/Muon"+prefix+"MC.TTbar.root");
   fill_pseudodata((TTree *) pseudodata_matrix_File->Get("AnalysisTree"));
 
   // fill ttbar
-  TFile *mc_matrix_File = new TFile(dir+prefix+"MC.TTbar.root");
+  TFile *mc_matrix_File = new TFile(dir+"/Muon"+prefix+"MC.TTbar.root");
   fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "mc");
 
   // fill other mass samples
   vector<TString> diff_masses = {"mtop1695", "mtop1715", "mtop1735", "mtop1755", "madgraph"};
   for(unsigned int i = 0; i < diff_masses.size(); i++){
-    TFile *masses_File = new TFile(dir+prefix+"MC.TTbar_"+diff_masses.at(i)+".root");
+    TFile *masses_File = new TFile(dir+"/Muon/Other_TTbar"+prefix+"MC.TTbar_"+diff_masses.at(i)+".root");
     fill_ttbar((TTree *) masses_File->Get("AnalysisTree"), diff_masses.at(i));
   }
   // fill variation
-  vector<TString> jetcorrections = {"JECup", "JECdown", "JERup", "JERdown", "BTagup", "BTagdown", "MUScaleup", "MUScaledown", "MUTriggerup", "MUTriggerdown", "PUup", "PUdown"};
+  vector<TString> jetcorrections = {"JECup", "JECdown", "JERup", "JERdown", "BTagup", "BTagdown", "MUIDup", "MUIDdown", "MUTriggerup", "MUTriggerdown", "PUup", "PUdown"};
   for(unsigned int i = 0; i < jetcorrections.size(); i++){
-    TFile *jc_matrix_file =  new TFile(dir+"/"+jetcorrections.at(i)+prefix+"MC.TTbar.root");
+    TFile *jc_matrix_file =  new TFile(dir+"/"+jetcorrections.at(i)+"/Muon"+prefix+"MC.TTbar.root");
     fill_ttbar((TTree *) jc_matrix_file->Get("AnalysisTree"), jetcorrections.at(i));
   }
+
+
+    // fill central sample for elec uncertainties in muon channel and vice versa
+      fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELEIDup");
+      fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELEIDdown");
+      fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELETriggerup");
+      fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELETriggerdown");
+      fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELERecoup");
+      fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELERecodown");
+
+
+
 
   // fill scales
   vector<TString> sv = {"SCALEupup", "SCALEupnone", "SCALEdownnone", "SCALEdowndown", "SCALEnoneup", "SCALEnonedown"};
   for(unsigned int i = 0; i < sv.size(); i++){
-    TFile *sv_matrix_file =  new TFile(dir+"/"+sv.at(i)+prefix+"MC.TTbar.root");
+    TFile *sv_matrix_file =  new TFile(dir+"/"+sv.at(i)+"/Muon"+prefix+"MC.TTbar.root");
     fill_scale((TTree *) sv_matrix_file->Get("AnalysisTree"), sv.at(i));
   }
 
@@ -102,9 +118,68 @@ int main(int argc, char* argv[]){
   std::vector<TString> background = {"DYJets", "ST", "Diboson"};
 
   for(unsigned int i = 0; i < background.size(); i++){
-    TFile *background_File = new TFile(dir+prefix+"MC."+background[i]+".root");
+    TFile *background_File = new TFile(dir+"/Muon"+prefix+"MC."+background[i]+".root");
     fill_background((TTree *) background_File->Get("AnalysisTree"), background[i]);
   }
+  outputFile->Close();
+  Muon_done = true;
+
+
+  outputFile2=new TFile(filename2.c_str(),"recreate");
+  outputFile2->cd();
+  // binning_rec->Write();
+  // binning_gen->Write();
+  TFile *data_File2;
+  data_File2 = new TFile(dir + prefix + "DATA.DATA.root");
+  fill_data((TTree *) data_File2->Get("AnalysisTree"));
+
+  // fill pseudodata
+  TFile *pseudodata_matrix_File2 = new TFile(dir+"/Electron"+prefix+"MC.TTbar.root");
+  fill_pseudodata((TTree *) pseudodata_matrix_File2->Get("AnalysisTree"));
+
+  // fill ttbar
+  TFile *mc_matrix_File2 = new TFile(dir+"/Electron"+prefix+"MC.TTbar.root");
+  fill_ttbar((TTree *) mc_matrix_File2->Get("AnalysisTree"), "mc");
+
+  // fill other mass samples
+  vector<TString> diff_masses2 = {"mtop1695", "mtop1715", "mtop1735", "mtop1755", "madgraph"};
+  for(unsigned int i = 0; i < diff_masses2.size(); i++){
+    TFile *masses_File2 = new TFile(dir+"/Electron/Other_TTbar"+prefix+"MC.TTbar_"+diff_masses2.at(i)+".root");
+    fill_ttbar((TTree *) masses_File2->Get("AnalysisTree"), diff_masses2.at(i));
+  }
+  // fill variation
+  vector<TString> jetcorrections2 = {"JECup", "JECdown", "JERup", "JERdown", "BTagup", "BTagdown", "ELEIDup", "ELEIDdown", "ELETriggerup", "ELETriggerdown", "PUup", "PUdown", "ELERecodown", "ELERecoup"};
+  for(unsigned int i = 0; i < jetcorrections2.size(); i++){
+    TFile *jc_matrix_file2 =  new TFile(dir+"/"+jetcorrections2.at(i)+"/Electron"+prefix+"MC.TTbar.root");
+    fill_ttbar((TTree *) jc_matrix_file2->Get("AnalysisTree"), jetcorrections2.at(i));
+  }
+
+  // fill central sample for elec uncertainties in muon channel and vice versa
+  fill_ttbar((TTree *) mc_matrix_File2->Get("AnalysisTree"), "MUIDup");
+  fill_ttbar((TTree *) mc_matrix_File2->Get("AnalysisTree"), "MUIDdown");
+  fill_ttbar((TTree *) mc_matrix_File2->Get("AnalysisTree"), "MUTriggerup");
+  fill_ttbar((TTree *) mc_matrix_File2->Get("AnalysisTree"), "MUTriggerdown");
+
+  // fill scales
+  vector<TString> sv2 = {"SCALEupup", "SCALEupnone", "SCALEdownnone", "SCALEdowndown", "SCALEnoneup", "SCALEnonedown"};
+  for(unsigned int i = 0; i < sv2.size(); i++){
+    TFile *sv_matrix_file2 =  new TFile(dir+"/"+sv2.at(i)+"/Electron"+prefix+"MC.TTbar.root");
+    fill_scale((TTree *) sv_matrix_file2->Get("AnalysisTree"), sv2.at(i));
+  }
+
+  // fill background
+  // std::vector<TString> background = {"DYJets", "QCD", "ST", "WJets", "WW", "WZ", "ZZ"};
+  std::vector<TString> background2 = {"DYJets", "ST", "Diboson"};
+
+  for(unsigned int i = 0; i < background2.size(); i++){
+    TFile *background_File2 = new TFile(dir+"/Electron"+prefix+"MC."+background2[i]+".root");
+    fill_background((TTree *) background_File2->Get("AnalysisTree"), background2[i]);
+  }
+
+  outputFile2->Close();
+
+  system("hadd -f Histograms_Combined.root Histograms_Muon.root Histograms_Electron.root");
+
   return 0;
 }
 
@@ -129,7 +204,8 @@ void fill_data(TTree* tree){
   TH1* h_data_dist_puppi = measurement_rec->CreateHistogram("Data_dist_puppi",kTRUE,0,0, "mass[C]");
   TH1* h_data_dist_puppi_sd = measurement_rec->CreateHistogram("Data_dist_puppi_sd",kTRUE,0,0, "mass[C]");
 
-  outputFile->cd();
+  if(!Muon_done) outputFile->cd();
+  else outputFile2->cd();
 
   tree->ResetBranchAddresses();
   tree->SetBranchAddress("h_tau32_rec", &tau32_rec);
@@ -285,7 +361,9 @@ void fill_pseudodata(TTree* tree){
   TH1* h_pseudodata_truth_sd_3           = measurement_gen->CreateHistogram("Pseudodata_truth_sd_3",kTRUE,0,0, "mass[C]");
   TH1* h_pseudodata_truth_puppi_3        = measurement_gen->CreateHistogram("Pseudodata_truth_puppi_3",kTRUE,0,0, "mass[C]");
   TH1* h_pseudodata_truth_puppi_sd_3     = measurement_gen->CreateHistogram("Pseudodata_truth_puppi_sd_3",kTRUE,0,0, "mass[C]");
-  outputFile->cd();
+
+  if(!Muon_done) outputFile->cd();
+  else outputFile2->cd();
 
   tree->ResetBranchAddresses();
   tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
@@ -770,7 +848,8 @@ void fill_ttbar(TTree* tree, TString prefix){
   TH2* h_mc_matrix_puppi_3    = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi_3");
   TH2* h_mc_matrix_puppi_sd_3 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi_sd_3");
 
-  outputFile->cd();
+  if(!Muon_done) outputFile->cd();
+  else outputFile2->cd();
 
   tree->ResetBranchAddresses();
   tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
@@ -1667,7 +1746,9 @@ void fill_scale(TTree* tree, TString prefix){
   TH1* h_pseudodata_truth_sd           = measurement_gen->CreateHistogram(prefix+"_truth_sd",kTRUE,0,0, "mass[C]");
   TH1* h_pseudodata_truth_puppi        = measurement_gen->CreateHistogram(prefix+"_truth_puppi",kTRUE,0,0, "mass[C]");
   TH1* h_pseudodata_truth_puppi_sd     = measurement_gen->CreateHistogram(prefix+"_truth_puppi_sd",kTRUE,0,0, "mass[C]");
-  outputFile->cd();
+
+  if(!Muon_done) outputFile->cd();
+  else outputFile2->cd();
 
   tree->ResetBranchAddresses();
   tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
@@ -1869,7 +1950,8 @@ void fill_background(TTree* tree, TString prefix){
   TH1* h_background_dist_puppi    = measurement_rec->CreateHistogram("Background_dist_puppi_"+prefix,kTRUE,0,0, "mass[C]");
   TH1* h_background_dist_puppi_sd = measurement_rec->CreateHistogram("Background_dist_puppi_sd_"+prefix,kTRUE,0,0, "mass[C]");
 
-  outputFile->cd();
+  if(!Muon_done) outputFile->cd();
+  else outputFile2->cd();
 
   tree->ResetBranchAddresses();
   tree->SetBranchAddress("h_tau32_rec", &tau32_rec);

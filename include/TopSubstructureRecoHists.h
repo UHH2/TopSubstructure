@@ -28,6 +28,8 @@ namespace uhh2examples {
     uhh2::Event::Handle<double> h_tau2_start, h_tau2_common, h_tau2_corrector, h_tau2_lepcleaner, h_tau2_cleaner;
     uhh2::Event::Handle<double> h_tau3_start, h_tau3_common, h_tau3_corrector, h_tau3_lepcleaner, h_tau3_cleaner;
     bool isTTbar;
+    enum lepton { muon, ele };
+    lepton channel_;
   };
 
 }

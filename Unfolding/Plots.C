@@ -262,6 +262,8 @@ void Plotter::Plot_result_with_uncertainty(TH1* h_unfolded, TH1* h_unfolded_unce
 
   TCanvas* c = new TCanvas("Unfolding result with uncertainty", "Unfolding Result", 800, 600);
   c->cd();
+  gStyle->SetPadRightMargin(0.1);
+  gStyle->SetPadLeftMargin(0.15);
   c->UseCurrentStyle();
   double min_value = 0;
   double max_bin = h_data_truth->GetMaximumBin();
@@ -326,7 +328,7 @@ void Plotter::Plot_result_with_uncertainty(TH1* h_unfolded, TH1* h_unfolded_unce
     unfolded_norm->SetLineColor(kBlack);
     unfolded_norm->SetMarkerColor(kBlack);
     unfolded_norm->GetYaxis()->SetTitleSize(0.06);
-    unfolded_norm->GetYaxis()->SetTitleOffset(0.95);
+    unfolded_norm->GetYaxis()->SetTitleOffset(1.1);
     unfolded_norm->GetXaxis()->SetTitleSize(0.06);
     unfolded_norm->GetXaxis()->SetTitleOffset(0.7);
     unfolded_norm->GetYaxis()->SetTitle("Events/Bin");
@@ -391,7 +393,7 @@ void Plotter::Plot_result_with_uncertainty(TH1* h_unfolded, TH1* h_unfolded_unce
     if(!directory.Contains("data")){
       h_data_truth->SetLineColor(kRed);
       h_data_truth->SetMarkerColor(kRed);
-      for(unsigned int i = 1; i <= h_data_truth->GetNbinsX(); i++) h_data_truth->SetBinError(i, 0.000001);
+      for(int i = 1; i <= h_data_truth->GetNbinsX(); i++) h_data_truth->SetBinError(i, 0.000001);
       h_data_truth->Draw("same hist");
     }
     h_unfolded_uncertainty->SetLineColor(kBlack);
@@ -444,7 +446,9 @@ void Plotter::Plot_uncertainty(std::vector<TH1*> error, std::vector<TString> err
 
 
 
-  TLegend* legend_rel = new TLegend(0.25, 0.52, 0.55, 0.82, "");
+  TLegend* legend_rel;
+  if(!error_name[last_element].Contains("model")) legend_rel = new TLegend(0.5, 0.52, 0.8, 0.82, "");
+  else legend_rel = new TLegend(0.55, 0.62, 0.85, 0.82, "");
   legend_rel->SetFillStyle(0);
   if(!error_name[last_element].Contains("model")) legend_rel->SetNColumns(2);
   legend_rel->AddEntry(h_rel[last_element], error_name[last_element], "f");
@@ -455,8 +459,9 @@ void Plotter::Plot_uncertainty(std::vector<TH1*> error, std::vector<TString> err
       h_rel[i]->SetMarkerColor(kBlack);
     }
     else if(error_name[i]=="MC stat"){
-      h_rel[i]->SetLineColor(kRed+1);
-      h_rel[i]->SetMarkerColor(kRed+1);
+      h_rel[i]->SetLineColor(kBlack);
+      h_rel[i]->SetLineStyle(5);
+      h_rel[i]->SetMarkerColor(kBlack);
     }
     else if(error_name[i].Contains("background")){
       h_rel[i]->SetLineColor(kRed);
@@ -468,8 +473,9 @@ void Plotter::Plot_uncertainty(std::vector<TH1*> error, std::vector<TString> err
       error_name[i] = "jet energy scale";
     }
     else if(error_name[i].Contains("JER")){
-      h_rel[i]->SetLineColor(kCyan);
-      h_rel[i]->SetMarkerColor(kCyan);
+      h_rel[i]->SetLineColor(kBlue);
+      h_rel[i]->SetLineStyle(5);
+      h_rel[i]->SetMarkerColor(kBlue);
       error_name[i] = "jet energy resolution";
     }
     else if(error_name[i].Contains("BTag")){
@@ -477,7 +483,12 @@ void Plotter::Plot_uncertainty(std::vector<TH1*> error, std::vector<TString> err
       h_rel[i]->SetMarkerColor(kGreen+2);
       error_name[i] = "b tagging";
     }
-    else if(error_name[i].Contains("MUScale")){
+    else if(error_name[i].Contains("PU")){
+      h_rel[i]->SetLineColor(kOrange-3);
+      h_rel[i]->SetMarkerColor(kOrange-3);
+      error_name[i] = "pileup";
+    }
+    else if(error_name[i].Contains("MUID")){
       h_rel[i]->SetLineColor(kOrange);
       h_rel[i]->SetMarkerColor(kOrange);
       error_name[i] = "muon ID";
@@ -486,11 +497,6 @@ void Plotter::Plot_uncertainty(std::vector<TH1*> error, std::vector<TString> err
       h_rel[i]->SetLineColor(kViolet);
       h_rel[i]->SetMarkerColor(kViolet);
       error_name[i] = "muon trigger";
-    }
-    else if(error_name[i].Contains("PU")){
-      h_rel[i]->SetLineColor(kOrange-3);
-      h_rel[i]->SetMarkerColor(kOrange-3);
-      error_name[i] = "pileup";
     }
     else if(error_name[i].Contains("scale")){
       h_rel[i]->SetLineColor(kOrange-3);
@@ -501,6 +507,24 @@ void Plotter::Plot_uncertainty(std::vector<TH1*> error, std::vector<TString> err
       h_rel[i]->SetLineColor(kGreen+2);
       h_rel[i]->SetMarkerColor(kGreen+2);
       error_name[i] = "choice of m_{t}";
+    }
+    else if(error_name[i].Contains("ELEID")){
+      h_rel[i]->SetLineColor(kOrange);
+      h_rel[i]->SetLineStyle(5);
+      h_rel[i]->SetMarkerColor(kOrange);
+      error_name[i] = "electron ID";
+    }
+    else if(error_name[i].Contains("ELETrigger")){
+      h_rel[i]->SetLineColor(kViolet);
+      h_rel[i]->SetLineStyle(5);
+      h_rel[i]->SetMarkerColor(kViolet);
+      error_name[i] = "electron trigger";
+    }
+    else if(error_name[i].Contains("ELEReco")){
+      h_rel[i]->SetLineColor(kCyan);
+      h_rel[i]->SetLineStyle(5);
+      h_rel[i]->SetMarkerColor(kCyan);
+      error_name[i] = "electron reconstruction";
     }
     h_rel[i]->Draw("same e1");
     legend_rel->AddEntry(h_rel[i], error_name[i], "l");
@@ -1184,6 +1208,17 @@ void Plotter::Plot_all_pseudo(TH1* pseudo1, TH1* pseudo1_truth, TH1* pseudo2, TH
     unfold3->SetBinError((3*i), pseudo3->GetBinError(i));
   }
 
+  int max_bin1 = unfold1->GetMaximumBin();
+  int max_bin2 = unfold2->GetMaximumBin();
+  int max_bin3 = unfold3->GetMaximumBin();
+  double max_count1 = unfold1->GetBinContent(max_bin1);
+  double max_count2 = unfold2->GetBinContent(max_bin2);
+  double max_count3 = unfold3->GetBinContent(max_bin3);
+  double max_range = 0;
+  if(max_count1 > max_count2 && max_count1 > max_count3) max_range = max_count1 *1.1;
+  else if(max_count2 > max_count1 && max_count2 > max_count3) max_range = max_count2 *1.1;
+  else if(max_count3 > max_count1 && max_count3 > max_count2) max_range = max_count3 *1.1;
+
   TCanvas* c1 = new TCanvas("test", "tests", 1000, 800);
   c1->cd();
   gStyle->SetPadLeftMargin(0.15);
@@ -1193,7 +1228,7 @@ void Plotter::Plot_all_pseudo(TH1* pseudo1, TH1* pseudo1_truth, TH1* pseudo2, TH
   c1->UseCurrentStyle();
   gr->SetTitle("");
   gr->GetXaxis()->SetRangeUser(0, 1);
-  gr->GetYaxis()->SetRangeUser(0, 12000);
+  gr->GetYaxis()->SetRangeUser(0, max_range);
   gr->GetXaxis()->SetTitle("#tau_{3/2}");
   gr->GetYaxis()->SetTitle("#frac{Events}{Bin}");
   gr->GetYaxis()->SetTitleSize(0.04);

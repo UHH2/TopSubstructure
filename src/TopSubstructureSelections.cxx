@@ -17,21 +17,37 @@ bool METSelection::passes(const Event & event){
   return pass;
 }
 
-MuonptSelection::MuonptSelection(double pt_min_, double pt_max_):pt_min(pt_min_), pt_max(pt_max_){}
-bool MuonptSelection::passes(const Event & event){
-
+LeptonPtSelection::LeptonPtSelection(int mode_, double pt_min_, double pt_max_):mode(mode_), pt_min(pt_min_), pt_max(pt_max_){}
+bool LeptonPtSelection::passes(const Event & event){
   bool pass = false;
-  sort_by_pt<Muon>(*event.muons);
-  if(event.muons->size()){
-    double pt = event.muons->at(0).pt();
+  switch (mode) {
+    case 0:
+    if(event.muons->size()){
+      sort_by_pt<Muon>(*event.muons);
+      double pt = event.muons->at(0).pt();
 
-    pass = (pt >= pt_min && (pt <= pt_max || pt_max < 0));
-    return pass;
+      pass = (pt >= pt_min && (pt <= pt_max || pt_max < 0));
+    }
+    else{
+      std::cout << "\n MuonSelection::passes: There are no muons in the event. returning 'false'\n" << std::endl;
+      return false;
+    }
+    break;
+
+    case 1:
+    if(event.electrons->size()){
+      sort_by_pt<Electron>(*event.electrons);
+      double pt = event.electrons->at(0).pt();
+
+      pass = (pt >= pt_min && (pt <= pt_max || pt_max < 0));
+    }
+    else{
+      std::cout << "\n MuonSelection::passes: There are no electrons in the event. returning 'false'\n" << std::endl;
+      return false;
+    }
+    break;
   }
-  else{
-    std::cout << "\n MuonSelection::passes: There are no muons in the event. returning 'false'\n" << std::endl;
-    return false;
-  }
+  return pass;
 }
 
 TopJetptSelection::TopJetptSelection(uhh2::Context& ctx, double pt_min_, double pt_max_):h_topjet(ctx.get_handle<std::vector<TopJet>>("topjet_cand")), pt_min(pt_min_), pt_max(pt_max_){}
@@ -55,19 +71,34 @@ bool TopJetptSelection::passes(const Event & event){
   return pass;
 }
 
-TwoDCut::TwoDCut(double min_deltaR_, double min_pTrel_): min_deltaR(min_deltaR_), min_pTrel(min_pTrel_) {}
+TwoDCut::TwoDCut(int mode_, double min_deltaR_, double min_pTrel_): mode(mode_), min_deltaR(min_deltaR_), min_pTrel(min_pTrel_) {}
 bool TwoDCut::passes(const Event & event){
-
   bool pass = false;
-  assert(event.muons && event.jets);
-  if(event.muons->size()!= 1){
-    std::cout << "\n @@@ WARNING -- TwoDCut::passes -- unexpected number of muons+electrons in the event (!=1). returning 'false'\n";
-    return false;
-  }
-
   double drmin, ptrel;
-  std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
-  pass = (drmin > min_deltaR) || (ptrel > min_pTrel);
+
+  switch (mode) {
+    case 0:
+    assert(event.muons && event.jets);
+    if(event.muons->size() != 1){
+      std::cout << "\n @@@ WARNING -- TwoDCut::passes -- unexpected number of muons in the event (!=1). returning 'false'\n";
+      return false;
+    }
+
+    std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
+    pass = ((drmin > min_deltaR) || (ptrel > min_pTrel));
+    break;
+
+    case 1:
+    assert(event.electrons && event.jets);
+    if(event.electrons->size()!= 1){
+      std::cout << "\n @@@ WARNING -- TwoDCut::passes -- unexpected number of electrons in the event (!=1). returning 'false'\n";
+      return false;
+    }
+
+    std::tie(drmin, ptrel) = drmin_pTrel(event.electrons->at(0), *event.jets);
+    pass = ((drmin > min_deltaR) || (ptrel > min_pTrel));
+    break;
+  }
 
   return pass;
 }

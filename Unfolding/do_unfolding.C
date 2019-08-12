@@ -5,8 +5,8 @@ int counter = 1;
 
 int main(int argc, char* argv[]){
   // switch on histogram errors
-  if(argc < 4){
-    throw runtime_error("Use: ./do_unfolding <dataset> <number of scans> <value of tau>; if you don't want to use a custom value of tau, then set it to -1");
+  if(argc != 5){
+    throw runtime_error("Use: ./do_unfolding <dataset> <number of scans> <value of tau> <mu/ele/comb>; if you don't want to use a custom value of tau, then set it to -1");
   }
   if(argv[1] != std::string("data") && argv[1] != std::string("data_sd") &&
   argv[1] != std::string("data_puppi") && argv[1] != std::string("data_puppi_sd") &&
@@ -41,11 +41,15 @@ int main(int argc, char* argv[]){
 ){
   throw runtime_error("use pseudo1, pseudo1_sd, pseudo1_puppi, pseudo1_puppi_sd, ...");
 }
+  if(argv[4] != std::string("mu") && argv[4] != std::string("ele") && argv[4] != std::string("comb")){
+  throw runtime_error("use mu, ele or comb");
+}
 TH1::SetDefaultSumw2();
 
 string filename;
 TString dataset = argv[1];
-filename = "Unfolding_" + dataset + ".root";
+TString data_file_name = argv[4];
+filename = "Unfoldings/Unfolding_" + dataset + "_" + data_file_name + ".root";
 TFile *outputFile = new TFile(filename.c_str(),"recreate");
 
 binning_xml = "Binning.xml";
@@ -67,12 +71,17 @@ binning_gen->Write();
 
 // define directory
 TString dir = "/nfs/dust/cms/user/skottkej/CMSSW_10_2_X_v1/CMSSW_10_2_10/src/UHH2/TopSubstructure/Unfolding/";
-TFile *data_File = new TFile(dir + "Histograms.root");
+TFile *data_File;
+if(data_file_name.Contains("mu")) data_File = new TFile(dir + "Histograms_Muon.root");
+else if(data_file_name.Contains("ele")) data_File = new TFile(dir + "Histograms_Electron.root");
+else if(data_file_name.Contains("comb")) data_File = new TFile(dir + "Histograms_Combined.root");
 
 // fill background hists -- add further or remove unnecassary backgrounds in background_names
-// background_names = {"DYJets", "QCD", "ST", "WJets", "Diboson_WW", "Diboson_WZ", "Diboson_ZZ"};
+// background_names = {"DYJets", "QCD", "ST", "WJets", "Diboson"};
 background_names = {"DYJets", "ST", "Diboson"};
-sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"MUScaleup", "MUScaledown"}, {"MUTriggerup", "MUTriggerdown"}, {"PUup", "PUdown"}};
+if(data_file_name.Contains("mu")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"MUIDup", "MUIDdown"}, {"MUTriggerup", "MUTriggerdown"}};
+else if(data_file_name.Contains("ele")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"ELEIDup", "ELEIDdown"}, {"ELETriggerup", "ELETriggerdown"}, {"ELERecoup", "ELERecodown"}};
+else if(data_file_name.Contains("comb")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"MUIDup", "MUIDdown"}, {"MUTriggerup", "MUTriggerdown"}, {"ELEIDup", "ELEIDdown"}, {"ELETriggerup", "ELETriggerdown"}, {"ELERecoup", "ELERecodown"}};
 
 // Setup everything for unfolding!
 if(dataset == std::string("pseudo1")){
@@ -936,13 +945,13 @@ for(unsigned int i = 0; i < sys_name.size(); i++){
 }
 
 subtract_background = false;
-if(dataset == std::string("data") || dataset == std::string("data_sd") || dataset == std::string("data_puppi") || dataset == std::string("data_puppi_sd") || dataset == std::string("madgraph") || dataset == std::string("madgraph_sd") || dataset == std::string("madgraph_puppi") || dataset == std::string("madgraph_puppi_sd")){
+if(dataset == std::string("data") || dataset == std::string("data_sd") || dataset == std::string("data_puppi") || dataset == std::string("data_puppi_sd")){
   subtract_background = true;
 }
 // cout << "subtract_background: " << subtract_background << '\n';
 TString save_dir = "/afs/desy.de/user/s/skottkej/Plots/Unfolding/";
 TString format = ".eps";
-TString regmode = "size";
+TString regmode = "derivative";
 TString density_flag = "none";
 TString nscan_word = argv[2];
 int nscan = atoi(argv[2]);
@@ -982,8 +991,8 @@ unfold.get_total_statcov();
 unfold.get_total_statcov_all();
 unfold.get_output_check();
 unfold.get_output_check_all();
-unfold.get_sys_delta();
 unfold.get_probability_matrix();
+if(subtract_background) unfold.get_sys_delta();
 if(subtract_background) unfold.GetBgrStatCov();
 if(subtract_background) unfold.GetBgrScaleCov();
 if(subtract_background) unfold.get_bgr_delta();
@@ -1024,14 +1033,14 @@ if(tau_value < 0){
   unfold2.get_output_check();
   unfold2.get_output_check_meas();
   unfold2.get_output_check_all();
-  unfold2.get_sys_covariance();
-  unfold2.get_sys_covariance_meas();
-  unfold2.get_sys_covariance_all();
-  unfold2.get_sys_delta();
-  unfold2.get_sys_delta_meas();
-  unfold2.get_sys_delta_all();
   unfold2.get_probability_matrix();
   if(subtract_background){
+    unfold2.get_sys_covariance();
+    unfold2.get_sys_covariance_meas();
+    unfold2.get_sys_covariance_all();
+    unfold2.get_sys_delta();
+    unfold2.get_sys_delta_meas();
+    unfold2.get_sys_delta_all();
     unfold2.GetBgrStatCov();
     unfold2.GetBgrStatCov_meas();
     unfold2.GetBgrStatCov_all();

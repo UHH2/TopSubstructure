@@ -161,7 +161,7 @@ namespace uhh2examples {
     nmu_sel.reset(new NMuonSelection(1,1));
     twodcut_sel.reset(new TwoDCut(0.4, 40));
     nele_sel.reset(new NElectronSelection(0, 0));
-    pt_mu_sel.reset(new MuonptSelection(55));
+    pt_mu_sel.reset(new LeptonPtSelection(0, 55));
     ntopjetcand_sel1.reset(new NTopJet(ctx,1));
     dphi_sel1.reset(new DPhiSelection(ctx,1));
     dphi_sel2.reset(new DPhiSelection(ctx,2.5));

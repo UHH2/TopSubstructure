@@ -50,17 +50,32 @@ bool TopJetSortMass::process(uhh2::Event& event){
   return true;
 }
 
-RecTopJetLeptonCleaner::RecTopJetLeptonCleaner() {}
+RecTopJetLeptonCleaner::RecTopJetLeptonCleaner(int mode_):mode(mode_) {}
 bool RecTopJetLeptonCleaner::process(uhh2::Event& event){
+  switch (mode) {
+    case 0:
+    sort_by_pt<Muon>(*event.muons);
 
-  sort_by_pt<Muon>(*event.muons);
-
-  if(event.muons->size() > 0 && event.topjets->size() > 0){
-    for (unsigned int i = 0; i < event.topjets->size(); i++){
-      if (deltaR(event.muons->at(0), event.topjets->at(i)) < 0.8){
-        event.topjets->at(i).set_v4(event.topjets->at(i).v4() - event.muons->at(0).v4());
+    if(event.muons->size() > 0 && event.topjets->size() > 0){
+      for (unsigned int i = 0; i < event.topjets->size(); i++){
+        if (deltaR(event.muons->at(0), event.topjets->at(i)) < 0.8){
+          event.topjets->at(i).set_v4(event.topjets->at(i).v4() - event.muons->at(0).v4());
+        }
       }
     }
+    break;
+
+    case 1:
+    sort_by_pt<Electron>(*event.electrons);
+
+    if(event.electrons->size() > 0 && event.topjets->size() > 0){
+      for (unsigned int i = 0; i < event.topjets->size(); i++){
+        if (deltaR(event.electrons->at(0), event.topjets->at(i)) < 0.8){
+          event.topjets->at(i).set_v4(event.topjets->at(i).v4() - event.electrons->at(0).v4());
+        }
+      }
+    }
+    break;
   }
   sort_by_pt<TopJet>(*event.topjets);
   return true;
@@ -105,7 +120,6 @@ bool ParticleRemover::process(uhh2::Event & event){
 
 GenTopJetLeptonCleaner::GenTopJetLeptonCleaner(uhh2::Context & ctx, string const & label_):hndl(ctx.get_handle<vector<GenTopJet>>(label_)), h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
 bool GenTopJetLeptonCleaner::process(uhh2::Event& event){
-
   if (!event.is_valid(hndl)) {
     cerr << "In GenTopJetLeptonCleaner: Handle not valid!\n";
     assert(false);

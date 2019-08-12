@@ -66,22 +66,23 @@ namespace uhh2examples {
   class TTbarSemilep : public uhh2::Selection {
 
   public:
-    explicit TTbarSemilep(Context&);
+    explicit TTbarSemilep(uhh2::Context& ctx, int mode);
     virtual bool passes(const Event&) override;
 
   protected:
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
+    int mode;
   };
 
   class GenMassCompare : public uhh2::Selection{
   public:
-    explicit GenMassCompare(uhh2::Context& ctx, int mode, std::string const & label_ = "gentopjets");
+    explicit GenMassCompare(uhh2::Context& ctx, int mode1_, int mode2_, std::string const & label_ = "gentopjets");
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
     uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet;
-    int mode;
+    int mode1, mode2;
   };
 
   class PtSelection:public uhh2::Selection{
@@ -97,23 +98,24 @@ namespace uhh2examples {
 
   class dRSelection:public uhh2::Selection{
   public:
-    explicit dRSelection(uhh2::Context& ctx, double dr_min = 0.8, int mode = 0, std::string const & label_ = "gentopjets");
+    explicit dRSelection(uhh2::Context& ctx, double dr_min = 0.8, int mode1 = 0, int mode2 = 0, std::string const & label_ = "gentopjets");
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
     uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet;
     double dr_min;
-    int mode;
+    int mode1, mode2;
   };
 
-  class GenMuonPtSelection:public uhh2::Selection{
+  class GenLeptonPtSelection:public uhh2::Selection{
   public:
-    explicit GenMuonPtSelection(uhh2::Context& ctx, double pt_min = 0, double pt_max = -1);
+    explicit GenLeptonPtSelection(uhh2::Context& ctx, int mode = 0, double pt_min = 0, double pt_max = -1);
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
+    int mode;
     double pt_min, pt_max;
   };
 

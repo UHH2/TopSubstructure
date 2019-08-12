@@ -35,12 +35,15 @@ int main(int argc, char* argv[]){
 
   bool isdata = false;
   bool ispseudodata = false;
-  if(File_name.Contains("_data.root") || File_name.Contains("_data_sd.root") || File_name.Contains("_data_puppi.root") || File_name.Contains("_data_puppi_sd.root")) isdata = true;
-  if(File_name.Contains("_madgraph.root") || File_name.Contains("_madgraph_sd.root") || File_name.Contains("_madgraph_puppi.root") || File_name.Contains("_madgraph_puppi_sd.root")) ispseudodata = true;
-
+  if(File_name.Contains("data")) isdata = true;
+  if(File_name.Contains("madgraph")) ispseudodata = true;
 
   vector<TString> background_names = {"DYJets", "ST", "Diboson"};
-  vector<vector<TString>> sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"MUScaleup", "MUScaledown"}, {"MUTriggerup", "MUTriggerdown"}, {"PUup", "PUdown"}};
+  vector<vector<TString>> sys_name;
+  if(File_name.Contains("mu")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"MUIDup", "MUIDdown"}, {"MUTriggerup", "MUTriggerdown"}};
+  else if(File_name.Contains("ele")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"ELEIDup", "ELEIDdown"}, {"ELETriggerup", "ELETriggerdown"}, {"ELERecoup", "ELERecodown"}};
+  else if(File_name.Contains("comb")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"MUIDup", "MUIDdown"}, {"MUTriggerup", "MUTriggerdown"}, {"ELEIDup", "ELEIDdown"}, {"ELETriggerup", "ELETriggerdown"}, {"ELERecoup", "ELERecodown"}};
+
   vector<vector<TString>> model_name;
   if(isdata) model_name = {{"scale_uu", "scale_un", "scale_nu", "scale_nd", "scale_dn", "scale_dd"}, {"mtop1695", "mtop1715", "mtop1735", "mtop1755"}, {"madgraph"}};
   if(ispseudodata) model_name = {{"scale_uu", "scale_un", "scale_nu", "scale_nd", "scale_dn", "scale_dd"}, {"mtop1695", "mtop1715", "mtop1735", "mtop1755"}};
@@ -64,10 +67,18 @@ int main(int argc, char* argv[]){
   vector<string> result;
   boost::split(result, input, boost::is_any_of("_ ."));
   for(unsigned int i = 0; i < result.size(); i++){
-    if(i > 0 && i < result.size()-1) directory += result[i];
-    if(i < result.size() - 2 && i > 0) directory += "_";
+    if(result[i] != "mu" && result[i] != "ele" && result[i] != "comb"){
+      if(i > 0 && i < result.size()-1) directory += result[i];
+      if(i < result.size() - 3 && i > 0) directory += "_";
+    }
   }
   directory += "/";
+  if(File_name.Contains("mu"))        directory += "mu/";
+  else if(File_name.Contains("ele"))  directory += "ele/";
+  else if(File_name.Contains("comb")) directory += "comb/";
+  if(File_name.Contains("mu"))        jetcol += "_mu";
+  else if(File_name.Contains("ele"))  jetcol += "_ele";
+  else if(File_name.Contains("comb")) jetcol += "_comb";
 
   plot->Plot_projections(projection_gen, h_input_gen, projection_rec, h_input_rec, directory);
 
@@ -99,7 +110,7 @@ int main(int argc, char* argv[]){
   vector<vector<TH1*>> model_output, model_delta;
   vector<vector<TH1D*>> model_truth;
   vector<vector<TH2*>> CovModel;
-  if(isdata || ispseudodata){
+  if(isdata){
     for(unsigned int i=0; i<model_name.size(); i++){
       vector<TH1*> dummy;
       model_output.push_back(dummy);
@@ -111,7 +122,7 @@ int main(int argc, char* argv[]){
       for(unsigned int j=0; j<model_name[i].size(); j++){
         cout << "***********************" << endl;
         cout << " UNFOLDING OF " << model_name[i][j] << endl;
-        TFile *file_model = new TFile("Unfolding_"+model_name[i][j]+jetcol+".root", "READ");
+        TFile *file_model = new TFile("Unfoldings/Unfolding_"+model_name[i][j]+jetcol+".root", "READ");
         TH1* output = (TH1*) file_model->Get("Unfolded data (meas region) TauScan");
         TH1D* truth = (TH1D*) file_model->Get("Data Truth");
         model_output[i].push_back(output);
@@ -144,7 +155,7 @@ int main(int argc, char* argv[]){
   CovStat->Add(h_covariance_covmatrix_tauscan);
   CovStat_model->Add(h_covariance_covmatrix_tauscan);
 
-  if(isdata || ispseudodata){
+  if(isdata){
     vector<TH2*> CovBgrStat;
     for(unsigned int i = 0; i < background_names.size(); i++)
     CovBgrStat.push_back((TH2D*) file->Get("Covariance of " + background_names.at(i) + " TauScan"));
@@ -167,7 +178,7 @@ int main(int argc, char* argv[]){
   TH2* total_cov = (TH2*) CovStat->Clone();
   TH2* total_model_cov = (TH2*) CovStat->Clone();
   vector<vector<TH1*>> sys_del;
-  if(isdata || ispseudodata){
+  if(isdata){
     vector<TH2*> CovBgrScale;
     for(unsigned int i = 0; i < background_names.size(); i++) CovBgrScale.push_back((TH2D*) file->Get("Scale of " + background_names.at(i) + " TauScan"));
 
@@ -184,7 +195,6 @@ int main(int argc, char* argv[]){
     error.push_back(sys_bkg_rel);
     error_name.push_back("background sys");
     for(auto bgrcov: CovBgrScale) total_cov->Add(bgrcov);
-  }
 
     // then add sys cov (and convert used uncertainty to relative hist)
     cout << "sum up experimental sys cov matrices" << endl;
@@ -219,7 +229,6 @@ int main(int argc, char* argv[]){
       error_name.push_back(sys_name[i][j]);
     }
 
-if(isdata || ispseudodata){
     cout << "sum up model sys cov matrices" << endl;
     vector<TH1*> model_delta_average;
     vector<TH1*> model_rel;
@@ -238,7 +247,7 @@ if(isdata || ispseudodata){
       CovStat_model->Add(chosen_cov);
     }
     model_rel.push_back(stat_rel);            // put in stat to get total
-}
+  }
   TH1* data_unfolded_sys = SetSysError(h_unfolded_tauscan, total_cov);
   data_unfolded_sys->SetName("Unfolded Data with sys errors");
 
@@ -257,7 +266,7 @@ if(isdata || ispseudodata){
 
   plot->Plot_delta(model_delta, model_name, directory);
 
-  if(isdata || ispseudodata){
+  if(isdata){
     sys_del[sys_del.size()-1].push_back(MC_stat_delta);
     sys_name[sys_del.size()-1].push_back("Background");
   }
@@ -314,9 +323,9 @@ if(isdata || ispseudodata){
   plot->Plot_covariance(cov_matrix_input_all, directory+"Covariance_input_all");
 
   if(directory.Contains("pseudo")){
-    TFile *file_pseudo1 = new TFile("Unfolding_pseudo1"+jetcol+".root", "READ");
-    TFile *file_pseudo2 = new TFile("Unfolding_pseudo2"+jetcol+".root", "READ");
-    TFile *file_pseudo3 = new TFile("Unfolding_pseudo3"+jetcol+".root", "READ");
+    TFile *file_pseudo1 = new TFile("Unfoldings/Unfolding_pseudo1"+jetcol+".root", "READ");
+    TFile *file_pseudo2 = new TFile("Unfoldings/Unfolding_pseudo2"+jetcol+".root", "READ");
+    TFile *file_pseudo3 = new TFile("Unfoldings/Unfolding_pseudo3"+jetcol+".root", "READ");
     TH1* h_pseudo1 = (TH1*) file_pseudo1->Get("Unfolded data (meas region) TauScan");
     TH1* h_pseudo1_truth = (TH1*) file_pseudo1->Get("Data Truth");
     TH1* h_pseudo2 = (TH1*) file_pseudo2->Get("Unfolded data (meas region) TauScan");

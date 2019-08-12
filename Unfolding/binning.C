@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
   // 1. set-up binning in vectors
   // std::vector<Double_t> TAU32 = {0, 0.4333, 0.5744, 0.6899, 0.7922, 0.8733, 1};
   // std::vector<Double_t> TAU32 = {0, 0.437, 0.577, 0.719, 0.825, 1};
-  std::vector<Double_t> TAU32 = {0, 0.437, 0.577, 0.719, 0.825, 1};
+  std::vector<Double_t> TAU32 = {0, 0.284, 0.507, 0.665, 0.837, 1};
   std::vector<Double_t> TAU32_MASS_SPLIT = {0, 155, 1000};
   std::vector<Double_t> TAU32_PT_TOPJET = TAU32;
   std::vector<Double_t> TAU32_MASS = TAU32;

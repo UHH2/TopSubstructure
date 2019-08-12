@@ -7,19 +7,37 @@ using namespace uhh2examples;
 using namespace uhh2;
 
 
-RecPuppiJetLeptonCleaner::RecPuppiJetLeptonCleaner(uhh2::Context & ctx):h_puppi(ctx.get_handle<std::vector<TopJet>>("jetsAk8PuppiSubstructure_SoftDropPuppi")), h_topjet_cand(ctx.declare_event_output<std::vector<TopJet>>("jetsAk8PuppiSubstructure_SoftDropPuppi")){}
+RecPuppiJetLeptonCleaner::RecPuppiJetLeptonCleaner(uhh2::Context & ctx, int mode_):h_puppi(ctx.get_handle<std::vector<TopJet>>("jetsAk8PuppiSubstructure_SoftDropPuppi")), h_topjet_cand(ctx.declare_event_output<std::vector<TopJet>>("jetsAk8PuppiSubstructure_SoftDropPuppi")), mode(mode_){}
 bool RecPuppiJetLeptonCleaner::process(uhh2::Event& event){
-  sort_by_pt<Muon>(*event.muons);
-  std::vector<TopJet> topjets;
-  if(event.is_valid(h_puppi)) topjets = event.get(h_puppi);
+std::vector<TopJet> topjets;
+  switch (mode) {
+    case 0:
+    sort_by_pt<Muon>(*event.muons);
+    if(event.is_valid(h_puppi)) topjets = event.get(h_puppi);
 
-  if(event.muons->size() > 0 && topjets.size() > 0){
-    for (unsigned int i = 0; i < topjets.size(); i++){
-      if (deltaR(event.muons->at(0), topjets.at(i)) < 0.8){
-        topjets.at(i).set_v4(topjets.at(i).v4() - event.muons->at(0).v4());
+    if(event.muons->size() > 0 && topjets.size() > 0){
+      for (unsigned int i = 0; i < topjets.size(); i++){
+        if (deltaR(event.muons->at(0), topjets.at(i)) < 0.8){
+          topjets.at(i).set_v4(topjets.at(i).v4() - event.muons->at(0).v4());
+        }
       }
     }
+    break;
+
+    case 1:
+    sort_by_pt<Electron>(*event.electrons);
+    if(event.is_valid(h_puppi)) topjets = event.get(h_puppi);
+
+    if(event.electrons->size() > 0 && topjets.size() > 0){
+      for (unsigned int i = 0; i < topjets.size(); i++){
+        if (deltaR(event.electrons->at(0), topjets.at(i)) < 0.8){
+          topjets.at(i).set_v4(topjets.at(i).v4() - event.electrons->at(0).v4());
+        }
+      }
+    }
+    break;
   }
+
   sort_by_pt<TopJet>(topjets);
   event.set(h_topjet_cand, topjets);
   return true;
@@ -57,25 +75,34 @@ bool NPuppiJet::passes(const Event & event){
   return pass;
 }
 
-PuppiMassCompare::PuppiMassCompare(uhh2::Context & ctx, int n_):h_puppi(ctx.get_handle<std::vector<TopJet>>("jetsAk8PuppiSubstructure_SoftDropPuppi")), n(n_){}
+PuppiMassCompare::PuppiMassCompare(uhh2::Context & ctx, int mode1_, int mode2_):h_puppi(ctx.get_handle<std::vector<TopJet>>("jetsAk8PuppiSubstructure_SoftDropPuppi")), mode1(mode1_), mode2(mode2_){}
 bool PuppiMassCompare::passes(const Event & event){
 
   bool pass = false;
   if(event.is_valid(h_puppi)){
     std::vector<TopJet> topjet_cand = event.get(h_puppi);
+    if(!(topjet_cand.size() > 1)) return pass;
 
-    switch(n){
-      case 0:
-      if(topjet_cand.size() > 1 && event.muons->size() > 0){
-        double mass;
-        mass = topjet_cand.at(0).v4().M();
-        const auto dummy = topjet_cand.at(1).v4() + event.muons->at(0).v4();
+    switch(mode1){
+      case 0:{
+        double mass = topjet_cand.at(0).v4().M();
+        LorentzVector dummy;
+        switch (mode2) {
+          case 0:
+          if(!(event.muons->size() > 0)) return pass;
+          dummy = topjet_cand.at(1).v4() + event.muons->at(0).v4();
+          break;
+
+          case 1:
+          if(!(event.electrons->size() > 0)) return pass;
+          dummy = topjet_cand.at(1).v4() + event.electrons->at(0).v4();
+          break;
+        }
         if(mass > (dummy.M())) pass = true;
       }
       break;
 
-      case 1:
-      if(topjet_cand.size() > 1 && event.muons->size() > 0){
+      case 1:{
         LorentzVector subjet_sum1;
         for (const auto s : topjet_cand.at(0).subjets()) {
           subjet_sum1 += s.v4();
@@ -86,8 +113,20 @@ bool PuppiMassCompare::passes(const Event & event){
         for (const auto s : topjet_cand.at(1).subjets()) {
           subjet_sum2 += s.v4();
         }
-        subjet_sum2 += event.muons->at(0).v4();
-        double mass2 = subjet_sum2.M();
+        double mass2 = 0;
+        switch (mode2) {
+          case 0:
+          if(!(event.muons->size() > 0)) return pass;
+          subjet_sum2 += event.muons->at(0).v4();
+          mass2 = subjet_sum2.M();
+          break;
+
+          case 1:
+          if(!(event.electrons->size() > 0))return pass;
+          subjet_sum2 += event.electrons->at(0).v4();
+          mass2 = subjet_sum2.M();
+          break;
+        }
         if(mass1 > mass2) pass = true;
       }
       break;
@@ -96,25 +135,44 @@ bool PuppiMassCompare::passes(const Event & event){
   return pass;
 }
 
-PuppidRSelection::PuppidRSelection(uhh2::Context & ctx, double dr_min_, int mode_) : h_puppi(ctx.get_handle<std::vector<TopJet>>("jetsAk8PuppiSubstructure_SoftDropPuppi")), dr_min(dr_min_), mode(mode_){}
+PuppidRSelection::PuppidRSelection(uhh2::Context & ctx, int mode1_, int mode2_, double dr_min_) : h_puppi(ctx.get_handle<std::vector<TopJet>>("jetsAk8PuppiSubstructure_SoftDropPuppi")), mode1(mode1_), mode2(mode2_), dr_min(dr_min_){}
 bool PuppidRSelection::passes(const Event & event){
   bool pass = false;
   if(!event.is_valid(h_puppi)) return pass;
   std::vector<TopJet> topjet = event.get(h_puppi);
-
-  if(!(event.muons->size() > 0)) return pass;
   if(!(topjet.size() > 1)) return pass;
-  switch (mode) {
+
+  switch (mode1) {
     case 0:
-    pass = deltaR(topjet.at(1), event.muons->at(0)) < dr_min;
+    switch (mode2) {
+      case 0:
+      if(!(event.muons->size() > 0)) return pass;
+      pass = deltaR(topjet.at(1), event.muons->at(0)) < dr_min;
+      break;
+
+      case 1:
+      if(!(event.electrons->size() > 0)) return pass;
+      pass = deltaR(topjet.at(1), event.electrons->at(0)) < dr_min;
+      break;
+    }
     break;
 
     case 1:
-    LorentzVector subjet_sum2;
+    LorentzVector subjet_sum;
     for (const auto s : topjet.at(1).subjets()) {
-      subjet_sum2 += s.v4();
+      subjet_sum += s.v4();
     }
-    pass = deltaR(subjet_sum2, event.muons->at(0)) < dr_min;
+    switch (mode2) {
+      case 0:
+      if(!(event.muons->size() > 0)) return pass;
+      pass = deltaR(subjet_sum, event.muons->at(0)) < dr_min;
+      break;
+
+      case 1:
+      if(!(event.electrons->size() > 0)) return pass;
+      pass = deltaR(subjet_sum, event.electrons->at(0)) < dr_min;
+      break;
+    }
     break;
   }
   return pass;

@@ -17,12 +17,13 @@
 namespace uhh2examples {
   class RecPuppiJetLeptonCleaner: public uhh2::AnalysisModule{
   public:
-    explicit RecPuppiJetLeptonCleaner(uhh2::Context &);
+    explicit RecPuppiJetLeptonCleaner(uhh2::Context &, int mode);
     virtual bool process(uhh2::Event &) override;
 
   private:
     uhh2::Event::Handle<std::vector<TopJet>> h_puppi;
     uhh2::Event::Handle<std::vector<TopJet>> h_topjet_cand;
+    int mode;
 
   };
 
@@ -47,23 +48,23 @@ namespace uhh2examples {
 
   class PuppiMassCompare : public uhh2::Selection{
   public:
-    explicit PuppiMassCompare(uhh2::Context& ctx, int n);
+    explicit PuppiMassCompare(uhh2::Context& ctx, int mode1, int mode2);
     virtual bool passes(const uhh2::Event &) override;
 
   private:
     uhh2::Event::Handle<std::vector<TopJet>> h_puppi;
-    int n;
+    int mode1, mode2;
   };
 
   class PuppidRSelection : public uhh2::Selection{
   public:
-    explicit PuppidRSelection(uhh2::Context& ctx, double dr_min = 0.8, int mode = 0);
+    explicit PuppidRSelection(uhh2::Context& ctx, int mode1, int mode2, double dr_min = 0.8);
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
     uhh2::Event::Handle<std::vector<TopJet>> h_puppi;
+    int mode1, mode2;
     double dr_min;
-    int mode;
   };
 
   class PuppiPtSelection:public uhh2::Selection{

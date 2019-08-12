@@ -30,11 +30,12 @@ namespace uhh2examples {
     double MET_min, MET_max;
   };
 
-  class MuonptSelection : public uhh2::Selection{
+  class LeptonPtSelection : public uhh2::Selection{
   public:
-    explicit MuonptSelection(double pt_min = 0., double pt_max = -1);
+    explicit LeptonPtSelection(int mode, double pt_min = 0., double pt_max = -1);
     virtual bool passes(const uhh2::Event & event) override;
   private:
+    int mode;
     double pt_min, pt_max;
   };
 
@@ -49,10 +50,11 @@ namespace uhh2examples {
 
   class TwoDCut : public uhh2::Selection {
   public:
-    explicit TwoDCut(double min_deltaR = 0.4, double min_pTrel = 40.);
+    explicit TwoDCut(int mode, double min_deltaR = 0.4, double min_pTrel = 40.);
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
+    int mode;
     float min_deltaR, min_pTrel;
   };
 

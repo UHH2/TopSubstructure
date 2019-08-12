@@ -99,59 +99,79 @@ bool GenNTopJet::passes(const Event & event){
   return pass;
 }
 
-TTbarSemilep::TTbarSemilep(uhh2::Context& ctx):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
+TTbarSemilep::TTbarSemilep(uhh2::Context& ctx, int mode_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), mode(mode_){}
 bool TTbarSemilep::passes(const uhh2::Event& event){
-
   const auto & ttbargen = event.get(h_ttbargen);
   bool semilep = false;
+  switch(mode){
+    case 0:
+      semilep = ttbargen.DecayChannel() == TTbarGen::e_muhad;
+    break;
 
-  if(ttbargen.DecayChannel() == TTbarGen::e_muhad){
-    semilep = true;
+    case 1:
+      semilep = ttbargen.DecayChannel() == TTbarGen::e_ehad;
+    break;
   }
   return semilep;
 }
 
-GenMassCompare::GenMassCompare(uhh2::Context& ctx, int mode_, string const & label_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), h_gentopjet(ctx.get_handle<std::vector<GenTopJet>>(label_)), mode(mode_){}
+GenMassCompare::GenMassCompare(uhh2::Context& ctx, int mode1_, int mode2_, string const & label_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), h_gentopjet(ctx.get_handle<std::vector<GenTopJet>>(label_)), mode1(mode1_), mode2(mode2_){}
 bool GenMassCompare::passes(const Event & event){
-
   bool pass = false;
-  // 0: w/o SoftDrop; 1: w/ SoftDrop
+  // mode1:  0: w/o SoftDrop; 1: w/ SoftDrop
+  // mode2:  0: muons         1: electron
   if(event.is_valid(h_gentopjet)){
-    std::vector<GenTopJet> gentopjets = event.get(h_gentopjet);
+    if(event.is_valid(h_ttbargen)){
+      std::vector<GenTopJet> gentopjets = event.get(h_gentopjet);
+      const auto & ttbargen = event.get(h_ttbargen);
+      if(gentopjets.size() > 1 && ttbargen.IsSemiLeptonicDecay()){
 
-    switch(mode){
-      case 0:
-      if(event.is_valid(h_ttbargen)){
-        const auto & ttbargen = event.get(h_ttbargen);
-        if(gentopjets.size() > 1 && ttbargen.IsSemiLeptonicDecay()){
-          double mass;
-          mass = gentopjets.at(0).v4().M();
-          const auto dummy = gentopjets.at(1).v4() + ttbargen.ChargedLepton().v4();
-          if(mass > (dummy.M())) pass = true;
+        switch(mode1){
+          case 0:{
+            double mass;
+            mass = gentopjets.at(0).v4().M();
+            LorentzVector dummy;
+            switch (mode2){
+              case 0:
+              if(!(ttbargen.DecayChannel() == TTbarGen::e_muhad)) return pass;
+              dummy = gentopjets.at(1).v4() + ttbargen.ChargedLepton().v4();
+              break;
+              case 1:
+              if(!(ttbargen.DecayChannel() == TTbarGen::e_ehad)) return pass;
+              dummy = gentopjets.at(1).v4() + ttbargen.ChargedLepton().v4();
+              break;
+            }
+            if(mass > (dummy.M())) pass = true;
+          }
+          break;
+
+          case 1:{
+            LorentzVector subjet_sum1;
+            for (const auto s : gentopjets.at(0).subjets()) {
+              subjet_sum1 += s.v4();
+            }
+            double mass1 = subjet_sum1.M();
+
+            LorentzVector subjet_sum2;
+            for (const auto s : gentopjets.at(1).subjets()) {
+              subjet_sum2 += s.v4();
+            }
+            switch (mode2) {
+              case 0:
+              if(!(ttbargen.DecayChannel() == TTbarGen::e_muhad)) return pass;
+              subjet_sum2 += ttbargen.ChargedLepton().v4();
+              break;
+              case 1:
+              if(!(ttbargen.DecayChannel() == TTbarGen::e_ehad)) return pass;
+              subjet_sum2 += ttbargen.ChargedLepton().v4();
+              break;
+            }
+            double mass2 = subjet_sum2.M();
+            if(mass1 > mass2) pass = true;
+          }
+          break;
         }
       }
-      break;
-
-      case 1:
-      if(event.is_valid(h_ttbargen)){
-        const auto & ttbargen = event.get(h_ttbargen);
-        if(gentopjets.size() > 1 && ttbargen.IsSemiLeptonicDecay()){
-          LorentzVector subjet_sum1;
-          for (const auto s : gentopjets.at(0).subjets()) {
-            subjet_sum1 += s.v4();
-          }
-          double mass1 = subjet_sum1.M();
-
-          LorentzVector subjet_sum2;
-          for (const auto s : gentopjets.at(1).subjets()) {
-            subjet_sum2 += s.v4();
-          }
-          subjet_sum2 += ttbargen.ChargedLepton().v4();
-          double mass2 = subjet_sum2.M();
-          if(mass1 > mass2) pass = true;
-        }
-      }
-      break;
     }
   }
   return pass;
@@ -192,18 +212,27 @@ bool PtSelection::passes(const Event & event){
   return pass;
 }
 
-dRSelection::dRSelection(uhh2::Context& ctx, double dr_min_, int mode_, string const & label_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), h_gentopjet(ctx.get_handle<std::vector<GenTopJet>>(label_)), dr_min(dr_min_), mode(mode_){}
+dRSelection::dRSelection(uhh2::Context& ctx, double dr_min_, int mode1_, int mode2_, string const & label_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), h_gentopjet(ctx.get_handle<std::vector<GenTopJet>>(label_)), dr_min(dr_min_), mode1(mode1_), mode2(mode2_){}
 bool dRSelection::passes(const Event & event){
   bool pass = false;
   if(event.is_valid(h_ttbargen) && event.is_valid(h_gentopjet)){
     std::vector<GenTopJet> gentopjets = event.get(h_gentopjet);
     const auto ttbargen = event.get(h_ttbargen);
     if(!ttbargen.IsSemiLeptonicDecay()) return pass;
-
     if(gentopjets.size() <= 1) return pass;
-    switch (mode) {
+
+    switch (mode1) {
       case 0:
-      pass = deltaR(gentopjets.at(1), ttbargen.ChargedLepton()) < dr_min;
+      switch (mode2) {
+        case 0:
+        if(!(ttbargen.DecayChannel() == TTbarGen::e_muhad)) return pass;
+        pass = deltaR(gentopjets.at(1), ttbargen.ChargedLepton()) < dr_min;
+        break;
+        case 1:
+        if(!(ttbargen.DecayChannel() == TTbarGen::e_ehad)) return pass;
+        pass = deltaR(gentopjets.at(1), ttbargen.ChargedLepton()) < dr_min;
+        break;
+      }
       break;
 
       case 1:
@@ -211,20 +240,40 @@ bool dRSelection::passes(const Event & event){
       for (const auto s : gentopjets.at(1).subjets()) {
         subjet_sum2 += s.v4();
       }
-      pass = deltaR(subjet_sum2, ttbargen.ChargedLepton()) < dr_min;
+      switch (mode2) {
+        case 0:
+        if(!(ttbargen.DecayChannel() == TTbarGen::e_muhad)) return pass;
+        pass = deltaR(subjet_sum2, ttbargen.ChargedLepton()) < dr_min;
+        break;
+        case 1:
+        if(!(ttbargen.DecayChannel() == TTbarGen::e_ehad)) return pass;
+        pass = deltaR(subjet_sum2, ttbargen.ChargedLepton()) < dr_min;
+        break;
+      }
       break;
     }
   }
   return pass;
 }
 
-GenMuonPtSelection::GenMuonPtSelection(uhh2::Context& ctx, double pt_min_, double pt_max_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), pt_min(pt_min_), pt_max(pt_max_){}
-bool GenMuonPtSelection::passes(const Event & event){
+GenLeptonPtSelection::GenLeptonPtSelection(uhh2::Context& ctx, int mode_, double pt_min_, double pt_max_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), mode(mode_), pt_min(pt_min_), pt_max(pt_max_){}
+bool GenLeptonPtSelection::passes(const Event & event){
   bool pass = false;
+
   if(event.is_valid(h_ttbargen)){
     const auto ttbargen = event.get(h_ttbargen);
-    if(ttbargen.DecayChannel() != TTbarGen::e_muhad) return false;
-    if((ttbargen.ChargedLepton().pt() < pt_max || pt_max < 0) && ttbargen.ChargedLepton().pt() > pt_min) pass = true;
+    switch(mode){
+      case 0:
+      if(ttbargen.DecayChannel() != TTbarGen::e_muhad) return false;
+      pass = ((ttbargen.ChargedLepton().pt() < pt_max || pt_max < 0) && ttbargen.ChargedLepton().pt() > pt_min);
+
+      break;
+      case 1:
+      if(ttbargen.DecayChannel() != TTbarGen::e_ehad) return false;
+      pass = ((ttbargen.ChargedLepton().pt() < pt_max || pt_max < 0) && ttbargen.ChargedLepton().pt() > pt_min);
+
+      break;
+    }
   }
   return pass;
 }

@@ -8,6 +8,15 @@ using namespace uhh2examples;
 
 TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string & dirname, std::string const & label): Hists(ctx, dirname), hndl(ctx.get_handle<vector<TopJet>>(label)){
   // book all histograms here
+
+  const std::string& channel = ctx.get("channel", ""); //define Channel
+  if     (channel == "muon") channel_ = muon;
+  else if(channel == "ele") channel_ = ele;
+  else {
+    std::string log("KinCutModule::KinCutModule -- ");
+    log += "invalid argument for 'channel' key in xml file (must be 'muon' or 'ele'): \""+channel+"\"";
+    throw std::runtime_error(log);
+  }
   // jets
   book<TH1D>("N_jets", "N_{Jets}", 17, -0.5, 16.5);
   book<TH1D>("eta_jet1", "#eta^{Jet 1}", 40, -2.5, 2.5);
@@ -101,8 +110,10 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   book<TH1D>("tau21_tj1", "#tau_{2}/#tau_{1} first TopJet", 40, 0, 1.);
   book<TH1D>("tau21_tj1_rebin", "#tau_{2}/#tau_{1} first TopJet", 1000, 0, 1.);
 
-  book<TH1D>("dR_mu_tj1", "#Delta R(#mu, first TopJet)", 50, 0, 5.);
-  book<TH1D>("dPhi_mu_tj1", "#Delta #Phi (#mu, first TopJet)", 32, 0, 3.2);
+  if(channel_ == muon) book<TH1D>("dR_lep_tj1", "#Delta R(#mu, first TopJet)", 50, 0, 5.);
+  else                 book<TH1D>("dR_lep_tj1", "#Delta R(electron, first TopJet)", 50, 0, 5.);
+  if(channel_ == muon) book<TH1D>("dPhi_lep_tj1", "#Delta #Phi (#mu, first TopJet)", 32, 0, 3.2);
+  else                 book<TH1D>("dPhi_lep_tj1", "#Delta #Phi (electron, first TopJet)", 32, 0, 3.2);
 
   // first topjet, groomed
   book<TH1D>("M_tj1_groomed", "M_{first TopJet, groomed} [GeV^{2}]", 40, 0, 400);
@@ -141,8 +152,10 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   book<TH1D>("tau21_tj2", "#tau_{2}/#tau_{1} second TopJet", 40, 0, 1.);
   book<TH1D>("tau21_tj2_rebin", "#tau_{2}/#tau_{1} second TopJet", 1000, 0, 1.);
 
-  book<TH1D>("dR_mu_tj2", "#Delta R(#mu, second TopJet)", 50, 0, 5.);
-  book<TH1D>("dPhi_mu_tj2", "#Delta #Phi (#mu, second TopJet)", 32, 0, 3.2);
+  if(channel_ == muon) book<TH1D>("dR_lep_tj2", "#Delta R(#mu, first TopJet)", 50, 0, 5.);
+  else                 book<TH1D>("dR_lep_tj2", "#Delta R(electron, first TopJet)", 50, 0, 5.);
+  if(channel_ == muon) book<TH1D>("dPhi_lep_tj2", "#Delta #Phi (#mu, first TopJet)", 32, 0, 3.2);
+  else                 book<TH1D>("dPhi_lep_tj2", "#Delta #Phi (electron, first TopJet)", 32, 0, 3.2);
 
   // second topjet, groomed
   book<TH1D>("M_tj2_groomed", "M_{second TopJet, groomed} [GeV^{2}]", 40, 0, 400);
@@ -150,9 +163,12 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   // leptons
   book<TH1D>("N_ele", "N_{electrons}", 8, -0.5, 7.5);
   book<TH1D>("N_mu", "N_{#mu}", 8, -0.5, 7.5);
-  book<TH1D>("pt_mu", "p_{T}^{#mu} [GeV]", 100, 0, 1000);
-  book<TH1D>("eta_mu", "#eta^{#mu}", 40, -2.5, 2.5);
-  book<TH1D>("mass_mu", "M^{#mu} [GeV]", 50, 0, 0.5);
+  if(channel_ == muon) book<TH1D>("pt_lep", "p_{T}^{#mu} [GeV]", 100, 0, 1000);
+  else                 book<TH1D>("pt_lep", "p_{T}^{electron} [GeV]", 100, 0, 1000);
+  if(channel_ == muon) book<TH1D>("eta_lep", "#eta^{#mu}", 40, -2.5, 2.5);
+  else                 book<TH1D>("eta_lep", "#eta^{electron}", 40, -2.5, 2.5);
+  if(channel_ == muon) book<TH1D>("mass_lep", "M^{#mu} [GeV]", 50, 0, 0.5);
+  else                 book<TH1D>("mass_lep", "M^{electron} [GeV]", 50, 0, 0.5);
 
   //general
   book<TH1D>("E_Tmiss", "missing E_{T} [GeV]", 75, 0, 1500);
@@ -268,8 +284,12 @@ void TopSubstructureRecoHists::fill(const Event & event){
   hist("sum_event_weights")->Fill(1, weight);
 
   double drmin, ptrel;
-  if(event.muons->size()){
+  if(channel_ == muon && event.muons->size() > 0){
     std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
+    TwoDCut->Fill(drmin, ptrel, weight);
+  }
+  else if(channel_ == ele && event.electrons->size() > 0){
+    std::tie(drmin, ptrel) = drmin_pTrel(event.electrons->at(0), *event.jets);
     TwoDCut->Fill(drmin, ptrel, weight);
   }
   // Jets
@@ -492,14 +512,16 @@ void TopSubstructureRecoHists::fill(const Event & event){
     hist("tau21_tj1_groomed_diff")->Fill(ratio_21_ug, weight);
     hist("tau21_tj1_rebin")->Fill(topjet.at(0).tau2()/topjet.at(0).tau1(), weight);
 
-    if(event.muons->size() > 0) hist("dPhi_mu_tj1")->Fill(deltaPhi(topjet.at(0), event.muons->at(0)), weight);
-
-    if(event.muons->size() > 0) hist("dR_mu_tj1")->Fill(deltaR(event.muons->at(0), topjet.at(0)), weight);
-    if(event.muons->size() > 0) hist("dPhi_mu_tj1")->Fill(deltaPhi(event.muons->at(0), topjet.at(0)), weight);
+    if(channel_ == muon && event.muons->size() > 0)         hist("dR_lep_tj1")->Fill(deltaR(event.muons->at(0), topjet.at(0)), weight);
+    else if(channel_ == ele && event.electrons->size() > 0) hist("dR_lep_tj1")->Fill(deltaR(event.electrons->at(0), topjet.at(0)), weight);
+    if(channel_ == muon && event.muons->size() > 0)         hist("dPhi_lep_tj1")->Fill(deltaPhi(event.muons->at(0), topjet.at(0)), weight);
+    else if(channel_ == ele && event.electrons->size() > 0) hist("dPhi_lep_tj1")->Fill(deltaPhi(event.electrons->at(0), topjet.at(0)), weight);
 
     if(topjet.size() > 1){
-      if(event.muons->size() > 0) hist("dR_mu_tj2")->Fill(deltaR(event.muons->at(0), topjet.at(1)), weight);
-      if(event.muons->size() > 0) hist("dPhi_mu_tj2")->Fill(deltaPhi(event.muons->at(0), topjet.at(1)), weight);
+      if(channel_ == muon && event.muons->size() > 0)         hist("dR_lep_tj2")->Fill(deltaR(event.muons->at(0), topjet.at(1)), weight);
+      else if(channel_ == ele && event.electrons->size() > 0) hist("dR_lep_tj2")->Fill(deltaR(event.electrons->at(0), topjet.at(1)), weight);
+      if(channel_ == muon && event.muons->size() > 0)         hist("dPhi_lep_tj2")->Fill(deltaPhi(event.muons->at(0), topjet.at(1)), weight);
+      else if(channel_ == ele && event.electrons->size() > 0) hist("dPhi_lep_tj2")->Fill(deltaPhi(event.electrons->at(0), topjet.at(1)), weight);
 
       hist("M_tj2")->Fill(topjet.at(1).v4().M(), weight);
       hist("M_tj2_rebin")->Fill(topjet.at(1).v4().M(), weight);
@@ -534,20 +556,30 @@ void TopSubstructureRecoHists::fill(const Event & event){
 
       hist("M_diff1_groomed")->Fill(mass1 - mass2, weight);
 
-      if(event.muons->size() > 0){
+      if(channel_ == muon && event.muons->size() > 0){
         const auto dummy_mass = topjet.at(1).v4() + event.muons->at(0).v4();
         hist("M_diff2")->Fill(topjet.at(0).v4().M() - dummy_mass.M(), weight);
         subjet_sum2 += event.muons->at(0).v4();
         double mass2_lep = subjet_sum2.M();
         hist("M_diff2_groomed")->Fill(mass1 - mass2_lep, weight);
       }
+      else if(channel_ == ele && event.electrons->size() > 0){
+        const auto dummy_mass = topjet.at(1).v4() + event.electrons->at(0).v4();
+        hist("M_diff2")->Fill(topjet.at(0).v4().M() - dummy_mass.M(), weight);
+        subjet_sum2 += event.electrons->at(0).v4();
+        double mass2_lep = subjet_sum2.M();
+        hist("M_diff2_groomed")->Fill(mass1 - mass2_lep, weight);
+      }
     }
   } // closing brackets of TopJet
   hist("N_mu")->Fill(event.muons->size(), weight);
-  if(event.muons->size() > 0) hist("pt_mu")->Fill(event.muons->at(0).pt(), weight);
-  if(event.muons->size() > 0) hist("eta_mu")->Fill(event.muons->at(0).eta(), weight);
-  if(event.muons->size() > 0) hist("mass_mu")->Fill(event.muons->at(0).v4().M(), weight);
+  hist("N_ele")->Fill(event.electrons->size(), weight);
+  if(channel_ == muon && event.muons->size() > 0) hist("pt_lep")->Fill(event.muons->at(0).pt(), weight);
+  else if(channel_ == ele && event.electrons->size() > 0) hist("pt_lep")->Fill(event.electrons->at(0).pt(), weight);
+  if(channel_ == muon && event.muons->size() > 0) hist("eta_lep")->Fill(event.muons->at(0).eta(), weight);
+  else if(channel_ == ele && event.electrons->size() > 0) hist("eta_lep")->Fill(event.electrons->at(0).eta(), weight);
+  if(channel_ == muon && event.muons->size() > 0) hist("mass_lep")->Fill(event.muons->at(0).v4().M(), weight);
+  else if(channel_ == ele && event.electrons->size() > 0) hist("mass_lep")->Fill(event.electrons->at(0).v4().M(), weight);
 
-  // if(event.muons->size() > 0) hist("E_Tmiss")->Fill(event.met->pt(), weight);
   hist("E_Tmiss")->Fill(event.met->pt(), weight);
 }

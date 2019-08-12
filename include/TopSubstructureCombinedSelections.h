@@ -27,21 +27,21 @@ namespace uhh2examples {
 
   class RecMassCompare : public uhh2::Selection{
   public:
-    explicit RecMassCompare(int n);
+    explicit RecMassCompare(int mode1, int mode2);
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
-    int n;
+    int mode1, mode2;
   };
 
   class RecdRSelection:public uhh2::Selection{
   public:
-    explicit RecdRSelection(double dr_min = 0.8, int mode = 0);
+    explicit RecdRSelection(double dr_min = 0.8, int mode1 = 0, int mode2 = 0);
     virtual bool passes(const uhh2::Event & event) override;
 
   private:
     double dr_min;
-    int mode;
+    int mode1, mode2;
   };
 
   class RecMatching : public uhh2::Selection{

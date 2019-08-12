@@ -223,7 +223,6 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
     tau.ResizeTo(1);
     tau[0] = tau_result;
     cout << tau_result <<'\n';
-    tau.Print();
 
     double logTaud = TMath::Log10(tau_result);
     x_value.ResizeTo(1);
@@ -243,7 +242,7 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
     for(unsigned int i=0; i<background_names.size(); i++){
       // Statistical uncertainties from Background
       CovBgrStat.push_back(unfold.GetEmatrixSysBackgroundUncorr(background_names.at(i), "", 0, "measurement_gen", "mass[C]", kTRUE));
-      CovBgrStat_meas.push_back(unfold.GetEmatrixSysBackgroundUncorr(background_names.at(i), "", 0, "measurement_gen", "mass[C]", kTRUE));
+      CovBgrStat_meas.push_back(unfold.GetEmatrixSysBackgroundUncorr(background_names.at(i), "", 0, "measurement_gen", "mass[C1]", kTRUE));
       CovBgrStat_all.push_back(unfold.GetEmatrixSysBackgroundUncorr(background_names.at(i), "", 0, 0, 0, kFALSE));
       if(do_lcurve){
         TString temp_name = "Covariance of " + background_names.at(i) + " LCurve";
@@ -295,11 +294,10 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
         CovBgrScale_all[i]->SetName(temp_name+" (all)");
       }
     }
-  }
 
   // treat sys uncertainties
   sys_delta.clear();
-  sys_delta.clear();
+  sys_delta_meas.clear();
   sys_delta_all.clear();
   for(unsigned int i = 0; i < sys_name.size(); i++){
     vector<TH1*> dummy;
@@ -308,19 +306,10 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
     sys_delta_all.push_back(dummy);
     for(unsigned int j = 0; j < sys_name[i].size(); j++){
       unfold.AddSysError(sys_matrix[i][j], sys_name[i][j], TUnfold::kHistMapOutputHoriz, TUnfoldDensity::kSysErrModeMatrix);
-      cout << "name: " << sys_name[i][j] << "Y bins: " << sys_matrix[i][j]->GetNbinsY() << '\n';
-      cout << "name: " << sys_name[i][j] << "X bins: " << sys_matrix[i][j]->GetNbinsX() << '\n';
-      cout << "name: " << sys_name[i][j] << "x*y: " << sys_matrix[i][j]->GetNbinsX()*sys_matrix[i][j]->GetNbinsY() << '\n';
-      cout << "name: " << sys_name[i][j] << "mean x axis: " << sys_matrix[i][j]->GetMean() << '\n';
-
-
 
       sys_delta[i].push_back(unfold.GetDeltaSysSource(sys_name[i][j], "",0,"measurement_gen","mass[C]",kTRUE));
-      cout << "name: " << sys_name[i][j] << "mean x axis: " << sys_matrix[i][j]->GetMean() << '\n';
       sys_delta_meas[i].push_back(unfold.GetDeltaSysSource(sys_name[i][j], "",0,"measurement_gen","mass[C1]",kTRUE));
-      cout << "name: " << sys_name[i][j] << "mean x axis: " << sys_matrix[i][j]->GetMean() << '\n';
       sys_delta_all[i].push_back(unfold.GetDeltaSysSource(sys_name[i][j], "", 0, 0, 0, kFALSE));
-      cout << "name: " << sys_name[i][j] << "mean x axis: " << sys_matrix[i][j]->GetMean() << '\n';
       if(do_lcurve){
         TString temp_name = "Delta of " + sys_name[i][j] + " LCurve";
         sys_delta[i][j]->SetName(temp_name);
@@ -361,8 +350,7 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
       }
     }
   }
-
-  return;
+}
 }
 
 void unfolding::get_output_check(){
