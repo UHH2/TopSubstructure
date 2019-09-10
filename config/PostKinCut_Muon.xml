@@ -30,11 +30,17 @@
 <!ENTITY TTbar_Mtt1000toInft_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_Mtt1000toInft.root">
 
 <!-- =============================================== other ttbar =========================================================================== -->
-<!ENTITY TTbar_2016v3_mtop1695    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_mtop1695.root">
-<!ENTITY TTbar_2016v3_mtop1715    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_mtop1715.root">
-<!ENTITY TTbar_2016v3_mtop1735    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_mtop1735.root">
-<!ENTITY TTbar_2016v3_mtop1755    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_mtop1755.root">
-<!ENTITY TTbar_2016v3_madgraph    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_madgraph.root">
+<!ENTITY TTbar_2016v3_mtop1695          "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_mtop1695.root">
+<!ENTITY TTbar_2016v3_mtop1715          "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_mtop1715.root">
+<!ENTITY TTbar_2016v3_mtop1735          "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_mtop1735.root">
+<!ENTITY TTbar_2016v3_mtop1755          "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_mtop1755.root">
+<!ENTITY TTbar_2016v3_madgraph          "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_madgraph.root">
+<!ENTITY TTbar_2016v3_isrup             "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_isrup.root">
+<!ENTITY TTbar_2016v3_isrdown           "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_isrdown.root">
+<!ENTITY TTbar_2016v3_fsrup             "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_fsrup.root">
+<!ENTITY TTbar_2016v3_fsrdown           "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_fsrdown.root">
+<!ENTITY TTbar_2016v3_hdampup           "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_hdampup.root">
+<!ENTITY TTbar_2016v3_hdampdown         "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_hdampdown.root">
 
 <!-- =============================================== DiBoson =========================================================================== -->
 <!ENTITY  Diboson_WW_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.Diboson_WW_2016v3.root">
@@ -197,6 +203,24 @@
 </InputData>
 <InputData Version="TTbar_2016v3_madgraph" Lumi="12262.01188" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&TTbar_2016v3_madgraph;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+</InputData>
+<InputData Version="TTbar_2016v3_isrup" Lumi="70906.39127" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+  <In FileName="&TTbar_2016v3_isrup;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+</InputData>
+<InputData Version="TTbar_2016v3_isrdown" Lumi="70236.78826" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+    <In FileName="&TTbar_2016v3_isrdown;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+</InputData>
+<InputData Version="TTbar_2016v3_fsrup" Lumi="71094.35053" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+    <In FileName="&TTbar_2016v3_fsrup;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+</InputData>
+<InputData Version="TTbar_2016v3_fsrdown" Lumi="71114.47533" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+    <In FileName="&TTbar_2016v3_fsrdown;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+</InputData>
+<InputData Version="TTbar_2016v3_hdampup" Lumi="70531.1436" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+    <In FileName="&TTbar_2016v3_hdampup;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
+</InputData>
+<InputData Version="TTbar_2016v3_hdampdown" Lumi="70098.79412" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+    <In FileName="&TTbar_2016v3_hdampdown;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 
 

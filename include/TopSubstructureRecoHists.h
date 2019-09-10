@@ -23,12 +23,12 @@ namespace uhh2examples {
 
   protected:
     uhh2::Event::Handle<std::vector<TopJet>> hndl;
-    TH2* TwoDCut;
+    TH2 *TwoDCut, *TwoDCut_mu, *TwoDCut_ele;
     uhh2::Event::Handle<double> h_weight, h_weight_kin;
     uhh2::Event::Handle<double> h_tau2_start, h_tau2_common, h_tau2_corrector, h_tau2_lepcleaner, h_tau2_cleaner;
     uhh2::Event::Handle<double> h_tau3_start, h_tau3_common, h_tau3_corrector, h_tau3_lepcleaner, h_tau3_cleaner;
     bool isTTbar;
-    enum lepton { muon, ele };
+    enum lepton { muon, ele , none };
     lepton channel_;
   };
 

@@ -57,6 +57,7 @@ public:
   void get_bgr_delta();
   void get_bgr_delta_meas();
   void get_bgr_delta_all();
+  void get_bias();
   TH2* CreateCovMatrixFromDelta(TH1*);
 
 private:
@@ -69,25 +70,26 @@ private:
   std::vector<std::vector<TH2*>> sys_covariance, sys_covariance_meas, sys_covariance_all;
 
   TVectorD x_value, y_value, tau;
-  TH1 *h_check, *h_check_meas;
-  TH1 *h_check_all;
-  TH1 *h_data_output, *h_data_meas;
-  TH1 *h_data_output_all;
-  TSpline *rhoLogTau;
-  TSpline *rhoLogTau_check;
-  TGraph *l_curve_check;
+  TH1 *h_check = 0, *h_check_meas = 0;
+  TH1 *h_check_all = 0;
+  TH1 *h_data_output = 0, *h_data_meas = 0;
+  TH1 *h_data_output_all = 0;
+  TSpline *rhoLogTau = 0;
+  TSpline *rhoLogTau_check = 0;
+  TGraph *l_curve_check = 0;
 
   TGraph *l_curve = 0;
   TSpline* logTauX = 0;
   TSpline* logTauY = 0;
 
-  TH2  *h_data_rho, *h_data_rho_meas, *h_data_rho_all;
-  TH2  *h_prob_matrix;
-  TH2D *response_matrix;
-  TH2  *h_covarianceinputstat, *h_covarianceinputstat_meas, *h_covarianceinputstat_all;
-  TH2  *h_covartiancematrixstat, *h_covartiancematrixstat_meas, *h_covartiancematrixstat_all;
-  TH2  *h_covariancetotal, *h_covariancetotal_meas, *h_covariancetotal_all;
-  TH1D *hist_truth, *hist_mc;
+  TH1* bias = 0;
+  TH2  *h_data_rho = 0, *h_data_rho_meas = 0, *h_data_rho_all = 0;
+  TH2  *h_prob_matrix = 0;
+  TH2D *response_matrix = 0;
+  TH2  *h_covarianceinputstat = 0, *h_covarianceinputstat_meas = 0, *h_covarianceinputstat_all = 0;
+  TH2  *h_covartiancematrixstat = 0, *h_covartiancematrixstat_meas = 0, *h_covartiancematrixstat_all = 0;
+  TH2  *h_covariancetotal = 0, *h_covariancetotal_meas = 0, *h_covariancetotal_all = 0;
+  TH1D *hist_truth = 0, *hist_mc = 0;
   std::vector<TSpline*> logTau;
   double tau_result;
   bool lcurve;

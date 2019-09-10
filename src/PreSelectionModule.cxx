@@ -72,11 +72,127 @@ namespace uhh2examples {
 
     isMC = (ctx.get("dataset_type") == "MC");
 
-    isEle = (ctx.get("dataset_version") == "DATA_2016v3_SingleElectronB" || ctx.get("dataset_version") == "DATA_2016v3_SingleElectronC" || ctx.get("dataset_version") == "DATA_2016v3_SingleElectronD" || ctx.get("dataset_version") == "DATA_2016v3_SingleElectronE" || ctx.get("dataset_version") == "DATA_2016v3_SingleElectronF" || ctx.get("dataset_version") == "DATA_2016v3_SingleElectronG" || ctx.get("dataset_version") == "DATA_2016v3_SingleElectronH");
+    isEle = (
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronB"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronB_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronB_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronB_part2" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronC"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronC_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronC_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronC_part2" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronD"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronD_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronD_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronD_part2" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronE"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronE_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronE_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronE_part2" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronF"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronF_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronF_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronF_part2" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronG"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronG_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronG_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronG_part2" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronH"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronH_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronH_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronH_part2"
+    );
 
-    isMu = (ctx.get("dataset_version") == "DATA_2016v3_SingleMuonB" || ctx.get("dataset_version") == "DATA_2016v3_SingleMuonC" || ctx.get("dataset_version") == "DATA_2016v3_SingleMuonD" || ctx.get("dataset_version") == "DATA_2016v3_SingleMuonE" || ctx.get("dataset_version") == "DATA_2016v3_SingleMuonF" || ctx.get("dataset_version") == "DATA_2016v3_SingleMuonG" || ctx.get("dataset_version") == "DATA_2016v3_SingleMuonH");
+    isMu = (
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonB"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonB_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonB_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonB_part2" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonC"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonC_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonC_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonC_part2" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonD"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonD_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonD_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonD_part2" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonE"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonE_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonE_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonE_part2" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonF"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonF_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonF_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonF_part2" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonG"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonG_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonG_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonG_part2" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonH"       ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonH_part0" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonH_part1" ||
+      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonH_part2"
+    );
 
-    isTTbar = (ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700" || ctx.get("dataset_version") == "TTbar_2016v3_Mtt0700to1000" || ctx.get("dataset_version") == "TTbar_2016v3_Mtt1000toInft" || ctx.get("dataset_version") == "TTbar_2016v3" || ctx.get("dataset_version") == "TTbar_2016v3_mtop1695" || ctx.get("dataset_version") == "TTbar_2016v3_mtop1715" || ctx.get("dataset_version") == "TTbar_2016v3_mtop1735" || ctx.get("dataset_version") == "TTbar_2016v3_mtop1755" || ctx.get("dataset_version") == "TTbar_2016v3_madgraph");
+    isTTbar = (
+      ctx.get("dataset_version") == "TTbar_2016v3"                      ||
+      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700"        ||
+      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700_part0"  ||
+      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700_part1"  ||
+      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700_part2"  ||
+      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0700to1000"        ||
+      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0700to1000_part0"  ||
+      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0700to1000_part1"  ||
+      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0700to1000_part2"  ||
+      ctx.get("dataset_version") == "TTbar_2016v3_Mtt1000toInft"        ||
+      ctx.get("dataset_version") == "TTbar_2016v3_Mtt1000toInft_part0"  ||
+      ctx.get("dataset_version") == "TTbar_2016v3_Mtt1000toInft_part1"  ||
+      ctx.get("dataset_version") == "TTbar_2016v3_Mtt1000toInft_part2"  ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1695"             ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1695_part0"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1695_part1"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1695_part2"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1715"             ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1715_part0"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1715_part1"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1715_part2"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1735"             ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1735_part0"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1735_part1"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1735_part2"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1755"             ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1755_part0"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1755_part1"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_mtop1755_part2"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_madgraph"             ||
+      ctx.get("dataset_version") == "TTbar_2016v3_madgraph_part0"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_madgraph_part1"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_madgraph_part2"       ||
+      ctx.get("dataset_version") == "TTbar_2016v3_isrup"                ||
+      ctx.get("dataset_version") == "TTbar_2016v3_isrup_part0"          ||
+      ctx.get("dataset_version") == "TTbar_2016v3_isrup_part1"          ||
+      ctx.get("dataset_version") == "TTbar_2016v3_isrup_part2"          ||
+      ctx.get("dataset_version") == "TTbar_2016v3_isrdown"              ||
+      ctx.get("dataset_version") == "TTbar_2016v3_isrdown_part0"        ||
+      ctx.get("dataset_version") == "TTbar_2016v3_isrdown_part1"        ||
+      ctx.get("dataset_version") == "TTbar_2016v3_isrdown_part2"        ||
+      ctx.get("dataset_version") == "TTbar_2016v3_fsrup"                ||
+      ctx.get("dataset_version") == "TTbar_2016v3_fsrup_part0"          ||
+      ctx.get("dataset_version") == "TTbar_2016v3_fsrup_part1"          ||
+      ctx.get("dataset_version") == "TTbar_2016v3_fsrup_part2"          ||
+      ctx.get("dataset_version") == "TTbar_2016v3_fsrdown"              ||
+      ctx.get("dataset_version") == "TTbar_2016v3_fsrdown_part0"        ||
+      ctx.get("dataset_version") == "TTbar_2016v3_fsrdown_part1"        ||
+      ctx.get("dataset_version") == "TTbar_2016v3_fsrdown_part2"        ||
+      ctx.get("dataset_version") == "TTbar_2016v3_hdampup"              ||
+      ctx.get("dataset_version") == "TTbar_2016v3_hdampup_part0"        ||
+      ctx.get("dataset_version") == "TTbar_2016v3_hdampup_part1"        ||
+      ctx.get("dataset_version") == "TTbar_2016v3_hdampup_part2"        ||
+      ctx.get("dataset_version") == "TTbar_2016v3_hdampdown"            ||
+      ctx.get("dataset_version") == "TTbar_2016v3_hdampdown_part0"      ||
+      ctx.get("dataset_version") == "TTbar_2016v3_hdampdown_part1"      ||
+      ctx.get("dataset_version") == "TTbar_2016v3_hdampdown_part2"
+    );
 
     if(ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700") genmttbar_sel.reset(new MttbarGenSelection(0., 700.));
     else genmttbar_sel.reset(new uhh2::AndSelection(ctx));
@@ -87,9 +203,9 @@ namespace uhh2examples {
       ttgenprod.reset(new TTbarGenProducer(ctx, ttbar_gen_label, false));
       nmu_gen.reset(new TTbarSemilep(ctx, 0));
       nele_gen.reset(new TTbarSemilep(ctx, 1));
+      pt_topjet_gen.reset(new GenTopJetPtSelection(200));
       pt_mu_gen.reset(new GenLeptonPtSelection(ctx, 0, 45));
       pt_ele_gen.reset(new GenLeptonPtSelection(ctx, 1, 45));
-      pt_topjet_gen.reset(new GenTopJetPtSelection(200));
     }
 
     met_sel.reset(new METSelection(30, -1));
@@ -165,11 +281,11 @@ namespace uhh2examples {
 
     if(isMu || isMC) passed_nmu_rec = nmu_sel->passes(event);
     if(isEle || isMC) passed_nele_rec = nele_sel->passes(event);
-    if((isMu || isMC) && passed_njet_rec && passed_nmu_rec)  h_nmu->fill(event);
+    if((isMu || isMC)  && passed_njet_rec && passed_nmu_rec)  h_nmu->fill(event);
     if((isEle || isMC) && passed_njet_rec && passed_nele_rec) h_nele->fill(event);
 
     passed_met_rec = met_sel->passes(event);
-    if((isMu || isMC) && passed_njet_rec && passed_nmu_rec && passed_met_rec) h_met_mu->fill(event);
+    if((isMu || isMC)  && passed_njet_rec && passed_nmu_rec  && passed_met_rec) h_met_mu->fill(event);
     if((isEle || isMC) && passed_njet_rec && passed_nele_rec && passed_met_rec) h_met_ele->fill(event);
 
     passed_mu_rec = (isMu || isMC) && passed_njet_rec && passed_nmu_rec && passed_met_rec;

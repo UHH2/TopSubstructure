@@ -29,7 +29,7 @@ bool LeptonPtSelection::passes(const Event & event){
       pass = (pt >= pt_min && (pt <= pt_max || pt_max < 0));
     }
     else{
-      std::cout << "\n MuonSelection::passes: There are no muons in the event. returning 'false'\n" << std::endl;
+      // std::cout << "\n MuonSelection::passes: There are no muons in the event. returning 'false'\n" << std::endl;
       return false;
     }
     break;
@@ -42,7 +42,7 @@ bool LeptonPtSelection::passes(const Event & event){
       pass = (pt >= pt_min && (pt <= pt_max || pt_max < 0));
     }
     else{
-      std::cout << "\n MuonSelection::passes: There are no electrons in the event. returning 'false'\n" << std::endl;
+      // std::cout << "\n MuonSelection::passes: There are no electrons in the event. returning 'false'\n" << std::endl;
       return false;
     }
     break;
@@ -57,13 +57,13 @@ bool TopJetptSelection::passes(const Event & event){
   std::vector<TopJet> topjets = event.get(h_topjet);
 
   if(topjets.size() <= 0){
-    std::cout << "\n DPhiSelection::passes: There are no topjets in the event. returning 'false'\n" << std::endl;
+    // std::cout << "\n DPhiSelection::passes: There are no topjets in the event. returning 'false'\n" << std::endl;
     return false;
   }
 
   for(int i=1; i<fabs(topjets.size()); i++){
     double diff = topjets.at(0).pt()-topjets.at(i).pt();
-    if(!(diff > 0)) std::cout << "\n In TopJetSelection::passes: event.topjets did not get sorted corretly by pt!\n" << std::endl;;
+    if(!(diff > 0)) std::cout << "\n In TopJetSelection::passes: event.topjets did not get sorted corretly by pt!\n" << std::endl;
   }
   double pt = topjets.at(0).pt();
 
@@ -80,7 +80,7 @@ bool TwoDCut::passes(const Event & event){
     case 0:
     assert(event.muons && event.jets);
     if(event.muons->size() != 1){
-      std::cout << "\n @@@ WARNING -- TwoDCut::passes -- unexpected number of muons in the event (!=1). returning 'false'\n";
+      // std::cout << "\n @@@ WARNING -- TwoDCut::passes -- unexpected number of muons in the event (!=1). returning 'false'\n";
       return false;
     }
 
@@ -91,7 +91,7 @@ bool TwoDCut::passes(const Event & event){
     case 1:
     assert(event.electrons && event.jets);
     if(event.electrons->size()!= 1){
-      std::cout << "\n @@@ WARNING -- TwoDCut::passes -- unexpected number of electrons in the event (!=1). returning 'false'\n";
+      // std::cout << "\n @@@ WARNING -- TwoDCut::passes -- unexpected number of electrons in the event (!=1). returning 'false'\n";
       return false;
     }
 
@@ -111,7 +111,7 @@ bool DPhiSelection::passes(const Event & event){
   std::vector<TopJet> topjets = event.get(h_topjet);
 
   if(topjets.size() <= 0){
-    std::cout << "\n DPhiSelection::passes: There are no topjets in the event. returning 'false'\n" << std::endl;
+    // std::cout << "\n DPhiSelection::passes: There are no topjets in the event. returning 'false'\n" << std::endl;
     return false;
   }
 

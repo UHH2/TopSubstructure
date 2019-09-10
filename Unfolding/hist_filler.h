@@ -17,7 +17,7 @@ using namespace std;
 
 
 void fill_data(TTree *);
-void fill_pseudodata(TTree *);
+void fill_pseudo(TTree *);
 void fill_ttbar(TTree *, TString prefix);
 void fill_scale(TTree *, TString prefix);
 void fill_background(TTree *, TString prefix);

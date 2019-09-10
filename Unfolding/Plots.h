@@ -1,4 +1,5 @@
 #include "iostream"
+#include <TROOT.h>
 #include "TString.h"
 #include "TH1D.h"
 #include "TCanvas.h"
@@ -36,7 +37,8 @@ public:
   void Plot_input(TH1* data, TH1* mc, TString save);
   void Plot_covariance(TH2* matrix, TString save);
   void Plot_delta(std::vector<std::vector<TH1*>> delta, std::vector<std::vector<TString>> delta_name, TString directory);
-  void Plot_all_pseudo(TH1* pseudo1, TH1* pseudo1_truth, TH1* pseudo2, TH1* pseudo2_truth, TH1* pseudo3, TH1* pseudo3_truth, TString directory);
+  void Plot_all_pseudo(TH1* pseudo1, TH1* pseudo1_truth_1, TH1* pseudo2, TH1* pseudo2_truth_1, TH1* pseudo3, TH1* pseudo3_truth_1, bool cs, TString directory);
+  void Plot_compatibility(TH1* mu_dummy, TH1* mu_sys_dummy, TH1* ele_dummy, TH1* ele_sys_dummy, TString directory);
 
 private:
   const TUnfoldBinning *measurement_rec, *measurement_gen, *rec_pt_topjet_sideband, *gen_pt_topjet_sideband, *rec_mass_sideband, *gen_mass_sideband;

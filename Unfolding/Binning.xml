@@ -4,6 +4,98 @@
 <BinningNode name="binning_rec" firstbin="1" factor="1">
  <BinningNode name="measurement_rec" firstbin="1" factor="1">
   <Axis name="#tau_{3/2}" lowEdge="0">
+   <Bin width="0.367" center="0.1835" />
+   <Bin width="0.045" center="0.3895" />
+   <Bin width="0.033" center="0.4285" />
+   <Bin width="0.03" center="0.46" />
+   <Bin width="0.028" center="0.489" />
+   <Bin repeat="2" width="0.026" center="0.516" />
+   <Bin width="0.025" center="0.5675" />
+   <Bin width="0.024" center="0.592" />
+   <Bin width="0.026" center="0.617" />
+   <Bin width="0.025" center="0.6425" />
+   <Bin width="0.024" center="0.667" />
+   <Bin width="0.025" center="0.6915" />
+   <Bin width="0.024" center="0.716" />
+   <Bin repeat="2" width="0.025" center="0.7405" />
+   <Bin width="0.024" center="0.79" />
+   <Bin repeat="2" width="0.023" center="0.8135" />
+   <Bin width="0.024" center="0.86" />
+   <Bin width="0.03" center="0.887" />
+   <Bin width="0.098" center="0.951" />
+   <Axis name="mass" lowEdge="0">
+    <Bin width="152" center="76" />
+    <Bin width="848" center="576" />
+   </Axis>
+  </Axis>
+ </BinningNode>
+ <BinningNode name="rec_pt_topjet_sideband" firstbin="45" factor="1">
+  <Axis name="#tau_{3/2}" lowEdge="0">
+   <Bin width="0.522" center="0.261" />
+   <Bin width="0.108" center="0.576" />
+   <Bin width="0.079" center="0.6695" />
+   <Bin width="0.057" center="0.7375" />
+   <Bin width="0.046" center="0.789" />
+   <Bin width="0.039" center="0.8315" />
+   <Bin width="0.038" center="0.87" />
+   <Bin width="0.111" center="0.9445" />
+  </Axis>
+ </BinningNode>
+ <BinningNode name="rec_mass_sideband" firstbin="53" factor="1">
+  <Axis name="#tau_{3/2}" lowEdge="0">
+   <Bin width="0.615" center="0.3075" />
+   <Bin width="0.075" center="0.6525" />
+   <Bin width="0.038" center="0.709" />
+   <Bin width="0.028" center="0.742" />
+   <Bin width="0.02" center="0.766" />
+   <Bin width="0.016" center="0.784" />
+   <Bin width="0.014" center="0.799" />
+   <Bin width="0.012" center="0.812" />
+   <Bin repeat="4" width="0.01" center="0.823" />
+   <Bin repeat="2" width="0.011" center="0.8635" />
+   <Bin width="0.013" center="0.8865" />
+   <Bin width="0.014" center="0.9" />
+   <Bin width="0.023" center="0.9185" />
+   <Bin width="0.07" center="0.965" />
+  </Axis>
+ </BinningNode>
+</BinningNode>
+<BinningNode name="binning_gen" firstbin="1" factor="1">
+ <BinningNode name="measurement_gen" firstbin="1" factor="1">
+  <Axis name="#tau_{3/2}" lowEdge="0">
+   <Bin width="0.362" center="0.181" />
+   <Bin width="0.171" center="0.4475" />
+   <Bin width="0.199" center="0.6325" />
+   <Bin width="0.135" center="0.7995" />
+   <Bin width="0.133" center="0.9335" />
+   <Axis name="mass" lowEdge="0">
+    <Bin width="155" center="77.5" />
+    <Bin width="845" center="577.5" />
+   </Axis>
+  </Axis>
+ </BinningNode>
+ <BinningNode name="gen_pt_topjet_sideband" firstbin="11" factor="1">
+  <Axis name="#tau_{3/2}" lowEdge="0">
+   <Bin width="0.362" center="0.181" />
+   <Bin width="0.171" center="0.4475" />
+   <Bin width="0.199" center="0.6325" />
+   <Bin width="0.135" center="0.7995" />
+   <Bin width="0.133" center="0.9335" />
+  </Axis>
+ </BinningNode>
+ <BinningNode name="gen_mass_sideband" firstbin="16" factor="1">
+  <Axis name="#tau_{3/2}" lowEdge="0">
+   <Bin width="0.362" center="0.181" />
+   <Bin width="0.171" center="0.4475" />
+   <Bin width="0.199" center="0.6325" />
+   <Bin width="0.135" center="0.7995" />
+   <Bin width="0.133" center="0.9335" />
+  </Axis>
+ </BinningNode>
+</BinningNode>
+<BinningNode name="binning_ecf21_rec" firstbin="1" factor="1">
+ <BinningNode name="measurement_ecf21_rec" firstbin="1" factor="1">
+  <Axis name="ECF21" lowEdge="0">
    <Bin width="0.365" center="0.1825" />
    <Bin width="0.044" center="0.387" />
    <Bin width="0.032" center="0.425" />
@@ -22,14 +114,15 @@
    <Bin repeat="2" width="0.024" center="0.832" />
    <Bin width="0.03" center="0.883" />
    <Bin width="0.102" center="0.949" />
+   <Bin width="1" center="1.5" />
    <Axis name="mass" lowEdge="0">
     <Bin width="152" center="76" />
     <Bin width="848" center="576" />
    </Axis>
   </Axis>
  </BinningNode>
- <BinningNode name="rec_pt_topjet_sideband" firstbin="45" factor="1">
-  <Axis name="#tau_{3/2}" lowEdge="0">
+ <BinningNode name="rec_pt_topjet_ecf21_sideband" firstbin="47" factor="1">
+  <Axis name="ECF21" lowEdge="0">
    <Bin width="0.52" center="0.26" />
    <Bin width="0.106" center="0.573" />
    <Bin width="0.078" center="0.665" />
@@ -38,10 +131,11 @@
    <Bin width="0.039" center="0.8255" />
    <Bin width="0.04" center="0.865" />
    <Bin width="0.115" center="0.9425" />
+   <Bin width="1" center="1.5" />
   </Axis>
  </BinningNode>
- <BinningNode name="rec_mass_sideband" firstbin="53" factor="1">
-  <Axis name="#tau_{3/2}" lowEdge="0">
+ <BinningNode name="rec_mass_ecf21_sideband" firstbin="56" factor="1">
+  <Axis name="ECF21" lowEdge="0">
    <Bin width="0.615" center="0.3075" />
    <Bin width="0.076" center="0.653" />
    <Bin width="0.036" center="0.709" />
@@ -58,39 +152,280 @@
    <Bin width="0.013" center="0.8955" />
    <Bin width="0.02" center="0.912" />
    <Bin width="0.078" center="0.961" />
+   <Bin width="1" center="1.5" />
   </Axis>
  </BinningNode>
 </BinningNode>
-<BinningNode name="binning_gen" firstbin="1" factor="1">
- <BinningNode name="measurement_gen" firstbin="1" factor="1">
-  <Axis name="#tau_{3/2}" lowEdge="0">
-   <Bin width="0.284" center="0.142" />
-   <Bin width="0.223" center="0.3955" />
-   <Bin width="0.158" center="0.586" />
-   <Bin width="0.172" center="0.751" />
-   <Bin width="0.163" center="0.9185" />
+<BinningNode name="binning_ecf21_gen" firstbin="1" factor="1">
+ <BinningNode name="measurement_ecf21_gen" firstbin="1" factor="1">
+  <Axis name="ECF21" lowEdge="0">
+   <Bin repeat="25" width="0.1" center="0.05" />
    <Axis name="mass" lowEdge="0">
     <Bin width="155" center="77.5" />
     <Bin width="845" center="577.5" />
    </Axis>
   </Axis>
  </BinningNode>
- <BinningNode name="gen_pt_topjet_sideband" firstbin="11" factor="1">
-  <Axis name="#tau_{3/2}" lowEdge="0">
-   <Bin width="0.284" center="0.142" />
-   <Bin width="0.223" center="0.3955" />
-   <Bin width="0.158" center="0.586" />
-   <Bin width="0.172" center="0.751" />
-   <Bin width="0.163" center="0.9185" />
+ <BinningNode name="gen_pt_topjet_ecf21_sideband" firstbin="51" factor="1">
+  <Axis name="ECF21" lowEdge="0">
+   <Bin repeat="25" width="0.1" center="0.05" />
   </Axis>
  </BinningNode>
- <BinningNode name="gen_mass_sideband" firstbin="16" factor="1">
-  <Axis name="#tau_{3/2}" lowEdge="0">
-   <Bin width="0.284" center="0.142" />
-   <Bin width="0.223" center="0.3955" />
-   <Bin width="0.158" center="0.586" />
-   <Bin width="0.172" center="0.751" />
-   <Bin width="0.163" center="0.9185" />
+ <BinningNode name="gen_mass_ecf21_sideband" firstbin="76" factor="1">
+  <Axis name="ECF21" lowEdge="0">
+   <Bin repeat="25" width="0.1" center="0.05" />
+  </Axis>
+ </BinningNode>
+</BinningNode>
+<BinningNode name="binning_ecf22_rec" firstbin="1" factor="1">
+ <BinningNode name="measurement_ecf22_rec" firstbin="1" factor="1">
+  <Axis name="ECF22" lowEdge="0">
+   <Bin width="0.365" center="0.1825" />
+   <Bin width="0.044" center="0.387" />
+   <Bin width="0.032" center="0.425" />
+   <Bin width="0.029" center="0.4555" />
+   <Bin width="0.028" center="0.484" />
+   <Bin width="0.026" center="0.511" />
+   <Bin width="0.025" center="0.5365" />
+   <Bin width="0.026" center="0.562" />
+   <Bin repeat="3" width="0.024" center="0.587" />
+   <Bin repeat="2" width="0.025" center="0.6595" />
+   <Bin width="0.024" center="0.709" />
+   <Bin width="0.025" center="0.7335" />
+   <Bin width="0.026" center="0.759" />
+   <Bin width="0.025" center="0.7845" />
+   <Bin width="0.023" center="0.8085" />
+   <Bin repeat="2" width="0.024" center="0.832" />
+   <Bin width="0.03" center="0.883" />
+   <Bin width="0.102" center="0.949" />
+   <Bin width="1" center="1.5" />
+   <Axis name="mass" lowEdge="0">
+    <Bin width="152" center="76" />
+    <Bin width="848" center="576" />
+   </Axis>
+  </Axis>
+ </BinningNode>
+ <BinningNode name="rec_pt_topjet_ecf22_sideband" firstbin="47" factor="1">
+  <Axis name="ECF22" lowEdge="0">
+   <Bin width="0.52" center="0.26" />
+   <Bin width="0.106" center="0.573" />
+   <Bin width="0.078" center="0.665" />
+   <Bin width="0.057" center="0.7325" />
+   <Bin width="0.045" center="0.7835" />
+   <Bin width="0.039" center="0.8255" />
+   <Bin width="0.04" center="0.865" />
+   <Bin width="0.115" center="0.9425" />
+   <Bin width="1" center="1.5" />
+  </Axis>
+ </BinningNode>
+ <BinningNode name="rec_mass_ecf22_sideband" firstbin="56" factor="1">
+  <Axis name="ECF22" lowEdge="0">
+   <Bin width="0.615" center="0.3075" />
+   <Bin width="0.076" center="0.653" />
+   <Bin width="0.036" center="0.709" />
+   <Bin width="0.028" center="0.741" />
+   <Bin width="0.019" center="0.7645" />
+   <Bin width="0.017" center="0.7825" />
+   <Bin width="0.014" center="0.798" />
+   <Bin width="0.012" center="0.811" />
+   <Bin width="0.011" center="0.8225" />
+   <Bin repeat="2" width="0.01" center="0.833" />
+   <Bin width="0.009" center="0.8525" />
+   <Bin repeat="2" width="0.01" center="0.862" />
+   <Bin width="0.012" center="0.883" />
+   <Bin width="0.013" center="0.8955" />
+   <Bin width="0.02" center="0.912" />
+   <Bin width="0.078" center="0.961" />
+   <Bin width="1" center="1.5" />
+  </Axis>
+ </BinningNode>
+</BinningNode>
+<BinningNode name="binning_ecf22_gen" firstbin="1" factor="1">
+ <BinningNode name="measurement_ecf22_gen" firstbin="1" factor="1">
+  <Axis name="ecf" lowEdge="0">
+   <Bin repeat="25" width="0.1" center="0.05" />
+   <Axis name="mass" lowEdge="0">
+    <Bin width="155" center="77.5" />
+    <Bin width="845" center="577.5" />
+   </Axis>
+  </Axis>
+ </BinningNode>
+ <BinningNode name="gen_pt_topjet_ecf22_sideband" firstbin="51" factor="1">
+  <Axis name="ECF22" lowEdge="0">
+   <Bin repeat="25" width="0.1" center="0.05" />
+  </Axis>
+ </BinningNode>
+ <BinningNode name="gen_mass_ecf22_sideband" firstbin="76" factor="1">
+  <Axis name="ECF22" lowEdge="0">
+   <Bin repeat="25" width="0.1" center="0.05" />
+  </Axis>
+ </BinningNode>
+</BinningNode>
+<BinningNode name="binning_ecf31_rec" firstbin="1" factor="1">
+ <BinningNode name="measurement_ecf31_rec" firstbin="1" factor="1">
+  <Axis name="ECF31" lowEdge="0">
+   <Bin width="0.365" center="0.1825" />
+   <Bin width="0.044" center="0.387" />
+   <Bin width="0.032" center="0.425" />
+   <Bin width="0.029" center="0.4555" />
+   <Bin width="0.028" center="0.484" />
+   <Bin width="0.026" center="0.511" />
+   <Bin width="0.025" center="0.5365" />
+   <Bin width="0.026" center="0.562" />
+   <Bin repeat="3" width="0.024" center="0.587" />
+   <Bin repeat="2" width="0.025" center="0.6595" />
+   <Bin width="0.024" center="0.709" />
+   <Bin width="0.025" center="0.7335" />
+   <Bin width="0.026" center="0.759" />
+   <Bin width="0.025" center="0.7845" />
+   <Bin width="0.023" center="0.8085" />
+   <Bin repeat="2" width="0.024" center="0.832" />
+   <Bin width="0.03" center="0.883" />
+   <Bin width="0.102" center="0.949" />
+   <Bin width="1" center="1.5" />
+   <Axis name="mass" lowEdge="0">
+    <Bin width="152" center="76" />
+    <Bin width="848" center="576" />
+   </Axis>
+  </Axis>
+ </BinningNode>
+ <BinningNode name="rec_pt_topjet_ecf31_sideband" firstbin="47" factor="1">
+  <Axis name="ECF31" lowEdge="0">
+   <Bin width="0.52" center="0.26" />
+   <Bin width="0.106" center="0.573" />
+   <Bin width="0.078" center="0.665" />
+   <Bin width="0.057" center="0.7325" />
+   <Bin width="0.045" center="0.7835" />
+   <Bin width="0.039" center="0.8255" />
+   <Bin width="0.04" center="0.865" />
+   <Bin width="0.115" center="0.9425" />
+   <Bin width="1" center="1.5" />
+  </Axis>
+ </BinningNode>
+ <BinningNode name="rec_mass_ecf31_sideband" firstbin="56" factor="1">
+  <Axis name="ECF31" lowEdge="0">
+   <Bin width="0.615" center="0.3075" />
+   <Bin width="0.076" center="0.653" />
+   <Bin width="0.036" center="0.709" />
+   <Bin width="0.028" center="0.741" />
+   <Bin width="0.019" center="0.7645" />
+   <Bin width="0.017" center="0.7825" />
+   <Bin width="0.014" center="0.798" />
+   <Bin width="0.012" center="0.811" />
+   <Bin width="0.011" center="0.8225" />
+   <Bin repeat="2" width="0.01" center="0.833" />
+   <Bin width="0.009" center="0.8525" />
+   <Bin repeat="2" width="0.01" center="0.862" />
+   <Bin width="0.012" center="0.883" />
+   <Bin width="0.013" center="0.8955" />
+   <Bin width="0.02" center="0.912" />
+   <Bin width="0.078" center="0.961" />
+   <Bin width="1" center="1.5" />
+  </Axis>
+ </BinningNode>
+</BinningNode>
+<BinningNode name="binning_ecf31_gen" firstbin="1" factor="1">
+ <BinningNode name="measurement_ecf31_gen" firstbin="1" factor="1">
+  <Axis name="ecf" lowEdge="0">
+   <Bin repeat="25" width="0.1" center="0.05" />
+   <Axis name="mass" lowEdge="0">
+    <Bin width="155" center="77.5" />
+    <Bin width="845" center="577.5" />
+   </Axis>
+  </Axis>
+ </BinningNode>
+ <BinningNode name="gen_pt_topjet_ecf31_sideband" firstbin="51" factor="1">
+  <Axis name="ECF31" lowEdge="0">
+   <Bin repeat="25" width="0.1" center="0.05" />
+  </Axis>
+ </BinningNode>
+ <BinningNode name="gen_mass_ecf31_sideband" firstbin="76" factor="1">
+  <Axis name="ECF31" lowEdge="0">
+   <Bin repeat="25" width="0.1" center="0.05" />
+  </Axis>
+ </BinningNode>
+</BinningNode>
+<BinningNode name="binning_ecf32_rec" firstbin="1" factor="1">
+ <BinningNode name="measurement_ecf32_rec" firstbin="1" factor="1">
+  <Axis name="ECF32" lowEdge="0">
+   <Bin width="0.365" center="0.1825" />
+   <Bin width="0.044" center="0.387" />
+   <Bin width="0.032" center="0.425" />
+   <Bin width="0.029" center="0.4555" />
+   <Bin width="0.028" center="0.484" />
+   <Bin width="0.026" center="0.511" />
+   <Bin width="0.025" center="0.5365" />
+   <Bin width="0.026" center="0.562" />
+   <Bin repeat="3" width="0.024" center="0.587" />
+   <Bin repeat="2" width="0.025" center="0.6595" />
+   <Bin width="0.024" center="0.709" />
+   <Bin width="0.025" center="0.7335" />
+   <Bin width="0.026" center="0.759" />
+   <Bin width="0.025" center="0.7845" />
+   <Bin width="0.023" center="0.8085" />
+   <Bin repeat="2" width="0.024" center="0.832" />
+   <Bin width="0.03" center="0.883" />
+   <Bin width="0.102" center="0.949" />
+   <Bin width="1" center="1.5" />
+   <Axis name="mass" lowEdge="0">
+    <Bin width="152" center="76" />
+    <Bin width="848" center="576" />
+   </Axis>
+  </Axis>
+ </BinningNode>
+ <BinningNode name="rec_pt_topjet_ecf32_sideband" firstbin="47" factor="1">
+  <Axis name="ECF32" lowEdge="0">
+   <Bin width="0.52" center="0.26" />
+   <Bin width="0.106" center="0.573" />
+   <Bin width="0.078" center="0.665" />
+   <Bin width="0.057" center="0.7325" />
+   <Bin width="0.045" center="0.7835" />
+   <Bin width="0.039" center="0.8255" />
+   <Bin width="0.04" center="0.865" />
+   <Bin width="0.115" center="0.9425" />
+   <Bin width="1" center="1.5" />
+  </Axis>
+ </BinningNode>
+ <BinningNode name="rec_mass_ecf32_sideband" firstbin="56" factor="1">
+  <Axis name="ECF32" lowEdge="0">
+   <Bin width="0.615" center="0.3075" />
+   <Bin width="0.076" center="0.653" />
+   <Bin width="0.036" center="0.709" />
+   <Bin width="0.028" center="0.741" />
+   <Bin width="0.019" center="0.7645" />
+   <Bin width="0.017" center="0.7825" />
+   <Bin width="0.014" center="0.798" />
+   <Bin width="0.012" center="0.811" />
+   <Bin width="0.011" center="0.8225" />
+   <Bin repeat="2" width="0.01" center="0.833" />
+   <Bin width="0.009" center="0.8525" />
+   <Bin repeat="2" width="0.01" center="0.862" />
+   <Bin width="0.012" center="0.883" />
+   <Bin width="0.013" center="0.8955" />
+   <Bin width="0.02" center="0.912" />
+   <Bin width="0.078" center="0.961" />
+   <Bin width="1" center="1.5" />
+  </Axis>
+ </BinningNode>
+</BinningNode>
+<BinningNode name="binning_ecf32_gen" firstbin="1" factor="1">
+ <BinningNode name="measurement_ecf32_gen" firstbin="1" factor="1">
+  <Axis name="ecf" lowEdge="0">
+   <Bin repeat="25" width="0.1" center="0.05" />
+   <Axis name="mass" lowEdge="0">
+    <Bin width="155" center="77.5" />
+    <Bin width="845" center="577.5" />
+   </Axis>
+  </Axis>
+ </BinningNode>
+ <BinningNode name="gen_pt_topjet_ecf32_sideband" firstbin="51" factor="1">
+  <Axis name="ECF32" lowEdge="0">
+   <Bin repeat="25" width="0.1" center="0.05" />
+  </Axis>
+ </BinningNode>
+ <BinningNode name="gen_mass_ecf32_sideband" firstbin="76" factor="1">
+  <Axis name="ECF32" lowEdge="0">
+   <Bin repeat="25" width="0.1" center="0.05" />
   </Axis>
  </BinningNode>
 </BinningNode>

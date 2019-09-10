@@ -10,13 +10,16 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   // book all histograms here
 
   const std::string& channel = ctx.get("channel", ""); //define Channel
-  if     (channel == "muon") channel_ = muon;
-  else if(channel == "ele") channel_ = ele;
-  else {
-    std::string log("KinCutModule::KinCutModule -- ");
-    log += "invalid argument for 'channel' key in xml file (must be 'muon' or 'ele'): \""+channel+"\"";
-    throw std::runtime_error(log);
+  if(channel != ""){
+    if     (channel == "muon") channel_ = muon;
+    else if(channel == "ele") channel_ = ele;
+    else {
+      std::string log("TopSubstructureRecoHists::TopSubstructureRecoHists -- ");
+      log += "invalid argument for 'channel' key in xml file (must be 'muon' or 'ele'): \""+channel+"\"";
+      throw std::runtime_error(log);
+    }
   }
+  else channel_ = none;
   // jets
   book<TH1D>("N_jets", "N_{Jets}", 17, -0.5, 16.5);
   book<TH1D>("eta_jet1", "#eta^{Jet 1}", 40, -2.5, 2.5);
@@ -36,15 +39,29 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
 
   // Mass difference between first and second topjet
   book<TH1D>("M_diff1", "M_{first TopJet} - M_{second TopJet} [GeV^{2}]", 80, -400, 400);
-  book<TH1D>("M_diff2", "M_{first TopJet} - M_{second TopJet + Muon} [GeV^{2}]", 80, -400, 400);
+  if(channel_ == muon) book<TH1D>("M_diff2", "M_{first TopJet} - M_{second TopJet + Muon} [GeV^{2}]", 80, -400, 400);
+  else if(channel_ == ele) book<TH1D>("M_diff2", "M_{first TopJet} - M_{second TopJet + Electron} [GeV^{2}]", 80, -400, 400);
+  else if(channel_ == none){
+    book<TH1D>("M_diff2_mu", "M_{first TopJet} - M_{second TopJet + Muon} [GeV^{2}]", 80, -400, 400);
+    book<TH1D>("M_diff2_ele", "M_{first TopJet} - M_{second TopJet + Electron} [GeV^{2}]", 80, -400, 400);
+
+  }
   book<TH1D>("M_diff1_groomed", "M_{first TopJet, groomed} - M_{second TopJet, groomed} [GeV^{2}]", 80, -400, 400);
-  book<TH1D>("M_diff2_groomed", "M_{first TopJet, groomed} - M_{second TopJet + Muon, groomed} [GeV^{2}]", 80, -400, 400);
+  if(channel_ == muon) book<TH1D>("M_diff2_groomed", "M_{first TopJet, groomed} - M_{second TopJet + Muon, groomed} [GeV^{2}]", 80, -400, 400);
+  else if(channel_ == ele) book<TH1D>("M_diff2_groomed", "M_{first TopJet, groomed} - M_{second TopJet + Electron, groomed} [GeV^{2}]", 80, -400, 400);
+  else if(channel_ == none){
+    book<TH1D>("M_diff2_groomed_mu", "M_{first TopJet, groomed} - M_{second TopJet + Muon, groomed} [GeV^{2}]", 80, -400, 400);
+    book<TH1D>("M_diff2_groomed_ele", "M_{first TopJet, groomed} - M_{second TopJet + Electron, groomed} [GeV^{2}]", 80, -400, 400);
+
+  }
 
   // TopJets
   // first topjet, ungroomed
   book<TH1D>("M_tj1", "M_{first TopJet} [GeV^{2}]", 40, 0, 400);
   book<TH1D>("M_tj1_rebin", "M_{first TopJet} [GeV^{2}]", 80, 0, 400);
   book<TH1D>("pt_tj1", "p_{T} first TopJet [GeV]", 120, 0, 1200);
+  book<TH1D>("pt_tj1_rebin1", "p_{T} first TopJet [GeV]", 80, 0, 1200);
+  book<TH1D>("pt_tj1_rebin2", "p_{T} first TopJet [GeV]", 60, 0, 1200);
   book<TH1D>("eta_tj1", "#eta first TopJet", 40, -2.5, 2.5);
   book<TH1D>("Nsubjet_tjs", "N_{subjets} all TopJets", 4, -0.5, 3.5);
   book<TH1D>("Nsubjet_tj1", "N_{subjets} first TopJet", 4, -0.5, 3.5);
@@ -70,6 +87,8 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
 
   book<TH1D>("tau3_tj1", "#tau_{3} first TopJet", 40, 0, 1.);
   book<TH1D>("tau3_tj1_rebin", "#tau_{3} first TopJet", 1000, 0, 1.);
+  book<TH1D>("tau4_tj1", "#tau_{4} first TopJet", 40, 0, 1.);
+  book<TH1D>("tau4_tj1_rebin", "#tau_{4} first TopJet", 1000, 0, 1.);
 
   book<TH1D>("tau3_tj1_calc_start", "#tau_{3} first TopJet (calculated start)", 40, 0, 1.);
   book<TH1D>("tau3_tj1_start_diff", "(#tau_{3}-#tau_{3, calc})/#tau_{3} first TopJet (start)", 40, -1., 1.);
@@ -85,6 +104,19 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   book<TH1D>("tau32_tj1", "#tau_{3}/#tau_{2} first TopJet", 40, 0, 1.);
   book<TH1D>("tau32_tj1_rebin1", "#tau_{3}/#tau_{2} first TopJet", 100, 0, 1.);
   book<TH1D>("tau32_tj1_rebin2", "#tau_{3}/#tau_{2} first TopJet", 1000, 0, 1.);
+
+  book<TH1D>("tau31_tj1", "#tau_{3}/#tau_{1} first TopJet", 40, 0, 1.);
+  book<TH1D>("tau31_tj1_rebin1", "#tau_{3}/#tau_{1} first TopJet", 100, 0, 1.);
+  book<TH1D>("tau31_tj1_rebin2", "#tau_{3}/#tau_{1} first TopJet", 1000, 0, 1.);
+  book<TH1D>("tau41_tj1", "#tau_{4}/#tau_{1} first TopJet", 40, 0, 1.);
+  book<TH1D>("tau41_tj1_rebin1", "#tau_{4}/#tau_{1} first TopJet", 100, 0, 1.);
+  book<TH1D>("tau41_tj1_rebin2", "#tau_{1}/#tau_{4} first TopJet", 1000, 0, 1.);
+  book<TH1D>("tau42_tj1", "#tau_{4}/#tau_{2} first TopJet", 40, 0, 1.);
+  book<TH1D>("tau42_tj1_rebin1", "#tau_{4}/#tau_{2} first TopJet", 100, 0, 1.);
+  book<TH1D>("tau42_tj1_rebin2", "#tau_{4}/#tau_{2} first TopJet", 1000, 0, 1.);
+  book<TH1D>("tau43_tj1", "#tau_{4}/#tau_{3} first TopJet", 40, 0, 1.);
+  book<TH1D>("tau43_tj1_rebin1", "#tau_{4}/#tau_{3} first TopJet", 100, 0, 1.);
+  book<TH1D>("tau43_tj1_rebin2", "#tau_{4}/#tau_{3} first TopJet", 1000, 0, 1.);
 
   book<TH1D>("tau32_tj1_calc_start", "#tau_{3}/#tau_{2} first TopJet (calculated start)", 40, 0, 1.);
   book<TH1D>("tau32_tj1_start_diff", "(#tau_{32}-#tau_{32, calc})/#tau_{32} first TopJet (start)", 40, -1., 1.);
@@ -110,10 +142,18 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   book<TH1D>("tau21_tj1", "#tau_{2}/#tau_{1} first TopJet", 40, 0, 1.);
   book<TH1D>("tau21_tj1_rebin", "#tau_{2}/#tau_{1} first TopJet", 1000, 0, 1.);
 
-  if(channel_ == muon) book<TH1D>("dR_lep_tj1", "#Delta R(#mu, first TopJet)", 50, 0, 5.);
-  else                 book<TH1D>("dR_lep_tj1", "#Delta R(electron, first TopJet)", 50, 0, 5.);
+  if(channel_ == muon)     book<TH1D>("dR_lep_tj1", "#Delta R(#mu, first TopJet)", 50, 0, 5.);
+  else if(channel_ == ele) book<TH1D>("dR_lep_tj1", "#Delta R(electron, first TopJet)", 50, 0, 5.);
+  else{
+    book<TH1D>("dR_mu_tj1", "#Delta R(#mu, first TopJet)", 50, 0, 5.);
+    book<TH1D>("dR_ele_tj1", "#Delta R(electron, first TopJet)", 50, 0, 5.);
+  }
   if(channel_ == muon) book<TH1D>("dPhi_lep_tj1", "#Delta #Phi (#mu, first TopJet)", 32, 0, 3.2);
-  else                 book<TH1D>("dPhi_lep_tj1", "#Delta #Phi (electron, first TopJet)", 32, 0, 3.2);
+  else if(channel_ == ele)                 book<TH1D>("dPhi_lep_tj1", "#Delta #Phi (electron, first TopJet)", 32, 0, 3.2);
+  else{
+    book<TH1D>("dPhi_mu_tj1", "#Delta #Phi (#mu, first TopJet)", 32, 0, 3.2);
+    book<TH1D>("dPhi_ele_tj1", "#Delta #Phi (electron, first TopJet)", 32, 0, 3.2);
+  }
 
   // first topjet, groomed
   book<TH1D>("M_tj1_groomed", "M_{first TopJet, groomed} [GeV^{2}]", 40, 0, 400);
@@ -123,11 +163,29 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   book<TH1D>("tau2_tj1_groomed_diff", "(#tau_{2, ungroomed}-#tau_{2, groomed})/#tau_{2,ungroomed} first TopJet", 40, 0, 1.);
   book<TH1D>("tau3_tj1_groomed", "#tau_{3, groomed} first TopJet", 40, 0, 1.);
   book<TH1D>("tau3_tj1_groomed_diff", "(#tau_{3, ungroomed}-#tau_{3, groomed})/#tau_{3,ungroomed} first TopJet", 40, 0, 1.);
+  book<TH1D>("tau4_tj1_groomed", "#tau_{4, groomed} first TopJet", 40, 0, 1.);
+  book<TH1D>("tau4_tj1_groomed_diff", "(#tau_{4, ungroomed}-#tau_{4, groomed})/#tau_{4,ungroomed} first TopJet", 40, 0, 1.);
   book<TH1D>("tau21_tj1_groomed", "#tau_{2, groomed}/#tau_{1, groomed} first TopJet", 40, 0, 1.);
   book<TH1D>("tau21_tj1_groomed_diff", "(#tau_{21, ungroomed}-#tau_{21, groomed})/#tau_{21, ungroomed} first TopJet", 40, -1., 1.);
   book<TH1D>("tau32_tj1_groomed", "#tau_{3, groomed}/#tau_{2, groomed} first TopJet", 40, 0, 1.);
   book<TH1D>("tau32_tj1_groomed_diff", "(#tau_{32, ungroomed}-#tau_{32, groomed})/#tau_{32, ungroomed} first TopJet", 40, -1., 1.);
+  book<TH1D>("tau31_tj1_groomed", "#tau_{3, groomed}/#tau_{1, groomed} first TopJet", 40, 0, 1.);
+  book<TH1D>("tau31_tj1_groomed_diff", "(#tau_{31, ungroomed}-#tau_{31, groomed})/#tau_{31, ungroomed} first TopJet", 40, -1., 1.);
+  book<TH1D>("tau41_tj1_groomed", "#tau_{4, groomed}/#tau_{1, groomed} first TopJet", 40, 0, 1.);
+  book<TH1D>("tau41_tj1_groomed_diff", "(#tau_{41, ungroomed}-#tau_{41, groomed})/#tau_{41, ungroomed} first TopJet", 40, -1., 1.);
+  book<TH1D>("tau42_tj1_groomed", "#tau_{4, groomed}/#tau_{2, groomed} first TopJet", 40, 0, 1.);
+  book<TH1D>("tau42_tj1_groomed_diff", "(#tau_{42, ungroomed}-#tau_{42, groomed})/#tau_{42, ungroomed} first TopJet", 40, -1., 1.);
+  book<TH1D>("tau43_tj1_groomed", "#tau_{4, groomed}/#tau_{3, groomed} first TopJet", 40, 0, 1.);
+  book<TH1D>("tau43_tj1_groomed_diff", "(#tau_{43, ungroomed}-#tau_{43, groomed})/#tau_{43, ungroomed} first TopJet", 40, -1., 1.);
 
+  book<TH1D>("ecfN2_beta1_tj1", "ecfN2_beta1 first TopJet", 40, 0, 1.);
+  book<TH1D>("ecfN2_beta1_tj1_rebin", "ecfN2_beta1 first TopJet", 1000, 0, 1.);
+  book<TH1D>("ecfN2_beta2_tj1", "ecfN2_beta2 first TopJet", 40, 0, 1.);
+  book<TH1D>("ecfN2_beta2_tj1_rebin", "ecfN2_beta2 first TopJet", 1000, 0, 1.);
+  book<TH1D>("ecfN3_beta1_tj1", "ecfN3_beta1 first TopJet", 40, 0, 1.);
+  book<TH1D>("ecfN3_beta1_tj1_rebin", "ecfN3_beta1 first TopJet", 1000, 0, 1.);
+  book<TH1D>("ecfN3_beta2_tj1", "ecfN3_beta2 first TopJet", 40, 0, 1.);
+  book<TH1D>("ecfN3_beta2_tj1_rebin", "ecfN3_beta2 first TopJet", 1000, 0, 1.);
 
 
   //  second topjet, ungroomed
@@ -152,10 +210,18 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   book<TH1D>("tau21_tj2", "#tau_{2}/#tau_{1} second TopJet", 40, 0, 1.);
   book<TH1D>("tau21_tj2_rebin", "#tau_{2}/#tau_{1} second TopJet", 1000, 0, 1.);
 
-  if(channel_ == muon) book<TH1D>("dR_lep_tj2", "#Delta R(#mu, first TopJet)", 50, 0, 5.);
-  else                 book<TH1D>("dR_lep_tj2", "#Delta R(electron, first TopJet)", 50, 0, 5.);
-  if(channel_ == muon) book<TH1D>("dPhi_lep_tj2", "#Delta #Phi (#mu, first TopJet)", 32, 0, 3.2);
-  else                 book<TH1D>("dPhi_lep_tj2", "#Delta #Phi (electron, first TopJet)", 32, 0, 3.2);
+  if(channel_ == muon)     book<TH1D>("dR_lep_tj2", "#Delta R(#mu, second TopJet)", 50, 0, 5.);
+  else if(channel_ == ele) book<TH1D>("dR_lep_tj2", "#Delta R(electron, second TopJet)", 50, 0, 5.);
+  else{
+    book<TH1D>("dR_mu_tj2", "#Delta R(#mu, second TopJet)", 50, 0, 5.);
+    book<TH1D>("dR_ele_tj2", "#Delta R(electron, second TopJet)", 50, 0, 5.);
+  }
+  if(channel_ == muon)     book<TH1D>("dPhi_lep_tj2", "#Delta #Phi (#mu, second TopJet)", 32, 0, 3.2);
+  else if(channel_ == ele) book<TH1D>("dPhi_lep_tj2", "#Delta #Phi (electron, second TopJet)", 32, 0, 3.2);
+  else{
+    book<TH1D>("dPhi_mu_tj2", "#Delta #Phi (#mu, second TopJet)", 32, 0, 3.2);
+    book<TH1D>("dPhi_ele_tj2", "#Delta #Phi (electron, second TopJet)", 32, 0, 3.2);
+  }
 
   // second topjet, groomed
   book<TH1D>("M_tj2_groomed", "M_{second TopJet, groomed} [GeV^{2}]", 40, 0, 400);
@@ -164,11 +230,23 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   book<TH1D>("N_ele", "N_{electrons}", 8, -0.5, 7.5);
   book<TH1D>("N_mu", "N_{#mu}", 8, -0.5, 7.5);
   if(channel_ == muon) book<TH1D>("pt_lep", "p_{T}^{#mu} [GeV]", 100, 0, 1000);
-  else                 book<TH1D>("pt_lep", "p_{T}^{electron} [GeV]", 100, 0, 1000);
+  else if(channel_ == ele) book<TH1D>("pt_lep", "p_{T}^{electron} [GeV]", 100, 0, 1000);
+  else{
+    book<TH1D>("pt_mu", "p_{T}^{#mu} [GeV]", 100, 0, 1000);
+    book<TH1D>("pt_ele", "p_{T}^{electron} [GeV]", 100, 0, 1000);
+  }
   if(channel_ == muon) book<TH1D>("eta_lep", "#eta^{#mu}", 40, -2.5, 2.5);
-  else                 book<TH1D>("eta_lep", "#eta^{electron}", 40, -2.5, 2.5);
+  else if(channel_ == ele) book<TH1D>("eta_lep", "#eta^{electron}", 40, -2.5, 2.5);
+  else{
+    book<TH1D>("eta_mu", "#eta^{#mu}", 40, -2.5, 2.5);
+    book<TH1D>("eta_ele", "#eta^{electron}", 40, -2.5, 2.5);
+  }
   if(channel_ == muon) book<TH1D>("mass_lep", "M^{#mu} [GeV]", 50, 0, 0.5);
-  else                 book<TH1D>("mass_lep", "M^{electron} [GeV]", 50, 0, 0.5);
+  else if(channel_ == ele) book<TH1D>("mass_lep", "M^{electron} [GeV]", 50, 0, 0.5);
+  else{
+    book<TH1D>("mass_mu", "M^{#mu} [GeV]", 50, 0, 0.5);
+    book<TH1D>("mass_ele", "M^{electron} [GeV]", 50, 0, 0.5);
+  }
 
   //general
   book<TH1D>("E_Tmiss", "missing E_{T} [GeV]", 75, 0, 1500);
@@ -178,6 +256,10 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
 
   // 2-D plot
   TwoDCut = book<TH2F>("TwoDCut", "x=#Delta R y=p_{T}^{rel}", 50, 0, 2, 50, 0, 200);
+  if(channel_ == none){
+    TwoDCut_mu = book<TH2F>("TwoDCut_mu", "x=#Delta R y=p_{T}^{rel} (#mu)", 50, 0, 2, 50, 0, 200);
+    TwoDCut_ele = book<TH2F>("TwoDCut_ele", "x=#Delta R y=p_{T}^{rel} (electron)", 50, 0, 2, 50, 0, 200);
+  }
 
   // get handles
   h_weight = ctx.get_handle<double>("h_rec_weight");
@@ -292,6 +374,18 @@ void TopSubstructureRecoHists::fill(const Event & event){
     std::tie(drmin, ptrel) = drmin_pTrel(event.electrons->at(0), *event.jets);
     TwoDCut->Fill(drmin, ptrel, weight);
   }
+  if(channel_ == none && event.muons->size() > 0){
+    std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
+    TwoDCut_mu->Fill(drmin, ptrel, weight);
+  }
+  if(channel_ == none && event.electrons->size() > 0){
+    std::tie(drmin, ptrel) = drmin_pTrel(event.electrons->at(0), *event.jets);
+    TwoDCut_ele->Fill(drmin, ptrel, weight);
+  }
+
+
+
+
   // Jets
   std::vector<Jet>* jets = event.jets;
   int Njets = jets->size();
@@ -355,6 +449,8 @@ void TopSubstructureRecoHists::fill(const Event & event){
 
 
     hist("pt_tj1")->Fill(topjet.at(0).pt(), weight);
+    hist("pt_tj1_rebin1")->Fill(topjet.at(0).pt(), weight);
+    hist("pt_tj1_rebin2")->Fill(topjet.at(0).pt(), weight);
     hist("eta_tj1")->Fill(topjet.at(0).eta(), weight);
     hist("Nsubjet_tj1")->Fill(topjet.at(0).subjets().size(), weight);
     if(topjet.at(0).subjets().size() >= 1) hist("pt_subjet1_tj1")->Fill(topjet.at(0).subjets().at(0).v4().pt(), weight);
@@ -402,8 +498,11 @@ void TopSubstructureRecoHists::fill(const Event & event){
 
     hist("tau2_tj1_rebin")->Fill(topjet.at(0).tau2(), weight);
     hist("tau3_tj1")->Fill(topjet.at(0).tau3(), weight);
+    hist("tau4_tj1")->Fill(topjet.at(0).tau4(), weight);
     hist("tau3_tj1_groomed")->Fill(topjet.at(0).tau3_groomed(), weight);
     hist("tau3_tj1_groomed_diff")->Fill((topjet.at(0).tau3()-topjet.at(0).tau3_groomed())/topjet.at(0).tau3(), weight);
+    hist("tau4_tj1_groomed")->Fill(topjet.at(0).tau4_groomed(), weight);
+    hist("tau4_tj1_groomed_diff")->Fill((topjet.at(0).tau4()-topjet.at(0).tau4_groomed())/topjet.at(0).tau4(), weight);
     if(tau3_start >= 0){
       hist("tau3_tj1_calc_start")->Fill(tau3_start, weight);
       double ratio = (topjet.at(0).tau3()-tau3_start)/topjet.at(0).tau3();
@@ -437,6 +536,7 @@ void TopSubstructureRecoHists::fill(const Event & event){
 
 
     hist("tau3_tj1_rebin")->Fill(topjet.at(0).tau3(), weight);
+    hist("tau4_tj1_rebin")->Fill(topjet.at(0).tau4(), weight);
     hist("tau32_tj1")->Fill(topjet.at(0).tau3()/topjet.at(0).tau2(), weight);
     hist("tau32_tj1_groomed")->Fill(topjet.at(0).tau3_groomed()/topjet.at(0).tau2_groomed(), weight);
     double tau32_ungroomed = topjet.at(0).tau3()/topjet.at(0).tau2();
@@ -512,16 +612,54 @@ void TopSubstructureRecoHists::fill(const Event & event){
     hist("tau21_tj1_groomed_diff")->Fill(ratio_21_ug, weight);
     hist("tau21_tj1_rebin")->Fill(topjet.at(0).tau2()/topjet.at(0).tau1(), weight);
 
+
+    hist("tau31_tj1")->Fill(topjet.at(0).tau3()/topjet.at(0).tau1(), weight);
+    hist("tau31_tj1_rebin1")->Fill(topjet.at(0).tau3()/topjet.at(0).tau1(), weight);
+    hist("tau31_tj1_rebin2")->Fill(topjet.at(0).tau3()/topjet.at(0).tau1(), weight);
+    hist("tau31_tj1_groomed")->Fill(topjet.at(0).tau3_groomed()/topjet.at(0).tau1_groomed(), weight);
+    hist("tau41_tj1")->Fill(topjet.at(0).tau4()/topjet.at(0).tau1(), weight);
+    hist("tau41_tj1_rebin1")->Fill(topjet.at(0).tau4()/topjet.at(0).tau1(), weight);
+    hist("tau41_tj1_rebin2")->Fill(topjet.at(0).tau4()/topjet.at(0).tau1(), weight);
+    hist("tau41_tj1_groomed")->Fill(topjet.at(0).tau4_groomed()/topjet.at(0).tau1_groomed(), weight);
+    hist("tau42_tj1")->Fill(topjet.at(0).tau4()/topjet.at(0).tau2(), weight);
+    hist("tau42_tj1_rebin1")->Fill(topjet.at(0).tau4()/topjet.at(0).tau2(), weight);
+    hist("tau42_tj1_rebin2")->Fill(topjet.at(0).tau4()/topjet.at(0).tau2(), weight);
+    hist("tau42_tj1_groomed")->Fill(topjet.at(0).tau4_groomed()/topjet.at(0).tau2_groomed(), weight);
+    hist("tau43_tj1")->Fill(topjet.at(0).tau4()/topjet.at(0).tau3(), weight);
+    hist("tau43_tj1_rebin1")->Fill(topjet.at(0).tau4()/topjet.at(0).tau3(), weight);
+    hist("tau43_tj1_rebin2")->Fill(topjet.at(0).tau4()/topjet.at(0).tau3(), weight);
+    hist("tau43_tj1_groomed")->Fill(topjet.at(0).tau4_groomed()/topjet.at(0).tau3_groomed(), weight);
+
+
+    hist("ecfN2_beta1_tj1")->Fill(topjet.at(0).ecfN2_beta1(), weight);
+    hist("ecfN2_beta1_tj1_rebin")->Fill(topjet.at(0).ecfN2_beta1(), weight);
+    hist("ecfN2_beta2_tj1")->Fill(topjet.at(0).ecfN2_beta2(), weight);
+    hist("ecfN2_beta2_tj1_rebin")->Fill(topjet.at(0).ecfN2_beta2(), weight);
+    hist("ecfN3_beta1_tj1")->Fill(topjet.at(0).ecfN3_beta1(), weight);
+    hist("ecfN3_beta1_tj1_rebin")->Fill(topjet.at(0).ecfN3_beta1(), weight);
+    hist("ecfN3_beta2_tj1")->Fill(topjet.at(0).ecfN3_beta2(), weight);
+    hist("ecfN3_beta2_tj1_rebin")->Fill(topjet.at(0).ecfN3_beta2(), weight);
+
     if(channel_ == muon && event.muons->size() > 0)         hist("dR_lep_tj1")->Fill(deltaR(event.muons->at(0), topjet.at(0)), weight);
     else if(channel_ == ele && event.electrons->size() > 0) hist("dR_lep_tj1")->Fill(deltaR(event.electrons->at(0), topjet.at(0)), weight);
+    if(channel_ == none && event.muons->size() > 0)         hist("dR_mu_tj1")->Fill(deltaR(event.muons->at(0), topjet.at(0)), weight);
+    if(channel_ == none && event.electrons->size() > 0)hist("dR_ele_tj1")->Fill(deltaR(event.electrons->at(0), topjet.at(0)), weight);
+
     if(channel_ == muon && event.muons->size() > 0)         hist("dPhi_lep_tj1")->Fill(deltaPhi(event.muons->at(0), topjet.at(0)), weight);
     else if(channel_ == ele && event.electrons->size() > 0) hist("dPhi_lep_tj1")->Fill(deltaPhi(event.electrons->at(0), topjet.at(0)), weight);
+    if(channel_ == none && event.muons->size() > 0)         hist("dPhi_mu_tj1")->Fill(deltaPhi(event.muons->at(0), topjet.at(0)), weight);
+    if(channel_ == none && event.electrons->size() > 0)hist("dPhi_ele_tj1")->Fill(deltaPhi(event.electrons->at(0), topjet.at(0)), weight);
 
     if(topjet.size() > 1){
       if(channel_ == muon && event.muons->size() > 0)         hist("dR_lep_tj2")->Fill(deltaR(event.muons->at(0), topjet.at(1)), weight);
       else if(channel_ == ele && event.electrons->size() > 0) hist("dR_lep_tj2")->Fill(deltaR(event.electrons->at(0), topjet.at(1)), weight);
+      if(channel_ == none && event.muons->size() > 0)         hist("dR_mu_tj2")->Fill(deltaR(event.muons->at(0), topjet.at(1)), weight);
+      if(channel_ == none && event.electrons->size() > 0)hist("dR_ele_tj2")->Fill(deltaR(event.electrons->at(0), topjet.at(1)), weight);
+
       if(channel_ == muon && event.muons->size() > 0)         hist("dPhi_lep_tj2")->Fill(deltaPhi(event.muons->at(0), topjet.at(1)), weight);
       else if(channel_ == ele && event.electrons->size() > 0) hist("dPhi_lep_tj2")->Fill(deltaPhi(event.electrons->at(0), topjet.at(1)), weight);
+      if(channel_ == none && event.muons->size() > 0)         hist("dPhi_mu_tj2")->Fill(deltaPhi(event.muons->at(0), topjet.at(1)), weight);
+      if(channel_ == none && event.electrons->size() > 0)hist("dPhi_ele_tj2")->Fill(deltaPhi(event.electrons->at(0), topjet.at(1)), weight);
 
       hist("M_tj2")->Fill(topjet.at(1).v4().M(), weight);
       hist("M_tj2_rebin")->Fill(topjet.at(1).v4().M(), weight);
@@ -570,16 +708,42 @@ void TopSubstructureRecoHists::fill(const Event & event){
         double mass2_lep = subjet_sum2.M();
         hist("M_diff2_groomed")->Fill(mass1 - mass2_lep, weight);
       }
+
+      if(channel_ == none && event.muons->size() > 0){
+        const auto dummy_mass = topjet.at(1).v4() + event.muons->at(0).v4();
+        hist("M_diff2_mu")->Fill(topjet.at(0).v4().M() - dummy_mass.M(), weight);
+        subjet_sum2 += event.muons->at(0).v4();
+        double mass2_lep = subjet_sum2.M();
+        hist("M_diff2_groomed_mu")->Fill(mass1 - mass2_lep, weight);
+      }
+      if(channel_ == none && event.electrons->size() > 0){
+        const auto dummy_mass = topjet.at(1).v4() + event.electrons->at(0).v4();
+        hist("M_diff2_ele")->Fill(topjet.at(0).v4().M() - dummy_mass.M(), weight);
+        subjet_sum2 += event.electrons->at(0).v4();
+        double mass2_lep = subjet_sum2.M();
+        hist("M_diff2_groomed_ele")->Fill(mass1 - mass2_lep, weight);
+      }
+
+
+
     }
   } // closing brackets of TopJet
   hist("N_mu")->Fill(event.muons->size(), weight);
   hist("N_ele")->Fill(event.electrons->size(), weight);
   if(channel_ == muon && event.muons->size() > 0) hist("pt_lep")->Fill(event.muons->at(0).pt(), weight);
   else if(channel_ == ele && event.electrons->size() > 0) hist("pt_lep")->Fill(event.electrons->at(0).pt(), weight);
+  if(channel_ == none && event.muons->size() > 0) hist("pt_mu")->Fill(event.muons->at(0).pt(), weight);
+  if(channel_ == none && event.electrons->size() > 0) hist("pt_ele")->Fill(event.electrons->at(0).pt(), weight);
+
   if(channel_ == muon && event.muons->size() > 0) hist("eta_lep")->Fill(event.muons->at(0).eta(), weight);
   else if(channel_ == ele && event.electrons->size() > 0) hist("eta_lep")->Fill(event.electrons->at(0).eta(), weight);
+  if(channel_ == none && event.muons->size() > 0) hist("eta_mu")->Fill(event.muons->at(0).eta(), weight);
+  if(channel_ == none && event.electrons->size() > 0) hist("eta_ele")->Fill(event.electrons->at(0).eta(), weight);
+
   if(channel_ == muon && event.muons->size() > 0) hist("mass_lep")->Fill(event.muons->at(0).v4().M(), weight);
-  else if(channel_ == ele && event.electrons->size() > 0) hist("mass_lep")->Fill(event.electrons->at(0).v4().M(), weight);
+  if(channel_ == ele && event.electrons->size() > 0) hist("mass_lep")->Fill(event.electrons->at(0).v4().M(), weight);
+  if(channel_ == none && event.muons->size() > 0) hist("mass_mu")->Fill(event.muons->at(0).v4().M(), weight);
+  if(channel_ == none && event.electrons->size() > 0) hist("mass_ele")->Fill(event.electrons->at(0).v4().M(), weight);
 
   hist("E_Tmiss")->Fill(event.met->pt(), weight);
 }

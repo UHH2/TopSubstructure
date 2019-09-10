@@ -50,8 +50,10 @@ int main(int argc, char* argv[]){
   // get distributions from measurement phase space and sideband regions
   measurement_rec = binning_rec->FindNode("measurement_rec");
   measurement_gen = binning_gen->FindNode("measurement_gen");
+
   rec_pt_topjet_sideband = binning_rec->FindNode("rec_pt_topjet_sideband");
   gen_pt_topjet_sideband = binning_gen->FindNode("gen_pt_topjet_sideband");
+
   rec_mass_sideband = binning_rec->FindNode("rec_mass_sideband");
   gen_mass_sideband = binning_gen->FindNode("gen_mass_sideband");
 
@@ -73,18 +75,18 @@ int main(int argc, char* argv[]){
   data_File = new TFile(dir + "/Muon" + prefix + "DATA.DATA.root");
   fill_data((TTree *) data_File->Get("AnalysisTree"));
 
-  // fill pseudodata
-  TFile *pseudodata_matrix_File = new TFile(dir+"/Muon"+prefix+"MC.TTbar.root");
-  fill_pseudodata((TTree *) pseudodata_matrix_File->Get("AnalysisTree"));
+  // fill pseudo
+  TFile *pseudo_matrix_File = new TFile(dir+"/Muon"+prefix+"MC.TTbar_2016v3_M.root");
+  fill_pseudo((TTree *) pseudo_matrix_File->Get("AnalysisTree"));
 
   // fill ttbar
-  TFile *mc_matrix_File = new TFile(dir+"/Muon"+prefix+"MC.TTbar.root");
+  TFile *mc_matrix_File = new TFile(dir+"/Muon"+prefix+"MC.TTbar_2016v3_M.root");
   fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "mc");
 
   // fill other mass samples
-  vector<TString> diff_masses = {"mtop1695", "mtop1715", "mtop1735", "mtop1755", "madgraph"};
+  vector<TString> diff_masses = {"mtop1695", "mtop1715", "mtop1735", "mtop1755", "madgraph", "isrup", "isrdown", "fsrup", "fsrdown", "hdampup", "hdampdown"};
   for(unsigned int i = 0; i < diff_masses.size(); i++){
-    TFile *masses_File = new TFile(dir+"/Muon/Other_TTbar"+prefix+"MC.TTbar_"+diff_masses.at(i)+".root");
+    TFile *masses_File = new TFile(dir+"/Muon/"+prefix+"MC.TTbar_"+diff_masses.at(i)+".root");
     fill_ttbar((TTree *) masses_File->Get("AnalysisTree"), diff_masses.at(i));
   }
   // fill variation
@@ -95,13 +97,13 @@ int main(int argc, char* argv[]){
   }
 
 
-    // fill central sample for elec uncertainties in muon channel and vice versa
-      fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELEIDup");
-      fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELEIDdown");
-      fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELETriggerup");
-      fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELETriggerdown");
-      fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELERecoup");
-      fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELERecodown");
+  // fill central sample for elec uncertainties in muon channel and vice versa
+    fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELEIDup");
+    fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELEIDdown");
+    fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELETriggerup");
+    fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELETriggerdown");
+    fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELERecoup");
+    fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "ELERecodown");
 
 
 
@@ -115,7 +117,7 @@ int main(int argc, char* argv[]){
 
   // fill background
   // std::vector<TString> background = {"DYJets", "QCD", "ST", "WJets", "WW", "WZ", "ZZ"};
-  std::vector<TString> background = {"DYJets", "ST", "Diboson"};
+  std::vector<TString> background = {"DYJets", "ST", "Diboson", "WJets"};
 
   for(unsigned int i = 0; i < background.size(); i++){
     TFile *background_File = new TFile(dir+"/Muon"+prefix+"MC."+background[i]+".root");
@@ -130,21 +132,21 @@ int main(int argc, char* argv[]){
   // binning_rec->Write();
   // binning_gen->Write();
   TFile *data_File2;
-  data_File2 = new TFile(dir + prefix + "DATA.DATA.root");
+  data_File2 = new TFile(dir+"/Electron" + prefix + "DATA.DATA.root");
   fill_data((TTree *) data_File2->Get("AnalysisTree"));
 
-  // fill pseudodata
-  TFile *pseudodata_matrix_File2 = new TFile(dir+"/Electron"+prefix+"MC.TTbar.root");
-  fill_pseudodata((TTree *) pseudodata_matrix_File2->Get("AnalysisTree"));
+  // fill pseudo
+  TFile *pseudo_matrix_File2 = new TFile(dir+"/Electron"+prefix+"MC.TTbar_2016v3_M.root");
+  fill_pseudo((TTree *) pseudo_matrix_File2->Get("AnalysisTree"));
 
   // fill ttbar
-  TFile *mc_matrix_File2 = new TFile(dir+"/Electron"+prefix+"MC.TTbar.root");
+  TFile *mc_matrix_File2 = new TFile(dir+"/Electron"+prefix+"MC.TTbar_2016v3_M.root");
   fill_ttbar((TTree *) mc_matrix_File2->Get("AnalysisTree"), "mc");
 
   // fill other mass samples
-  vector<TString> diff_masses2 = {"mtop1695", "mtop1715", "mtop1735", "mtop1755", "madgraph"};
+  vector<TString> diff_masses2 = {"mtop1695", "mtop1715", "mtop1735", "mtop1755", "madgraph", "isrup", "isrdown", "fsrup", "fsrdown", "hdampup", "hdampdown"};
   for(unsigned int i = 0; i < diff_masses2.size(); i++){
-    TFile *masses_File2 = new TFile(dir+"/Electron/Other_TTbar"+prefix+"MC.TTbar_"+diff_masses2.at(i)+".root");
+    TFile *masses_File2 = new TFile(dir+"/Electron/"+prefix+"MC.TTbar_"+diff_masses2.at(i)+".root");
     fill_ttbar((TTree *) masses_File2->Get("AnalysisTree"), diff_masses2.at(i));
   }
   // fill variation
@@ -169,7 +171,7 @@ int main(int argc, char* argv[]){
 
   // fill background
   // std::vector<TString> background = {"DYJets", "QCD", "ST", "WJets", "WW", "WZ", "ZZ"};
-  std::vector<TString> background2 = {"DYJets", "ST", "Diboson"};
+  std::vector<TString> background2 = {"DYJets", "ST", "Diboson", "WJets"};
 
   for(unsigned int i = 0; i < background2.size(); i++){
     TFile *background_File2 = new TFile(dir+"/Electron"+prefix+"MC."+background2[i]+".root");
@@ -194,24 +196,25 @@ int main(int argc, char* argv[]){
 void fill_data(TTree* tree){
   if(!tree) cout << "could not read 'data' tree\n";
   else      cout << "Filling Data Histograms...\n";
-
-  TH1* h_data = binning_rec->CreateHistogram("Data");
-  TH1* h_data_sd = binning_rec->CreateHistogram("Data_sd");
-  TH1* h_data_puppi = binning_rec->CreateHistogram("Data_puppi");
-  TH1* h_data_puppi_sd = binning_rec->CreateHistogram("Data_puppi_sd");
-  TH1* h_data_dist = measurement_rec->CreateHistogram("Data_dist",kTRUE,0,0, "mass[C]");
-  TH1* h_data_dist_sd = measurement_rec->CreateHistogram("Data_dist_sd",kTRUE,0,0, "mass[C]");
-  TH1* h_data_dist_puppi = measurement_rec->CreateHistogram("Data_dist_puppi",kTRUE,0,0, "mass[C]");
-  TH1* h_data_dist_puppi_sd = measurement_rec->CreateHistogram("Data_dist_puppi_sd",kTRUE,0,0, "mass[C]");
-
   if(!Muon_done) outputFile->cd();
   else outputFile2->cd();
+
+  TH1* h_data = binning_rec->CreateHistogram("Data_rec");
+  TH1* h_data_sd = binning_rec->CreateHistogram("Data_sd_rec");
+  TH1* h_data_puppi = binning_rec->CreateHistogram("Data_puppi_rec");
+  TH1* h_data_puppi_sd = binning_rec->CreateHistogram("Data_puppi_sd_rec");
+  TH1* h_data_dist = measurement_rec->CreateHistogram("Data_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_data_dist_sd = measurement_rec->CreateHistogram("Data_sd_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_data_dist_puppi = measurement_rec->CreateHistogram("Data_puppi_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_data_dist_puppi_sd = measurement_rec->CreateHistogram("Data_puppi_sd_rec_dist",kTRUE,0,0, "mass[C]");
+
 
   tree->ResetBranchAddresses();
   tree->SetBranchAddress("h_tau32_rec", &tau32_rec);
   tree->SetBranchAddress("h_tau32_rec_sd", &tau32_rec_sd);
   tree->SetBranchAddress("h_tau32_rec_puppi", &tau32_rec_puppi);
   tree->SetBranchAddress("h_tau32_rec_puppi_sd", &tau32_rec_puppi_sd);
+
   tree->SetBranchAddress("h_mass_rec", &mass_rec);
   tree->SetBranchAddress("h_mass_rec_sd", &mass_rec_sd);
   tree->SetBranchAddress("h_mass_rec_puppi", &mass_rec_puppi);
@@ -234,9 +237,15 @@ void fill_data(TTree* tree){
     if(tree->GetEntry(ievent) <= 0) break;
 
     Int_t binNumber = 0;
-    if(passed_rec_final)                   binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec, mass_rec);
-    else if(passed_rec_pt_topjet_sideband) binNumber = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec);
-    else if(passed_rec_mass_sideband)      binNumber = rec_mass_sideband->GetGlobalBinNumber(tau32_rec);
+    if(passed_rec_final){
+      binNumber       = measurement_rec->GetGlobalBinNumber(tau32_rec, mass_rec);
+    }
+    else if(passed_rec_pt_topjet_sideband){
+      binNumber       = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec);
+    }
+    else if(passed_rec_mass_sideband){
+      binNumber       = rec_mass_sideband->GetGlobalBinNumber(tau32_rec);
+    }
 
     if(passed_rec_final || passed_rec_pt_topjet_sideband || passed_rec_mass_sideband){
       h_data->Fill(binNumber);
@@ -245,9 +254,15 @@ void fill_data(TTree* tree){
 
 
     Int_t binNumber_sd = 0;
-    if(passed_rec_final_sd)                   binNumber_sd = measurement_rec->GetGlobalBinNumber(tau32_rec_sd, mass_rec_sd);
-    else if(passed_rec_pt_topjet_sideband_sd) binNumber_sd = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec_sd);
-    else if(passed_rec_mass_sideband_sd)      binNumber_sd = rec_mass_sideband->GetGlobalBinNumber(tau32_rec_sd);
+    if(passed_rec_final_sd){
+      binNumber_sd = measurement_rec->GetGlobalBinNumber(tau32_rec_sd, mass_rec_sd);
+    }
+    else if(passed_rec_pt_topjet_sideband_sd){
+      binNumber_sd       = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec_sd);
+    }
+    else if(passed_rec_mass_sideband_sd){
+      binNumber_sd       = rec_mass_sideband->GetGlobalBinNumber(tau32_rec_sd);
+    }
 
     if(passed_rec_final_sd || passed_rec_pt_topjet_sideband_sd || passed_rec_mass_sideband_sd){
       h_data_sd->Fill(binNumber_sd);
@@ -256,9 +271,15 @@ void fill_data(TTree* tree){
 
 
     Int_t binNumber_puppi = 0;
-    if(passed_rec_final_puppi)                   binNumber_puppi = measurement_rec->GetGlobalBinNumber(tau32_rec_puppi, mass_rec_puppi);
-    else if(passed_rec_pt_topjet_sideband_puppi) binNumber_puppi = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec_puppi);
-    else if(passed_rec_mass_sideband_puppi)      binNumber_puppi = rec_mass_sideband->GetGlobalBinNumber(tau32_rec_puppi);
+    if(passed_rec_final_puppi){
+      binNumber_puppi = measurement_rec->GetGlobalBinNumber(tau32_rec_puppi, mass_rec_puppi);
+    }
+    else if(passed_rec_pt_topjet_sideband_puppi){
+      binNumber_puppi       = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec_puppi);
+    }
+    else if(passed_rec_mass_sideband_puppi){
+      binNumber_puppi       = rec_mass_sideband->GetGlobalBinNumber(tau32_rec_puppi);
+    }
 
     if(passed_rec_final_puppi || passed_rec_pt_topjet_sideband_puppi || passed_rec_mass_sideband_puppi){
       h_data_puppi->Fill(binNumber_puppi);
@@ -267,9 +288,15 @@ void fill_data(TTree* tree){
 
 
     Int_t binNumber_puppi_sd = 0;
-    if(passed_rec_final_puppi_sd)                   binNumber_puppi_sd = measurement_rec->GetGlobalBinNumber(tau32_rec_puppi_sd, mass_rec_puppi_sd);
-    else if(passed_rec_pt_topjet_sideband_puppi_sd) binNumber_puppi_sd = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec_puppi_sd);
-    else if(passed_rec_mass_sideband_puppi_sd)      binNumber_puppi_sd = rec_mass_sideband->GetGlobalBinNumber(tau32_rec_puppi_sd);
+    if(passed_rec_final_puppi_sd){
+      binNumber_puppi_sd       = measurement_rec->GetGlobalBinNumber(tau32_rec_puppi_sd, mass_rec_puppi_sd);
+    }
+    else if(passed_rec_pt_topjet_sideband_puppi_sd){
+      binNumber_puppi_sd       = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec_puppi_sd);
+    }
+    else if(passed_rec_mass_sideband_puppi_sd){
+      binNumber_puppi_sd       = rec_mass_sideband->GetGlobalBinNumber(tau32_rec_puppi_sd);
+    }
 
     if(passed_rec_final_puppi_sd || passed_rec_pt_topjet_sideband_puppi_sd || passed_rec_mass_sideband_puppi_sd){
       h_data_puppi_sd->Fill(binNumber_puppi_sd);
@@ -285,6 +312,8 @@ void fill_data(TTree* tree){
   h_data_dist_sd->Write();
   h_data_dist_puppi->Write();
   h_data_dist_puppi_sd->Write();
+
+
   delete h_data;
   delete h_data_sd;
   delete h_data_puppi;
@@ -293,6 +322,7 @@ void fill_data(TTree* tree){
   delete h_data_dist_sd;
   delete h_data_dist_puppi;
   delete h_data_dist_puppi_sd;
+
   cout << "finished: filling data" << '\n';
   return;
 }
@@ -306,64 +336,64 @@ void fill_data(TTree* tree){
 */
 
 
-void fill_pseudodata(TTree* tree){
+void fill_pseudo(TTree* tree){
   if(!tree) cout << "could not read 'mc' tree\n";
-  else      cout << "Filling Pseudodata Histograms...\n";
-
-  // setup hists
-  TH1* h_pseudodata_1                    = binning_rec->CreateHistogram("Pseudodata_1");
-  TH1* h_pseudodata_sd_1                 = binning_rec->CreateHistogram("Pseudodata_sd_1");
-  TH1* h_pseudodata_puppi_1              = binning_rec->CreateHistogram("Pseudodata_puppi_1");
-  TH1* h_pseudodata_puppi_sd_1           = binning_rec->CreateHistogram("Pseudodata_puppi_sd_1");
-  TH1* h_pseudodata_dist_1               = measurement_rec->CreateHistogram("Pseudodata_dist_1",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_dist_sd_1            = measurement_rec->CreateHistogram("Pseudodata_dist_sd_1",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_dist_puppi_1         = measurement_rec->CreateHistogram("Pseudodata_dist_puppi_1",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_dist_puppi_sd_1      = measurement_rec->CreateHistogram("Pseudodata_dist_puppi_sd_1",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_all_1          = binning_gen->CreateHistogram("Pseudodata_truth_all_1");
-  TH1* h_pseudodata_truth_all_sd_1       = binning_gen->CreateHistogram("Pseudodata_truth_all_sd_1");
-  TH1* h_pseudodata_truth_all_puppi_1    = binning_gen->CreateHistogram("Pseudodata_truth_all_puppi_1");
-  TH1* h_pseudodata_truth_all_puppi_sd_1 = binning_gen->CreateHistogram("Pseudodata_truth_all_puppi_sd_1");
-  TH1* h_pseudodata_truth_1              = measurement_gen->CreateHistogram("Pseudodata_truth_1",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_sd_1           = measurement_gen->CreateHistogram("Pseudodata_truth_sd_1",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_puppi_1        = measurement_gen->CreateHistogram("Pseudodata_truth_puppi_1",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_puppi_sd_1     = measurement_gen->CreateHistogram("Pseudodata_truth_puppi_sd_1",kTRUE,0,0, "mass[C]");
-
-  TH1* h_pseudodata_2                    = binning_rec->CreateHistogram("Pseudodata_2");
-  TH1* h_pseudodata_sd_2                 = binning_rec->CreateHistogram("Pseudodata_sd_2");
-  TH1* h_pseudodata_puppi_2              = binning_rec->CreateHistogram("Pseudodata_puppi_2");
-  TH1* h_pseudodata_puppi_sd_2           = binning_rec->CreateHistogram("Pseudodata_puppi_sd_2");
-  TH1* h_pseudodata_dist_2               = measurement_rec->CreateHistogram("Pseudodata_dist_2",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_dist_sd_2            = measurement_rec->CreateHistogram("Pseudodata_dist_sd_2",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_dist_puppi_2         = measurement_rec->CreateHistogram("Pseudodata_dist_puppi_2",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_dist_puppi_sd_2      = measurement_rec->CreateHistogram("Pseudodata_dist_puppi_sd_2",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_all_2          = binning_gen->CreateHistogram("Pseudodata_truth_all_2");
-  TH1* h_pseudodata_truth_all_sd_2       = binning_gen->CreateHistogram("Pseudodata_truth_all_sd_2");
-  TH1* h_pseudodata_truth_all_puppi_2    = binning_gen->CreateHistogram("Pseudodata_truth_all_puppi_2");
-  TH1* h_pseudodata_truth_all_puppi_sd_2 = binning_gen->CreateHistogram("Pseudodata_truth_all_puppi_sd_2");
-  TH1* h_pseudodata_truth_2              = measurement_gen->CreateHistogram("Pseudodata_truth_2",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_sd_2           = measurement_gen->CreateHistogram("Pseudodata_truth_sd_2",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_puppi_2        = measurement_gen->CreateHistogram("Pseudodata_truth_puppi_2",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_puppi_sd_2     = measurement_gen->CreateHistogram("Pseudodata_truth_puppi_sd_2",kTRUE,0,0, "mass[C]");
-
-  TH1* h_pseudodata_3                    = binning_rec->CreateHistogram("Pseudodata_3");
-  TH1* h_pseudodata_sd_3                 = binning_rec->CreateHistogram("Pseudodata_sd_3");
-  TH1* h_pseudodata_puppi_3              = binning_rec->CreateHistogram("Pseudodata_puppi_3");
-  TH1* h_pseudodata_puppi_sd_3           = binning_rec->CreateHistogram("Pseudodata_puppi_sd_3");
-  TH1* h_pseudodata_dist_3               = measurement_rec->CreateHistogram("Pseudodata_dist_3",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_dist_sd_3            = measurement_rec->CreateHistogram("Pseudodata_dist_sd_3",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_dist_puppi_3         = measurement_rec->CreateHistogram("Pseudodata_dist_puppi_3",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_dist_puppi_sd_3      = measurement_rec->CreateHistogram("Pseudodata_dist_puppi_sd_3",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_all_3          = binning_gen->CreateHistogram("Pseudodata_truth_all_3");
-  TH1* h_pseudodata_truth_all_sd_3       = binning_gen->CreateHistogram("Pseudodata_truth_all_sd_3");
-  TH1* h_pseudodata_truth_all_puppi_3    = binning_gen->CreateHistogram("Pseudodata_truth_all_puppi_3");
-  TH1* h_pseudodata_truth_all_puppi_sd_3 = binning_gen->CreateHistogram("Pseudodata_truth_all_puppi_sd_3");
-  TH1* h_pseudodata_truth_3              = measurement_gen->CreateHistogram("Pseudodata_truth_3",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_sd_3           = measurement_gen->CreateHistogram("Pseudodata_truth_sd_3",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_puppi_3        = measurement_gen->CreateHistogram("Pseudodata_truth_puppi_3",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_puppi_sd_3     = measurement_gen->CreateHistogram("Pseudodata_truth_puppi_sd_3",kTRUE,0,0, "mass[C]");
+  else      cout << "Filling Pseudo Histograms...\n";
 
   if(!Muon_done) outputFile->cd();
   else outputFile2->cd();
+  // setup hists
+  TH1* h_pseudo_1                    = binning_rec->CreateHistogram("Pseudo_1_rec");
+  TH1* h_pseudo_sd_1                 = binning_rec->CreateHistogram("Pseudo_1_sd_rec");
+  TH1* h_pseudo_puppi_1              = binning_rec->CreateHistogram("Pseudo_1_puppi_rec");
+  TH1* h_pseudo_puppi_sd_1           = binning_rec->CreateHistogram("Pseudo_1_puppi_sd_rec");
+  TH1* h_pseudo_dist_1               = measurement_rec->CreateHistogram("Pseudo_1_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_dist_sd_1            = measurement_rec->CreateHistogram("Pseudo_1_sd_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_dist_puppi_1         = measurement_rec->CreateHistogram("Pseudo_1_puppi_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_dist_puppi_sd_1      = measurement_rec->CreateHistogram("Pseudo_1_puppi_sd_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_all_1          = binning_gen->CreateHistogram("Pseudo_1_truth_all");
+  TH1* h_pseudo_truth_all_sd_1       = binning_gen->CreateHistogram("Pseudo_1_sd_truth_all");
+  TH1* h_pseudo_truth_all_puppi_1    = binning_gen->CreateHistogram("Pseudo_1_puppi_truth_all");
+  TH1* h_pseudo_truth_all_puppi_sd_1 = binning_gen->CreateHistogram("Pseudo_1_puppi_sd_truth_all");
+  TH1* h_pseudo_truth_1              = measurement_gen->CreateHistogram("Pseudo_1_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_sd_1           = measurement_gen->CreateHistogram("Pseudo_1_sd_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_puppi_1        = measurement_gen->CreateHistogram("Pseudo_1_puppi_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_puppi_sd_1     = measurement_gen->CreateHistogram("Pseudo_1_puppi_sd_truth",kTRUE,0,0, "mass[C]");
+
+  TH1* h_pseudo_2                    = binning_rec->CreateHistogram("Pseudo_2_rec");
+  TH1* h_pseudo_sd_2                 = binning_rec->CreateHistogram("Pseudo_2_sd_rec");
+  TH1* h_pseudo_puppi_2              = binning_rec->CreateHistogram("Pseudo_2_puppi_rec");
+  TH1* h_pseudo_puppi_sd_2           = binning_rec->CreateHistogram("Pseudo_2_puppi_sd_rec");
+  TH1* h_pseudo_dist_2               = measurement_rec->CreateHistogram("Pseudo_2_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_dist_sd_2            = measurement_rec->CreateHistogram("Pseudo_2_sd_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_dist_puppi_2         = measurement_rec->CreateHistogram("Pseudo_2_puppi_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_dist_puppi_sd_2      = measurement_rec->CreateHistogram("Pseudo_2_puppi_sd_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_all_2          = binning_gen->CreateHistogram("Pseudo_2_truth_all");
+  TH1* h_pseudo_truth_all_sd_2       = binning_gen->CreateHistogram("Pseudo_2_sd_truth_all");
+  TH1* h_pseudo_truth_all_puppi_2    = binning_gen->CreateHistogram("Pseudo_2_puppi_truth_all");
+  TH1* h_pseudo_truth_all_puppi_sd_2 = binning_gen->CreateHistogram("Pseudo_2_puppi_sd_truth_all");
+  TH1* h_pseudo_truth_2              = measurement_gen->CreateHistogram("Pseudo_2_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_sd_2           = measurement_gen->CreateHistogram("Pseudo_2_sd_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_puppi_2        = measurement_gen->CreateHistogram("Pseudo_2_puppi_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_puppi_sd_2     = measurement_gen->CreateHistogram("Pseudo_2_puppi_sd_truth",kTRUE,0,0, "mass[C]");
+
+  TH1* h_pseudo_3                    = binning_rec->CreateHistogram("Pseudo_3_rec");
+  TH1* h_pseudo_sd_3                 = binning_rec->CreateHistogram("Pseudo_3_sd_rec");
+  TH1* h_pseudo_puppi_3              = binning_rec->CreateHistogram("Pseudo_3_puppi_rec");
+  TH1* h_pseudo_puppi_sd_3           = binning_rec->CreateHistogram("Pseudo_3_puppi_sd_rec");
+  TH1* h_pseudo_dist_3               = measurement_rec->CreateHistogram("Pseudo_3_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_dist_sd_3            = measurement_rec->CreateHistogram("Pseudo_3_sd_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_dist_puppi_3         = measurement_rec->CreateHistogram("Pseudo_3_puppi_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_dist_puppi_sd_3      = measurement_rec->CreateHistogram("Pseudo_3_puppi_sd_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_all_3          = binning_gen->CreateHistogram("Pseudo_3_truth_all");
+  TH1* h_pseudo_truth_all_sd_3       = binning_gen->CreateHistogram("Pseudo_3_sd_truth_all");
+  TH1* h_pseudo_truth_all_puppi_3    = binning_gen->CreateHistogram("Pseudo_3_puppi_truth_all");
+  TH1* h_pseudo_truth_all_puppi_sd_3 = binning_gen->CreateHistogram("Pseudo_3_puppi_sd_truth_all");
+  TH1* h_pseudo_truth_3              = measurement_gen->CreateHistogram("Pseudo_3_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_sd_3           = measurement_gen->CreateHistogram("Pseudo_3_sd_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_puppi_3        = measurement_gen->CreateHistogram("Pseudo_3_puppi_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_puppi_sd_3     = measurement_gen->CreateHistogram("Pseudo_3_puppi_sd_truth",kTRUE,0,0, "mass[C]");
+
 
   tree->ResetBranchAddresses();
   tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
@@ -433,27 +463,27 @@ void fill_pseudodata(TTree* tree){
 
     if(rec_info){
       if(counter == 1 || counter == 2){
-        h_pseudodata_1->Fill(rec_binNumber, w_sig_rec);
-        h_pseudodata_dist_1->Fill(tau32_rec, w_sig_rec);
+        h_pseudo_1->Fill(rec_binNumber, w_sig_rec);
+        h_pseudo_dist_1->Fill(tau32_rec, w_sig_rec);
       }
       else if(counter == 3 || counter == 4){
-        h_pseudodata_2->Fill(rec_binNumber, w_sig_rec);
-        h_pseudodata_dist_2->Fill(tau32_rec, w_sig_rec);
+        h_pseudo_2->Fill(rec_binNumber, w_sig_rec);
+        h_pseudo_dist_2->Fill(tau32_rec, w_sig_rec);
       }
       else if(counter == 5 || counter == 6){
-        h_pseudodata_3->Fill(rec_binNumber, w_sig_rec);
-        h_pseudodata_dist_3->Fill(tau32_rec, w_sig_rec);
+        h_pseudo_3->Fill(rec_binNumber, w_sig_rec);
+        h_pseudo_dist_3->Fill(tau32_rec, w_sig_rec);
       }
     }
     if(gen_info){
-      if(counter == 1 || counter == 2)  h_pseudodata_truth_all_1->Fill(gen_binNumber, w_gen);
-      if(counter == 3 || counter == 4)  h_pseudodata_truth_all_2->Fill(gen_binNumber, w_gen);
-      if(counter == 5 || counter == 6) h_pseudodata_truth_all_3->Fill(gen_binNumber, w_gen);
+      if(counter == 1 || counter == 2)  h_pseudo_truth_all_1->Fill(gen_binNumber, w_gen);
+      if(counter == 3 || counter == 4)  h_pseudo_truth_all_2->Fill(gen_binNumber, w_gen);
+      if(counter == 5 || counter == 6) h_pseudo_truth_all_3->Fill(gen_binNumber, w_gen);
     }
     if(passed_gen_final){
-      if(counter == 1 || counter == 2)       h_pseudodata_truth_1->Fill(tau32_gen, w_gen);
-      else if(counter == 3 || counter == 4)  h_pseudodata_truth_2->Fill(tau32_gen, w_gen);
-      else if(counter == 5 || counter == 6) h_pseudodata_truth_3->Fill(tau32_gen, w_gen);
+      if(counter == 1 || counter == 2)       h_pseudo_truth_1->Fill(tau32_gen, w_gen);
+      else if(counter == 3 || counter == 4)  h_pseudo_truth_2->Fill(tau32_gen, w_gen);
+      else if(counter == 5 || counter == 6) h_pseudo_truth_3->Fill(tau32_gen, w_gen);
     }
 
     // fill histograms for CHS Jets w/ SoftDrop
@@ -472,27 +502,27 @@ void fill_pseudodata(TTree* tree){
 
     if(rec_info_sd){
       if(counter == 1 || counter == 2){
-        h_pseudodata_sd_1->Fill(rec_binNumber_sd, w_sig_rec);
-        h_pseudodata_dist_sd_1->Fill(tau32_rec_sd, w_sig_rec);
+        h_pseudo_sd_1->Fill(rec_binNumber_sd, w_sig_rec);
+        h_pseudo_dist_sd_1->Fill(tau32_rec_sd, w_sig_rec);
       }
       else if(counter == 3 || counter == 4){
-        h_pseudodata_sd_2->Fill(rec_binNumber_sd, w_sig_rec);
-        h_pseudodata_dist_sd_2->Fill(tau32_rec_sd, w_sig_rec);
+        h_pseudo_sd_2->Fill(rec_binNumber_sd, w_sig_rec);
+        h_pseudo_dist_sd_2->Fill(tau32_rec_sd, w_sig_rec);
       }
       else if(counter == 5 || counter == 6){
-        h_pseudodata_sd_3->Fill(rec_binNumber_sd, w_sig_rec);
-        h_pseudodata_dist_sd_3->Fill(tau32_rec_sd, w_sig_rec);
+        h_pseudo_sd_3->Fill(rec_binNumber_sd, w_sig_rec);
+        h_pseudo_dist_sd_3->Fill(tau32_rec_sd, w_sig_rec);
       }
     }
     if(gen_info_sd){
-      if(counter == 1 || counter == 2)  h_pseudodata_truth_all_sd_1->Fill(gen_binNumber_sd, w_gen);
-      if(counter == 3 || counter == 4)  h_pseudodata_truth_all_sd_2->Fill(gen_binNumber_sd, w_gen);
-      if(counter == 5 || counter == 6) h_pseudodata_truth_all_sd_3->Fill(gen_binNumber_sd, w_gen);
+      if(counter == 1 || counter == 2)  h_pseudo_truth_all_sd_1->Fill(gen_binNumber_sd, w_gen);
+      if(counter == 3 || counter == 4)  h_pseudo_truth_all_sd_2->Fill(gen_binNumber_sd, w_gen);
+      if(counter == 5 || counter == 6) h_pseudo_truth_all_sd_3->Fill(gen_binNumber_sd, w_gen);
     }
     if(passed_gen_final_sd){
-      if(counter == 1 || counter == 2)       h_pseudodata_truth_sd_1->Fill(tau32_gen_sd, w_gen);
-      else if(counter == 3 || counter == 4)  h_pseudodata_truth_sd_2->Fill(tau32_gen_sd, w_gen);
-      else if(counter == 5 || counter == 6) h_pseudodata_truth_sd_3->Fill(tau32_gen_sd, w_gen);
+      if(counter == 1 || counter == 2)       h_pseudo_truth_sd_1->Fill(tau32_gen_sd, w_gen);
+      else if(counter == 3 || counter == 4)  h_pseudo_truth_sd_2->Fill(tau32_gen_sd, w_gen);
+      else if(counter == 5 || counter == 6) h_pseudo_truth_sd_3->Fill(tau32_gen_sd, w_gen);
     }
 
     // fill histograms for PUPPI Jets w/o SoftDrop
@@ -512,27 +542,27 @@ void fill_pseudodata(TTree* tree){
 
     if(rec_info_puppi){
       if(counter == 1 || counter == 2){
-        h_pseudodata_puppi_1->Fill(rec_binNumber_puppi, w_sig_rec);
-        h_pseudodata_dist_puppi_1->Fill(tau32_rec_puppi, w_sig_rec);
+        h_pseudo_puppi_1->Fill(rec_binNumber_puppi, w_sig_rec);
+        h_pseudo_dist_puppi_1->Fill(tau32_rec_puppi, w_sig_rec);
       }
       else if(counter == 3 || counter == 4){
-        h_pseudodata_puppi_2->Fill(rec_binNumber_puppi, w_sig_rec);
-        h_pseudodata_dist_puppi_2->Fill(tau32_rec_puppi, w_sig_rec);
+        h_pseudo_puppi_2->Fill(rec_binNumber_puppi, w_sig_rec);
+        h_pseudo_dist_puppi_2->Fill(tau32_rec_puppi, w_sig_rec);
       }
       else if(counter == 5 || counter == 6){
-        h_pseudodata_puppi_3->Fill(rec_binNumber_puppi, w_sig_rec);
-        h_pseudodata_dist_puppi_3->Fill(tau32_rec_puppi, w_sig_rec);
+        h_pseudo_puppi_3->Fill(rec_binNumber_puppi, w_sig_rec);
+        h_pseudo_dist_puppi_3->Fill(tau32_rec_puppi, w_sig_rec);
       }
     }
     if(gen_info_puppi){
-      if(counter == 1 || counter == 2)  h_pseudodata_truth_all_puppi_1->Fill(gen_binNumber_puppi, w_gen);
-      if(counter == 3 || counter == 4)  h_pseudodata_truth_all_puppi_2->Fill(gen_binNumber_puppi, w_gen);
-      if(counter == 5 || counter == 6) h_pseudodata_truth_all_puppi_3->Fill(gen_binNumber_puppi, w_gen);
+      if(counter == 1 || counter == 2)  h_pseudo_truth_all_puppi_1->Fill(gen_binNumber_puppi, w_gen);
+      if(counter == 3 || counter == 4)  h_pseudo_truth_all_puppi_2->Fill(gen_binNumber_puppi, w_gen);
+      if(counter == 5 || counter == 6) h_pseudo_truth_all_puppi_3->Fill(gen_binNumber_puppi, w_gen);
     }
     if(passed_gen_final){
-      if(counter == 1 || counter == 2)       h_pseudodata_truth_puppi_1->Fill(tau32_gen, w_gen);
-      else if(counter == 3 || counter == 4)  h_pseudodata_truth_puppi_2->Fill(tau32_gen, w_gen);
-      else if(counter == 5 || counter == 6) h_pseudodata_truth_puppi_3->Fill(tau32_gen, w_gen);
+      if(counter == 1 || counter == 2)       h_pseudo_truth_puppi_1->Fill(tau32_gen, w_gen);
+      else if(counter == 3 || counter == 4)  h_pseudo_truth_puppi_2->Fill(tau32_gen, w_gen);
+      else if(counter == 5 || counter == 6) h_pseudo_truth_puppi_3->Fill(tau32_gen, w_gen);
     }
 
     // fill histograms for PUPPI Jets w/ SoftDrop
@@ -551,132 +581,132 @@ void fill_pseudodata(TTree* tree){
 
     if(rec_info_puppi_sd){
       if(counter == 1 || counter == 2){
-        h_pseudodata_puppi_sd_1->Fill(rec_binNumber_puppi_sd, w_sig_rec);
-        h_pseudodata_dist_puppi_sd_1->Fill(tau32_rec_puppi_sd, w_sig_rec);
+        h_pseudo_puppi_sd_1->Fill(rec_binNumber_puppi_sd, w_sig_rec);
+        h_pseudo_dist_puppi_sd_1->Fill(tau32_rec_puppi_sd, w_sig_rec);
       }
       else if(counter == 3 || counter == 4){
-        h_pseudodata_puppi_sd_2->Fill(rec_binNumber_puppi_sd, w_sig_rec);
-        h_pseudodata_dist_puppi_sd_2->Fill(tau32_rec_puppi_sd, w_sig_rec);
+        h_pseudo_puppi_sd_2->Fill(rec_binNumber_puppi_sd, w_sig_rec);
+        h_pseudo_dist_puppi_sd_2->Fill(tau32_rec_puppi_sd, w_sig_rec);
       }
       else if(counter == 5 || counter == 6){
-        h_pseudodata_puppi_sd_3->Fill(rec_binNumber_puppi_sd, w_sig_rec);
-        h_pseudodata_dist_puppi_sd_3->Fill(tau32_rec_puppi_sd, w_sig_rec);
+        h_pseudo_puppi_sd_3->Fill(rec_binNumber_puppi_sd, w_sig_rec);
+        h_pseudo_dist_puppi_sd_3->Fill(tau32_rec_puppi_sd, w_sig_rec);
       }
     }
     if(gen_info_puppi_sd){
-      if(counter == 1 || counter == 2)  h_pseudodata_truth_all_puppi_sd_1->Fill(gen_binNumber_puppi_sd, w_gen);
-      else if(counter == 3 || counter == 4)  h_pseudodata_truth_all_puppi_sd_2->Fill(gen_binNumber_puppi_sd, w_gen);
-      else if(counter == 5 || counter == 6)  h_pseudodata_truth_all_puppi_sd_3->Fill(gen_binNumber_puppi_sd, w_gen);
+      if(counter == 1 || counter == 2)  h_pseudo_truth_all_puppi_sd_1->Fill(gen_binNumber_puppi_sd, w_gen);
+      else if(counter == 3 || counter == 4)  h_pseudo_truth_all_puppi_sd_2->Fill(gen_binNumber_puppi_sd, w_gen);
+      else if(counter == 5 || counter == 6)  h_pseudo_truth_all_puppi_sd_3->Fill(gen_binNumber_puppi_sd, w_gen);
     }
     if(passed_gen_final_sd){
-      if(counter == 1 || counter == 2)       h_pseudodata_truth_puppi_sd_1->Fill(tau32_gen_sd, w_gen);
-      else if(counter == 3 || counter == 4)  h_pseudodata_truth_puppi_sd_2->Fill(tau32_gen_sd, w_gen);
-      else if(counter == 5 || counter == 6)  h_pseudodata_truth_puppi_sd_3->Fill(tau32_gen_sd, w_gen);
+      if(counter == 1 || counter == 2)       h_pseudo_truth_puppi_sd_1->Fill(tau32_gen_sd, w_gen);
+      else if(counter == 3 || counter == 4)  h_pseudo_truth_puppi_sd_2->Fill(tau32_gen_sd, w_gen);
+      else if(counter == 5 || counter == 6)  h_pseudo_truth_puppi_sd_3->Fill(tau32_gen_sd, w_gen);
     }
     if(counter != 10) counter++;
     else counter = 1;
   }
 
-  h_pseudodata_1->Write();
-  h_pseudodata_sd_1->Write();
-  h_pseudodata_puppi_1->Write();
-  h_pseudodata_puppi_sd_1->Write();
-  h_pseudodata_dist_1->Write();
-  h_pseudodata_dist_sd_1->Write();
-  h_pseudodata_dist_puppi_1->Write();
-  h_pseudodata_dist_puppi_sd_1->Write();
-  h_pseudodata_truth_1->Write();
-  h_pseudodata_truth_sd_1->Write();
-  h_pseudodata_truth_puppi_1->Write();
-  h_pseudodata_truth_puppi_sd_1->Write();
-  h_pseudodata_truth_all_1->Write();
-  h_pseudodata_truth_all_sd_1->Write();
-  h_pseudodata_truth_all_puppi_1->Write();
-  h_pseudodata_truth_all_puppi_sd_1->Write();
+  h_pseudo_1->Write();
+  h_pseudo_sd_1->Write();
+  h_pseudo_puppi_1->Write();
+  h_pseudo_puppi_sd_1->Write();
+  h_pseudo_dist_1->Write();
+  h_pseudo_dist_sd_1->Write();
+  h_pseudo_dist_puppi_1->Write();
+  h_pseudo_dist_puppi_sd_1->Write();
+  h_pseudo_truth_1->Write();
+  h_pseudo_truth_sd_1->Write();
+  h_pseudo_truth_puppi_1->Write();
+  h_pseudo_truth_puppi_sd_1->Write();
+  h_pseudo_truth_all_1->Write();
+  h_pseudo_truth_all_sd_1->Write();
+  h_pseudo_truth_all_puppi_1->Write();
+  h_pseudo_truth_all_puppi_sd_1->Write();
 
-  h_pseudodata_2->Write();
-  h_pseudodata_sd_2->Write();
-  h_pseudodata_puppi_2->Write();
-  h_pseudodata_puppi_sd_2->Write();
-  h_pseudodata_dist_2->Write();
-  h_pseudodata_dist_sd_2->Write();
-  h_pseudodata_dist_puppi_2->Write();
-  h_pseudodata_dist_puppi_sd_2->Write();
-  h_pseudodata_truth_2->Write();
-  h_pseudodata_truth_sd_2->Write();
-  h_pseudodata_truth_puppi_2->Write();
-  h_pseudodata_truth_puppi_sd_2->Write();
-  h_pseudodata_truth_all_2->Write();
-  h_pseudodata_truth_all_sd_2->Write();
-  h_pseudodata_truth_all_puppi_2->Write();
-  h_pseudodata_truth_all_puppi_sd_2->Write();
+  h_pseudo_2->Write();
+  h_pseudo_sd_2->Write();
+  h_pseudo_puppi_2->Write();
+  h_pseudo_puppi_sd_2->Write();
+  h_pseudo_dist_2->Write();
+  h_pseudo_dist_sd_2->Write();
+  h_pseudo_dist_puppi_2->Write();
+  h_pseudo_dist_puppi_sd_2->Write();
+  h_pseudo_truth_2->Write();
+  h_pseudo_truth_sd_2->Write();
+  h_pseudo_truth_puppi_2->Write();
+  h_pseudo_truth_puppi_sd_2->Write();
+  h_pseudo_truth_all_2->Write();
+  h_pseudo_truth_all_sd_2->Write();
+  h_pseudo_truth_all_puppi_2->Write();
+  h_pseudo_truth_all_puppi_sd_2->Write();
 
-  h_pseudodata_3->Write();
-  h_pseudodata_sd_3->Write();
-  h_pseudodata_puppi_3->Write();
-  h_pseudodata_puppi_sd_3->Write();
-  h_pseudodata_dist_3->Write();
-  h_pseudodata_dist_sd_3->Write();
-  h_pseudodata_dist_puppi_3->Write();
-  h_pseudodata_dist_puppi_sd_3->Write();
-  h_pseudodata_truth_3->Write();
-  h_pseudodata_truth_sd_3->Write();
-  h_pseudodata_truth_puppi_3->Write();
-  h_pseudodata_truth_puppi_sd_3->Write();
-  h_pseudodata_truth_all_3->Write();
-  h_pseudodata_truth_all_sd_3->Write();
-  h_pseudodata_truth_all_puppi_3->Write();
-  h_pseudodata_truth_all_puppi_sd_3->Write();
+  h_pseudo_3->Write();
+  h_pseudo_sd_3->Write();
+  h_pseudo_puppi_3->Write();
+  h_pseudo_puppi_sd_3->Write();
+  h_pseudo_dist_3->Write();
+  h_pseudo_dist_sd_3->Write();
+  h_pseudo_dist_puppi_3->Write();
+  h_pseudo_dist_puppi_sd_3->Write();
+  h_pseudo_truth_3->Write();
+  h_pseudo_truth_sd_3->Write();
+  h_pseudo_truth_puppi_3->Write();
+  h_pseudo_truth_puppi_sd_3->Write();
+  h_pseudo_truth_all_3->Write();
+  h_pseudo_truth_all_sd_3->Write();
+  h_pseudo_truth_all_puppi_3->Write();
+  h_pseudo_truth_all_puppi_sd_3->Write();
 
-  delete h_pseudodata_1;
-  delete h_pseudodata_sd_1;
-  delete h_pseudodata_puppi_1;
-  delete h_pseudodata_puppi_sd_1;
-  delete h_pseudodata_dist_1;
-  delete h_pseudodata_dist_sd_1;
-  delete h_pseudodata_dist_puppi_1;
-  delete h_pseudodata_dist_puppi_sd_1;
-  delete h_pseudodata_truth_1;
-  delete h_pseudodata_truth_sd_1;
-  delete h_pseudodata_truth_puppi_1;
-  delete h_pseudodata_truth_puppi_sd_1;
-  delete h_pseudodata_truth_all_1;
-  delete h_pseudodata_truth_all_sd_1;
-  delete h_pseudodata_truth_all_puppi_1;
-  delete h_pseudodata_truth_all_puppi_sd_1;
-  delete h_pseudodata_2;
-  delete h_pseudodata_sd_2;
-  delete h_pseudodata_puppi_2;
-  delete h_pseudodata_puppi_sd_2;
-  delete h_pseudodata_dist_2;
-  delete h_pseudodata_dist_sd_2;
-  delete h_pseudodata_dist_puppi_2;
-  delete h_pseudodata_dist_puppi_sd_2;
-  delete h_pseudodata_truth_2;
-  delete h_pseudodata_truth_sd_2;
-  delete h_pseudodata_truth_puppi_2;
-  delete h_pseudodata_truth_puppi_sd_2;
-  delete h_pseudodata_truth_all_2;
-  delete h_pseudodata_truth_all_sd_2;
-  delete h_pseudodata_truth_all_puppi_2;
-  delete h_pseudodata_truth_all_puppi_sd_2;
-  delete h_pseudodata_3;
-  delete h_pseudodata_sd_3;
-  delete h_pseudodata_puppi_3;
-  delete h_pseudodata_puppi_sd_3;
-  delete h_pseudodata_dist_3;
-  delete h_pseudodata_dist_sd_3;
-  delete h_pseudodata_dist_puppi_3;
-  delete h_pseudodata_dist_puppi_sd_3;
-  delete h_pseudodata_truth_3;
-  delete h_pseudodata_truth_sd_3;
-  delete h_pseudodata_truth_puppi_3;
-  delete h_pseudodata_truth_puppi_sd_3;
-  delete h_pseudodata_truth_all_3;
-  delete h_pseudodata_truth_all_sd_3;
-  delete h_pseudodata_truth_all_puppi_3;
-  delete h_pseudodata_truth_all_puppi_sd_3;
-  cout << "Finished: Filling Pseudodata" << '\n';
+  delete h_pseudo_1;
+  delete h_pseudo_sd_1;
+  delete h_pseudo_puppi_1;
+  delete h_pseudo_puppi_sd_1;
+  delete h_pseudo_dist_1;
+  delete h_pseudo_dist_sd_1;
+  delete h_pseudo_dist_puppi_1;
+  delete h_pseudo_dist_puppi_sd_1;
+  delete h_pseudo_truth_1;
+  delete h_pseudo_truth_sd_1;
+  delete h_pseudo_truth_puppi_1;
+  delete h_pseudo_truth_puppi_sd_1;
+  delete h_pseudo_truth_all_1;
+  delete h_pseudo_truth_all_sd_1;
+  delete h_pseudo_truth_all_puppi_1;
+  delete h_pseudo_truth_all_puppi_sd_1;
+  delete h_pseudo_2;
+  delete h_pseudo_sd_2;
+  delete h_pseudo_puppi_2;
+  delete h_pseudo_puppi_sd_2;
+  delete h_pseudo_dist_2;
+  delete h_pseudo_dist_sd_2;
+  delete h_pseudo_dist_puppi_2;
+  delete h_pseudo_dist_puppi_sd_2;
+  delete h_pseudo_truth_2;
+  delete h_pseudo_truth_sd_2;
+  delete h_pseudo_truth_puppi_2;
+  delete h_pseudo_truth_puppi_sd_2;
+  delete h_pseudo_truth_all_2;
+  delete h_pseudo_truth_all_sd_2;
+  delete h_pseudo_truth_all_puppi_2;
+  delete h_pseudo_truth_all_puppi_sd_2;
+  delete h_pseudo_3;
+  delete h_pseudo_sd_3;
+  delete h_pseudo_puppi_3;
+  delete h_pseudo_puppi_sd_3;
+  delete h_pseudo_dist_3;
+  delete h_pseudo_dist_sd_3;
+  delete h_pseudo_dist_puppi_3;
+  delete h_pseudo_dist_puppi_sd_3;
+  delete h_pseudo_truth_3;
+  delete h_pseudo_truth_sd_3;
+  delete h_pseudo_truth_puppi_3;
+  delete h_pseudo_truth_puppi_sd_3;
+  delete h_pseudo_truth_all_3;
+  delete h_pseudo_truth_all_sd_3;
+  delete h_pseudo_truth_all_puppi_3;
+  delete h_pseudo_truth_all_puppi_sd_3;
+  cout << "Finished: Filling Pseudo" << '\n';
   return;
 }
 
@@ -695,161 +725,193 @@ void fill_ttbar(TTree* tree, TString prefix){
   else      cout << "Filling Histograms for "+prefix+" ...\n";
   bool pseudo = true;
   if(!prefix.Contains("mc")) pseudo = false;
+  if(!Muon_done) outputFile->cd();
+  else outputFile2->cd();
 
   // setup hists
   TH1* h_rec                              = binning_rec->CreateHistogram(prefix+"_rec");
-  TH1* h_rec_sd                           = binning_rec->CreateHistogram(prefix+"_rec_sd");
-  TH1* h_rec_puppi                        = binning_rec->CreateHistogram(prefix+"_rec_puppi");
-  TH1* h_rec_puppi_sd                     = binning_rec->CreateHistogram(prefix+"_rec_puppi_sd");
+  TH1* h_rec_sd                           = binning_rec->CreateHistogram(prefix+"_sd_rec");
+  TH1* h_rec_puppi                        = binning_rec->CreateHistogram(prefix+"_puppi_rec");
+  TH1* h_rec_puppi_sd                     = binning_rec->CreateHistogram(prefix+"_puppi_sd_rec");
   TH1* h_rec_dist                         = measurement_rec->CreateHistogram(prefix+"_rec_dist",kTRUE,0,0, "mass[C]");
-  TH1* h_rec_dist_sd                      = measurement_rec->CreateHistogram(prefix+"_rec_dist_sd",kTRUE,0,0, "mass[C]");
-  TH1* h_rec_dist_puppi                   = measurement_rec->CreateHistogram(prefix+"_rec_dist_puppi",kTRUE,0,0, "mass[C]");
-  TH1* h_rec_dist_puppi_sd                = measurement_rec->CreateHistogram(prefix+"_rec_dist_puppi_sd",kTRUE,0,0, "mass[C]");
+  TH1* h_rec_dist_sd                      = measurement_rec->CreateHistogram(prefix+"_sd_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_rec_dist_puppi                   = measurement_rec->CreateHistogram(prefix+"_puppi_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_rec_dist_puppi_sd                = measurement_rec->CreateHistogram(prefix+"_puppi_sd_rec_dist",kTRUE,0,0, "mass[C]");
   TH1* h_gen                              = binning_gen->CreateHistogram(prefix+"_gen");
-  TH1* h_gen_sd                           = binning_gen->CreateHistogram(prefix+"_gen_sd");
-  TH1* h_gen_puppi                        = binning_gen->CreateHistogram(prefix+"_gen_puppi");
-  TH1* h_gen_puppi_sd                     = binning_gen->CreateHistogram(prefix+"_gen_puppi_sd");
+  TH1* h_gen_sd                           = binning_gen->CreateHistogram(prefix+"_sd_gen");
+  TH1* h_gen_puppi                        = binning_gen->CreateHistogram(prefix+"_puppi_gen");
+  TH1* h_gen_puppi_sd                     = binning_gen->CreateHistogram(prefix+"_puppi_sd_gen");
   TH1* h_truth_all                        = binning_gen->CreateHistogram(prefix+"_truth_all");
-  TH1* h_truth_all_sd                     = binning_gen->CreateHistogram(prefix+"_truth_all_sd");
-  TH1* h_truth_all_puppi                  = binning_gen->CreateHistogram(prefix+"_truth_all_puppi");
-  TH1* h_truth_all_puppi_sd               = binning_gen->CreateHistogram(prefix+"_truth_all_puppi_sd");
+  TH1* h_truth_all_sd                     = binning_gen->CreateHistogram(prefix+"_sd_truth_all");
+  TH1* h_truth_all_puppi                  = binning_gen->CreateHistogram(prefix+"_puppi_truth_all");
+  TH1* h_truth_all_puppi_sd               = binning_gen->CreateHistogram(prefix+"_puppi_sd_truth_all");
   TH1* h_truth                            = measurement_gen->CreateHistogram(prefix+"_truth",kTRUE,0,0, "mass[C]");
-  TH1* h_truth_sd                         = measurement_gen->CreateHistogram(prefix+"_truth_sd",kTRUE,0,0, "mass[C]");
-  TH1* h_truth_puppi                      = measurement_gen->CreateHistogram(prefix+"_truth_puppi",kTRUE,0,0, "mass[C]");
-  TH1* h_truth_puppi_sd                   = measurement_gen->CreateHistogram(prefix+"_truth_puppi_sd",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_sd                         = measurement_gen->CreateHistogram(prefix+"_sd_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_puppi                      = measurement_gen->CreateHistogram(prefix+"_puppi_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_puppi_sd                   = measurement_gen->CreateHistogram(prefix+"_puppi_sd_truth",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all                       = measurement_gen->CreateHistogram(prefix+"_purity_all",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_all_sd                    = measurement_gen->CreateHistogram(prefix+"_purity_all_sd",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_all_puppi                 = measurement_gen->CreateHistogram(prefix+"_purity_all_puppi",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_all_puppi_sd              = measurement_gen->CreateHistogram(prefix+"_purity_all_puppi_sd",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_sd                    = measurement_gen->CreateHistogram(prefix+"_sd_purity_all",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_puppi                 = measurement_gen->CreateHistogram(prefix+"_puppi_purity_all",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_puppi_sd              = measurement_gen->CreateHistogram(prefix+"_puppi_sd_purity_all",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all                    = measurement_gen->CreateHistogram(prefix+"_stability_all",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_sd                 = measurement_gen->CreateHistogram(prefix+"_sd_stability_all",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_puppi              = measurement_gen->CreateHistogram(prefix+"_puppi_stability_all",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_puppi_sd           = measurement_gen->CreateHistogram(prefix+"_puppi_sd_stability_all",kTRUE,0,0, "mass[C]");
   TH1* h_purity_samebin                   = measurement_gen->CreateHistogram(prefix+"_purity_samebin",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_sd                = measurement_gen->CreateHistogram(prefix+"_purity_samebin_sd",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_puppi             = measurement_gen->CreateHistogram(prefix+"_purity_samebin_puppi",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_puppi_sd          = measurement_gen->CreateHistogram(prefix+"_purity_samebin_puppi_sd",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_sd                = measurement_gen->CreateHistogram(prefix+"_sd_purity_samebin",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_puppi             = measurement_gen->CreateHistogram(prefix+"_puppi_purity_samebin",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_puppi_sd          = measurement_gen->CreateHistogram(prefix+"_puppi_sd_purity_samebin",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin                = measurement_gen->CreateHistogram(prefix+"_stability_samebin",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_sd             = measurement_gen->CreateHistogram(prefix+"_sd_stability_samebin",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_puppi          = measurement_gen->CreateHistogram(prefix+"_puppi_stability_samebin",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_puppi_sd       = measurement_gen->CreateHistogram(prefix+"_puppi_sd_stability_samebin",kTRUE,0,0, "mass[C]");
   TH1* h_purity_samebin_mass              = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_mass_sd           = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_sd",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_mass_puppi        = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_puppi",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_mass_puppi_sd     = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_puppi_sd",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_sd           = measurement_gen->CreateHistogram(prefix+"_sd_purity_samebin_mass",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_puppi        = measurement_gen->CreateHistogram(prefix+"_puppi_purity_samebin_mass",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_puppi_sd     = measurement_gen->CreateHistogram(prefix+"_puppi_sd_purity_samebin_mass",kTRUE,0,0, "mass[C]");
   TH2* h_mc_matrix          = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix");
-  TH2* h_mc_matrix_sd       = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_sd");
-  TH2* h_mc_matrix_puppi    = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi");
-  TH2* h_mc_matrix_puppi_sd = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi_sd");
+  TH2* h_mc_matrix_sd       = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_sd_matrix");
+  TH2* h_mc_matrix_puppi    = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_puppi_matrix");
+  TH2* h_mc_matrix_puppi_sd = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_puppi_sd_matrix");
 
   TH1* h_rec_1                            = binning_rec->CreateHistogram(prefix+"_rec_1");
-  TH1* h_rec_sd_1                         = binning_rec->CreateHistogram(prefix+"_rec_sd_1");
-  TH1* h_rec_puppi_1                      = binning_rec->CreateHistogram(prefix+"_rec_puppi_1");
-  TH1* h_rec_puppi_sd_1                   = binning_rec->CreateHistogram(prefix+"_rec_puppi_sd_1");
-  TH1* h_rec_dist_1                       = measurement_rec->CreateHistogram(prefix+"_rec_dist_1",kTRUE,0,0, "mass[C]");
-  TH1* h_rec_dist_sd_1                    = measurement_rec->CreateHistogram(prefix+"_rec_dist_sd_1",kTRUE,0,0, "mass[C]");
-  TH1* h_rec_dist_puppi_1                 = measurement_rec->CreateHistogram(prefix+"_rec_dist_puppi_1",kTRUE,0,0, "mass[C]");
-  TH1* h_rec_dist_puppi_sd_1              = measurement_rec->CreateHistogram(prefix+"_rec_dist_puppi_sd_1",kTRUE,0,0, "mass[C]");
+  TH1* h_rec_sd_1                         = binning_rec->CreateHistogram(prefix+"_sd_rec_1");
+  TH1* h_rec_puppi_1                      = binning_rec->CreateHistogram(prefix+"_puppi_rec_1");
+  TH1* h_rec_puppi_sd_1                   = binning_rec->CreateHistogram(prefix+"_puppi_sd_rec_1");
+  TH1* h_rec_dist_1                       = measurement_rec->CreateHistogram(prefix+"_rec_dist_1",kTRUE, 0, 0, "mass[C]");
+  TH1* h_rec_dist_sd_1                    = measurement_rec->CreateHistogram(prefix+"_sd_rec_dist_1",kTRUE,0,0, "mass[C]");
+  TH1* h_rec_dist_puppi_1                 = measurement_rec->CreateHistogram(prefix+"_puppi_rec_dist_1",kTRUE,0,0, "mass[C]");
+  TH1* h_rec_dist_puppi_sd_1              = measurement_rec->CreateHistogram(prefix+"_puppi_sd_rec_dist_1",kTRUE,0,0, "mass[C]");
   TH1* h_gen_1                            = binning_gen->CreateHistogram(prefix+"_gen_1");
-  TH1* h_gen_sd_1                         = binning_gen->CreateHistogram(prefix+"_gen_sd_1");
-  TH1* h_gen_puppi_1                      = binning_gen->CreateHistogram(prefix+"_gen_puppi_1");
-  TH1* h_gen_puppi_sd_1                   = binning_gen->CreateHistogram(prefix+"_gen_puppi_sd_1");
+  TH1* h_gen_sd_1                         = binning_gen->CreateHistogram(prefix+"_sd_gen_1");
+  TH1* h_gen_puppi_1                      = binning_gen->CreateHistogram(prefix+"_puppi_gen_1");
+  TH1* h_gen_puppi_sd_1                   = binning_gen->CreateHistogram(prefix+"_puppi_sd_gen_1");
   TH1* h_truth_all_1                      = binning_gen->CreateHistogram(prefix+"_truth_all_1");
-  TH1* h_truth_all_sd_1                   = binning_gen->CreateHistogram(prefix+"_truth_all_sd_1");
-  TH1* h_truth_all_puppi_1                = binning_gen->CreateHistogram(prefix+"_truth_all_puppi_1");
-  TH1* h_truth_all_puppi_sd_1             = binning_gen->CreateHistogram(prefix+"_truth_all_puppi_sd_1");
+  TH1* h_truth_all_sd_1                   = binning_gen->CreateHistogram(prefix+"_sd_truth_all_1");
+  TH1* h_truth_all_puppi_1                = binning_gen->CreateHistogram(prefix+"_puppi_truth_all_1");
+  TH1* h_truth_all_puppi_sd_1             = binning_gen->CreateHistogram(prefix+"_puppi_sd_truth_all_1");
   TH1* h_truth_1                          = measurement_gen->CreateHistogram(prefix+"_truth_1",kTRUE,0,0, "mass[C]");
-  TH1* h_truth_sd_1                       = measurement_gen->CreateHistogram(prefix+"_truth_sd_1",kTRUE,0,0, "mass[C]");
-  TH1* h_truth_puppi_1                    = measurement_gen->CreateHistogram(prefix+"_truth_puppi_1",kTRUE,0,0, "mass[C]");
-  TH1* h_truth_puppi_sd_1                 = measurement_gen->CreateHistogram(prefix+"_truth_puppi_sd_1",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_sd_1                       = measurement_gen->CreateHistogram(prefix+"_sd_truth_1",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_puppi_1                    = measurement_gen->CreateHistogram(prefix+"_puppi_truth_1",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_puppi_sd_1                 = measurement_gen->CreateHistogram(prefix+"_puppi_sd_truth_1",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_1                     = measurement_gen->CreateHistogram(prefix+"_purity_all_1",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_all_sd_1                  = measurement_gen->CreateHistogram(prefix+"_purity_all_sd_1",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_all_puppi_1               = measurement_gen->CreateHistogram(prefix+"_purity_all_puppi_1",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_all_puppi_sd_1            = measurement_gen->CreateHistogram(prefix+"_purity_all_puppi_sd_1",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_sd_1                  = measurement_gen->CreateHistogram(prefix+"_sd_purity_all_1",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_puppi_1               = measurement_gen->CreateHistogram(prefix+"_puppi_purity_all_1",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_puppi_sd_1            = measurement_gen->CreateHistogram(prefix+"_puppi_sd_purity_all_1",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_1                  = measurement_gen->CreateHistogram(prefix+"_stability_all_1",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_sd_1               = measurement_gen->CreateHistogram(prefix+"_sd_stability_all_1",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_puppi_1            = measurement_gen->CreateHistogram(prefix+"_puppi_stability_all_1",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_puppi_sd_1         = measurement_gen->CreateHistogram(prefix+"_puppi_sd_stability_all_1",kTRUE,0,0, "mass[C]");
   TH1* h_purity_samebin_1                 = measurement_gen->CreateHistogram(prefix+"_purity_samebin_1",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_sd_1              = measurement_gen->CreateHistogram(prefix+"_purity_samebin_sd_1",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_puppi_1           = measurement_gen->CreateHistogram(prefix+"_purity_samebin_puppi_1",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_puppi_sd_1        = measurement_gen->CreateHistogram(prefix+"_purity_samebin_puppi_sd_1",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_sd_1              = measurement_gen->CreateHistogram(prefix+"_sd_purity_samebin_1",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_puppi_1           = measurement_gen->CreateHistogram(prefix+"_puppi_purity_samebin_1",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_puppi_sd_1        = measurement_gen->CreateHistogram(prefix+"_puppi_sd_purity_samebin_1",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_1              = measurement_gen->CreateHistogram(prefix+"_stability_samebin_1",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_sd_1           = measurement_gen->CreateHistogram(prefix+"_sd_stability_samebin_1",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_puppi_1        = measurement_gen->CreateHistogram(prefix+"_puppi_stability_samebin_1",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_puppi_sd_1     = measurement_gen->CreateHistogram(prefix+"_puppi_sd_stability_samebin_1",kTRUE,0,0, "mass[C]");
   TH1* h_purity_samebin_mass_1            = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_1",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_mass_sd_1         = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_sd_1",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_mass_puppi_1      = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_puppi_1",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_mass_puppi_sd_1   = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_puppi_sd_1",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_sd_1         = measurement_gen->CreateHistogram(prefix+"_sd_purity_samebin_mass_1",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_puppi_1      = measurement_gen->CreateHistogram(prefix+"_puppi_purity_samebin_mass_1",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_puppi_sd_1   = measurement_gen->CreateHistogram(prefix+"_puppi_sd_purity_samebin_mass_1",kTRUE,0,0, "mass[C]");
 
   TH1* h_rec_2                            = binning_rec->CreateHistogram(prefix+"_rec_2");
-  TH1* h_rec_sd_2                         = binning_rec->CreateHistogram(prefix+"_rec_sd_2");
-  TH1* h_rec_puppi_2                      = binning_rec->CreateHistogram(prefix+"_rec_puppi_2");
-  TH1* h_rec_puppi_sd_2                   = binning_rec->CreateHistogram(prefix+"_rec_puppi_sd_2");
+  TH1* h_rec_sd_2                         = binning_rec->CreateHistogram(prefix+"_sd_rec_2");
+  TH1* h_rec_puppi_2                      = binning_rec->CreateHistogram(prefix+"_puppi_rec_2");
+  TH1* h_rec_puppi_sd_2                   = binning_rec->CreateHistogram(prefix+"_puppi_sd_rec_2");
   TH1* h_rec_dist_2                       = measurement_rec->CreateHistogram(prefix+"_rec_dist_2",kTRUE,0,0, "mass[C]");
-  TH1* h_rec_dist_sd_2                    = measurement_rec->CreateHistogram(prefix+"_rec_dist_sd_2",kTRUE,0,0, "mass[C]");
-  TH1* h_rec_dist_puppi_2                 = measurement_rec->CreateHistogram(prefix+"_rec_dist_puppi_2",kTRUE,0,0, "mass[C]");
-  TH1* h_rec_dist_puppi_sd_2              = measurement_rec->CreateHistogram(prefix+"_rec_dist_puppi_sd_2",kTRUE,0,0, "mass[C]");
+  TH1* h_rec_dist_sd_2                    = measurement_rec->CreateHistogram(prefix+"_sd_rec_dist_2",kTRUE,0,0, "mass[C]");
+  TH1* h_rec_dist_puppi_2                 = measurement_rec->CreateHistogram(prefix+"_puppi_rec_dist_2",kTRUE,0,0, "mass[C]");
+  TH1* h_rec_dist_puppi_sd_2              = measurement_rec->CreateHistogram(prefix+"_puppi_sd_rec_dist_2",kTRUE,0,0, "mass[C]");
   TH1* h_gen_2                            = binning_gen->CreateHistogram(prefix+"_gen_2");
-  TH1* h_gen_sd_2                         = binning_gen->CreateHistogram(prefix+"_gen_sd_2");
-  TH1* h_gen_puppi_2                      = binning_gen->CreateHistogram(prefix+"_gen_puppi_2");
-  TH1* h_gen_puppi_sd_2                   = binning_gen->CreateHistogram(prefix+"_gen_puppi_sd_2");
+  TH1* h_gen_sd_2                         = binning_gen->CreateHistogram(prefix+"_sd_gen_2");
+  TH1* h_gen_puppi_2                      = binning_gen->CreateHistogram(prefix+"_puppi_gen_2");
+  TH1* h_gen_puppi_sd_2                   = binning_gen->CreateHistogram(prefix+"_puppi_sd_gen_2");
   TH1* h_truth_all_2                      = binning_gen->CreateHistogram(prefix+"_truth_all_2");
-  TH1* h_truth_all_sd_2                   = binning_gen->CreateHistogram(prefix+"_truth_all_sd_2");
-  TH1* h_truth_all_puppi_2                = binning_gen->CreateHistogram(prefix+"_truth_all_puppi_2");
-  TH1* h_truth_all_puppi_sd_2             = binning_gen->CreateHistogram(prefix+"_truth_all_puppi_sd_2");
+  TH1* h_truth_all_sd_2                   = binning_gen->CreateHistogram(prefix+"_sd_truth_all_2");
+  TH1* h_truth_all_puppi_2                = binning_gen->CreateHistogram(prefix+"_puppi_truth_all_2");
+  TH1* h_truth_all_puppi_sd_2             = binning_gen->CreateHistogram(prefix+"_puppi_sd_truth_all_2");
   TH1* h_truth_2                          = measurement_gen->CreateHistogram(prefix+"_truth_2",kTRUE,0,0, "mass[C]");
-  TH1* h_truth_sd_2                       = measurement_gen->CreateHistogram(prefix+"_truth_sd_2",kTRUE,0,0, "mass[C]");
-  TH1* h_truth_puppi_2                    = measurement_gen->CreateHistogram(prefix+"_truth_puppi_2",kTRUE,0,0, "mass[C]");
-  TH1* h_truth_puppi_sd_2                 = measurement_gen->CreateHistogram(prefix+"_truth_puppi_sd_2",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_sd_2                       = measurement_gen->CreateHistogram(prefix+"_sd_truth_2",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_puppi_2                    = measurement_gen->CreateHistogram(prefix+"_puppi_truth_2",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_puppi_sd_2                 = measurement_gen->CreateHistogram(prefix+"_puppi_sd_truth_2",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_2                     = measurement_gen->CreateHistogram(prefix+"_purity_all_2",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_all_sd_2                  = measurement_gen->CreateHistogram(prefix+"_purity_all_sd_2",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_all_puppi_2               = measurement_gen->CreateHistogram(prefix+"_purity_all_puppi_2",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_all_puppi_sd_2            = measurement_gen->CreateHistogram(prefix+"_purity_all_puppi_sd_2",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_sd_2                  = measurement_gen->CreateHistogram(prefix+"_sd_purity_all_2",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_puppi_2               = measurement_gen->CreateHistogram(prefix+"_puppi_purity_all_2",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_puppi_sd_2            = measurement_gen->CreateHistogram(prefix+"_puppi_sd_purity_all_2",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_2                  = measurement_gen->CreateHistogram(prefix+"_stability_all_2",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_sd_2               = measurement_gen->CreateHistogram(prefix+"_sd_stability_all_2",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_puppi_2            = measurement_gen->CreateHistogram(prefix+"_puppi_stability_all_2",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_puppi_sd_2         = measurement_gen->CreateHistogram(prefix+"_puppi_sd_stability_all_2",kTRUE,0,0, "mass[C]");
   TH1* h_purity_samebin_2                 = measurement_gen->CreateHistogram(prefix+"_purity_samebin_2",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_sd_2              = measurement_gen->CreateHistogram(prefix+"_purity_samebin_sd_2",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_puppi_2           = measurement_gen->CreateHistogram(prefix+"_purity_samebin_puppi_2",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_puppi_sd_2        = measurement_gen->CreateHistogram(prefix+"_purity_samebin_puppi_sd_2",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_sd_2              = measurement_gen->CreateHistogram(prefix+"_sd_purity_samebin_2",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_puppi_2           = measurement_gen->CreateHistogram(prefix+"_puppi_purity_samebin_2",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_puppi_sd_2        = measurement_gen->CreateHistogram(prefix+"_puppi_sd_purity_samebin_2",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_2              = measurement_gen->CreateHistogram(prefix+"_stability_samebin_2",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_sd_2           = measurement_gen->CreateHistogram(prefix+"_sd_stability_samebin_2",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_puppi_2        = measurement_gen->CreateHistogram(prefix+"_puppi_stability_samebin_2",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_puppi_sd_2     = measurement_gen->CreateHistogram(prefix+"_puppi_sd_stability_samebin_2",kTRUE,0,0, "mass[C]");
   TH1* h_purity_samebin_mass_2            = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_2",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_mass_sd_2         = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_sd_2",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_mass_puppi_2      = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_puppi_2",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_mass_puppi_sd_2   = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_puppi_sd_2",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_sd_2         = measurement_gen->CreateHistogram(prefix+"_sd_purity_samebin_mass_2",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_puppi_2      = measurement_gen->CreateHistogram(prefix+"_puppi_purity_samebin_mass_2",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_puppi_sd_2   = measurement_gen->CreateHistogram(prefix+"_puppi_sd_purity_samebin_mass_2",kTRUE,0,0, "mass[C]");
 
   TH1* h_rec_3                            = binning_rec->CreateHistogram(prefix+"_rec_3");
-  TH1* h_rec_sd_3                         = binning_rec->CreateHistogram(prefix+"_rec_sd_3");
-  TH1* h_rec_puppi_3                      = binning_rec->CreateHistogram(prefix+"_rec_puppi_3");
-  TH1* h_rec_puppi_sd_3                   = binning_rec->CreateHistogram(prefix+"_rec_puppi_sd_3");
+  TH1* h_rec_sd_3                         = binning_rec->CreateHistogram(prefix+"_sd_rec_3");
+  TH1* h_rec_puppi_3                      = binning_rec->CreateHistogram(prefix+"_puppi_rec_3");
+  TH1* h_rec_puppi_sd_3                   = binning_rec->CreateHistogram(prefix+"_puppi_sd_rec_3");
   TH1* h_rec_dist_3                       = measurement_rec->CreateHistogram(prefix+"_rec_dist_3",kTRUE,0,0, "mass[C]");
-  TH1* h_rec_dist_sd_3                    = measurement_rec->CreateHistogram(prefix+"_rec_dist_sd_3",kTRUE,0,0, "mass[C]");
-  TH1* h_rec_dist_puppi_3                 = measurement_rec->CreateHistogram(prefix+"_rec_dist_puppi_3",kTRUE,0,0, "mass[C]");
-  TH1* h_rec_dist_puppi_sd_3              = measurement_rec->CreateHistogram(prefix+"_rec_dist_puppi_sd_3",kTRUE,0,0, "mass[C]");
+  TH1* h_rec_dist_sd_3                    = measurement_rec->CreateHistogram(prefix+"_sd_rec_dist_3",kTRUE,0,0, "mass[C]");
+  TH1* h_rec_dist_puppi_3                 = measurement_rec->CreateHistogram(prefix+"_puppi_rec_dist_3",kTRUE,0,0, "mass[C]");
+  TH1* h_rec_dist_puppi_sd_3              = measurement_rec->CreateHistogram(prefix+"_puppi_sd_rec_dist_3",kTRUE,0,0, "mass[C]");
   TH1* h_gen_3                            = binning_gen->CreateHistogram(prefix+"_gen_3");
-  TH1* h_gen_sd_3                         = binning_gen->CreateHistogram(prefix+"_gen_sd_3");
-  TH1* h_gen_puppi_3                      = binning_gen->CreateHistogram(prefix+"_gen_puppi_3");
-  TH1* h_gen_puppi_sd_3                   = binning_gen->CreateHistogram(prefix+"_gen_puppi_sd_3");
+  TH1* h_gen_sd_3                         = binning_gen->CreateHistogram(prefix+"_sd_gen_3");
+  TH1* h_gen_puppi_3                      = binning_gen->CreateHistogram(prefix+"_puppi_gen_3");
+  TH1* h_gen_puppi_sd_3                   = binning_gen->CreateHistogram(prefix+"_puppi_sd_gen_3");
   TH1* h_truth_all_3                      = binning_gen->CreateHistogram(prefix+"_truth_all_3");
-  TH1* h_truth_all_sd_3                   = binning_gen->CreateHistogram(prefix+"_truth_all_sd_3");
-  TH1* h_truth_all_puppi_3                = binning_gen->CreateHistogram(prefix+"_truth_all_puppi_3");
-  TH1* h_truth_all_puppi_sd_3             = binning_gen->CreateHistogram(prefix+"_truth_all_puppi_sd_3");
+  TH1* h_truth_all_sd_3                   = binning_gen->CreateHistogram(prefix+"_sd_truth_all_3");
+  TH1* h_truth_all_puppi_3                = binning_gen->CreateHistogram(prefix+"_puppi_truth_all_3");
+  TH1* h_truth_all_puppi_sd_3             = binning_gen->CreateHistogram(prefix+"_puppi_sd_truth_all_3");
   TH1* h_truth_3                          = measurement_gen->CreateHistogram(prefix+"_truth_3",kTRUE,0,0, "mass[C]");
-  TH1* h_truth_sd_3                       = measurement_gen->CreateHistogram(prefix+"_truth_sd_3",kTRUE,0,0, "mass[C]");
-  TH1* h_truth_puppi_3                    = measurement_gen->CreateHistogram(prefix+"_truth_puppi_3",kTRUE,0,0, "mass[C]");
-  TH1* h_truth_puppi_sd_3                 = measurement_gen->CreateHistogram(prefix+"_truth_puppi_sd_3",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_sd_3                       = measurement_gen->CreateHistogram(prefix+"_sd_truth_3",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_puppi_3                    = measurement_gen->CreateHistogram(prefix+"_puppi_truth_3",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_puppi_sd_3                 = measurement_gen->CreateHistogram(prefix+"_puppi_sd_truth_3",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_3                     = measurement_gen->CreateHistogram(prefix+"_purity_all_3",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_all_sd_3                  = measurement_gen->CreateHistogram(prefix+"_purity_all_sd_3",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_all_puppi_3               = measurement_gen->CreateHistogram(prefix+"_purity_all_puppi_3",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_all_puppi_sd_3            = measurement_gen->CreateHistogram(prefix+"_purity_all_puppi_sd_3",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_sd_3                  = measurement_gen->CreateHistogram(prefix+"_sd_purity_all_3",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_puppi_3               = measurement_gen->CreateHistogram(prefix+"_puppi_purity_all_3",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_all_puppi_sd_3            = measurement_gen->CreateHistogram(prefix+"_puppi_sd_purity_all_3",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_3                  = measurement_gen->CreateHistogram(prefix+"_stability_all_3",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_sd_3               = measurement_gen->CreateHistogram(prefix+"_sd_stability_all_3",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_puppi_3            = measurement_gen->CreateHistogram(prefix+"_puppi_stability_all_3",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_all_puppi_sd_3         = measurement_gen->CreateHistogram(prefix+"_puppi_sd_stability_all_3",kTRUE,0,0, "mass[C]");
   TH1* h_purity_samebin_3                 = measurement_gen->CreateHistogram(prefix+"_purity_samebin_3",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_sd_3              = measurement_gen->CreateHistogram(prefix+"_purity_samebin_sd_3",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_puppi_3           = measurement_gen->CreateHistogram(prefix+"_purity_samebin_puppi_3",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_puppi_sd_3        = measurement_gen->CreateHistogram(prefix+"_purity_samebin_puppi_sd_3",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_sd_3              = measurement_gen->CreateHistogram(prefix+"_sd_purity_samebin_3",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_puppi_3           = measurement_gen->CreateHistogram(prefix+"_puppi_purity_samebin_3",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_puppi_sd_3        = measurement_gen->CreateHistogram(prefix+"_puppi_sd_purity_samebin_3",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_3              = measurement_gen->CreateHistogram(prefix+"_stability_samebin_3",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_sd_3           = measurement_gen->CreateHistogram(prefix+"_sd_stability_samebin_3",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_puppi_3        = measurement_gen->CreateHistogram(prefix+"_puppi_stability_samebin_3",kTRUE,0,0, "mass[C]");
+  TH1* h_stability_samebin_puppi_sd_3     = measurement_gen->CreateHistogram(prefix+"_puppi_sd_stability_samebin_3",kTRUE,0,0, "mass[C]");
   TH1* h_purity_samebin_mass_3            = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_3",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_mass_sd_3         = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_sd_3",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_mass_puppi_3      = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_puppi_3",kTRUE,0,0, "mass[C]");
-  TH1* h_purity_samebin_mass_puppi_sd_3   = measurement_gen->CreateHistogram(prefix+"_purity_samebin_mass_puppi_sd_3",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_sd_3         = measurement_gen->CreateHistogram(prefix+"_sd_purity_samebin_mass_3",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_puppi_3      = measurement_gen->CreateHistogram(prefix+"_puppi_purity_samebin_mass_3",kTRUE,0,0, "mass[C]");
+  TH1* h_purity_samebin_mass_puppi_sd_3   = measurement_gen->CreateHistogram(prefix+"_puppi_sd_purity_samebin_mass_3",kTRUE,0,0, "mass[C]");
 
   TH2* h_mc_matrix_1          = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_1");
-  TH2* h_mc_matrix_sd_1       = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_sd_1");
-  TH2* h_mc_matrix_puppi_1    = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi_1");
-  TH2* h_mc_matrix_puppi_sd_1 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi_sd_1");
+  TH2* h_mc_matrix_sd_1       = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_sd_matrix_1");
+  TH2* h_mc_matrix_puppi_1    = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_puppi_matrix_1");
+  TH2* h_mc_matrix_puppi_sd_1 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_puppi_sd_matrix_1");
 
   TH2* h_mc_matrix_2          = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_2");
-  TH2* h_mc_matrix_sd_2       = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_sd_2");
-  TH2* h_mc_matrix_puppi_2    = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi_2");
-  TH2* h_mc_matrix_puppi_sd_2 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi_sd_2");
+  TH2* h_mc_matrix_sd_2       = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_sd_matrix_2");
+  TH2* h_mc_matrix_puppi_2    = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_puppi_matrix_2");
+  TH2* h_mc_matrix_puppi_sd_2 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_puppi_sd_matrix_2");
 
   TH2* h_mc_matrix_3          = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_3");
-  TH2* h_mc_matrix_sd_3       = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_sd_3");
-  TH2* h_mc_matrix_puppi_3    = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi_3");
-  TH2* h_mc_matrix_puppi_sd_3 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_matrix_puppi_sd_3");
+  TH2* h_mc_matrix_sd_3       = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_sd_matrix_3");
+  TH2* h_mc_matrix_puppi_3    = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_puppi_matrix_3");
+  TH2* h_mc_matrix_puppi_sd_3 = TUnfoldBinning::CreateHistogramOfMigrations(binning_gen, binning_rec, prefix+"_puppi_sd_matrix_3");
 
-  if(!Muon_done) outputFile->cd();
-  else outputFile2->cd();
 
   tree->ResetBranchAddresses();
   tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
@@ -1009,29 +1071,45 @@ void fill_ttbar(TTree* tree, TString prefix){
     //fill hists for purity
     int genBin_recInfo = 0, genBin_recInfo_mass = 0;
 
-    if(passed_gen_final && rec_info){
+    if(passed_gen_final && passed_rec_final){
       genBin_recInfo      = measurement_gen->GetGlobalBinNumber(tau32_rec,mass_gen);
       genBin_recInfo_mass = measurement_gen->GetGlobalBinNumber(tau32_rec,mass_rec);
 
       h_purity_all->Fill(tau32_gen, w_gen);
-      if(genBin_recInfo == gen_binNumber)      h_purity_samebin->Fill(tau32_gen, w_gen);
+      h_stability_all->Fill(tau32_rec, w_gen);
+      if(genBin_recInfo == gen_binNumber){
+        h_purity_samebin->Fill(tau32_gen, w_gen);
+        h_stability_samebin->Fill(tau32_rec, w_gen);
+      }
       if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass->Fill(tau32_gen, w_gen);
 
 
       if(pseudo){
         if(counter != 1 || counter != 2){
           h_purity_all_1->Fill(tau32_gen, w_gen_scaled);
-          if(genBin_recInfo == gen_binNumber)      h_purity_samebin_1->Fill(tau32_gen, w_gen_scaled);
+          h_stability_all_1->Fill(tau32_rec, w_gen_scaled);
+          if(genBin_recInfo == gen_binNumber){
+            h_purity_samebin_1->Fill(tau32_gen, w_gen_scaled);
+            h_stability_samebin_1->Fill(tau32_rec, w_gen_scaled);
+          }
           if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass_1->Fill(tau32_gen, w_gen_scaled);
         }
         if(counter != 3 || counter != 4){
           h_purity_all_2->Fill(tau32_gen, w_gen_scaled);
-          if(genBin_recInfo == gen_binNumber)      h_purity_samebin_2->Fill(tau32_gen, w_gen_scaled);
+          h_stability_all_2->Fill(tau32_rec, w_gen_scaled);
+          if(genBin_recInfo == gen_binNumber){
+            h_purity_samebin_2->Fill(tau32_gen, w_gen_scaled);
+            h_stability_samebin_2->Fill(tau32_rec, w_gen_scaled);
+          }
           if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass_2->Fill(tau32_gen, w_gen_scaled);
         }
         if(counter != 5 || counter != 6){
           h_purity_all_3->Fill(tau32_gen, w_gen_scaled);
-          if(genBin_recInfo == gen_binNumber)      h_purity_samebin_3->Fill(tau32_gen, w_gen_scaled);
+          h_stability_all_3->Fill(tau32_rec, w_gen_scaled);
+          if(genBin_recInfo == gen_binNumber)      {
+            h_purity_samebin_3->Fill(tau32_gen, w_gen_scaled);
+            h_stability_samebin_3->Fill(tau32_rec, w_gen_scaled);
+          }
           if(genBin_recInfo_mass == gen_binNumber) h_purity_samebin_mass_3->Fill(tau32_gen, w_gen_scaled);
         }
       }
@@ -1134,29 +1212,45 @@ void fill_ttbar(TTree* tree, TString prefix){
     //fill hists for purity
     int genBin_recInfo_sd = 0, genBin_recInfo_mass_sd = 0;
 
-    if(passed_gen_final_sd && rec_info_sd){
+    if(passed_gen_final_sd && passed_rec_final_sd){
       genBin_recInfo_sd      = measurement_gen->GetGlobalBinNumber(tau32_rec_sd,mass_gen_sd);
       genBin_recInfo_mass_sd = measurement_gen->GetGlobalBinNumber(tau32_rec_sd,mass_rec_sd);
 
       h_purity_all_sd->Fill(tau32_gen_sd, w_gen);
-      if(genBin_recInfo_sd == gen_binNumber_sd)      h_purity_samebin_sd->Fill(tau32_gen_sd, w_gen);
+      h_stability_all_sd->Fill(tau32_rec_sd, w_gen);
+      if(genBin_recInfo_sd == gen_binNumber_sd)      {
+        h_purity_samebin_sd->Fill(tau32_gen_sd, w_gen);
+        h_stability_samebin_sd->Fill(tau32_rec_sd, w_gen);
+      }
       if(genBin_recInfo_mass_sd == gen_binNumber_sd) h_purity_samebin_mass_sd->Fill(tau32_gen_sd, w_gen);
 
 
       if(pseudo){
         if(counter != 1 || counter != 2){
           h_purity_all_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
-          if(genBin_recInfo_sd == gen_binNumber_sd)      h_purity_samebin_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
+          h_stability_all_sd_1->Fill(tau32_rec_sd, w_gen_scaled);
+          if(genBin_recInfo_sd == gen_binNumber_sd)      {
+            h_purity_samebin_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
+            h_stability_samebin_sd_1->Fill(tau32_rec_sd, w_gen_scaled);
+          }
           if(genBin_recInfo_mass_sd == gen_binNumber_sd) h_purity_samebin_mass_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
         }
         if(counter != 3 || counter != 4){
           h_purity_all_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
-          if(genBin_recInfo_sd == gen_binNumber_sd)      h_purity_samebin_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
+          h_stability_all_sd_2->Fill(tau32_rec_sd, w_gen_scaled);
+          if(genBin_recInfo_sd == gen_binNumber_sd)      {
+            h_purity_samebin_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
+            h_stability_samebin_sd_2->Fill(tau32_rec_sd, w_gen_scaled);
+          }
           if(genBin_recInfo_mass_sd == gen_binNumber_sd) h_purity_samebin_mass_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
         }
         if(counter != 5 || counter != 6){
           h_purity_all_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
-          if(genBin_recInfo_sd == gen_binNumber_sd)      h_purity_samebin_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+          h_stability_all_sd_3->Fill(tau32_rec_sd, w_gen_scaled);
+          if(genBin_recInfo_sd == gen_binNumber_sd)      {
+            h_purity_samebin_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+            h_stability_samebin_sd_3->Fill(tau32_rec_sd, w_gen_scaled);
+          }
           if(genBin_recInfo_mass_sd == gen_binNumber_sd) h_purity_samebin_mass_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
         }
       }
@@ -1259,29 +1353,45 @@ void fill_ttbar(TTree* tree, TString prefix){
     //fill hists for purity
     int genBin_recInfo_puppi = 0, genBin_recInfo_mass_puppi = 0;
 
-    if(passed_gen_final && rec_info_puppi){
+    if(passed_gen_final && passed_rec_final_puppi){
       genBin_recInfo_puppi      = measurement_gen->GetGlobalBinNumber(tau32_rec_puppi,mass_gen);
       genBin_recInfo_mass_puppi = measurement_gen->GetGlobalBinNumber(tau32_rec_puppi,mass_rec_puppi);
 
       h_purity_all_puppi->Fill(tau32_gen, w_gen);
-      if(genBin_recInfo_puppi == gen_binNumber_puppi)      h_purity_samebin_puppi->Fill(tau32_gen, w_gen);
+      h_stability_all_puppi->Fill(tau32_rec, w_gen);
+      if(genBin_recInfo_puppi == gen_binNumber_puppi)      {
+        h_purity_samebin_puppi->Fill(tau32_gen, w_gen);
+        h_stability_samebin_puppi->Fill(tau32_rec, w_gen);
+      }
       if(genBin_recInfo_mass_puppi == gen_binNumber_puppi) h_purity_samebin_mass_puppi->Fill(tau32_gen, w_gen);
 
 
       if(pseudo){
         if(counter != 1 || counter != 2){
           h_purity_all_puppi_1->Fill(tau32_gen, w_gen_scaled);
-          if(genBin_recInfo_puppi == gen_binNumber_puppi)      h_purity_samebin_puppi_1->Fill(tau32_gen, w_gen_scaled);
+          h_stability_all_puppi_1->Fill(tau32_rec, w_gen_scaled);
+          if(genBin_recInfo_puppi == gen_binNumber_puppi)      {
+            h_purity_samebin_puppi_1->Fill(tau32_gen, w_gen_scaled);
+            h_stability_samebin_puppi_1->Fill(tau32_rec, w_gen_scaled);
+          }
           if(genBin_recInfo_mass_puppi == gen_binNumber_puppi) h_purity_samebin_mass_puppi_1->Fill(tau32_gen, w_gen_scaled);
         }
         if(counter != 3 || counter != 4){
           h_purity_all_puppi_2->Fill(tau32_gen, w_gen_scaled);
-          if(genBin_recInfo_puppi == gen_binNumber_puppi)      h_purity_samebin_puppi_2->Fill(tau32_gen, w_gen_scaled);
+          h_stability_all_puppi_2->Fill(tau32_rec, w_gen_scaled);
+          if(genBin_recInfo_puppi == gen_binNumber_puppi)      {
+            h_purity_samebin_puppi_2->Fill(tau32_gen, w_gen_scaled);
+            h_stability_samebin_puppi_2->Fill(tau32_rec, w_gen_scaled);
+          }
           if(genBin_recInfo_mass_puppi == gen_binNumber_puppi) h_purity_samebin_mass_puppi_2->Fill(tau32_gen, w_gen_scaled);
         }
         if(counter != 5 || counter != 6){
           h_purity_all_puppi_3->Fill(tau32_gen, w_gen_scaled);
-          if(genBin_recInfo_puppi == gen_binNumber_puppi)      h_purity_samebin_puppi_3->Fill(tau32_gen, w_gen_scaled);
+          h_stability_all_puppi_3->Fill(tau32_rec, w_gen_scaled);
+          if(genBin_recInfo_puppi == gen_binNumber_puppi)      {
+            h_purity_samebin_puppi_3->Fill(tau32_gen, w_gen_scaled);
+            h_stability_samebin_puppi_3->Fill(tau32_rec, w_gen_scaled);
+          }
           if(genBin_recInfo_mass_puppi == gen_binNumber_puppi) h_purity_samebin_mass_puppi_3->Fill(tau32_gen, w_gen_scaled);
         }
       }
@@ -1384,29 +1494,45 @@ void fill_ttbar(TTree* tree, TString prefix){
     //fill hists for purity
     int genBin_recInfo_puppi_sd = 0, genBin_recInfo_mass_puppi_sd = 0;
 
-    if(passed_gen_final_sd && rec_info_puppi_sd){
+    if(passed_gen_final_sd && passed_rec_final_puppi_sd){
       genBin_recInfo_puppi_sd      = measurement_gen->GetGlobalBinNumber(tau32_rec_puppi_sd,mass_gen_sd);
       genBin_recInfo_mass_puppi_sd = measurement_gen->GetGlobalBinNumber(tau32_rec_puppi_sd,mass_rec_puppi_sd);
 
       h_purity_all_puppi_sd->Fill(tau32_gen_sd, w_gen);
-      if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      h_purity_samebin_puppi_sd->Fill(tau32_gen_sd, w_gen);
+      h_stability_all_puppi_sd->Fill(tau32_rec_sd, w_gen);
+      if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      {
+        h_purity_samebin_puppi_sd->Fill(tau32_gen_sd, w_gen);
+        h_stability_samebin_puppi_sd->Fill(tau32_rec_sd, w_gen);
+      }
       if(genBin_recInfo_mass_puppi_sd == gen_binNumber_puppi_sd) h_purity_samebin_mass_puppi_sd->Fill(tau32_gen_sd, w_gen);
 
 
       if(pseudo){
         if(counter != 1 || counter != 2){
           h_purity_all_puppi_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
-          if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      h_purity_samebin_puppi_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
+          h_stability_all_puppi_sd_1->Fill(tau32_rec_sd, w_gen_scaled);
+          if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      {
+            h_purity_samebin_puppi_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
+            h_stability_samebin_puppi_sd_1->Fill(tau32_rec_sd, w_gen_scaled);
+          }
           if(genBin_recInfo_mass_puppi_sd == gen_binNumber_puppi_sd) h_purity_samebin_mass_puppi_sd_1->Fill(tau32_gen_sd, w_gen_scaled);
         }
         if(counter != 3 || counter != 4){
           h_purity_all_puppi_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
-          if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      h_purity_samebin_puppi_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
+          h_stability_all_puppi_sd_2->Fill(tau32_rec_sd, w_gen_scaled);
+          if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      {
+            h_purity_samebin_puppi_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
+            h_stability_samebin_puppi_sd_2->Fill(tau32_rec_sd, w_gen_scaled);
+          }
           if(genBin_recInfo_mass_puppi_sd == gen_binNumber_puppi_sd) h_purity_samebin_mass_puppi_sd_2->Fill(tau32_gen_sd, w_gen_scaled);
         }
         if(counter != 5 || counter != 6){
           h_purity_all_puppi_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
-          if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      h_purity_samebin_puppi_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+          h_stability_all_puppi_sd_3->Fill(tau32_rec_sd, w_gen_scaled);
+          if(genBin_recInfo_puppi_sd == gen_binNumber_puppi_sd)      {
+            h_purity_samebin_puppi_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
+            h_stability_samebin_puppi_sd_3->Fill(tau32_rec_sd, w_gen_scaled);
+          }
           if(genBin_recInfo_mass_puppi_sd == gen_binNumber_puppi_sd) h_purity_samebin_mass_puppi_sd_3->Fill(tau32_gen_sd, w_gen_scaled);
         }
       }
@@ -1444,10 +1570,18 @@ void fill_ttbar(TTree* tree, TString prefix){
   h_purity_all_sd->Write();
   h_purity_all_puppi->Write();
   h_purity_all_puppi_sd->Write();
+  h_stability_all->Write();
+  h_stability_all_sd->Write();
+  h_stability_all_puppi->Write();
+  h_stability_all_puppi_sd->Write();
   h_purity_samebin->Write();
   h_purity_samebin_sd->Write();
   h_purity_samebin_puppi->Write();
   h_purity_samebin_puppi_sd->Write();
+  h_stability_samebin->Write();
+  h_stability_samebin_sd->Write();
+  h_stability_samebin_puppi->Write();
+  h_stability_samebin_puppi_sd->Write();
   h_purity_samebin_mass->Write();
   h_purity_samebin_mass_sd->Write();
   h_purity_samebin_mass_puppi->Write();
@@ -1481,10 +1615,18 @@ void fill_ttbar(TTree* tree, TString prefix){
   delete h_purity_all_sd;
   delete h_purity_all_puppi;
   delete h_purity_all_puppi_sd;
+  delete h_stability_all;
+  delete h_stability_all_sd;
+  delete h_stability_all_puppi;
+  delete h_stability_all_puppi_sd;
   delete h_purity_samebin;
   delete h_purity_samebin_sd;
   delete h_purity_samebin_puppi;
   delete h_purity_samebin_puppi_sd;
+  delete h_stability_samebin;
+  delete h_stability_samebin_sd;
+  delete h_stability_samebin_puppi;
+  delete h_stability_samebin_puppi_sd;
   delete h_purity_samebin_mass;
   delete h_purity_samebin_mass_sd;
   delete h_purity_samebin_mass_puppi;
@@ -1519,10 +1661,18 @@ void fill_ttbar(TTree* tree, TString prefix){
     h_purity_all_sd_1->Write();
     h_purity_all_puppi_1->Write();
     h_purity_all_puppi_sd_1->Write();
+    h_stability_all_1->Write();
+    h_stability_all_sd_1->Write();
+    h_stability_all_puppi_1->Write();
+    h_stability_all_puppi_sd_1->Write();
     h_purity_samebin_1->Write();
     h_purity_samebin_sd_1->Write();
     h_purity_samebin_puppi_1->Write();
     h_purity_samebin_puppi_sd_1->Write();
+    h_stability_samebin_1->Write();
+    h_stability_samebin_sd_1->Write();
+    h_stability_samebin_puppi_1->Write();
+    h_stability_samebin_puppi_sd_1->Write();
     h_purity_samebin_mass_1->Write();
     h_purity_samebin_mass_sd_1->Write();
     h_purity_samebin_mass_puppi_1->Write();
@@ -1556,10 +1706,18 @@ void fill_ttbar(TTree* tree, TString prefix){
     h_purity_all_sd_2->Write();
     h_purity_all_puppi_2->Write();
     h_purity_all_puppi_sd_2->Write();
+    h_stability_all_2->Write();
+    h_stability_all_sd_2->Write();
+    h_stability_all_puppi_2->Write();
+    h_stability_all_puppi_sd_2->Write();
     h_purity_samebin_2->Write();
     h_purity_samebin_sd_2->Write();
     h_purity_samebin_puppi_2->Write();
     h_purity_samebin_puppi_sd_2->Write();
+    h_stability_samebin_2->Write();
+    h_stability_samebin_sd_2->Write();
+    h_stability_samebin_puppi_2->Write();
+    h_stability_samebin_puppi_sd_2->Write();
     h_purity_samebin_mass_2->Write();
     h_purity_samebin_mass_sd_2->Write();
     h_purity_samebin_mass_puppi_2->Write();
@@ -1593,10 +1751,18 @@ void fill_ttbar(TTree* tree, TString prefix){
     h_purity_all_sd_3->Write();
     h_purity_all_puppi_3->Write();
     h_purity_all_puppi_sd_3->Write();
+    h_stability_all_3->Write();
+    h_stability_all_sd_3->Write();
+    h_stability_all_puppi_3->Write();
+    h_stability_all_puppi_sd_3->Write();
     h_purity_samebin_3->Write();
     h_purity_samebin_sd_3->Write();
     h_purity_samebin_puppi_3->Write();
     h_purity_samebin_puppi_sd_3->Write();
+    h_stability_samebin_3->Write();
+    h_stability_samebin_sd_3->Write();
+    h_stability_samebin_puppi_3->Write();
+    h_stability_samebin_puppi_sd_3->Write();
     h_purity_samebin_mass_3->Write();
     h_purity_samebin_mass_sd_3->Write();
     h_purity_samebin_mass_puppi_3->Write();
@@ -1630,10 +1796,18 @@ void fill_ttbar(TTree* tree, TString prefix){
     delete h_purity_all_sd_1;
     delete h_purity_all_puppi_1;
     delete h_purity_all_puppi_sd_1;
+    delete h_stability_all_1;
+    delete h_stability_all_sd_1;
+    delete h_stability_all_puppi_1;
+    delete h_stability_all_puppi_sd_1;
     delete h_purity_samebin_1;
     delete h_purity_samebin_sd_1;
     delete h_purity_samebin_puppi_1;
     delete h_purity_samebin_puppi_sd_1;
+    delete h_stability_samebin_1;
+    delete h_stability_samebin_sd_1;
+    delete h_stability_samebin_puppi_1;
+    delete h_stability_samebin_puppi_sd_1;
     delete h_purity_samebin_mass_1;
     delete h_purity_samebin_mass_sd_1;
     delete h_purity_samebin_mass_puppi_1;
@@ -1667,10 +1841,18 @@ void fill_ttbar(TTree* tree, TString prefix){
     delete h_purity_all_sd_2;
     delete h_purity_all_puppi_2;
     delete h_purity_all_puppi_sd_2;
+    delete h_stability_all_2;
+    delete h_stability_all_sd_2;
+    delete h_stability_all_puppi_2;
+    delete h_stability_all_puppi_sd_2;
     delete h_purity_samebin_2;
     delete h_purity_samebin_sd_2;
     delete h_purity_samebin_puppi_2;
     delete h_purity_samebin_puppi_sd_2;
+    delete h_stability_samebin_2;
+    delete h_stability_samebin_sd_2;
+    delete h_stability_samebin_puppi_2;
+    delete h_stability_samebin_puppi_sd_2;
     delete h_purity_samebin_mass_2;
     delete h_purity_samebin_mass_sd_2;
     delete h_purity_samebin_mass_puppi_2;
@@ -1704,10 +1886,18 @@ void fill_ttbar(TTree* tree, TString prefix){
     delete h_purity_all_sd_3;
     delete h_purity_all_puppi_3;
     delete h_purity_all_puppi_sd_3;
+    delete h_stability_all_3;
+    delete h_stability_all_sd_3;
+    delete h_stability_all_puppi_3;
+    delete h_stability_all_puppi_sd_3;
     delete h_purity_samebin_3;
     delete h_purity_samebin_sd_3;
     delete h_purity_samebin_puppi_3;
     delete h_purity_samebin_puppi_sd_3;
+    delete h_stability_samebin_3;
+    delete h_stability_samebin_sd_3;
+    delete h_stability_samebin_puppi_3;
+    delete h_stability_samebin_puppi_sd_3;
     delete h_purity_samebin_mass_3;
     delete h_purity_samebin_mass_sd_3;
     delete h_purity_samebin_mass_puppi_3;
@@ -1728,31 +1918,32 @@ void fill_ttbar(TTree* tree, TString prefix){
 void fill_scale(TTree* tree, TString prefix){
   if(!tree) cout << "could not read 'mc' tree\n";
   else      cout << "Filling " << prefix <<  " Histograms...\n";
-
-  // setup hists
-  TH1* h_pseudodata                    = binning_rec->CreateHistogram(prefix);
-  TH1* h_pseudodata_sd                 = binning_rec->CreateHistogram(prefix+"_sd");
-  TH1* h_pseudodata_puppi              = binning_rec->CreateHistogram(prefix+"_puppi");
-  TH1* h_pseudodata_puppi_sd           = binning_rec->CreateHistogram(prefix+"_puppi_sd");
-  TH1* h_pseudodata_dist               = measurement_rec->CreateHistogram(prefix+"_dist",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_dist_sd            = measurement_rec->CreateHistogram(prefix+"_dist_sd",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_dist_puppi         = measurement_rec->CreateHistogram(prefix+"_dist_puppi",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_dist_puppi_sd      = measurement_rec->CreateHistogram(prefix+"_dist_puppi_sd",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_all          = binning_gen->CreateHistogram(prefix+"_truth_all");
-  TH1* h_pseudodata_truth_all_sd       = binning_gen->CreateHistogram(prefix+"_truth_all_sd");
-  TH1* h_pseudodata_truth_all_puppi    = binning_gen->CreateHistogram(prefix+"_truth_all_puppi");
-  TH1* h_pseudodata_truth_all_puppi_sd = binning_gen->CreateHistogram(prefix+"_truth_all_puppi_sd");
-  TH1* h_pseudodata_truth              = measurement_gen->CreateHistogram(prefix+"_truth",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_sd           = measurement_gen->CreateHistogram(prefix+"_truth_sd",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_puppi        = measurement_gen->CreateHistogram(prefix+"_truth_puppi",kTRUE,0,0, "mass[C]");
-  TH1* h_pseudodata_truth_puppi_sd     = measurement_gen->CreateHistogram(prefix+"_truth_puppi_sd",kTRUE,0,0, "mass[C]");
-
   if(!Muon_done) outputFile->cd();
   else outputFile2->cd();
+
+  // setup hists
+  TH1* h_pseudo                    = binning_rec->CreateHistogram(prefix+"_rec");
+  TH1* h_pseudo_sd                 = binning_rec->CreateHistogram(prefix+"_sd_rec");
+  TH1* h_pseudo_puppi              = binning_rec->CreateHistogram(prefix+"_puppi_rec");
+  TH1* h_pseudo_puppi_sd           = binning_rec->CreateHistogram(prefix+"_puppi_sd_rec");
+  TH1* h_pseudo_dist               = measurement_rec->CreateHistogram(prefix+"_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_dist_sd            = measurement_rec->CreateHistogram(prefix+"_sd_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_dist_puppi         = measurement_rec->CreateHistogram(prefix+"_puppi_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_dist_puppi_sd      = measurement_rec->CreateHistogram(prefix+"_puppi_sd_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_all          = binning_gen->CreateHistogram(prefix+"_truth_all");
+  TH1* h_pseudo_truth_all_sd       = binning_gen->CreateHistogram(prefix+"_sd_truth_all");
+  TH1* h_pseudo_truth_all_puppi    = binning_gen->CreateHistogram(prefix+"_puppi_truth_all");
+  TH1* h_pseudo_truth_all_puppi_sd = binning_gen->CreateHistogram(prefix+"_puppi_sd_truth_all");
+  TH1* h_pseudo_truth              = measurement_gen->CreateHistogram(prefix+"_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_sd           = measurement_gen->CreateHistogram(prefix+"_sd_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_puppi        = measurement_gen->CreateHistogram(prefix+"_puppi_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_pseudo_truth_puppi_sd     = measurement_gen->CreateHistogram(prefix+"_puppi_sd_truth",kTRUE,0,0, "mass[C]");
+
 
   tree->ResetBranchAddresses();
   tree->SetBranchAddress("h_tau32_gen", &tau32_gen);
   tree->SetBranchAddress("h_tau32_gen_sd", &tau32_gen_sd);
+
   tree->SetBranchAddress("h_mass_gen", &mass_gen);
   tree->SetBranchAddress("h_mass_gen_sd", &mass_gen_sd);
   tree->SetBranchAddress("h_passed_gen_final", &passed_gen_final);
@@ -1766,6 +1957,7 @@ void fill_scale(TTree* tree, TString prefix){
   tree->SetBranchAddress("h_tau32_rec_sd", &tau32_rec_sd);
   tree->SetBranchAddress("h_tau32_rec_puppi", &tau32_rec_puppi);
   tree->SetBranchAddress("h_tau32_rec_puppi_sd", &tau32_rec_puppi_sd);
+
   tree->SetBranchAddress("h_mass_rec", &mass_rec);
   tree->SetBranchAddress("h_mass_rec_sd", &mass_rec_sd);
   tree->SetBranchAddress("h_mass_rec_puppi", &mass_rec_puppi);
@@ -1800,7 +1992,8 @@ void fill_scale(TTree* tree, TString prefix){
     w_gen = gen_weight;
 
     // fill histograms for CHS Jets w/o SoftDrop
-    Int_t rec_binNumber = 0, gen_binNumber = 0;
+    Int_t rec_binNumber = 0;
+    Int_t gen_binNumber = 0;
     if(passed_rec_final)                    rec_binNumber = measurement_rec->GetGlobalBinNumber(tau32_rec, mass_rec);
     else if(passed_rec_pt_topjet_sideband)  rec_binNumber = rec_pt_topjet_sideband->GetGlobalBinNumber(tau32_rec);
     else if(passed_rec_mass_sideband)       rec_binNumber = rec_mass_sideband->GetGlobalBinNumber(tau32_rec);
@@ -1815,11 +2008,11 @@ void fill_scale(TTree* tree, TString prefix){
 
 
     if(rec_info){
-      h_pseudodata->Fill(rec_binNumber, w_sig_rec);
-      h_pseudodata_dist->Fill(tau32_rec, w_sig_rec);
+      h_pseudo->Fill(rec_binNumber, w_sig_rec);
+      h_pseudo_dist->Fill(tau32_rec, w_sig_rec);
     }
-    if(gen_info)         h_pseudodata_truth_all->Fill(gen_binNumber, w_gen);
-    if(passed_gen_final) h_pseudodata_truth->Fill(tau32_gen, w_gen);
+    if(gen_info)         h_pseudo_truth_all->Fill(gen_binNumber, w_gen);
+    if(passed_gen_final) h_pseudo_truth->Fill(tau32_gen, w_gen);
 
     // fill histograms for CHS Jets w/ SoftDrop
     Int_t rec_binNumber_sd = 0, gen_binNumber_sd = 0;
@@ -1836,11 +2029,11 @@ void fill_scale(TTree* tree, TString prefix){
     if(passed_rec_final_sd || passed_rec_pt_topjet_sideband_sd || passed_rec_mass_sideband_sd) rec_info_sd = true;
 
     if(rec_info_sd){
-      h_pseudodata_sd->Fill(rec_binNumber_sd, w_sig_rec);
-      h_pseudodata_dist_sd->Fill(tau32_rec_sd, w_sig_rec);
+      h_pseudo_sd->Fill(rec_binNumber_sd, w_sig_rec);
+      h_pseudo_dist_sd->Fill(tau32_rec_sd, w_sig_rec);
     }
-    if(gen_info_sd)         h_pseudodata_truth_all_sd->Fill(gen_binNumber_sd, w_gen);
-    if(passed_gen_final_sd) h_pseudodata_truth_sd->Fill(tau32_gen_sd, w_gen);
+    if(gen_info_sd)         h_pseudo_truth_all_sd->Fill(gen_binNumber_sd, w_gen);
+    if(passed_gen_final_sd) h_pseudo_truth_sd->Fill(tau32_gen_sd, w_gen);
 
     // fill histograms for PUPPI Jets w/o SoftDrop
     Int_t rec_binNumber_puppi = 0, gen_binNumber_puppi = 0;
@@ -1858,11 +2051,11 @@ void fill_scale(TTree* tree, TString prefix){
 
 
     if(rec_info_puppi){
-      h_pseudodata_puppi->Fill(rec_binNumber_puppi, w_sig_rec);
-      h_pseudodata_dist_puppi->Fill(tau32_rec_puppi, w_sig_rec);
+      h_pseudo_puppi->Fill(rec_binNumber_puppi, w_sig_rec);
+      h_pseudo_dist_puppi->Fill(tau32_rec_puppi, w_sig_rec);
     }
-    if(gen_info_puppi)   h_pseudodata_truth_all_puppi->Fill(gen_binNumber_puppi, w_gen);
-    if(passed_gen_final) h_pseudodata_truth_puppi->Fill(tau32_gen, w_gen);
+    if(gen_info_puppi)   h_pseudo_truth_all_puppi->Fill(gen_binNumber_puppi, w_gen);
+    if(passed_gen_final) h_pseudo_truth_puppi->Fill(tau32_gen, w_gen);
 
     // fill histograms for PUPPI Jets w/ SoftDrop
     Int_t rec_binNumber_puppi_sd = 0, gen_binNumber_puppi_sd = 0;
@@ -1879,46 +2072,46 @@ void fill_scale(TTree* tree, TString prefix){
     if(passed_rec_final_puppi_sd || passed_rec_pt_topjet_sideband_puppi_sd || passed_rec_mass_sideband_puppi_sd) rec_info_puppi_sd = true;
 
     if(rec_info_puppi_sd){
-      h_pseudodata_puppi_sd->Fill(rec_binNumber_puppi_sd, w_sig_rec);
-      h_pseudodata_dist_puppi_sd->Fill(tau32_rec_puppi_sd, w_sig_rec);
+      h_pseudo_puppi_sd->Fill(rec_binNumber_puppi_sd, w_sig_rec);
+      h_pseudo_dist_puppi_sd->Fill(tau32_rec_puppi_sd, w_sig_rec);
     }
-    if(gen_info_puppi_sd)   h_pseudodata_truth_all_puppi_sd->Fill(gen_binNumber_puppi_sd, w_gen);
-    if(passed_gen_final_sd) h_pseudodata_truth_puppi_sd->Fill(tau32_gen_sd, w_gen);
+    if(gen_info_puppi_sd)   h_pseudo_truth_all_puppi_sd->Fill(gen_binNumber_puppi_sd, w_gen);
+    if(passed_gen_final_sd) h_pseudo_truth_puppi_sd->Fill(tau32_gen_sd, w_gen);
   }
 
-  h_pseudodata->Write();
-  h_pseudodata_sd->Write();
-  h_pseudodata_puppi->Write();
-  h_pseudodata_puppi_sd->Write();
-  h_pseudodata_dist->Write();
-  h_pseudodata_dist_sd->Write();
-  h_pseudodata_dist_puppi->Write();
-  h_pseudodata_dist_puppi_sd->Write();
-  h_pseudodata_truth->Write();
-  h_pseudodata_truth_sd->Write();
-  h_pseudodata_truth_puppi->Write();
-  h_pseudodata_truth_puppi_sd->Write();
-  h_pseudodata_truth_all->Write();
-  h_pseudodata_truth_all_sd->Write();
-  h_pseudodata_truth_all_puppi->Write();
-  h_pseudodata_truth_all_puppi_sd->Write();
+  h_pseudo->Write();
+  h_pseudo_sd->Write();
+  h_pseudo_puppi->Write();
+  h_pseudo_puppi_sd->Write();
+  h_pseudo_dist->Write();
+  h_pseudo_dist_sd->Write();
+  h_pseudo_dist_puppi->Write();
+  h_pseudo_dist_puppi_sd->Write();
+  h_pseudo_truth->Write();
+  h_pseudo_truth_sd->Write();
+  h_pseudo_truth_puppi->Write();
+  h_pseudo_truth_puppi_sd->Write();
+  h_pseudo_truth_all->Write();
+  h_pseudo_truth_all_sd->Write();
+  h_pseudo_truth_all_puppi->Write();
+  h_pseudo_truth_all_puppi_sd->Write();
 
-  delete h_pseudodata;
-  delete h_pseudodata_sd;
-  delete h_pseudodata_puppi;
-  delete h_pseudodata_puppi_sd;
-  delete h_pseudodata_dist;
-  delete h_pseudodata_dist_sd;
-  delete h_pseudodata_dist_puppi;
-  delete h_pseudodata_dist_puppi_sd;
-  delete h_pseudodata_truth;
-  delete h_pseudodata_truth_sd;
-  delete h_pseudodata_truth_puppi;
-  delete h_pseudodata_truth_puppi_sd;
-  delete h_pseudodata_truth_all;
-  delete h_pseudodata_truth_all_sd;
-  delete h_pseudodata_truth_all_puppi;
-  delete h_pseudodata_truth_all_puppi_sd;
+  delete h_pseudo;
+  delete h_pseudo_sd;
+  delete h_pseudo_puppi;
+  delete h_pseudo_puppi_sd;
+  delete h_pseudo_dist;
+  delete h_pseudo_dist_sd;
+  delete h_pseudo_dist_puppi;
+  delete h_pseudo_dist_puppi_sd;
+  delete h_pseudo_truth;
+  delete h_pseudo_truth_sd;
+  delete h_pseudo_truth_puppi;
+  delete h_pseudo_truth_puppi_sd;
+  delete h_pseudo_truth_all;
+  delete h_pseudo_truth_all_sd;
+  delete h_pseudo_truth_all_puppi;
+  delete h_pseudo_truth_all_puppi_sd;
   cout << "Finished: Filling " << prefix << "!" << '\n';
   return;
 }
@@ -1939,19 +2132,19 @@ void fill_scale(TTree* tree, TString prefix){
 void fill_background(TTree* tree, TString prefix){
   if(!tree) cout << "could not read 'mc signal' tree\n";
   else      cout << "Filling Matrix Histograms for " + prefix + "...\n";
-
-  // setup hists
-  TH1* h_background               = binning_rec->CreateHistogram("Background_"+prefix);
-  TH1* h_background_sd            = binning_rec->CreateHistogram("Background_sd_"+prefix);
-  TH1* h_background_puppi         = binning_rec->CreateHistogram("Background_puppi_"+prefix);
-  TH1* h_background_puppi_sd      = binning_rec->CreateHistogram("Background_puppi_sd_"+prefix);
-  TH1* h_background_dist          = measurement_rec->CreateHistogram("Background_dist_"+prefix,kTRUE,0,0, "mass[C]");
-  TH1* h_background_dist_sd       = measurement_rec->CreateHistogram("Background_dist_sd_"+prefix,kTRUE,0,0, "mass[C]");
-  TH1* h_background_dist_puppi    = measurement_rec->CreateHistogram("Background_dist_puppi_"+prefix,kTRUE,0,0, "mass[C]");
-  TH1* h_background_dist_puppi_sd = measurement_rec->CreateHistogram("Background_dist_puppi_sd_"+prefix,kTRUE,0,0, "mass[C]");
-
   if(!Muon_done) outputFile->cd();
   else outputFile2->cd();
+
+  // setup hists
+  TH1* h_background               = binning_rec->CreateHistogram("Background_"+prefix+"_rec");
+  TH1* h_background_sd            = binning_rec->CreateHistogram("Background_"+prefix+"_sd_rec");
+  TH1* h_background_puppi         = binning_rec->CreateHistogram("Background_"+prefix+"_puppi_rec");
+  TH1* h_background_puppi_sd      = binning_rec->CreateHistogram("Background_"+prefix+"_puppi_sd_rec");
+  TH1* h_background_dist          = measurement_rec->CreateHistogram("Background_"+prefix+"_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_background_dist_sd       = measurement_rec->CreateHistogram("Background_"+prefix+"_sd_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_background_dist_puppi    = measurement_rec->CreateHistogram("Background_"+prefix+"_puppi_rec_dist",kTRUE,0,0, "mass[C]");
+  TH1* h_background_dist_puppi_sd = measurement_rec->CreateHistogram("Background_"+prefix+"_puppi_sd_rec_dist",kTRUE,0,0, "mass[C]");
+
 
   tree->ResetBranchAddresses();
   tree->SetBranchAddress("h_tau32_rec", &tau32_rec);

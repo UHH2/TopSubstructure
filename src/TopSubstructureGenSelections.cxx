@@ -16,7 +16,7 @@ bool GenDPhiSelection::passes(const Event & event){
     std::vector<GenTopJet> gentopjets = event.get(h_gentopjet_cand);
 
     if(gentopjets.size() <= 0){
-      std::cout << "\n DPhiSelection::passes: There are no gentopjets in the event. returning 'false'\n" << std::endl;
+      // std::cout << "\n DPhiSelection::passes: There are no gentopjets in the event. returning 'false'\n" << std::endl;
       return false;
     }
 

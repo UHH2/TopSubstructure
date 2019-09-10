@@ -2,6 +2,7 @@
 #include "TVectorD.h"
 
 using namespace std;
+void text(TCanvas* c, bool over_canvas);
 
 Plotter::Plotter(TUnfoldBinning* binning_gen, TUnfoldBinning* binning_rec){
   measurement_rec = binning_rec->FindNode("measurement_rec");
@@ -35,9 +36,37 @@ Plotter::Plotter(TUnfoldBinning* binning_gen, TUnfoldBinning* binning_rec){
   dim_mass_gen = gen_mass_sideband->GetDistributionDimension();
 
   gStyle->SetOptStat(kFALSE);
-  gStyle->SetPadTickY(1);
-  gStyle->SetPadTickX(1);
   gStyle->SetLegendBorderSize(0);
+
+  // gROOT->SetStyle("Plain");
+  gStyle->SetOptStat(0);
+  gStyle -> SetPadTickX(1);
+  gStyle -> SetPadTickY(1);
+  // gStyle->SetEndErrorSize(5);
+
+  // gStyle->SetPadBorderMode(0);
+  // gStyle->SetPadColor(kWhite);
+  // gStyle->SetPadGridX(false);
+  // gStyle->SetPadGridY(false);
+  // gStyle->SetGridColor(0);
+  // gStyle->SetGridStyle(3);
+  // gStyle->SetGridWidth(1);
+  //
+  // gStyle->SetFrameBorderMode(0);
+  // gStyle->SetFrameBorderSize(1);
+  // gStyle->SetFrameFillColor(0);
+  // gStyle->SetFrameFillStyle(0);
+  // gStyle->SetFrameLineColor(1);
+  // gStyle->SetFrameLineStyle(1);
+  // gStyle->SetFrameLineWidth(1);
+  //
+  // gStyle->SetTitleFont(42, "XYZ");
+  // gStyle->SetLabelFont(42, "XYZ");
+  //
+  // gStyle->SetAxisColor(1, "XYZ");
+  // gStyle->SetStripDecimals(kTRUE);
+  // gStyle->SetTickLength(0.03, "XYZ");
+  // gStyle->SetNdivisions(510, "XYZ");
 }
 
 
@@ -49,17 +78,17 @@ void Plotter::Plot_projections(TH1D* projection_gen, TH1* h_input_gen, TH1D* pro
   gStyle->SetPadLeftMargin(0.12);
   gStyle->SetPadRightMargin(0.06);
 
-  TCanvas* c_projection_x = new TCanvas("Projection X", "Projection X", 1000, 800);
+  TCanvas* c_projection_x = new TCanvas("Projection X", "Projection X", 400, 400);
   c_projection_x->cd();
   c_projection_x->UseCurrentStyle();
   int max_bin = projection_gen_clone->GetMaximumBin();
   double max_value = projection_gen_clone->GetBinContent(max_bin)*1.1;
   double min_value = 0.;
   projection_gen_clone->GetYaxis()->SetRangeUser(min_value, max_value);
-  projection_gen_clone->GetYaxis()->SetTitleSize(0.06);
-  projection_gen_clone->GetYaxis()->SetTitleOffset(0.9);
-  projection_gen_clone->GetXaxis()->SetTitleSize(0.06);
-  projection_gen_clone->GetXaxis()->SetTitleOffset(0.7);
+  projection_gen_clone->GetYaxis()->SetTitleSize(0.05);
+  projection_gen_clone->GetYaxis()->SetTitleOffset(1.6);
+  projection_gen_clone->GetXaxis()->SetTitleSize(0.05);
+  projection_gen_clone->GetXaxis()->SetTitleOffset(0.9);
   projection_gen_clone->GetYaxis()->SetTitle("Events");
   projection_gen_clone->GetXaxis()->SetTitle("gen binning");
   projection_gen_clone->DrawCopy();
@@ -82,16 +111,16 @@ void Plotter::Plot_projections(TH1D* projection_gen, TH1* h_input_gen, TH1D* pro
   c_projection_x->SaveAs(directory+"projection_x.eps");
   delete c_projection_x;
 
-  TCanvas* c_projection_Y = new TCanvas("Projection Y", "Projection Y", 1000, 800);
+  TCanvas* c_projection_Y = new TCanvas("Projection Y", "Projection Y", 400, 400);
   c_projection_Y->cd();
   c_projection_Y->UseCurrentStyle();
   max_bin = projection_rec_clone->GetMaximumBin();
   max_value = projection_rec_clone->GetBinContent(max_bin)*1.1;
   projection_rec_clone->GetYaxis()->SetRangeUser(min_value, max_value);
-  projection_rec_clone->GetYaxis()->SetTitleSize(0.06);
-  projection_rec_clone->GetYaxis()->SetTitleOffset(0.9);
-  projection_rec_clone->GetXaxis()->SetTitleSize(0.06);
-  projection_rec_clone->GetXaxis()->SetTitleOffset(0.7);
+  projection_rec_clone->GetYaxis()->SetTitleSize(0.05);
+  projection_rec_clone->GetYaxis()->SetTitleOffset(1.6);
+  projection_rec_clone->GetXaxis()->SetTitleSize(0.05);
+  projection_rec_clone->GetXaxis()->SetTitleOffset(0.9);
   projection_rec_clone->GetYaxis()->SetTitle("Events");
   projection_rec_clone->GetXaxis()->SetTitle("rec binning");
   projection_rec_clone->DrawCopy();
@@ -121,7 +150,7 @@ void Plotter::Plot_output(TH1* h_unfolded, TH1* h_truth_, bool normalise, TStrin
   TH1* h_unfolded_clone = (TH1*) h_unfolded->Clone("h_unfolded_clone");
   TH1* h_truth_clone = (TH1*) h_truth_->Clone("h_truth_clone");
 
-  TCanvas* c_unfolding = new TCanvas(save , "Unfolding result", 1000, 800);
+  TCanvas* c_unfolding = new TCanvas(save , "Unfolding result", 400, 400);
   gStyle->SetPadLeftMargin(0.12);
   gStyle->SetPadRightMargin(0.06);
   c_unfolding->cd();
@@ -130,25 +159,26 @@ void Plotter::Plot_output(TH1* h_unfolded, TH1* h_truth_, bool normalise, TStrin
   double max_value = 0.;
   double min_value = 0.;
   if(!normalise){
-    if(h_unfolded_clone->GetBinContent(h_unfolded_clone->GetMaximumBin()) > h_truth_clone->GetBinContent(h_truth_clone->GetMaximumBin())){
-      max_bin = h_unfolded_clone->GetMaximumBin();
-      max_value = h_unfolded_clone->GetBinContent(max_bin)*1.1;
+    if(h_unfolded_clone->GetMaximum() > h_truth_clone->GetMaximum()){
+      max_value = h_unfolded_clone->GetMaximum();
+      max_value *= 1.1;
     }
     else{
-      max_bin = h_truth_clone->GetMaximumBin();
-      max_value = h_truth_clone->GetBinContent(max_bin)*1.1;
+      max_value = h_truth_clone->GetMaximum();
+      max_value *= 1.1;
     }
+
     h_unfolded_clone->GetYaxis()->SetRangeUser(min_value, max_value);
     h_unfolded_clone->SetMarkerStyle(20);
     h_unfolded_clone->SetLineColor(kBlack);
     h_unfolded_clone->SetMarkerColor(kBlack);
-    h_unfolded_clone->GetYaxis()->SetTitleSize(0.06);
-    h_unfolded_clone->GetYaxis()->SetTitleOffset(0.9);
+    h_unfolded_clone->GetYaxis()->SetTitleSize(0.05);
+    h_unfolded_clone->GetYaxis()->SetTitleOffset(1.6);
     h_unfolded_clone->GetYaxis()->SetTitle("Events");
     if(save.Contains("all")) h_unfolded_clone->GetXaxis()->SetTitle("generator binning");
     else h_unfolded_clone->GetXaxis()->SetTitle("#tau_{3/2}");
-    h_unfolded_clone->GetXaxis()->SetTitleSize(0.06);
-    h_unfolded_clone->GetXaxis()->SetTitleOffset(0.7);
+    h_unfolded_clone->GetXaxis()->SetTitleSize(0.05);
+    h_unfolded_clone->GetXaxis()->SetTitleOffset(0.9);
     h_unfolded_clone->SetTitle("");
     h_unfolded_clone->DrawCopy("E1");
     h_truth_clone->DrawCopy("same hist");
@@ -202,24 +232,21 @@ void Plotter::Plot_output(TH1* h_unfolded, TH1* h_truth_, bool normalise, TStrin
       double relative_error = unfolded_data_norm->GetBinError(i)/unfolded_data_norm->GetBinContent(i)*100;
       h_relative->SetBinContent(i, relative_error);
     }
-
-    if(unfolded_data_norm->GetBinContent(unfolded_data_norm->GetMaximumBin()) > h_truth_norm->GetBinContent(h_truth_norm->GetMaximumBin())){
-      max_bin = unfolded_data_norm->GetMaximumBin();
-      max_value = unfolded_data_norm->GetBinContent(max_bin)*1.1;
+    if(unfolded_data_norm->GetMaximum() > h_truth_norm->GetMaximum()){
+      max_value = unfolded_data_norm->GetMaximum()*1.1;
     }
     else{
-      max_bin = h_truth_norm->GetMaximumBin();
-      max_value = h_truth_norm->GetBinContent(max_bin)*1.1;
+      max_value = h_truth_norm->GetMaximum()*1.1;
     }
 
     unfolded_data_norm->GetYaxis()->SetRangeUser(min_value, max_value);
     unfolded_data_norm->SetMarkerStyle(20);
     unfolded_data_norm->SetLineColor(kBlack);
     unfolded_data_norm->SetMarkerColor(kBlack);
-    unfolded_data_norm->GetYaxis()->SetTitleSize(0.06);
-    unfolded_data_norm->GetYaxis()->SetTitleOffset(0.95);
-    unfolded_data_norm->GetXaxis()->SetTitleSize(0.06);
-    unfolded_data_norm->GetXaxis()->SetTitleOffset(0.7);
+    unfolded_data_norm->GetYaxis()->SetTitleSize(0.05);
+    unfolded_data_norm->GetYaxis()->SetTitleOffset(1.65);
+    unfolded_data_norm->GetXaxis()->SetTitleSize(0.05);
+    unfolded_data_norm->GetXaxis()->SetTitleOffset(0.9);
     unfolded_data_norm->GetYaxis()->SetTitle("Events/Bin");
     if(save.Contains("all")) unfolded_data_norm->GetXaxis()->SetTitle("generator binning");
     else unfolded_data_norm->GetXaxis()->SetTitle("#tau_{3/2}");
@@ -260,15 +287,24 @@ void Plotter::Plot_output(TH1* h_unfolded, TH1* h_truth_, bool normalise, TStrin
 
 void Plotter::Plot_result_with_uncertainty(TH1* h_unfolded, TH1* h_unfolded_uncertainty, TH1* h_data_truth, TH1* h_mc_truth, bool normalise, TString directory){
 
-  TCanvas* c = new TCanvas("Unfolding result with uncertainty", "Unfolding Result", 800, 600);
+  TCanvas* c = new TCanvas("Unfolding result with uncertainty", "Unfolding Result", 400, 400);
   c->cd();
-  gStyle->SetPadRightMargin(0.1);
-  gStyle->SetPadLeftMargin(0.15);
+  gStyle->SetPadLeftMargin(0.19);
+  gStyle->SetPadRightMargin(0.01);
   c->UseCurrentStyle();
   double min_value = 0;
-  double max_bin = h_data_truth->GetMaximumBin();
-  double max_value = h_data_truth->GetBinContent(max_bin)*1.1;
+  double max_bin = h_unfolded_uncertainty->GetMaximumBin();
+  double max_value = (h_unfolded_uncertainty->GetBinContent(max_bin)+h_unfolded_uncertainty->GetBinError(max_bin))*1.1;
 
+  if(h_unfolded_uncertainty->GetBinContent(h_unfolded_uncertainty->GetMaximumBin()) > h_data_truth->GetBinContent(h_data_truth->GetMaximumBin())){
+    max_bin = h_unfolded_uncertainty->GetMaximumBin();
+    max_value = (h_unfolded_uncertainty->GetBinContent(max_bin)+h_unfolded_uncertainty->GetBinError(max_bin))*1.15;
+  }
+  else{
+    max_bin = h_data_truth->GetMaximumBin();
+    max_value = (h_data_truth->GetBinContent(max_bin)+h_data_truth->GetBinError(max_bin))*1.15;
+  }
+  max_value = 400;
   if(normalise){
     TH1 *unfolded_norm = (TH1*) h_unfolded->Clone("unfolded_norm");
     TH1 *unfolded_uncer_norm = (TH1*) h_unfolded_uncertainty->Clone("unfolded_uncer_norm");
@@ -316,21 +352,23 @@ void Plotter::Plot_result_with_uncertainty(TH1* h_unfolded, TH1* h_unfolded_unce
 
     if(unfolded_norm->GetBinContent(unfolded_norm->GetMaximumBin()) > h_data_truth_norm->GetBinContent(h_data_truth_norm->GetMaximumBin())){
       max_bin = unfolded_norm->GetMaximumBin();
-      max_value = unfolded_norm->GetBinContent(max_bin)*1.15;
+      max_value = (unfolded_norm->GetBinContent(max_bin)+unfolded_norm->GetBinError(max_bin))*1.15;
     }
     else{
       max_bin = h_data_truth_norm->GetMaximumBin();
-      max_value = h_data_truth_norm->GetBinContent(max_bin)*1.15;
+      max_value = (h_data_truth_norm->GetBinContent(max_bin)+h_data_truth_norm->GetBinError(max_bin))*1.15;
     }
 
-    unfolded_norm->GetYaxis()->SetRangeUser(min_value, max_value);
+    unfolded_norm->GetYaxis()->SetRangeUser(0, 400);
     unfolded_norm->SetMarkerStyle(20);
     unfolded_norm->SetLineColor(kBlack);
     unfolded_norm->SetMarkerColor(kBlack);
-    unfolded_norm->GetYaxis()->SetTitleSize(0.06);
+    unfolded_norm->GetYaxis()->SetLabelSize(0.04);
+    unfolded_norm->GetYaxis()->SetTitleSize(0.07);
     unfolded_norm->GetYaxis()->SetTitleOffset(1.1);
-    unfolded_norm->GetXaxis()->SetTitleSize(0.06);
-    unfolded_norm->GetXaxis()->SetTitleOffset(0.7);
+    unfolded_norm->GetXaxis()->SetLabelSize(0.04);
+    unfolded_norm->GetXaxis()->SetTitleSize(0.07);
+    unfolded_norm->GetXaxis()->SetTitleOffset(0.9);
     unfolded_norm->GetYaxis()->SetTitle("Events/Bin");
     if(directory.Contains("all")) unfolded_norm->GetXaxis()->SetTitle("generator binning");
     else unfolded_norm->GetXaxis()->SetTitle("#tau_{3/2}");
@@ -342,13 +380,13 @@ void Plotter::Plot_result_with_uncertainty(TH1* h_unfolded, TH1* h_unfolded_unce
     unfolded_uncer_norm->Draw("same e1");
     c->Modified();
     c->Update();
-    if(!directory.Contains("data")){
-      h_data_truth_norm->SetLineColor(kRed);
-      h_data_truth_norm->SetMarkerColor(kRed);
-      h_data_truth_norm->Draw("same hist");
-      c->Modified();
-      c->Update();
-    }
+    // if(!directory.Contains("data")){
+    //   h_data_truth_norm->SetLineColor(kRed);
+    //   h_data_truth_norm->SetMarkerColor(kRed);
+    //   h_data_truth_norm->Draw("same hist");
+    //   c->Modified();
+    //   c->Update();
+    // }
     h_mc_truth_norm->SetLineColor(kBlue+2);
     h_mc_truth_norm->SetMarkerColor(kBlue+2);
     h_mc_truth_norm->Draw("same hist");
@@ -370,50 +408,85 @@ void Plotter::Plot_result_with_uncertainty(TH1* h_unfolded, TH1* h_unfolded_unce
     }
 
     TLegend *legend_unfolding_norm;
-    if(normalise) legend_unfolding_norm = new TLegend(0.15, 0.72, 0.45, 0.88, "");
+    if(normalise) legend_unfolding_norm = new TLegend(0.2, 0.7, 0.5, 0.85, "");
     else if(directory.Contains("all")) legend_unfolding_norm = new TLegend(0.40, 0.62, 0.80, 0.82, "");
     else legend_unfolding_norm = new TLegend(0.15, 0.22, 0.65, 0.42, "");
     legend_unfolding_norm->SetFillStyle(0);
     legend_unfolding_norm->AddEntry(unfolded_norm, "unfolded data","ple");
-    if(!directory.Contains("data")) legend_unfolding_norm->AddEntry(h_data_truth_norm, "Data truth", "l");
-    legend_unfolding_norm->AddEntry(h_mc_truth_norm, "MC truth", "l");
+    // if(!directory.Contains("data")) legend_unfolding_norm->AddEntry(h_data_truth_norm, "Data truth", "l");
+    legend_unfolding_norm->AddEntry(h_mc_truth_norm, "POWHEG Truth", "l");
     legend_unfolding_norm->Draw();
 
   }
   else{
 
     h_mc_truth->GetYaxis()->SetRangeUser(0, max_value);
-    h_mc_truth->GetYaxis()->SetTitle("Events");
+    if(directory.Contains("CS")) h_mc_truth->GetYaxis()->SetTitle("#frac{d#sigma}{d#tau_{32}} [fb]");
+    else h_mc_truth->GetYaxis()->SetTitle("Events");
     h_mc_truth->SetTitle("");
-    h_mc_truth->GetYaxis()->SetTitleSize(0.06);
-    h_mc_truth->GetYaxis()->SetTitleOffset(0.8);
-    h_mc_truth->GetXaxis()->SetTitleSize(0.06);
-    h_mc_truth->GetXaxis()->SetTitleOffset(0.7);
-    h_mc_truth->Draw("hist");
-    if(!directory.Contains("data")){
-      h_data_truth->SetLineColor(kRed);
-      h_data_truth->SetMarkerColor(kRed);
-      for(int i = 1; i <= h_data_truth->GetNbinsX(); i++) h_data_truth->SetBinError(i, 0.000001);
-      h_data_truth->Draw("same hist");
+    h_mc_truth->GetYaxis()->SetLabelSize(0.04);
+    h_mc_truth->GetYaxis()->SetTitleSize(0.05);
+    h_mc_truth->GetYaxis()->SetTitleOffset(1.6);
+    h_mc_truth->GetXaxis()->SetLabelSize(0.04);
+    h_mc_truth->GetXaxis()->SetTitleSize(0.05);
+    h_mc_truth->GetXaxis()->SetTitleOffset(0.9);
+    h_mc_truth->SetLineWidth(3);
+    if(directory.Contains("data")){
+      h_data_truth->SetLineColor(kBlue+2);
+      h_data_truth->SetMarkerColor(kBlue+2);
+      h_data_truth->SetLineStyle(7);
+      h_mc_truth->SetLineColor(kRed);
+      h_mc_truth->SetMarkerColor(kRed);
     }
+    else{
+      // h_mc_truth->SetLineStyle(7);
+      // h_data_truth->SetLineColor(kRed);
+      // h_data_truth->SetMarkerColor(kRed);
+        h_data_truth->SetLineColor(kBlue+2);
+        h_data_truth->SetMarkerColor(kBlue+2);
+        h_data_truth->SetLineStyle(7);
+        h_mc_truth->SetLineColor(kRed);
+        h_mc_truth->SetMarkerColor(kRed);
+    }
+    h_mc_truth->Draw("hist");
+    h_data_truth->SetLineWidth(3);
+    for(int i = 1; i <= h_data_truth->GetNbinsX(); i++) h_data_truth->SetBinError(i, 0.000001);
+    h_data_truth->Draw("same hist");
     h_unfolded_uncertainty->SetLineColor(kBlack);
     h_unfolded_uncertainty->SetMarkerColor(kBlack);
-    h_unfolded_uncertainty->SetMarkerStyle(10);
+    h_unfolded_uncertainty->SetMarkerStyle(9);
+    h_unfolded_uncertainty->SetMarkerSize(1);
     h_unfolded_uncertainty->Draw("same E1");
     h_unfolded->SetLineColor(kBlack);
     h_unfolded->SetMarkerColor(kBlack);
+    h_unfolded->SetMarkerStyle(9);
+    h_unfolded->SetMarkerSize(1);
     h_unfolded->Draw("same E1");
 
     TLegend *legend;
-    if(!directory.Contains("data")) legend = new TLegend(0.15, 0.32, 0.45, 0.52, "");
-    else legend = new TLegend(0.15, 0.18, 0.45, 0.38, "");
+    if(directory.Contains("CS")) legend = new TLegend(0.53,0.77,0.83,0.92);
+    else if(!directory.Contains("data")) legend = new TLegend(0.15, 0.32, 0.45, 0.52);
+    else legend = new TLegend(0.15, 0.18, 0.45, 0.38);
     legend->SetFillStyle(0);
-    if(!directory.Contains("data")) legend->AddEntry(h_data_truth, "DATA Truth", "l");
-    legend->AddEntry(h_mc_truth, "MC Truth", "l");
-    legend->AddEntry(h_unfolded_uncertainty, "Unfolded Data", "lpe");
+    legend->SetBorderSize(0);
+    legend->AddEntry(h_unfolded_uncertainty, "Unfolded MADGRAPH", "lpe");
+    if(directory.Contains("data")){
+      legend->AddEntry(h_mc_truth, "POWHEG", "l");
+      legend->AddEntry(h_data_truth, "MADGRAPH", "l");
+
+    }
+    else{
+      legend->AddEntry(h_mc_truth, "POWHEG (Mig. Ma.)", "l");
+      legend->AddEntry(h_data_truth, "MADGRAPH", "l");
+    }
+    legend->SetTextSize(0.04);
+
+
     legend->Draw();
   }
+  text(c,false);
   c->SaveAs(directory + "Result_w_uncertainty.eps");
+  delete c;
 }
 
 
@@ -422,6 +495,7 @@ void Plotter::Plot_uncertainty(std::vector<TH1*> error, std::vector<TString> err
   std::vector<TH1*> h_rel;
   for(unsigned int i = 0; i < error.size(); i++){
     TH1* h_temp = (TH1*) error[i]->Clone();
+    // cout << "error_name[i]: " << error_name[i] << '\n';
     for(int j = 1; j <= h_temp->GetNbinsX(); j++){
       double relative_error = 0.;
       relative_error = error[i]->GetBinContent(j);
@@ -431,29 +505,46 @@ void Plotter::Plot_uncertainty(std::vector<TH1*> error, std::vector<TString> err
   }
   int last_element = h_rel.size()-1;
 
-  TCanvas* c_relative = new TCanvas("relative_", "relative", 1000, 800);
+  TCanvas* c_relative = new TCanvas("relative_", "relative", 400, 400);
   c_relative->cd();
+  gStyle->SetPadLeftMargin(0.19);
+  gStyle->SetPadRightMargin(0.01);
+  gStyle->SetPadTopMargin(0.045);
+  // gStyle->SetLegendTextSize(0.1);
+  c_relative->UseCurrentStyle();
+  double max = 0;
+
+  for(unsigned int i = 0; i < h_rel.size(); i++){
+    if(h_rel.at(i)->GetMaximum() > max) max = h_rel.at(i)->GetMaximum();
+  }
+
   h_rel[last_element]->GetYaxis()->SetRangeUser(0., 100.);
-  h_rel[last_element]->GetYaxis()->SetTitleSize(0.05);
-  h_rel[last_element]->GetYaxis()->SetTitleOffset(0.95);
-  h_rel[last_element]->GetXaxis()->SetTitleSize(0.05);
-  h_rel[last_element]->GetXaxis()->SetTitleOffset(0.7);
   h_rel[last_element]->GetYaxis()->SetTitle("relative uncertainty [%]");
   h_rel[last_element]->GetXaxis()->SetTitle("#tau_{3/2}");
   h_rel[last_element]->SetLineColor(kGray);
   h_rel[last_element]->SetFillColor(kGray);
+  h_rel[last_element]->GetYaxis()->SetTitleSize(0.05);
+  h_rel[last_element]->GetYaxis()->SetLabelSize(0.04);
+  h_rel[last_element]->GetYaxis()->SetTitleOffset(1.6);
+  h_rel[last_element]->GetXaxis()->SetTitleSize(0.05);
+  h_rel[last_element]->GetXaxis()->SetLabelSize(0.04);
+  h_rel[last_element]->GetXaxis()->SetTitleOffset(0.9);
   h_rel[last_element]->Draw("hist");
 
 
 
   TLegend* legend_rel;
-  if(!error_name[last_element].Contains("model")) legend_rel = new TLegend(0.5, 0.52, 0.8, 0.82, "");
-  else legend_rel = new TLegend(0.55, 0.62, 0.85, 0.82, "");
-  legend_rel->SetFillStyle(0);
+  // cout << "last_element: " << last_element << '\n';
+  // cout << "error_name size: " << error_name.size() << '\n';
+  // cout << "error_name[last_element]: " << error_name[last_element] << '\n';
+
+  if(!error_name[last_element].Contains("model")) legend_rel = new TLegend(0.42,0.6,0.88,0.88); //  0.2, 0.57, 0.8, 0.9
+  else legend_rel = new TLegend(0.25, 0.57, 0.55, 0.9);
   if(!error_name[last_element].Contains("model")) legend_rel->SetNColumns(2);
   legend_rel->AddEntry(h_rel[last_element], error_name[last_element], "f");
 
   for(int i = 0; i < last_element; i++){
+    h_rel[i]->SetLineWidth(3);
     if(error_name[i]=="stat"){
       h_rel[i]->SetLineColor(kBlack);
       h_rel[i]->SetMarkerColor(kBlack);
@@ -521,16 +612,34 @@ void Plotter::Plot_uncertainty(std::vector<TH1*> error, std::vector<TString> err
       error_name[i] = "electron trigger";
     }
     else if(error_name[i].Contains("ELEReco")){
-      h_rel[i]->SetLineColor(kCyan);
+      h_rel[i]->SetLineColor(kCyan+2);
       h_rel[i]->SetLineStyle(5);
-      h_rel[i]->SetMarkerColor(kCyan);
+      h_rel[i]->SetMarkerColor(kCyan+2);
       error_name[i] = "electron reconstruction";
+    }
+    else if(error_name[i].Contains("isr")){
+      h_rel[i]->SetLineColor(kRed);
+      h_rel[i]->SetMarkerColor(kRed);
+      error_name[i] = "ISR";
+    }
+    else if(error_name[i].Contains("fsr")){
+      h_rel[i]->SetLineColor(kMagenta+2);
+      h_rel[i]->SetMarkerColor(kMagenta+2);
+      error_name[i] = "FSR";
+    }
+    else if(error_name[i].Contains("hdamp")){
+      h_rel[i]->SetLineColor(kCyan+2);
+      h_rel[i]->SetMarkerColor(kCyan+2);
+      error_name[i] = "h_{damp}";
     }
     h_rel[i]->Draw("same e1");
     legend_rel->AddEntry(h_rel[i], error_name[i], "l");
   }
+  legend_rel->SetBorderSize(0);
+  legend_rel->SetFillStyle(0);
+  legend_rel->SetTextSize(0.03);
   legend_rel->Draw();
-
+  // text(c_relative);
   c_relative->SaveAs(directory + "rel_uncertainty.eps");
   delete c_relative;
 }
@@ -549,15 +658,15 @@ void Plotter::Plot_correlation_matrix(TH2* h_corr_matrix, TString save){
   if(save.Contains("LCurve")) name = " (LCurve)";
   else if(save.Contains("TauScan")) name = " (TauScan)";
   else if(save.Contains("CustomTau")) name = " (CustomTau)";
-  TCanvas* c_corr_matrix = new TCanvas("Correlation Matrix" + name, "Correlation Matrix", 1000, 800);
+  TCanvas* c_corr_matrix = new TCanvas("Correlation Matrix" + name, "Correlation Matrix", 400, 400);
   c_corr_matrix->cd();
   h_corr_matrix_clone->SetTitle("");
   if(save.Contains("all"))h_corr_matrix_clone->GetXaxis()->SetTitle("generator binning");
   else h_corr_matrix_clone->GetXaxis()->SetTitle("#tau_{3/2}");
-  h_corr_matrix_clone->GetYaxis()->SetTitleSize(0.06);
+  h_corr_matrix_clone->GetYaxis()->SetTitleSize(0.07);
   h_corr_matrix_clone->GetYaxis()->SetTitleOffset(0.7);
-  h_corr_matrix_clone->GetXaxis()->SetTitleSize(0.06);
-  h_corr_matrix_clone->GetXaxis()->SetTitleOffset(0.7);
+  h_corr_matrix_clone->GetXaxis()->SetTitleSize(0.07);
+  h_corr_matrix_clone->GetXaxis()->SetTitleOffset(0.9);
   if(save.Contains("all"))h_corr_matrix_clone->GetYaxis()->SetTitle("generator binning");
   else h_corr_matrix_clone->GetYaxis()->SetTitle("#tau_{3/2}");
   h_corr_matrix_clone->Draw("colz");
@@ -592,7 +701,7 @@ void Plotter::Plot_LogTau(TSpline* logTau_, double tau, double coordinate, TStri
   if(directory.Contains("X")) y_axis_title = "L_{X}";
   else if(directory.Contains("Y")) y_axis_title = "L_{Y}";
 
-  TCanvas* c_lcurve = new TCanvas("LogTau", "LCurve of unfolding", 1000, 800);
+  TCanvas* c_lcurve = new TCanvas("LogTau", "LCurve of unfolding", 400, 400);
   gStyle->SetPadLeftMargin(0.12);
   gStyle->SetPadRightMargin(0.06);
   c_lcurve->cd();
@@ -602,10 +711,10 @@ void Plotter::Plot_LogTau(TSpline* logTau_, double tau, double coordinate, TStri
   std::vector<double> Ypoint = {coordinate};
   TGraph * point = new TGraph(1, &Xpoint[0], &Ypoint[0]);
   point->SetTitle("");
-  point->GetYaxis()->SetTitleSize(0.06);
+  point->GetYaxis()->SetTitleSize(0.07);
   point->GetYaxis()->SetTitleOffset(0.7);
-  point->GetXaxis()->SetTitleSize(0.06);
-  point->GetXaxis()->SetTitleOffset(0.7);
+  point->GetXaxis()->SetTitleSize(0.07);
+  point->GetXaxis()->SetTitleOffset(0.9);
   point->GetXaxis()->SetTitle("log #tau");
   point->GetYaxis()->SetTitle(y_axis_title);
   point->GetXaxis()->SetNdivisions(510);
@@ -637,7 +746,7 @@ void Plotter::Plot_LogTau(TSpline* logTau_, double tau, double coordinate, TStri
 
 void Plotter::Plot_LCurve(TGraph* lcurve, std::vector<double> coordinates, std::vector<double> coordinates_2, TString directory){
 
-  TCanvas* c_lcurve = new TCanvas("LCurve", "LCurve of Unfolded data (TauScan)", 1000, 800);
+  TCanvas* c_lcurve = new TCanvas("LCurve", "LCurve of Unfolded data (TauScan)", 400, 400);
   gStyle->SetPadLeftMargin(0.12);
   gStyle->SetPadRightMargin(0.06);
   c_lcurve->cd();
@@ -646,11 +755,11 @@ void Plotter::Plot_LCurve(TGraph* lcurve, std::vector<double> coordinates, std::
   LCurve_tau->SetMarkerColor(kRed);
   TMarker* TauScan_tau = new TMarker(coordinates_2.at(0), coordinates_2.at(1), 20);
   TauScan_tau->SetMarkerColor(kBlue);
-  lcurve->GetYaxis()->SetTitleSize(0.06);
+  lcurve->GetYaxis()->SetTitleSize(0.07);
   lcurve->GetYaxis()->SetTitleOffset(0.6);
   lcurve->GetYaxis()->SetTitle("L_{Y}");
-  lcurve->GetXaxis()->SetTitleSize(0.06);
-  lcurve->GetXaxis()->SetTitleOffset(0.7);
+  lcurve->GetXaxis()->SetTitleSize(0.07);
+  lcurve->GetXaxis()->SetTitleOffset(0.9);
   lcurve->GetXaxis()->SetTitle("L_{X}");
   lcurve->SetTitle("");
   lcurve->DrawClone();
@@ -673,50 +782,60 @@ void Plotter::Plot_LCurve(TGraph* lcurve, std::vector<double> coordinates, std::
 
 void Plotter::Plot_RhoLogTau(TSpline* rhologTau, double tau, TString directory){
 
-  TCanvas* c_rhologtau = new TCanvas("RhoLogTau ", "LCurve2 of Unfolded data (TauScan)", 1000, 800);
-  gStyle->SetPadLeftMargin(0.12);
-  gStyle->SetPadRightMargin(0.06);
-  c_rhologtau->cd();
-  c_rhologtau->UseCurrentStyle();
+  TCanvas* c = new TCanvas("RhoLogTau ", "LCurve2 of Unfolded data (TauScan)", 400, 400);
+  gStyle->SetPadLeftMargin(0.19);
+  gStyle->SetPadRightMargin(0.01);
+  c->cd();
+  c->UseCurrentStyle();
   std::vector<double> Xpoint_rhologtau = {TMath::Log10(tau)};
   std::vector<double> Ypoint_rhologtau = {rhologTau->Eval(TMath::Log10(tau))};
   TGraph * point_rhologtau = new TGraph(1, &Xpoint_rhologtau[0], &Ypoint_rhologtau[0]);
   point_rhologtau->SetTitle("");
-  point_rhologtau->GetXaxis()->SetTitleSize(0.06);
-  point_rhologtau->GetXaxis()->SetTitleOffset(0.7);
-  point_rhologtau->GetYaxis()->SetTitleSize(0.06);
-  point_rhologtau->GetYaxis()->SetTitleOffset(0.7);
+  point_rhologtau->GetYaxis()->SetLabelSize(0.04);
+  point_rhologtau->GetYaxis()->SetTitleSize(0.05);
+  point_rhologtau->GetYaxis()->SetTitleOffset(1.6);
+  point_rhologtau->GetXaxis()->SetLabelSize(0.04);
+  point_rhologtau->GetXaxis()->SetTitleSize(0.05);
+  point_rhologtau->GetXaxis()->SetTitleOffset(0.9);
+
+
+
   point_rhologtau->GetXaxis()->SetTitle("log #tau");
   point_rhologtau->GetYaxis()->SetTitle("#rho(log #tau)");
-  point_rhologtau->GetXaxis()->SetNdivisions(510);
-  point_rhologtau->GetYaxis()->SetNdivisions(810);
+  // point_rhologtau->GetXaxis()->SetNdivisions(510);
+  // point_rhologtau->GetYaxis()->SetNdivisions(810);
+
   point_rhologtau->SetMarkerStyle(20);
   point_rhologtau->SetMarkerSize(1.5);
   point_rhologtau->SetLineColor(1);
-  point_rhologtau->Draw("AP");
+  // point_rhologtau->Draw("AP");
   point_rhologtau->GetXaxis()->SetLimits(-6.0, 0.0);
+  point_rhologtau->GetYaxis()->SetRangeUser(0.6, 1.2);
   point_rhologtau->DrawClone("AP");
-  c_rhologtau->Update();
+  c->Update();
   rhologTau->SetLineColor(kRed);
-  rhologTau->DrawClone("same");
+  rhologTau->SetLineWidth(3);
+  rhologTau->DrawClone("samel");
   point_rhologtau->DrawClone("psame");
-  TLegend *legend_rhologTau = new TLegend(0.15, 0.20, 0.55, 0.35, "");
+  TLegend *legend_rhologTau = new TLegend(0.25, 0.7, 0.65, 0.85, "");
   legend_rhologTau->SetFillStyle(0);
-  legend_rhologTau->AddEntry(rhologTau, "unfolded data", "l");
+  legend_rhologTau->SetBorderSize(0);
+  legend_rhologTau->AddEntry(point_rhologtau,"final #tau value","pl");
+  legend_rhologTau->AddEntry(rhologTau,"#tau scan","l");
   legend_rhologTau->Draw();
-  c_rhologtau->SaveAs(directory+"RhoLogTau.eps");
-  delete c_rhologtau;
+  c->SaveAs(directory+"RhoLogTau.eps");
+  delete c;
 }
 
 
 
 void Plotter::Plot_ResponseMatrix(TH2* resp_matrix_, TString directory){
 
-  TCanvas* c_response = new TCanvas("Response Matrix", "", 1000, 800);
+  TCanvas* c_response = new TCanvas("Response Matrix", "", 400, 400);
   gStyle->SetPadLeftMargin(0.13);
   gStyle->SetPadRightMargin(0.11);
   gStyle->SetPadTopMargin(0.05);
-  gStyle->SetPadBottomMargin(0.11);
+  gStyle->SetPadBottomMargin(0.12);
   c_response->cd();
   c_response->UseCurrentStyle();
   if(directory.Contains("Migration"))c_response->SetLogz();
@@ -724,10 +843,10 @@ void Plotter::Plot_ResponseMatrix(TH2* resp_matrix_, TString directory){
   resp_matrix_->GetYaxis()->SetLabelSize(0);
   resp_matrix_->GetXaxis()->SetLabelSize(0);
   resp_matrix_->GetYaxis()->SetTitle("detector binning");
-  resp_matrix_->GetYaxis()->SetTitleSize(0.045);
+  resp_matrix_->GetYaxis()->SetTitleSize(0.05);
   resp_matrix_->GetYaxis()->SetTitleOffset(1.3);
   resp_matrix_->GetXaxis()->SetTitle("generator binning");
-  resp_matrix_->GetXaxis()->SetTitleSize(0.045);
+  resp_matrix_->GetXaxis()->SetTitleSize(0.05);
   resp_matrix_->GetXaxis()->SetTitleOffset(1.1);
   if(!directory.Contains("Migration")) resp_matrix_->GetZaxis()->SetRangeUser(0, 0.3);
   resp_matrix_->DrawCopy("colz");
@@ -741,10 +860,10 @@ void Plotter::Plot_ResponseMatrix(TH2* resp_matrix_, TString directory){
 
     TLatex text1;
     text1.SetTextFont(43);
-    text1.SetTextSize(18);
+    text1.SetTextSize(11);
     text1.SetTextAlign(12);
-    double position1 = n_measurement_gen+n_gen_pt_topjet/2-2;
-    text1.DrawLatex(position1, -2.5, "300 GeV #leq p_{T}^{} < 400 GeV");
+    double position1 = n_measurement_gen+n_gen_pt_topjet/2-1.5;
+    text1.DrawLatex(position1, -2.5, "p_{T}^{} < 400 GeV");
 
     if(dim_measurement_gen > 1){
       double sub_region_gen = (n_measurement_gen/dim_measurement_gen);
@@ -755,17 +874,17 @@ void Plotter::Plot_ResponseMatrix(TH2* resp_matrix_, TString directory){
 
       TLatex text;
       text.SetTextFont(43);
-      text.SetTextSize(20);
+      text.SetTextSize(11);
       text.SetTextAlign(12);
       double position = sub_region_gen/2-1.5;
-      text.DrawLatex(position, -2.5, "m_{TopJet}^{} < 155 GeV");
+      text.DrawLatex(position, -2.5, "m_{jet}^{} < 155 GeV");
 
       TLatex text2;
       text2.SetTextFont(43);
-      text2.SetTextSize(20);
+      text2.SetTextSize(11);
       text2.SetTextAlign(12);
       double position2 = n_measurement_gen-sub_region_gen+1;
-      text2.DrawLatex(position2, -2.5, "155 GeV < m_{TopJet}");
+      text2.DrawLatex(position2, -2.5, "155 GeV < m_{jet}");
     }
 
     TLine *line2 = new TLine(0.5, n_measurement_rec+0.5, xmax+0.5, n_measurement_rec+0.5);
@@ -774,11 +893,11 @@ void Plotter::Plot_ResponseMatrix(TH2* resp_matrix_, TString directory){
 
     TLatex text11;
     text11.SetTextFont(43);
-    text11.SetTextSize(18);
+    text11.SetTextSize(11);
     text11.SetTextAngle(105);
     text11.SetTextAlign(12);
-    double position11 = n_measurement_rec+n_rec_pt_topjet/2-2;
-    text11.DrawLatex(0.1, position11, "300 GeV #leq p_{T}^{} < 400 GeV");
+    double position11 = n_measurement_rec+n_rec_pt_topjet/2-2.5;
+    text11.DrawLatex(0.1, position11, "p_{T}^{} < 400 GeV");
 
     if(dim_measurement_rec > 1){
 
@@ -790,19 +909,19 @@ void Plotter::Plot_ResponseMatrix(TH2* resp_matrix_, TString directory){
 
       TLatex text;
       text.SetTextFont(43);
-      text.SetTextSize(20);
+      text.SetTextSize(11);
       text.SetTextAngle(90);
       text.SetTextAlign(12);
       double position = sub_region_rec/2-sub_region_rec/2+2;
-      text.DrawLatex(0.1, position, "m_{TopJet}^{} < 152 GeV");
+      text.DrawLatex(0.1, position, "m_{jet}^{} < 152 GeV");
 
       TLatex text2;
       text2.SetTextFont(43);
-      text2.SetTextSize(20);
+      text2.SetTextSize(11);
       text2.SetTextAngle(90);
       text2.SetTextAlign(12);
       double position2 = n_measurement_rec-sub_region_rec+2;
-      text2.DrawLatex(0.1, position2, "152 GeV < m_{TopJet}");
+      text2.DrawLatex(0.1, position2, "152 GeV < m_{jet}");
     }
 
     if(xmax/3 >= 2){
@@ -815,20 +934,21 @@ void Plotter::Plot_ResponseMatrix(TH2* resp_matrix_, TString directory){
 
       TLatex text4;
       text4.SetTextFont(43);
-      text4.SetTextSize(18);
+      text4.SetTextSize(11);
       text4.SetTextAlign(12);
-      double position4 = n_measurement_gen+n_gen_pt_topjet+1;
-      text4.DrawLatex(position4, -2.5, "M_{first TopJet}^{} < M_{second TopJet + #mu}^{}");
+      double position4 = n_measurement_gen+n_gen_pt_topjet+1+0.5;
+      text4.DrawLatex(position4, -2.5, "M_{jet1}^{} < M_{jet2+lep}^{}");
 
       TLatex text44;
       text44.SetTextFont(43);
-      text44.SetTextSize(18);
+      text44.SetTextSize(11);
       text44.SetTextAngle(90);
       text44.SetTextAlign(12);
-      double position44 = n_measurement_rec+n_rec_pt_topjet+1;
-      text44.DrawLatex(0.1, position44, "M_{first TopJet}^{} < M_{second TopJet + #mu}^{}");
+      double position44 = n_measurement_rec+n_rec_pt_topjet+2.5;
+      text44.DrawLatex(0.1, position44, "M_{jet1}^{} < M_{jet2+lep}^{}");
     }
   }
+  text(c_response, true);
   c_response->SaveAs(directory+".eps");
   delete c_response;
 }
@@ -840,15 +960,15 @@ void Plotter::Plot_ResponseMatrix(TH2* resp_matrix_, TString directory){
 void Plotter::Plot_purity(TH1* purity_same, TH1* purity_all, TString directory){
   TH1* purity_ratio = (TH1*) purity_same->Clone("purity_ratio");
 
-  TCanvas* c_purity = new TCanvas("Purity", "Purity", 1000, 800);
+  TCanvas* c_purity = new TCanvas("Purity", "Purity", 400, 400);
   gStyle->SetPadLeftMargin(0.12);
   gStyle->SetPadRightMargin(0.06);
   c_purity->cd();
   purity_ratio->SetTitle("");
-  purity_ratio->GetYaxis()->SetTitleSize(0.06);
+  purity_ratio->GetYaxis()->SetTitleSize(0.07);
   purity_ratio->GetYaxis()->SetTitleOffset(0.7);
-  purity_ratio->GetXaxis()->SetTitleSize(0.06);
-  purity_ratio->GetXaxis()->SetTitleOffset(0.7);
+  purity_ratio->GetXaxis()->SetTitleSize(0.07);
+  purity_ratio->GetXaxis()->SetTitleOffset(0.9);
   purity_ratio->GetYaxis()->SetTitle("Purity [%]");
   purity_ratio->Scale(100);
   purity_ratio->Divide(purity_all);
@@ -865,7 +985,7 @@ void Plotter::Plot_purity(TH1* purity_same, TH1* purity_all, TString directory){
 void Plotter::Plot_input(TH1* data, TH1* mc, TString directory){
   gStyle->SetPadLeftMargin(0.12);
   gStyle->SetPadRightMargin(0.06);
-  TCanvas* c_input = new TCanvas("Input"  , "Input", 1000, 800);
+  TCanvas* c_input = new TCanvas("Input"  , "Input", 400, 400);
   c_input->cd();
   c_input->UseCurrentStyle();
   // TLine *l_input, *l_input_2;
@@ -884,10 +1004,10 @@ void Plotter::Plot_input(TH1* data, TH1* mc, TString directory){
   mc->SetTitle("");
   mc->GetYaxis()->SetTitle("Events");
   mc->GetXaxis()->SetTitle("detector binning");
-  mc->GetYaxis()->SetTitleSize(0.06);
+  mc->GetYaxis()->SetTitleSize(0.07);
   mc->GetYaxis()->SetTitleOffset(0.7);
-  mc->GetXaxis()->SetTitleSize(0.06);
-  mc->GetXaxis()->SetTitleOffset(0.7);
+  mc->GetXaxis()->SetTitleSize(0.07);
+  mc->GetXaxis()->SetTitleOffset(0.9);
   mc->Draw("hist");
   data->SetLineColor(kBlack);
   data->SetMarkerColor(kBlack);
@@ -912,7 +1032,7 @@ void Plotter::Plot_input(TH1* data, TH1* mc, TString directory){
 
 
 void Plotter::Plot_covariance(TH2* matrix, TString directory){
-  TCanvas* c_cov = new TCanvas("Covariance", "Covariance", 1000, 1000);
+  TCanvas* c_cov = new TCanvas("Covariance", "Covariance", 400, 400);
   c_cov->cd();
   c_cov->SetLogz();
   gStyle->SetPadLeftMargin(0.1);
@@ -922,17 +1042,19 @@ void Plotter::Plot_covariance(TH2* matrix, TString directory){
 
   if(directory.Contains("all")) matrix->GetYaxis()->SetTitle("generator binning");
   else matrix->GetYaxis()->SetTitle("#tau_{3/2}");
-  matrix->GetYaxis()->SetTitleSize(0.06);
+  matrix->GetYaxis()->SetTitleSize(0.07);
   matrix->GetYaxis()->SetTitleOffset(0.7);
 
   if(directory.Contains("all")) matrix->GetXaxis()->SetTitle("generator binning");
   else matrix->GetYaxis()->SetTitle("#tau_{3/2}");
-  matrix->GetXaxis()->SetTitleSize(0.06);
-  matrix->GetXaxis()->SetTitleOffset(0.7);
+  matrix->GetXaxis()->SetTitleSize(0.07);
+  matrix->GetXaxis()->SetTitleOffset(0.9);
 
   matrix->SetTitle("");
   if(directory.Contains("all")) matrix->GetYaxis()->SetLabelSize(0);
   if(directory.Contains("all")) matrix->GetXaxis()->SetLabelSize(0);
+  if(directory.Contains("Cov")) matrix->GetZaxis()->SetRangeUser(0, 30000);
+  else matrix->GetZaxis()->SetRangeUser(-1, 1);
   matrix->DrawCopy("colz");
 
   if(directory.Contains("all")) {
@@ -962,14 +1084,14 @@ void Plotter::Plot_covariance(TH2* matrix, TString directory){
         text.SetTextSize(20);
         text.SetTextAlign(12);
         double position = sub_region_gen/2-1.5;
-        text.DrawLatex(position, -0.25, "m_{TopJet}^{} < 155 GeV");
+        text.DrawLatex(position, -0.25, "m_{jet}^{} < 155 GeV");
 
         TLatex text2;
         text2.SetTextFont(43);
         text2.SetTextSize(20);
         text2.SetTextAlign(12);
         double position2 = n_measurement_gen-sub_region_gen+1;
-        text2.DrawLatex(position2, -0.25, "155 GeV < m_{TopJet}");
+        text2.DrawLatex(position2, -0.25, "155 GeV < m_{jet}");
       }
 
       TLine *line2 = new TLine(0.5, n_measurement_gen+0.5, xmax+0.5, n_measurement_gen+0.5);
@@ -998,7 +1120,7 @@ void Plotter::Plot_covariance(TH2* matrix, TString directory){
         text.SetTextAngle(90);
         text.SetTextAlign(12);
         double position = sub_region_gen/2-sub_region_gen/2+0.75;
-        text.DrawLatex(0.1, position, "m_{TopJet}^{} < 155 GeV");
+        text.DrawLatex(0.1, position, "m_{jet}^{} < 155 GeV");
 
         TLatex text2;
         text2.SetTextFont(43);
@@ -1006,7 +1128,7 @@ void Plotter::Plot_covariance(TH2* matrix, TString directory){
         text2.SetTextAngle(90);
         text2.SetTextAlign(12);
         double position2 = n_measurement_gen-sub_region_gen+0.75;
-        text2.DrawLatex(0.1, position2, "155 GeV < m_{TopJet}");
+        text2.DrawLatex(0.1, position2, "155 GeV < m_{jet}");
       }
 
       if(xmax/3 >= 2){
@@ -1022,7 +1144,7 @@ void Plotter::Plot_covariance(TH2* matrix, TString directory){
         text4.SetTextSize(18);
         text4.SetTextAlign(12);
         double position4 = n_measurement_gen+n_gen_pt_topjet+1;
-        text4.DrawLatex(position4, -0.25, "M_{first TopJet}^{} < M_{second TopJet + #mu}^{}");
+        text4.DrawLatex(position4, -0.25, "M_{jet1}^{} < M_{jet2 + #mu}^{}");
 
         TLatex text44;
         text44.SetTextFont(43);
@@ -1030,7 +1152,7 @@ void Plotter::Plot_covariance(TH2* matrix, TString directory){
         text44.SetTextAngle(90);
         text44.SetTextAlign(12);
         double position44 = n_measurement_gen+n_gen_pt_topjet+0.75;
-        text44.DrawLatex(0.1, position44, "M_{first TopJet}^{} < M_{second TopJet + #mu}^{}");
+        text44.DrawLatex(0.1, position44, "M_{jet1}^{} < M_{jet2 + #mu}^{}");
       }
     }
   }
@@ -1052,7 +1174,7 @@ void Plotter::Plot_delta(std::vector<std::vector<TH1*>> delta, std::vector<std::
       }
       TLine *line = new TLine(0,0,1,0);
       line->SetLineColor(kBlack);
-      TCanvas *c = new TCanvas("", "", 800, 600);
+      TCanvas *c = new TCanvas("", "", 400, 400);
       c->cd();
       gStyle->SetPadTopMargin(0.1);
       c->UseCurrentStyle();
@@ -1073,10 +1195,10 @@ void Plotter::Plot_delta(std::vector<std::vector<TH1*>> delta, std::vector<std::
       dummy->SetTitle(delta_name[i][j]);
       dummy->GetYaxis()->SetTitle("#Delta Events");
       dummy->GetXaxis()->SetTitle("#tau_{3/2}");
-      dummy->GetYaxis()->SetTitleSize(0.06);
+      dummy->GetYaxis()->SetTitleSize(0.07);
       dummy->GetYaxis()->SetTitleOffset(0.7);
-      dummy->GetXaxis()->SetTitleSize(0.06);
-      dummy->GetXaxis()->SetTitleOffset(0.7);
+      dummy->GetXaxis()->SetTitleSize(0.07);
+      dummy->GetXaxis()->SetTitleOffset(0.9);
       dummy->Draw("p E1");
       line->Draw("same");
 
@@ -1091,60 +1213,66 @@ void Plotter::Plot_delta(std::vector<std::vector<TH1*>> delta, std::vector<std::
   }
 }
 
-void Plotter::Plot_all_pseudo(TH1* pseudo1, TH1* pseudo1_truth, TH1* pseudo2, TH1* pseudo2_truth, TH1* pseudo3, TH1* pseudo3_truth, TString directory){
-  for(int i = 1; i <= pseudo3_truth->GetNbinsX(); i++){
-    double content_1 = pseudo1->GetBinContent(i);
-    double error_bin_1 = pseudo1->GetBinError(i);
-    double bin_width_1 = pseudo1->GetBinWidth(i);
-    double bin_width_2 = pseudo2->GetBinWidth(i);
-    double new_content_1 = content_1/bin_width_1;
-    double new_error_1 = error_bin_1/bin_width_1;
+void Plotter::Plot_all_pseudo(TH1* pseudo1, TH1* pseudo1_truth_1, TH1* pseudo2, TH1* pseudo2_truth_1, TH1* pseudo3, TH1* pseudo3_truth_1, bool cs, TString directory){
 
-    double content_2 = pseudo2->GetBinContent(i);
-    double error_bin_2 = pseudo2->GetBinError(i);
+  TH1* pseudo1_truth = (TH1*) pseudo1_truth_1->Clone("pseudo1_truth");
+  TH1* pseudo2_truth = (TH1*) pseudo2_truth_1->Clone("pseudo2_truth");
+  TH1* pseudo3_truth = (TH1*) pseudo3_truth_1->Clone("pseudo3_truth");
 
-    double new_content_2 = content_2/bin_width_2;
-    double new_error_2 = error_bin_2/bin_width_2;
+  if(!cs){
+    for(int i = 1; i <= pseudo3_truth->GetNbinsX(); i++){
+      double content_1 = pseudo1->GetBinContent(i);
+      double error_bin_1 = pseudo1->GetBinError(i);
+      double bin_width_1 = pseudo1->GetBinWidth(i);
+      double bin_width_2 = pseudo2->GetBinWidth(i);
+      double new_content_1 = content_1/bin_width_1;
+      double new_error_1 = error_bin_1/bin_width_1;
+
+      double content_2 = pseudo2->GetBinContent(i);
+      double error_bin_2 = pseudo2->GetBinError(i);
+
+      double new_content_2 = content_2/bin_width_2;
+      double new_error_2 = error_bin_2/bin_width_2;
 
 
-    double content_3 = pseudo3->GetBinContent(i);
-    double error_bin_3 = pseudo3->GetBinError(i);
-    double bin_width_3 = pseudo3->GetBinWidth(i);
-    double new_content_3 = content_3/bin_width_3;
-    double new_error_3 = error_bin_3/bin_width_3;
+      double content_3 = pseudo3->GetBinContent(i);
+      double error_bin_3 = pseudo3->GetBinError(i);
+      double bin_width_3 = pseudo3->GetBinWidth(i);
+      double new_content_3 = content_3/bin_width_3;
+      double new_error_3 = error_bin_3/bin_width_3;
 
-    double content_truth_1 = pseudo1_truth->GetBinContent(i);
-    double error_truth_1 = pseudo1_truth->GetBinError(i);
-    double bin_width_truth_1 = pseudo1_truth->GetBinWidth(i);
-    double new_content_truth_1 = content_truth_1/bin_width_truth_1;
-    double new_error_truth_1 = error_truth_1/bin_width_truth_1;
+      double content_truth_1 = pseudo1_truth->GetBinContent(i);
+      double error_truth_1 = pseudo1_truth->GetBinError(i);
+      double bin_width_truth_1 = pseudo1_truth->GetBinWidth(i);
+      double new_content_truth_1 = content_truth_1/bin_width_truth_1;
+      double new_error_truth_1 = error_truth_1/bin_width_truth_1;
 
-    double content_truth_2 = pseudo2_truth->GetBinContent(i);
-    double error_truth_2 = pseudo2_truth->GetBinError(i);
-    double bin_width_truth_2 = pseudo2_truth->GetBinWidth(i);
-    double new_content_truth_2 = content_truth_2/bin_width_truth_2;
-    double new_error_truth_2 = error_truth_2/bin_width_truth_2;
+      double content_truth_2 = pseudo2_truth->GetBinContent(i);
+      double error_truth_2 = pseudo2_truth->GetBinError(i);
+      double bin_width_truth_2 = pseudo2_truth->GetBinWidth(i);
+      double new_content_truth_2 = content_truth_2/bin_width_truth_2;
+      double new_error_truth_2 = error_truth_2/bin_width_truth_2;
 
-    double content_truth_3 = pseudo3_truth->GetBinContent(i);
-    double error_truth_3 = pseudo3_truth->GetBinError(i);
-    double bin_width_truth_3 = pseudo3_truth->GetBinWidth(i);
-    double new_content_truth_3 = content_truth_3/bin_width_truth_3;
-    double new_error_truth_3 = error_truth_3/bin_width_truth_3;
+      double content_truth_3 = pseudo3_truth->GetBinContent(i);
+      double error_truth_3 = pseudo3_truth->GetBinError(i);
+      double bin_width_truth_3 = pseudo3_truth->GetBinWidth(i);
+      double new_content_truth_3 = content_truth_3/bin_width_truth_3;
+      double new_error_truth_3 = error_truth_3/bin_width_truth_3;
 
-    pseudo1_truth->SetBinContent(i, new_content_truth_1);
-    pseudo1_truth->SetBinError(i, new_error_truth_1);
-    pseudo2_truth->SetBinContent(i, new_content_truth_2);
-    pseudo2_truth->SetBinError(i, new_error_truth_2);
-    pseudo3_truth->SetBinContent(i, new_content_truth_3);
-    pseudo3_truth->SetBinError(i, new_error_truth_3);
-    pseudo1->SetBinContent(i, new_content_1);
-    pseudo1->SetBinError(i, new_error_1);
-    pseudo2->SetBinContent(i, new_content_2);
-    pseudo2->SetBinError(i, new_error_2);
-    pseudo3->SetBinContent(i, new_content_3);
-    pseudo3->SetBinError(i, new_error_3);
+      pseudo1_truth->SetBinContent(i, new_content_truth_1);
+      pseudo1_truth->SetBinError(i, new_error_truth_1);
+      pseudo2_truth->SetBinContent(i, new_content_truth_2);
+      pseudo2_truth->SetBinError(i, new_error_truth_2);
+      pseudo3_truth->SetBinContent(i, new_content_truth_3);
+      pseudo3_truth->SetBinError(i, new_error_truth_3);
+      pseudo1->SetBinContent(i, new_content_1);
+      pseudo1->SetBinError(i, new_error_1);
+      pseudo2->SetBinContent(i, new_content_2);
+      pseudo2->SetBinError(i, new_error_2);
+      pseudo3->SetBinContent(i, new_content_3);
+      pseudo3->SetBinError(i, new_error_3);
+    }
   }
-
   TH1D* dummy = (TH1D*) pseudo1_truth->Clone("dummy");
   dummy->Add(pseudo2_truth);
   dummy->Add(pseudo3_truth);
@@ -1219,46 +1347,189 @@ void Plotter::Plot_all_pseudo(TH1* pseudo1, TH1* pseudo1_truth, TH1* pseudo2, TH
   else if(max_count2 > max_count1 && max_count2 > max_count3) max_range = max_count2 *1.1;
   else if(max_count3 > max_count1 && max_count3 > max_count2) max_range = max_count3 *1.1;
 
-  TCanvas* c1 = new TCanvas("test", "tests", 1000, 800);
+  TCanvas* c1 = new TCanvas("test", "tests", 600, 600);
   c1->cd();
-  gStyle->SetPadLeftMargin(0.15);
-  gStyle->SetPadRightMargin(0.05);
-  gStyle->SetPadTopMargin(0.08);
-  gStyle->SetPadBottomMargin(0.1);
+  gStyle->SetPadLeftMargin(0.19);
+  gStyle->SetPadRightMargin(0.01);
+  gStyle->SetPadTopMargin(0.045);
+  // gStyle->SetPadBottomMargin(0.1);
+
+  // gStyle->UseCurrentStyle();
   c1->UseCurrentStyle();
+
   gr->SetTitle("");
+  // gr->GetXaxis()->SetLabelSize(0.04);
+  // gr->GetYaxis()->SetLabelSize(0.04);
   gr->GetXaxis()->SetRangeUser(0, 1);
-  gr->GetYaxis()->SetRangeUser(0, max_range);
+  if(cs) gr->GetYaxis()->SetRangeUser(0, 400);
+  else gr->GetYaxis()->SetRangeUser(0, max_range);
   gr->GetXaxis()->SetTitle("#tau_{3/2}");
-  gr->GetYaxis()->SetTitle("#frac{Events}{Bin}");
-  gr->GetYaxis()->SetTitleSize(0.04);
-  gr->GetYaxis()->SetTitleOffset(1.7);
-  gr->GetXaxis()->SetTitleSize(0.06);
-  gr->GetXaxis()->SetTitleOffset(0.7);
+  // gr->GetYaxis()->SetTitle("#frac{Events}{Bin}");
+  gr->GetYaxis()->SetTitle("#frac{d#sigma}{d#tau_{32}} [fb]");
+  gr->GetYaxis()->SetTitleSize(0.05);
+  gr->GetYaxis()->SetLabelSize(0.04);
+  gr->GetYaxis()->SetTitleOffset(1.6);
+  gr->GetXaxis()->SetTitleSize(0.05);
+  gr->GetXaxis()->SetLabelSize(0.04);
+  gr->GetXaxis()->SetTitleOffset(0.9);
   gr->SetFillColor(kRed);
   gr->SetLineColor(kRed);
   gr->SetMarkerColor(kRed);
+
+
   gr->Draw("AP e2");
   unfold1->SetLineColor(kBlack);
   unfold1->SetMarkerColor(kBlack);
-  unfold1->SetMarkerStyle(21);
+  unfold1->SetMarkerStyle(20);
+  unfold1->SetMarkerSize(1.5);
   unfold1->Draw("same");
   unfold2->SetLineColor(kBlack);
   unfold2->SetMarkerColor(kBlack);
-  unfold2->SetMarkerStyle(22);
+  unfold2->SetMarkerStyle(21);
+  unfold2->SetMarkerSize(1.5);
   unfold2->Draw("same");
   unfold3->SetLineColor(kBlack);
   unfold3->SetMarkerColor(kBlack);
-  unfold3->SetMarkerStyle(23);
+  unfold3->SetMarkerStyle(22);
+  unfold3->SetMarkerSize(1.5);
   unfold3->Draw("same");
 
-  TLegend *t1 = new TLegend(0.2, 0.62, 0.5, 0.82, "");
+  TLegend *t1 = new TLegend(0.6,0.72,0.9,0.92);
   t1->SetBorderSize(0);
   t1->SetFillStyle(0);
   t1->AddEntry(gr, "Pseudo data Truth", "lp");
   t1->AddEntry(unfold1, "Pseudo data 1", "lp");
   t1->AddEntry(unfold2, "Pseudo data 2", "lp");
   t1->AddEntry(unfold3, "Pseudo data 3", "lp");
+  t1->SetTextSize(0.04);
   t1->Draw();
+  text(c1, false);
   c1->SaveAs(directory+"all_pseudo.eps");
+  delete c1;
+}
+
+
+
+
+void Plotter::Plot_compatibility(TH1* mu_dummy, TH1* mu_sys_dummy, TH1* ele_dummy, TH1* ele_sys_dummy, TString directory){
+  TH1* mu = (TH1*) mu_dummy->Clone();
+  TH1* mu_sys = (TH1*) mu_sys_dummy->Clone();
+  TH1* ele = (TH1*) ele_dummy->Clone();
+  TH1* ele_sys = (TH1*) ele_sys_dummy->Clone();
+
+  TCanvas* c = new TCanvas("Compatibility", "" , 600, 830);
+  gStyle->SetPadRightMargin(0.05);
+  gStyle->SetPadLeftMargin(0.11);
+  c->UseCurrentStyle();
+  c->cd();
+
+  mu->SetMarkerColor(kRed);
+  mu->SetLineColor(kRed);
+  mu_sys->SetMarkerColor(kRed);
+  mu_sys->SetLineColor(kRed);
+
+
+  ele->SetFillColor(kGray+1);
+  ele->SetMarkerStyle(10);
+  ele_sys->SetFillColor(kGray);
+  ele_sys->SetTitle("");
+  ele_sys->GetYaxis()->SetTitle("Events");
+  ele_sys->GetYaxis()->SetTitleSize(0.05);
+  ele_sys->GetYaxis()->SetTitleOffset(1.6);
+  ele_sys->GetXaxis()->SetTitleSize(0.06);
+  ele_sys->GetXaxis()->SetTitleOffset(0.9);
+  ele_sys->Draw("same e2");
+  ele->Draw("same e2");
+  mu->Draw("same e1");
+  mu_sys->Draw("same e1");
+  gPad->RedrawAxis();
+
+  TLegend *l = new TLegend(0.2, 0.62, 0.5, 0.82, "");
+  l->SetBorderSize(0);
+  l->SetFillStyle(0);
+  l->AddEntry(mu_sys,  "muon channel", "lp");
+  l->AddEntry(ele_sys, "ele channel", "lp");
+  l->Draw();
+
+  c->SaveAs(directory+"Compatibility.eps");
+  delete c;
+}
+
+void text(TCanvas* c, bool over_canvas){
+  if(!over_canvas){
+
+    double lumi = 35.9;
+    TString infotext = TString::Format("%3.1f fb^{-1} (13 TeV)", lumi);
+    TLatex *text1 = new TLatex(3.5, 24, infotext);
+    text1->SetNDC();
+    text1->SetTextAlign(33);
+    text1->SetTextFont(42);
+    text1->SetTextSize(0.6*c->GetTopMargin());
+    text1->SetX(0.99);
+    text1->SetY(0.987);
+    text1->Draw();
+
+    TString cmstext = "CMS";
+    TLatex *text = new TLatex(3.5, 24, cmstext);
+    text->SetNDC();
+    text->SetTextAlign(13);
+    text->SetX(0.23);      //0.2 -> outside
+    text->SetTextFont(61);
+    text->SetTextSize(0.75*1.5*c->GetTopMargin());
+    text->SetY(0.92); //0.99 -> outside
+    text->Draw();
+
+    TString cmstext2 = "Simulation";
+    TLatex *text2 = new TLatex(3.5, 24, cmstext2);
+    text2->SetNDC();
+    text2->SetTextAlign(13);
+    text2->SetX(0.225); // 0.27 -> outside
+    text2->SetTextFont(52);
+    text2->SetTextSize(0.76*1.5*0.75*c->GetTopMargin());
+    text2->SetY(0.865); //0.982 -> outside
+    text2->Draw();
+
+    TString cmstext3 = "work in progress";
+    TLatex *text3 = new TLatex(3.5, 24, cmstext3);
+    text3->SetNDC();
+    text3->SetTextAlign(13);
+    text3->SetX(0.225); // 0.27 -> outside
+    text3->SetTextFont(52);
+    text3->SetTextSize(0.76*1.5*0.75*c->GetTopMargin());
+    text3->SetY(0.82); //0.982 -> outside
+    text3->Draw();
+  }
+  else{
+
+    double lumi = 35.9;
+    TString infotext = TString::Format("%3.1f fb^{-1} (13 TeV)", lumi);
+    TLatex *text1 = new TLatex(3.5, 24, infotext);
+    text1->SetNDC();
+    text1->SetTextAlign(33);
+    text1->SetTextFont(42);
+    text1->SetTextSize(0.6*c->GetTopMargin());
+    text1->SetX(0.89);
+    text1->SetY(0.982);
+    text1->Draw();
+
+    TString cmstext = "CMS";
+    TLatex *text = new TLatex(3.5, 24, cmstext);
+    text->SetNDC();
+    text->SetTextAlign(13);
+    text->SetX(0.13);      //0.2 -> outside
+    text->SetTextFont(61);
+    text->SetTextSize(0.75*c->GetTopMargin());
+    text->SetY(0.99); //0.99 -> outside
+    text->Draw();
+
+    TString cmstext2 = "Simulation work in progress";
+    TLatex *text2 = new TLatex(3.5, 24, cmstext2);
+    text2->SetNDC();
+    text2->SetTextAlign(13);
+    text2->SetX(0.21); // 0.27 -> outside
+    text2->SetTextFont(52);
+    text2->SetTextSize(0.76*0.75*c->GetTopMargin());
+    text2->SetY(0.981); //0.982 -> outside
+    text2->Draw();
+  }
 }
