@@ -97,15 +97,15 @@ else if(data_file_name.Contains("comb")) data_File = new TFile(dir + "Histograms
 
 // fill background hists -- add further or remove unnecassary backgrounds in background_names
 // background_names = {"DYJets", "QCD", "ST", "WJets", "Diboson"};
-background_names = {"DYJets", "ST", "Diboson", "WJets"};
+background_names = {"DYJets", "ST", "Diboson", "WJets_HT", "QCD"};
 if(data_file_name.Contains("mu")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"MUIDup", "MUIDdown"}, {"MUTriggerup", "MUTriggerdown"}};
 else if(data_file_name.Contains("ele")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"ELEIDup", "ELEIDdown"}, {"ELETriggerup", "ELETriggerdown"}, {"ELERecoup", "ELERecodown"}};
 else if(data_file_name.Contains("comb")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"MUIDup", "MUIDdown"}, {"MUTriggerup", "MUTriggerdown"}, {"ELEIDup", "ELEIDdown"}, {"ELETriggerup", "ELETriggerdown"}, {"ELERecoup", "ELERecodown"}};
 
 // Setup everything for unfolding!
 data_File->GetObject("mc"+pu+"_matrix"+suffix, mat_response);          // fill response matrix
-data_File->GetObject(dataset+"_rec", h_data);                  // fill histogram with data which should be unfolded
-data_File->GetObject(dataset+"_rec_dist", h_data_dist);           // fill histogram with data which should be unfolded
+data_File->GetObject(dataset+"_rec", h_data);                          // fill histogram with data which should be unfolded
+data_File->GetObject(dataset+"_rec_dist", h_data_dist);                // fill histogram with data which should be unfolded
 if(!dataset.Contains("Data")) data_File->GetObject(dataset+"_truth", h_truth);
 else data_File->GetObject("mc"+pu+"_truth", h_truth);
 if(!dataset.Contains("Data")) data_File->GetObject(dataset+"_truth_all", h_truth_all);
@@ -120,20 +120,19 @@ data_File->GetObject("mc"+pu+"_purity_samebin"+suffix, h_purity_samebin);
 data_File->GetObject("mc"+pu+"_stability_all"+suffix, h_stability_all);
 data_File->GetObject("mc"+pu+"_stability_samebin"+suffix, h_stability_samebin);
 
-cout << "test1: " << mat_response->GetName() << '\n';
-cout << "test2: " << h_data->GetName() << '\n';
-cout << "test3: " << h_data_dist->GetName() << '\n';
-cout << "test4: " << h_truth->GetName() << '\n';
-cout << "test5: " << h_truth_all->GetName() << '\n';
-cout << "test6: " << h_unfold->GetName() << '\n';
-cout << "test7: " << h_mc->GetName() << '\n';
-cout << "test8: " << h_mc_dist->GetName() << '\n';
-cout << "test9: " << h_trutch_check->GetName() << '\n';
-cout << "test10: " << h_trutch_check_all->GetName() << '\n';
-cout << "test11: " << h_purity_all->GetName() << '\n';
-cout << "test12: " << h_purity_samebin->GetName() << '\n';
-cout << "test13: " << h_stability_all->GetName() << '\n';
-cout << "test14: " << h_stability_samebin->GetName() << '\n';
+  TH1D* h_background = (TH1D*) h_data->Clone();
+  h_background->Reset();
+  h_background->SetTitle("Background_rec");
+  TH1D* h_background_dist =(TH1D*) h_data_dist->Clone();
+  h_background_dist->Reset();
+  h_background_dist->SetTitle("Background_rec_dist");
+  if(dataset.Contains("Data")){
+  for(unsigned int i = 0; i < background_names.size(); i++){
+    h_background->Add((TH1D*) data_File->Get("Background_"+background_names[i]+"_rec"));
+    h_background_dist->Add((TH1D*) data_File->Get("Background_"+background_names[i]+"_rec_dist"));
+  }
+}
+
 
 background.clear();
 subtract_background = false;
@@ -150,14 +149,12 @@ for(unsigned int i = 0; i < sys_name.size(); i++){
     vector<TH2*> dummy;
     sys_matrix.push_back(dummy);
     TString blub = sys_name[i][j] + pu + "_matrix";
-    cout << "Test: " << blub << '\n';
-    sys_matrix[i].push_back((TH2*) data_File->Get(sys_name[i][j] + pu + "_matrix"));
+    // cout << "Test: " << blub << '\n';
+    sys_matrix[i].push_back((TH2*) data_File->Get(blub));
   }
 }
 
 // cout << "subtract_background: " << subtract_background << '\n';
-TString save_dir = "/afs/desy.de/user/s/skottkej/Plots/Unfolding/";
-TString format = ".eps";
 TString regmode = "derivative";
 TString density_flag = "none";
 TString nscan_word = argv[2];
@@ -167,7 +164,6 @@ bool do_lcurve = true;
 bool do_lcurve_2 = false;
 double tau_value = atoi(argv[3]);
 TString tau_value_word = argv[3];
-TString folder = argv[1];
 
 // what the unfolding class needs:
 // 1.    Set the data which should be unfolded.
@@ -200,9 +196,9 @@ unfold.get_total_statcov_all();
 unfold.get_correlation();
 unfold.get_correlation_meas();
 unfold.get_correlation_all();
-unfold.get_output_check();
-unfold.get_output_check_meas();
-unfold.get_output_check_all();
+// unfold.get_output_check();
+// unfold.get_output_check_meas();
+// unfold.get_output_check_all();
 unfold.get_probability_matrix();
 unfold.check_projection();
 if(subtract_background){
@@ -234,6 +230,7 @@ if(tau_value < 0){
   unfold.get_bias();
 
   unfolding unfold2(h_data, h_mc, mat_response, h_truth, binning_gen, binning_rec, sys_matrix, sys_name, background, background_names, nscan, regmode, density_flag, do_lcurve_2, subtract_background, tau_value);
+
   unfold2.get_coordinates();
   unfold2.get_lcurve();
   unfold2.get_tau();
@@ -254,9 +251,9 @@ if(tau_value < 0){
   unfold2.get_correlation();
   unfold2.get_correlation_meas();
   unfold2.get_correlation_all();
-  unfold2.get_output_check();
-  unfold2.get_output_check_meas();
-  unfold2.get_output_check_all();
+  // unfold2.get_output_check();
+  // unfold2.get_output_check_meas();
+  // unfold2.get_output_check_all();
   unfold2.get_probability_matrix();
   unfold2.check_projection();
   if(subtract_background){
@@ -282,6 +279,10 @@ h_data->Write("Data input");
 h_data_dist->Write("Data Distribution");
 h_mc->Write("MC rec input");
 h_mc_dist->Write("MC rec Distribution");
+if(dataset.Contains("Data")){
+  h_background->Write("Background rec input");
+  h_background_dist->Write("Background rec Distribution");
+}
 h_truth->Write("Data Truth");
 h_truth_all->Write("Whole Data Truth");
 h_trutch_check->Write("MC Truth");

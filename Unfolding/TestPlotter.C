@@ -39,19 +39,16 @@ int main(int argc, char* argv[]){
   vector<Int_t> binmap = {1,2,3,4,5};
 
   bool isdata = false;
-  bool ispseudodata = false;
-  if(File_name.Contains("data")) isdata = true;
-  if(File_name.Contains("madgraph")) ispseudodata = true;
-
-  vector<TString> background_names = {"DYJets", "ST", "Diboson", "WJets"};
+  if(File_name.Contains("Data")) isdata = true;
+  cout << "isData: " << isdata << '\n';
+  vector<TString> background_names = {"DYJets", "ST", "Diboson", "WJets_HT", "QCD"};
   vector<vector<TString>> sys_name;
   if(File_name.Contains("mu")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"MUIDup", "MUIDdown"}, {"MUTriggerup", "MUTriggerdown"}};
   else if(File_name.Contains("ele")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"ELEIDup", "ELEIDdown"}, {"ELETriggerup", "ELETriggerdown"}, {"ELERecoup", "ELERecodown"}};
   else if(File_name.Contains("comb")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"MUIDup", "MUIDdown"}, {"MUTriggerup", "MUTriggerdown"}, {"ELEIDup", "ELEIDdown"}, {"ELETriggerup", "ELETriggerdown"}, {"ELERecoup", "ELERecodown"}};
 
   vector<vector<TString>> model_name;
-  if(isdata) model_name = {{"scale_uu", "scale_un", "scale_nu", "scale_nd", "scale_dn", "scale_dd"}, {"mtop1695", "mtop1715", "mtop1735", "mtop1755"}, {"isrup", "isrdown"}, {"fsrup", "fsrdown"}, {"hdampup", "hdampdown"}};
-  if(ispseudodata) model_name = {{"scale_uu", "scale_un", "scale_nu", "scale_nd", "scale_dn", "scale_dd"}, {"mtop1695", "mtop1715", "mtop1735", "mtop1755"}, {"isrup", "isrdown"}, {"fsrup", "fsrdown"}, {"hdampup", "hdampdown"}};
+  if(isdata) model_name = {{"SCALEupup", "SCALEupnone", "SCALEnoneup", "SCALEnonedown", "SCALEdownnone", "SCALEdowndown"}, {"mtop1695", "mtop1715", "mtop1735", "mtop1755"}, {"isrup", "isrdown"}, {"fsrup", "fsrdown"}, {"hdampup", "hdampdown"}};
 
   TFile *file = new TFile(File_name, "READ");
   TString jetcol = "";
@@ -80,13 +77,13 @@ int main(int argc, char* argv[]){
         directory += result[i];
         if(i==1) data = result[i];
         if(i==2){
-          if(data.Contains("scale")){
+          if(data.Contains("SCALE") || data.Contains("Pseudo")){
             data += "_"+result[i];
           }
         }
         if(result[i] != "sd" && result[i] != "puppi"){
           dataset += result[i];
-          if(result[i] != "scale") count++;
+          if(result[i] != "SCALE") count++;
         }
       }
       if(i < result.size() - 3 && i > 0){
@@ -95,8 +92,9 @@ int main(int argc, char* argv[]){
       }
     }
   }
-  // cout << "data: " << data << '\n';
-  // cout << "dataset: " << dataset << '\n';
+  dataset = data;
+  cout << "data: " << data << '\n';
+  cout << "dataset: " << dataset << '\n';
   directory += "/";
   TString jetcol2 = jetcol;
   TString channel = "";
@@ -107,6 +105,11 @@ int main(int argc, char* argv[]){
   else if(File_name.Contains("ele"))  channel += "_ele";
   else if(File_name.Contains("comb")) channel += "_comb";
   jetcol += channel;
+  cout << "directory: " << directory << '\n';
+  cout << "channel: " << channel << '\n';
+  cout << "jetcol: " << jetcol << '\n';
+  cout << "File_name: " << File_name << '\n';
+
 
   plot->Plot_projections(projection_gen, h_input_gen, projection_rec, h_input_rec, directory);
 
@@ -133,16 +136,16 @@ int main(int argc, char* argv[]){
   // h_mc_truth->SetName("POWHEG");
   TH1* h_mc_truth_newbinning = ConvertToNewBinning_1D(h_mc_truth, binmap, binning_gen, "MC Truth new binning");
 
-  plot->Plot_output(h_unfolded_tauscan, h_data_truth, false, directory, "Unfolding_result_Tauscan");
-  plot->Plot_output(h_unfolded_tauscan, h_data_truth, true, directory, "Unfolding_result_normalised_Tauscan");
-  plot->Plot_output(h_unfolded_tauscan_newbinning, h_data_truth_newbinning, false, directory+"New_binning/", "Unfolding_result_Tauscan");
-  plot->Plot_output(h_unfolded_tauscan_newbinning, h_data_truth_newbinning, true, directory+"New_binning/", "Unfolding_result_normalised_Tauscan");
-  plot->Plot_output(h_unfolded_tauscan_part, h_data_truth, false, directory, "Unfolding_result_Tauscan_part");
-  plot->Plot_output(h_unfolded_tauscan_part, h_data_truth, true, directory, "Unfolding_result_normalised_Tauscan_part");
+  // plot->Plot_output(h_unfolded_tauscan, h_data_truth, false, directory, "Unfolding_result_Tauscan");
+  // plot->Plot_output(h_unfolded_tauscan, h_data_truth, true, directory, "Unfolding_result_normalised_Tauscan");
+  // plot->Plot_output(h_unfolded_tauscan_newbinning, h_data_truth_newbinning, false, directory+"New_binning/", "Unfolding_result_Tauscan");
+  // plot->Plot_output(h_unfolded_tauscan_newbinning, h_data_truth_newbinning, true, directory+"New_binning/", "Unfolding_result_normalised_Tauscan");
+  // plot->Plot_output(h_unfolded_tauscan_part, h_data_truth, false, directory, "Unfolding_result_Tauscan_part");
+  // plot->Plot_output(h_unfolded_tauscan_part, h_data_truth, true, directory, "Unfolding_result_normalised_Tauscan_part");
 
   TH1D* h_data_truth_all = (TH1D*) file->Get("Whole Data Truth");
   TH1D* h_unfolded_tauscan_all = (TH1D*) file->Get("Unfolded data (all) TauScan");
-  plot->Plot_output(h_unfolded_tauscan_all, h_data_truth_all, false, directory, "Unfolding_result_all_Tauscan");
+  // plot->Plot_output(h_unfolded_tauscan_all, h_data_truth_all, false, directory, "Unfolding_result_all_Tauscan");
 
   TH2D* h_covariance_input_tauscan = (TH2D*) file->Get("Covariance of input (meas region) TauScan");
   TH2D* h_covariance_covmatrix_tauscan = (TH2D*) file->Get("Covariance of CovMatrix (meas region) TauScan");
@@ -448,9 +451,16 @@ int main(int argc, char* argv[]){
   TH1* input_mc_dist = (TH1*) file->Get("MC rec Distribution");
   TH1* input_data = (TH1*) file->Get("Data input");
   TH1* input_mc = (TH1*) file->Get("MC rec input");
-  plot->Plot_input(input_data_dist, input_mc_dist, directory+"dist");
-  plot->Plot_input(input_data, input_mc, directory);
-
+  if(isdata){
+    TH1* input_background_dist = (TH1*) file->Get("Background rec Distribution");
+    TH1* input_background = (TH1*) file->Get("Background rec input");
+    plot->Plot_input(input_data_dist, input_mc_dist, input_background_dist, directory+"dist");
+    plot->Plot_input(input_data, input_mc, input_background, directory);
+  }
+  else{
+    plot->Plot_input(input_data_dist, input_mc_dist, directory+"dist");
+    plot->Plot_input(input_data, input_mc, directory);
+  }
 
 
   TH2* correlation_matrix = (TH2*) file->Get("Correlation Matrix (meas region) TauScan");
@@ -468,7 +478,7 @@ int main(int argc, char* argv[]){
   TH2* cov_matrix_input_all = (TH2*) file->Get("Covariance of input (all) TauScan");
   plot->Plot_covariance(cov_matrix_input_all, directory+"Covariance_input_all");
 
-  if(directory.Contains("pseudo")){
+  if(directory.Contains("Pseudo")){
     TFile *file_pseudo1 = new TFile("Unfoldings/Unfolding_Pseudo_1"+jetcol+".root", "READ");
     TFile *file_pseudo2 = new TFile("Unfoldings/Unfolding_Pseudo_2"+jetcol+".root", "READ");
     TFile *file_pseudo3 = new TFile("Unfoldings/Unfolding_Pseudo_3"+jetcol+".root", "READ");

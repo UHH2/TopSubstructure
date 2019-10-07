@@ -44,155 +44,42 @@ namespace uhh2examples {
   private:
 
     bool isMC, isTTbar, isEle, isMu;
+    TString dataset_version_string;
     bool passed_nmu_gen, passed_nele_gen, passed_mu_pt_gen, passed_ele_pt_gen, passed_topjet_pt_gen, passed_mu_gen, passed_ele_gen, passed_mu_rec, passed_ele_rec;
     bool passed_njet_rec, passed_nmu_rec, passed_nele_rec, passed_met_rec;
 
     // declare the Selections to use. Use unique_ptr to ensure automatic call of delete in the destructor, to avoid memory leaks.
     std::unique_ptr<Selection> genmttbar_sel;
     std::unique_ptr<Selection> met_sel, nmu_sel, nele_sel, njet_sel;
-    std::unique_ptr<Selection> nmu_gen, nele_gen,pt_mu_gen, pt_ele_gen, pt_topjet_gen;
+    std::unique_ptr<Selection> nmu_gen, nele_gen, pt_mu_gen, pt_ele_gen, pt_topjet_gen;
 
     std::unique_ptr<AnalysisModule> ttgenprod;
 
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
-    std::unique_ptr<Hists> h_gen_nocuts, h_gen_nmu, h_gen_nele, h_gen_pt_mu, h_gen_pt_ele, h_gen_pt_topjet_mu, h_gen_pt_topjet_ele;
-    std::unique_ptr<Hists> h_nocuts, h_njet, h_nmu, h_nele, h_met_mu, h_met_ele;
 
-    uhh2::Event::Handle<bool> h_passed_mu_gen_pre, h_passed_ele_gen_pre;
-    uhh2::Event::Handle<bool> h_passed_mu_rec_pre, h_passed_ele_rec_pre;
+    uhh2::Event::Handle<bool>   h_passed_mu_gen_pre, h_passed_ele_gen_pre;
+    uhh2::Event::Handle<bool>   h_passed_mu_rec_pre, h_passed_ele_rec_pre;
   };
 
 
   PreSelectionModule::PreSelectionModule(Context & ctx){
     // 1. setup other modules. CommonModules and the JetCleaner:
-    h_passed_mu_gen_pre = ctx.declare_event_output<bool>("h_passed_mu_gen_pre");
-    h_passed_ele_gen_pre = ctx.declare_event_output<bool>("h_passed_ele_gen_pre");
-    h_passed_mu_rec_pre = ctx.declare_event_output<bool>("h_passed_mu_rec_pre");
-    h_passed_ele_rec_pre = ctx.declare_event_output<bool>("h_passed_ele_rec_pre");
+    h_passed_mu_gen_pre   = ctx.declare_event_output<bool>("h_passed_mu_gen_pre");
+    h_passed_ele_gen_pre  = ctx.declare_event_output<bool>("h_passed_ele_gen_pre");
+    h_passed_mu_rec_pre   = ctx.declare_event_output<bool>("h_passed_mu_rec_pre");
+    h_passed_ele_rec_pre  = ctx.declare_event_output<bool>("h_passed_ele_rec_pre");
 
+    dataset_version_string = ctx.get("dataset_version");
+
+    isEle   = dataset_version_string.Contains("SingleElectron");
+    isMu    = dataset_version_string.Contains("SingleMuon");
+    isTTbar = dataset_version_string.Contains("TTbar");
     isMC = (ctx.get("dataset_type") == "MC");
 
-    isEle = (
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronB"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronB_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronB_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronB_part2" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronC"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronC_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronC_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronC_part2" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronD"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronD_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronD_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronD_part2" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronE"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronE_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronE_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronE_part2" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronF"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronF_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronF_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronF_part2" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronG"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronG_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronG_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronG_part2" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronH"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronH_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronH_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleElectronH_part2"
-    );
-
-    isMu = (
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonB"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonB_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonB_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonB_part2" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonC"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonC_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonC_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonC_part2" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonD"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonD_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonD_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonD_part2" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonE"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonE_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonE_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonE_part2" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonF"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonF_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonF_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonF_part2" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonG"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonG_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonG_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonG_part2" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonH"       ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonH_part0" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonH_part1" ||
-      ctx.get("dataset_version") == "DATA_2016v3_SingleMuonH_part2"
-    );
-
-    isTTbar = (
-      ctx.get("dataset_version") == "TTbar_2016v3"                      ||
-      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700"        ||
-      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700_part0"  ||
-      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700_part1"  ||
-      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700_part2"  ||
-      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0700to1000"        ||
-      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0700to1000_part0"  ||
-      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0700to1000_part1"  ||
-      ctx.get("dataset_version") == "TTbar_2016v3_Mtt0700to1000_part2"  ||
-      ctx.get("dataset_version") == "TTbar_2016v3_Mtt1000toInft"        ||
-      ctx.get("dataset_version") == "TTbar_2016v3_Mtt1000toInft_part0"  ||
-      ctx.get("dataset_version") == "TTbar_2016v3_Mtt1000toInft_part1"  ||
-      ctx.get("dataset_version") == "TTbar_2016v3_Mtt1000toInft_part2"  ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1695"             ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1695_part0"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1695_part1"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1695_part2"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1715"             ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1715_part0"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1715_part1"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1715_part2"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1735"             ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1735_part0"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1735_part1"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1735_part2"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1755"             ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1755_part0"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1755_part1"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_mtop1755_part2"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_madgraph"             ||
-      ctx.get("dataset_version") == "TTbar_2016v3_madgraph_part0"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_madgraph_part1"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_madgraph_part2"       ||
-      ctx.get("dataset_version") == "TTbar_2016v3_isrup"                ||
-      ctx.get("dataset_version") == "TTbar_2016v3_isrup_part0"          ||
-      ctx.get("dataset_version") == "TTbar_2016v3_isrup_part1"          ||
-      ctx.get("dataset_version") == "TTbar_2016v3_isrup_part2"          ||
-      ctx.get("dataset_version") == "TTbar_2016v3_isrdown"              ||
-      ctx.get("dataset_version") == "TTbar_2016v3_isrdown_part0"        ||
-      ctx.get("dataset_version") == "TTbar_2016v3_isrdown_part1"        ||
-      ctx.get("dataset_version") == "TTbar_2016v3_isrdown_part2"        ||
-      ctx.get("dataset_version") == "TTbar_2016v3_fsrup"                ||
-      ctx.get("dataset_version") == "TTbar_2016v3_fsrup_part0"          ||
-      ctx.get("dataset_version") == "TTbar_2016v3_fsrup_part1"          ||
-      ctx.get("dataset_version") == "TTbar_2016v3_fsrup_part2"          ||
-      ctx.get("dataset_version") == "TTbar_2016v3_fsrdown"              ||
-      ctx.get("dataset_version") == "TTbar_2016v3_fsrdown_part0"        ||
-      ctx.get("dataset_version") == "TTbar_2016v3_fsrdown_part1"        ||
-      ctx.get("dataset_version") == "TTbar_2016v3_fsrdown_part2"        ||
-      ctx.get("dataset_version") == "TTbar_2016v3_hdampup"              ||
-      ctx.get("dataset_version") == "TTbar_2016v3_hdampup_part0"        ||
-      ctx.get("dataset_version") == "TTbar_2016v3_hdampup_part1"        ||
-      ctx.get("dataset_version") == "TTbar_2016v3_hdampup_part2"        ||
-      ctx.get("dataset_version") == "TTbar_2016v3_hdampdown"            ||
-      ctx.get("dataset_version") == "TTbar_2016v3_hdampdown_part0"      ||
-      ctx.get("dataset_version") == "TTbar_2016v3_hdampdown_part1"      ||
-      ctx.get("dataset_version") == "TTbar_2016v3_hdampdown_part2"
-    );
+    // cout << "isEle: " << isEle << '\n';
+    // cout << "isMu: " << isMu << '\n';
+    // cout << "isTTbar: " << isTTbar << '\n';
+    // cout << "isMC: " << isMC << '\n';
 
     if(ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700") genmttbar_sel.reset(new MttbarGenSelection(0., 700.));
     else genmttbar_sel.reset(new uhh2::AndSelection(ctx));
@@ -212,30 +99,11 @@ namespace uhh2examples {
     njet_sel.reset(new NJetSelection(1, -1, JetId(PtEtaCut(20, 2.4))));
     nmu_sel.reset(new NMuonSelection(1, -1, MuonId(PtEtaCut(45, 2.4))));
     nele_sel.reset(new NElectronSelection(1, -1, ElectronId(PtEtaCut(45, 2.4))));
-
-    // 3. Set up Hists classes:
-    h_gen_nocuts.reset(new GenHists(ctx, "gen_nocuts"));
-    h_gen_nmu.reset(new GenHists(ctx, "gen_nmu"));
-    h_gen_nele.reset(new GenHists(ctx, "gen_nele"));
-    h_gen_pt_mu.reset(new GenHists(ctx, "gen_pt_mu"));
-    h_gen_pt_ele.reset(new GenHists(ctx, "gen_pt_ele"));
-    h_gen_pt_topjet_mu.reset(new GenHists(ctx, "gen_pt_topjet_mu"));
-    h_gen_pt_topjet_ele.reset(new GenHists(ctx, "gen_pt_topjet_ele"));
-
-    h_nocuts.reset(new TopSubstructureRecoHists(ctx, "nocuts"));
-    h_njet.reset(new TopSubstructureRecoHists(ctx, "njet"));
-    h_nmu.reset(new TopSubstructureRecoHists(ctx, "nmu"));
-    h_nele.reset(new TopSubstructureRecoHists(ctx, "nele"));
-    h_met_mu.reset(new TopSubstructureRecoHists(ctx, "met_mu"));
-    h_met_ele.reset(new TopSubstructureRecoHists(ctx, "met_ele"));
   }
 
 
   bool PreSelectionModule::process(Event & event) {
-    cout << "PreSelectionModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
-
-    h_nocuts->fill(event);
-    if(isTTbar) h_gen_nocuts->fill(event);
+    // cout << "PreSelectionModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
 
     // 1. run all modules other modules.
     passed_mu_gen = false;
@@ -260,33 +128,22 @@ namespace uhh2examples {
 
       passed_nmu_gen = nmu_gen->passes(event);
       passed_nele_gen = nele_gen->passes(event);
-      if(passed_nmu_gen) h_gen_nmu->fill(event);
-      if(passed_nele_gen) h_gen_nele->fill(event);
 
       passed_mu_pt_gen = pt_mu_gen->passes(event);
       passed_ele_pt_gen = pt_ele_gen->passes(event);
-      if(passed_nmu_gen && passed_mu_pt_gen) h_gen_pt_mu->fill(event);
-      if(passed_nele_gen && passed_ele_pt_gen) h_gen_pt_ele->fill(event);
 
       passed_topjet_pt_gen = pt_topjet_gen->passes(event);
-      if(passed_nmu_gen && passed_mu_pt_gen && passed_topjet_pt_gen) h_gen_pt_topjet_mu->fill(event);
-      if(passed_nele_gen && passed_ele_pt_gen && passed_topjet_pt_gen) h_gen_pt_topjet_ele->fill(event);
 
       passed_mu_gen = (passed_nmu_gen && passed_mu_pt_gen && passed_topjet_pt_gen);
       passed_ele_gen = (passed_nele_gen && passed_ele_pt_gen && passed_topjet_pt_gen);
     }
 
     passed_njet_rec = njet_sel->passes(event);
-    if(passed_njet_rec) h_njet->fill(event);
 
     if(isMu || isMC) passed_nmu_rec = nmu_sel->passes(event);
     if(isEle || isMC) passed_nele_rec = nele_sel->passes(event);
-    if((isMu || isMC)  && passed_njet_rec && passed_nmu_rec)  h_nmu->fill(event);
-    if((isEle || isMC) && passed_njet_rec && passed_nele_rec) h_nele->fill(event);
 
     passed_met_rec = met_sel->passes(event);
-    if((isMu || isMC)  && passed_njet_rec && passed_nmu_rec  && passed_met_rec) h_met_mu->fill(event);
-    if((isEle || isMC) && passed_njet_rec && passed_nele_rec && passed_met_rec) h_met_ele->fill(event);
 
     passed_mu_rec = (isMu || isMC) && passed_njet_rec && passed_nmu_rec && passed_met_rec;
     passed_ele_rec = (isEle || isMC) && passed_njet_rec && passed_nele_rec && passed_met_rec;
@@ -294,6 +151,8 @@ namespace uhh2examples {
     if(!passed_mu_rec && !passed_ele_rec && !passed_mu_gen && !passed_ele_gen) return false;
 
     // 3. decide whether or not to keep the current event in the output:
+    // cout << "passed_mu_gen: " << passed_mu_gen <<'\n';
+    // cout << "passed_mu_rec: " << passed_mu_rec <<'\n';
     event.set(h_passed_mu_rec_pre, passed_mu_rec);
     event.set(h_passed_ele_rec_pre, passed_ele_rec);
     event.set(h_passed_mu_gen_pre, passed_mu_gen);

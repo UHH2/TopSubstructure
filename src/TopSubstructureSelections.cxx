@@ -28,10 +28,7 @@ bool LeptonPtSelection::passes(const Event & event){
 
       pass = (pt >= pt_min && (pt <= pt_max || pt_max < 0));
     }
-    else{
-      // std::cout << "\n MuonSelection::passes: There are no muons in the event. returning 'false'\n" << std::endl;
-      return false;
-    }
+    else return false;
     break;
 
     case 1:
@@ -41,10 +38,7 @@ bool LeptonPtSelection::passes(const Event & event){
 
       pass = (pt >= pt_min && (pt <= pt_max || pt_max < 0));
     }
-    else{
-      // std::cout << "\n MuonSelection::passes: There are no electrons in the event. returning 'false'\n" << std::endl;
-      return false;
-    }
+    else return false;
     break;
   }
   return pass;
@@ -56,10 +50,7 @@ bool TopJetptSelection::passes(const Event & event){
   bool pass = false;
   std::vector<TopJet> topjets = event.get(h_topjet);
 
-  if(topjets.size() <= 0){
-    // std::cout << "\n DPhiSelection::passes: There are no topjets in the event. returning 'false'\n" << std::endl;
-    return false;
-  }
+  if(topjets.size() <= 0) return false;
 
   for(int i=1; i<fabs(topjets.size()); i++){
     double diff = topjets.at(0).pt()-topjets.at(i).pt();
@@ -79,10 +70,7 @@ bool TwoDCut::passes(const Event & event){
   switch (mode) {
     case 0:
     assert(event.muons && event.jets);
-    if(event.muons->size() != 1){
-      // std::cout << "\n @@@ WARNING -- TwoDCut::passes -- unexpected number of muons in the event (!=1). returning 'false'\n";
-      return false;
-    }
+    if(event.muons->size() != 1) return false;
 
     std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
     pass = ((drmin > min_deltaR) || (ptrel > min_pTrel));
@@ -90,10 +78,7 @@ bool TwoDCut::passes(const Event & event){
 
     case 1:
     assert(event.electrons && event.jets);
-    if(event.electrons->size()!= 1){
-      // std::cout << "\n @@@ WARNING -- TwoDCut::passes -- unexpected number of electrons in the event (!=1). returning 'false'\n";
-      return false;
-    }
+    if(event.electrons->size()!= 1) return false;
 
     std::tie(drmin, ptrel) = drmin_pTrel(event.electrons->at(0), *event.jets);
     pass = ((drmin > min_deltaR) || (ptrel > min_pTrel));
@@ -110,10 +95,7 @@ bool DPhiSelection::passes(const Event & event){
 
   std::vector<TopJet> topjets = event.get(h_topjet);
 
-  if(topjets.size() <= 0){
-    // std::cout << "\n DPhiSelection::passes: There are no topjets in the event. returning 'false'\n" << std::endl;
-    return false;
-  }
+  if(topjets.size() <= 0)  return false;
 
   sort_by_pt<Muon>(*event.muons);
   const auto & topjet = topjets.at(0);

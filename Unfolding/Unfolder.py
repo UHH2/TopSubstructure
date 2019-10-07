@@ -31,8 +31,8 @@ datasets = [
             , 'hdampdown','hdampdown_sd','hdampdown_puppi','hdampdown_puppi_sd'
             ]
 
-# channel = ['mu','ele','comb']
-channel = ['ele']
+channel = ['mu','ele','comb']
+# channel = ['ele']
 # datasets = [
 #               # 'Data_sd'
 #              'Pseudo_1_sd'
@@ -46,8 +46,8 @@ channel = ['ele']
 #             , 'Pseudo_3'
 #             , 'SCALEupup'
 #             , 'SCALEupnone'
-#             , 'SCALnoneup'
-#             , 'SCALnonedown'
+#             , 'SCALEnoneup'
+#             , 'SCALEnonedown'
 #             , 'SCALEdownnone'
 #             , 'SCALEdowndown'
 #             , 'mtop1695'
@@ -55,6 +55,12 @@ channel = ['ele']
 #             , 'mtop1735'
 #             , 'mtop1755'
 #             , 'madgraph'
+#             , 'isrup'
+#             , 'isrdown'
+#             , 'fsrup'
+#             , 'fsrdown'
+#             , 'hdampup'
+#             , 'hdampdown'
 #             ]
 # datasets = [
 #               'Data_sd'
@@ -63,8 +69,8 @@ channel = ['ele']
 #             , 'Pseudo_3_sd'
 #             , 'SCALEupup_sd'
 #             , 'SCALEupnone_sd'
-#             , 'SCALnoneup_sd'
-#             , 'SCALnonedown_sd'
+#             , 'SCALEnoneup_sd'
+#             , 'SCALEnonedown_sd'
 #             , 'SCALEdownnone_sd'
 #             , 'SCALEdowndown_sd'
 #             , 'mtop1695_sd'
@@ -72,10 +78,16 @@ channel = ['ele']
 #             , 'mtop1735_sd'
 #             , 'mtop1755_sd'
 #             , 'madgraph_sd'
+#             , 'isrup_sd'
+#             , 'isrdown_sd'
+#             , 'fsrup_sd'
+#             , 'fsrdown_sd'
+#             , 'hdampup_sd'
+#             , 'hdampdown_sd'
 #             ]
 
 for chan in channel:
     for i in range(len(datasets)):
-        os.system('echo '+c_send+datasets[i]+nscans+tau_value+chan);
         os.system(c_send+datasets[i]+nscans+tau_value+chan)
+        os.system('echo '+c_send+datasets[i]+nscans+tau_value+chan);
         os.system('\n')

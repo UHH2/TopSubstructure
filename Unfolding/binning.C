@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
   /******************* RECO BINNING ***********************************/
   // std::vector<Double_t> REC_TAU32 = {0, 0.3569, 0.3983, 0.4275, 0.4530, 0.4764, 0.4994, 0.5211, 0.5412, 0.5625, 0.5822, 0.6021, 0.6221, 0.6421, 0.6625, 0.6823, 0.7027, 0.7219, 0.7419, 0.7622, 0.7831, 0.8024, 0.8214, 0.8398, 0.8585, 0.8794, 0.9051, 1};
   // std::vector<Double_t> REC_TAU32 = {0, 0.365, 0.409, 0.441, 0.470, 0.498, 0.524, 0.549, 0.575, 0.599, 0.623, 0.647, 0.672, 0.697, 0.721, 0.746, 0.772, 0.797, 0.820, 0.844, 0.868, 0.898, 1};
-  TString file_name = "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_cmssw10_data/Muon/uhh2.AnalysisModuleRunner.MC.TTbar.root";
+  TString file_name = "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/PostSelection/Muon/uhh2.AnalysisModuleRunner.MC.2016v3_TTbar.root";
   std::vector<Double_t> REC_TAU32 = bin_range(file_name, "mass", "/tau32_tj1_rebin2", 120, TAU32);
   // std::vector<Double_t> REC_ECF21 = bin_range(file_name, "mass", "/ecfN2_beta1_tj1_rebin", 120, ECF21);
   // std::vector<Double_t> REC_ECF22 = bin_range(file_name, "mass", "/ecfN2_beta2_tj1_rebin", 120, ECF22);

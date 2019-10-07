@@ -4,59 +4,52 @@
 <BinningNode name="binning_rec" firstbin="1" factor="1">
  <BinningNode name="measurement_rec" firstbin="1" factor="1">
   <Axis name="#tau_{3/2}" lowEdge="0">
-   <Bin width="0.367" center="0.1835" />
-   <Bin width="0.045" center="0.3895" />
-   <Bin width="0.033" center="0.4285" />
-   <Bin width="0.03" center="0.46" />
-   <Bin width="0.028" center="0.489" />
-   <Bin repeat="2" width="0.026" center="0.516" />
-   <Bin width="0.025" center="0.5675" />
-   <Bin width="0.024" center="0.592" />
-   <Bin width="0.026" center="0.617" />
-   <Bin width="0.025" center="0.6425" />
-   <Bin width="0.024" center="0.667" />
-   <Bin width="0.025" center="0.6915" />
-   <Bin width="0.024" center="0.716" />
-   <Bin repeat="2" width="0.025" center="0.7405" />
-   <Bin width="0.024" center="0.79" />
-   <Bin repeat="2" width="0.023" center="0.8135" />
-   <Bin width="0.024" center="0.86" />
-   <Bin width="0.03" center="0.887" />
-   <Bin width="0.098" center="0.951" />
+   <Bin width="0.369" center="0.1845" />
+   <Bin width="0.046" center="0.392" />
+   <Bin width="0.034" center="0.432" />
+   <Bin width="0.031" center="0.4645" />
+   <Bin width="0.029" center="0.4945" />
+   <Bin repeat="2" width="0.027" center="0.5225" />
+   <Bin repeat="5" width="0.026" center="0.576" />
+   <Bin width="0.025" center="0.7055" />
+   <Bin repeat="3" width="0.026" center="0.731" />
+   <Bin repeat="2" width="0.024" center="0.808" />
+   <Bin width="0.025" center="0.8565" />
+   <Bin width="0.031" center="0.8845" />
+   <Bin width="0.1" center="0.95" />
    <Axis name="mass" lowEdge="0">
     <Bin width="152" center="76" />
     <Bin width="848" center="576" />
    </Axis>
   </Axis>
  </BinningNode>
- <BinningNode name="rec_pt_topjet_sideband" firstbin="45" factor="1">
+ <BinningNode name="rec_pt_topjet_sideband" firstbin="43" factor="1">
   <Axis name="#tau_{3/2}" lowEdge="0">
-   <Bin width="0.522" center="0.261" />
-   <Bin width="0.108" center="0.576" />
-   <Bin width="0.079" center="0.6695" />
-   <Bin width="0.057" center="0.7375" />
-   <Bin width="0.046" center="0.789" />
-   <Bin width="0.039" center="0.8315" />
-   <Bin width="0.038" center="0.87" />
-   <Bin width="0.111" center="0.9445" />
+   <Bin width="0.546" center="0.273" />
+   <Bin width="0.117" center="0.6045" />
+   <Bin width="0.073" center="0.6995" />
+   <Bin width="0.059" center="0.7655" />
+   <Bin width="0.047" center="0.8185" />
+   <Bin width="0.042" center="0.863" />
+   <Bin width="0.116" center="0.942" />
   </Axis>
  </BinningNode>
- <BinningNode name="rec_mass_sideband" firstbin="53" factor="1">
+ <BinningNode name="rec_mass_sideband" firstbin="50" factor="1">
   <Axis name="#tau_{3/2}" lowEdge="0">
-   <Bin width="0.615" center="0.3075" />
-   <Bin width="0.075" center="0.6525" />
-   <Bin width="0.038" center="0.709" />
-   <Bin width="0.028" center="0.742" />
-   <Bin width="0.02" center="0.766" />
-   <Bin width="0.016" center="0.784" />
-   <Bin width="0.014" center="0.799" />
-   <Bin width="0.012" center="0.812" />
-   <Bin repeat="4" width="0.01" center="0.823" />
-   <Bin repeat="2" width="0.011" center="0.8635" />
-   <Bin width="0.013" center="0.8865" />
-   <Bin width="0.014" center="0.9" />
-   <Bin width="0.023" center="0.9185" />
-   <Bin width="0.07" center="0.965" />
+   <Bin width="0.626" center="0.313" />
+   <Bin width="0.074" center="0.663" />
+   <Bin width="0.039" center="0.7195" />
+   <Bin width="0.027" center="0.7525" />
+   <Bin width="0.019" center="0.7755" />
+   <Bin width="0.017" center="0.7935" />
+   <Bin width="0.014" center="0.809" />
+   <Bin width="0.012" center="0.822" />
+   <Bin repeat="3" width="0.011" center="0.8335" />
+   <Bin width="0.012" center="0.867" />
+   <Bin width="0.013" center="0.8795" />
+   <Bin width="0.015" center="0.8935" />
+   <Bin width="0.021" center="0.9115" />
+   <Bin width="0.078" center="0.961" />
   </Axis>
  </BinningNode>
 </BinningNode>

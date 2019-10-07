@@ -4,8 +4,8 @@
 <!ENTITY NEVT "-1">
 <!ENTITY channel "muon">
 
-<!ENTITY INdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/kin_cut_TDC40_btm_cmssw10_data/Muon">
-<!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_cmssw10_data/PUdown/Muon">
+<!ENTITY INdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Selection/Muon">
+<!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/PostSelection/PUdown/Muon">
 
 <!-- =============================================== ttbar =========================================================================== -->
 <!ENTITY TTbar_2016v3_Mtt0000to0700    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_Mtt0000to0700.root">
@@ -57,7 +57,7 @@
     <Item Name="GenJetCollection"        Value="slimmedGenJets"/>
     <Item Name="TopJetCollection"        Value="jetsAk8CHSSubstructure_SoftDropCHS"/>
     <Item Name="GenTopJetCollection"     Value="genjetsAk8SubstructureSoftDrop" />
-    <Item Name="PFParticleCollection"    Value="PFParticles"/>
+    <!-- <Item Name="PFParticleCollection"    Value="PFParticles"/> -->
 
     <Item Name="additionalBranches"      Value="genjetsAk8Substructure jetsAk8PuppiSubstructure_SoftDropPuppi h_rec_weight_kin h_gen_weight_kin h_passed_mu_gen h_passed_mu_rec h_passed_ele_gen h_passed_ele_rec h_gen_tau2_start h_gen_tau2_lepcleaner h_gen_tau2_cleaner h_gen_tau3_start h_gen_tau3_lepcleaner h_gen_tau3_cleaner h_pf_tau2_start h_pf_tau2_start_puppi h_pf_tau2_common h_pf_tau2_common_puppi h_pf_tau2_corrector h_pf_tau2_corrector_puppi h_pf_tau2_lepcleaner h_pf_tau2_lepcleaner_puppi h_pf_tau2_cleaner h_pf_tau2_cleaner_puppi h_pf_tau3_start h_pf_tau3_start_puppi h_pf_tau3_common h_pf_tau3_common_puppi h_pf_tau3_corrector h_pf_tau3_corrector_puppi h_pf_tau3_lepcleaner h_pf_tau3_lepcleaner_puppi h_pf_tau3_cleaner h_pf_tau3_cleaner_puppi"/>
 

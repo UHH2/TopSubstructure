@@ -66,21 +66,20 @@ int main(int argc, char* argv[]){
   */
 
   // define directory
-  TString dir = "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Post_kin_full_sel_cmssw10_data";
+  TString dir = "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/PostSelection";
   TString prefix = "/uhh2.AnalysisModuleRunner.";
-  // vector<TString> sv = {"SVMR_u_SVMF_u", "SVMR_u_SVMF_d", "SVMR_d_SVMF_u", "SVMR_d_SVMF_d"};
 
   // fill data
   TFile *data_File;
-  data_File = new TFile(dir + "/Muon" + prefix + "DATA.DATA.root");
+  data_File = new TFile(dir + "/Muon" + prefix + "DATA.2016v3_DATA.root");
   fill_data((TTree *) data_File->Get("AnalysisTree"));
 
   // fill pseudo
-  TFile *pseudo_matrix_File = new TFile(dir+"/Muon"+prefix+"MC.TTbar_2016v3_M.root");
+  TFile *pseudo_matrix_File = new TFile(dir+"/Muon"+prefix+"MC.2016v3_TTbar.root");
   fill_pseudo((TTree *) pseudo_matrix_File->Get("AnalysisTree"));
 
   // fill ttbar
-  TFile *mc_matrix_File = new TFile(dir+"/Muon"+prefix+"MC.TTbar_2016v3_M.root");
+  TFile *mc_matrix_File = new TFile(dir+"/Muon"+prefix+"MC.2016v3_TTbar.root");
   fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "mc");
 
   // fill other mass samples
@@ -92,7 +91,7 @@ int main(int argc, char* argv[]){
   // fill variation
   vector<TString> jetcorrections = {"JECup", "JECdown", "JERup", "JERdown", "BTagup", "BTagdown", "MUIDup", "MUIDdown", "MUTriggerup", "MUTriggerdown", "PUup", "PUdown"};
   for(unsigned int i = 0; i < jetcorrections.size(); i++){
-    TFile *jc_matrix_file =  new TFile(dir+"/"+jetcorrections.at(i)+"/Muon"+prefix+"MC.TTbar.root");
+    TFile *jc_matrix_file =  new TFile(dir+"/"+jetcorrections.at(i)+"/Muon"+prefix+"MC.2016v3_TTbar.root");
     fill_ttbar((TTree *) jc_matrix_file->Get("AnalysisTree"), jetcorrections.at(i));
   }
 
@@ -111,16 +110,16 @@ int main(int argc, char* argv[]){
   // fill scales
   vector<TString> sv = {"SCALEupup", "SCALEupnone", "SCALEdownnone", "SCALEdowndown", "SCALEnoneup", "SCALEnonedown"};
   for(unsigned int i = 0; i < sv.size(); i++){
-    TFile *sv_matrix_file =  new TFile(dir+"/"+sv.at(i)+"/Muon"+prefix+"MC.TTbar.root");
+    TFile *sv_matrix_file =  new TFile(dir+"/"+sv.at(i)+"/Muon"+prefix+"MC.2016v3_TTbar.root");
     fill_scale((TTree *) sv_matrix_file->Get("AnalysisTree"), sv.at(i));
   }
 
   // fill background
-  // std::vector<TString> background = {"DYJets", "QCD", "ST", "WJets", "WW", "WZ", "ZZ"};
-  std::vector<TString> background = {"DYJets", "ST", "Diboson", "WJets"};
+  std::vector<TString> background = {"DYJets", "ST", "Diboson", "WJets_HT", "WJets_Pt", "QCD"};
 
   for(unsigned int i = 0; i < background.size(); i++){
-    TFile *background_File = new TFile(dir+"/Muon"+prefix+"MC."+background[i]+".root");
+    TFile *background_File;
+    background_File = new TFile(dir+"/Muon"+prefix+"MC."+"2016v3_"+background[i]+".root");
     fill_background((TTree *) background_File->Get("AnalysisTree"), background[i]);
   }
   outputFile->Close();
@@ -129,18 +128,17 @@ int main(int argc, char* argv[]){
 
   outputFile2=new TFile(filename2.c_str(),"recreate");
   outputFile2->cd();
-  // binning_rec->Write();
-  // binning_gen->Write();
+
   TFile *data_File2;
-  data_File2 = new TFile(dir+"/Electron" + prefix + "DATA.DATA.root");
+  data_File2 = new TFile(dir+"/Electron" + prefix + "DATA.2016v3_DATA.root");
   fill_data((TTree *) data_File2->Get("AnalysisTree"));
 
   // fill pseudo
-  TFile *pseudo_matrix_File2 = new TFile(dir+"/Electron"+prefix+"MC.TTbar_2016v3_M.root");
+  TFile *pseudo_matrix_File2 = new TFile(dir+"/Electron"+prefix+"MC.2016v3_TTbar.root");
   fill_pseudo((TTree *) pseudo_matrix_File2->Get("AnalysisTree"));
 
   // fill ttbar
-  TFile *mc_matrix_File2 = new TFile(dir+"/Electron"+prefix+"MC.TTbar_2016v3_M.root");
+  TFile *mc_matrix_File2 = new TFile(dir+"/Electron"+prefix+"MC.2016v3_TTbar.root");
   fill_ttbar((TTree *) mc_matrix_File2->Get("AnalysisTree"), "mc");
 
   // fill other mass samples
@@ -152,7 +150,7 @@ int main(int argc, char* argv[]){
   // fill variation
   vector<TString> jetcorrections2 = {"JECup", "JECdown", "JERup", "JERdown", "BTagup", "BTagdown", "ELEIDup", "ELEIDdown", "ELETriggerup", "ELETriggerdown", "PUup", "PUdown", "ELERecodown", "ELERecoup"};
   for(unsigned int i = 0; i < jetcorrections2.size(); i++){
-    TFile *jc_matrix_file2 =  new TFile(dir+"/"+jetcorrections2.at(i)+"/Electron"+prefix+"MC.TTbar.root");
+    TFile *jc_matrix_file2 =  new TFile(dir+"/"+jetcorrections2.at(i)+"/Electron"+prefix+"MC.2016v3_TTbar.root");
     fill_ttbar((TTree *) jc_matrix_file2->Get("AnalysisTree"), jetcorrections2.at(i));
   }
 
@@ -165,16 +163,17 @@ int main(int argc, char* argv[]){
   // fill scales
   vector<TString> sv2 = {"SCALEupup", "SCALEupnone", "SCALEdownnone", "SCALEdowndown", "SCALEnoneup", "SCALEnonedown"};
   for(unsigned int i = 0; i < sv2.size(); i++){
-    TFile *sv_matrix_file2 =  new TFile(dir+"/"+sv2.at(i)+"/Electron"+prefix+"MC.TTbar.root");
+    TFile *sv_matrix_file2 =  new TFile(dir+"/"+sv2.at(i)+"/Electron"+prefix+"MC.2016v3_TTbar.root");
     fill_scale((TTree *) sv_matrix_file2->Get("AnalysisTree"), sv2.at(i));
   }
 
   // fill background
   // std::vector<TString> background = {"DYJets", "QCD", "ST", "WJets", "WW", "WZ", "ZZ"};
-  std::vector<TString> background2 = {"DYJets", "ST", "Diboson", "WJets"};
+  std::vector<TString> background2 = {"DYJets", "ST", "Diboson", "WJets_HT", "WJets_Pt", "QCD"};
 
   for(unsigned int i = 0; i < background2.size(); i++){
-    TFile *background_File2 = new TFile(dir+"/Electron"+prefix+"MC."+background2[i]+".root");
+    TFile *background_File2;
+    background_File2 = new TFile(dir+"/Electron"+prefix+"MC."+"2016v3_"+background2[i]+".root");
     fill_background((TTree *) background_File2->Get("AnalysisTree"), background2[i]);
   }
 

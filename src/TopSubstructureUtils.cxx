@@ -118,7 +118,7 @@ bool ParticleRemover::process(uhh2::Event & event){
 }
 
 
-GenTopJetLeptonCleaner::GenTopJetLeptonCleaner(uhh2::Context & ctx, string const & label_):hndl(ctx.get_handle<vector<GenTopJet>>(label_)), h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")){}
+GenTopJetLeptonCleaner::GenTopJetLeptonCleaner(uhh2::Context & ctx, string const & label_):h_ttbargen(ctx.get_handle<TTbarGen>("ttbargen")), hndl(ctx.get_handle<vector<GenTopJet>>(label_)), h_gen(ctx.declare_event_output<std::vector<GenTopJet>>(label_)){}
 bool GenTopJetLeptonCleaner::process(uhh2::Event& event){
   if (!event.is_valid(hndl)) {
     cerr << "In GenTopJetLeptonCleaner: Handle not valid!\n";
@@ -137,6 +137,7 @@ bool GenTopJetLeptonCleaner::process(uhh2::Event& event){
   }
 
   sort_by_pt<GenTopJet> (gentopjet);
+  event.set(h_gen, gentopjet);
   return true;
 }
 

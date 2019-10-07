@@ -1,6 +1,7 @@
 #include "iostream"
 #include <TROOT.h>
 #include "TString.h"
+#include "THStack.h"
 #include "TH1D.h"
 #include "TCanvas.h"
 #include <cmath>
@@ -34,6 +35,7 @@ public:
   void Plot_LCurve(TGraph* lcurve, std::vector<double> coordinates, std::vector<double> coordinates_2, TString save);
   void Plot_RhoLogTau(TSpline* rhologTau, double tau, TString save);
   void Plot_purity(TH1* purity_same, TH1* purity_all, TString save);
+  void Plot_input(TH1* data, TH1* mc, TH1* background, TString save);
   void Plot_input(TH1* data, TH1* mc, TString save);
   void Plot_covariance(TH2* matrix, TString save);
   void Plot_delta(std::vector<std::vector<TH1*>> delta, std::vector<std::vector<TString>> delta_name, TString directory);

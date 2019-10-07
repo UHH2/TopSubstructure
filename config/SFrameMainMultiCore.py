@@ -126,6 +126,8 @@ def read_missing_files(workdir):
     with open(workdir+"/missing_files.txt", "r") as ins:
         array = []
         for line in ins:
+            # if '_3.xml' in line or '_4.xml' in line or '_5.xml' in line:
+                # print line
             array.append(line.rstrip('\n'))
     return array
 

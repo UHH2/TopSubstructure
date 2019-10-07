@@ -304,7 +304,7 @@ void Plotter::Plot_result_with_uncertainty(TH1* h_unfolded, TH1* h_unfolded_unce
     max_bin = h_data_truth->GetMaximumBin();
     max_value = (h_data_truth->GetBinContent(max_bin)+h_data_truth->GetBinError(max_bin))*1.15;
   }
-  max_value = 400;
+  max_value = 1000;
   if(normalise){
     TH1 *unfolded_norm = (TH1*) h_unfolded->Clone("unfolded_norm");
     TH1 *unfolded_uncer_norm = (TH1*) h_unfolded_uncertainty->Clone("unfolded_uncer_norm");
@@ -469,15 +469,15 @@ void Plotter::Plot_result_with_uncertainty(TH1* h_unfolded, TH1* h_unfolded_unce
     else legend = new TLegend(0.15, 0.18, 0.45, 0.38);
     legend->SetFillStyle(0);
     legend->SetBorderSize(0);
-    legend->AddEntry(h_unfolded_uncertainty, "Unfolded MADGRAPH", "lpe");
+    legend->AddEntry(h_unfolded_uncertainty, "Unfolded Data", "lpe");
     if(directory.Contains("data")){
       legend->AddEntry(h_mc_truth, "POWHEG", "l");
-      legend->AddEntry(h_data_truth, "MADGRAPH", "l");
+      legend->AddEntry(h_data_truth, "m_{top}=173.5", "l");
 
     }
     else{
       legend->AddEntry(h_mc_truth, "POWHEG (Mig. Ma.)", "l");
-      legend->AddEntry(h_data_truth, "MADGRAPH", "l");
+      legend->AddEntry(h_data_truth, "m_{top}=173.5", "l");
     }
     legend->SetTextSize(0.04);
 
@@ -982,6 +982,56 @@ void Plotter::Plot_purity(TH1* purity_same, TH1* purity_all, TString directory){
 
 
 
+void Plotter::Plot_input(TH1* data, TH1* mc, TH1* background, TString directory){
+  gStyle->SetPadLeftMargin(0.12);
+  gStyle->SetPadRightMargin(0.06);
+  TCanvas* c_input = new TCanvas("Input"  , "Input", 400, 400);
+  c_input->cd();
+  c_input->UseCurrentStyle();
+  // TLine *l_input, *l_input_2;
+  // if(!directory.Contains("dist")){
+  //   l_input = new TLine(27.5,0,27.5,130);
+  //   l_input->SetLineColor(kBlue);
+  //   l_input_2 = new TLine(37.5,0,37.5,130);
+  //   l_input_2->SetLineColor(kBlue);
+  // }
+  mc->SetLineColor(633);
+  mc->SetFillColor(633);
+  mc->SetMarkerColor(633);
+  background->SetLineColor(859);
+  background->SetFillColor(859);
+  background->SetMarkerColor(859);
+  THStack *hs = new THStack("hs","");
+  hs->Add(background);
+  hs->Add(mc);
+  // double max_bin = mc->GetMaximumBin();
+  // double max_value = mc->GetBinContent(max_bin)*1.4;
+  data->GetYaxis()->SetRangeUser(0, 600);
+  data->SetTitle("");
+  data->GetYaxis()->SetTitle("Events");
+  data->GetXaxis()->SetTitle("detector binning");
+  data->GetYaxis()->SetTitleSize(0.07);
+  data->GetYaxis()->SetTitleOffset(0.7);
+  data->GetXaxis()->SetTitleSize(0.07);
+  data->GetXaxis()->SetTitleOffset(0.9);
+  data->SetLineColor(kBlack);
+  data->SetMarkerColor(kBlack);
+  data->SetMarkerStyle(20);
+  data->Draw("");
+  hs->Draw("same hist");
+  data->Draw("same");
+  // if(!directory.Contains("dist")) l_input->Draw("same");
+  // if(!directory.Contains("dist")) l_input_2->Draw("same");
+  TLegend *legend_input = new TLegend(0.39, 0.70, 0.59, 0.85, "");
+  legend_input->SetFillStyle(0);
+  legend_input->AddEntry(data, "Data", "lp");
+  legend_input->AddEntry(mc, "TTbar", "f");
+  legend_input->AddEntry(background, "Other", "f");
+  legend_input->Draw();
+  c_input->SaveAs(directory+"Input.eps");
+  delete c_input;
+}
+
 void Plotter::Plot_input(TH1* data, TH1* mc, TString directory){
   gStyle->SetPadLeftMargin(0.12);
   gStyle->SetPadRightMargin(0.06);
@@ -1000,7 +1050,7 @@ void Plotter::Plot_input(TH1* data, TH1* mc, TString directory){
   mc->SetMarkerColor(633);
   double max_bin = data->GetMaximumBin();
   double max_value = data->GetBinContent(max_bin)*1.1;
-  mc->GetYaxis()->SetRangeUser(0, max_value);
+  mc->GetYaxis()->SetRangeUser(0, 1500);
   mc->SetTitle("");
   mc->GetYaxis()->SetTitle("Events");
   mc->GetXaxis()->SetTitle("detector binning");
@@ -1018,12 +1068,11 @@ void Plotter::Plot_input(TH1* data, TH1* mc, TString directory){
   TLegend *legend_input = new TLegend(0.39, 0.70, 0.59, 0.85, "");
   legend_input->SetFillStyle(0);
   legend_input->AddEntry(data, "Data", "lp");
-  legend_input->AddEntry(mc, "MC", "f");
+  legend_input->AddEntry(mc, "TTbar", "f");
   legend_input->Draw();
   c_input->SaveAs(directory+"Input.eps");
   delete c_input;
 }
-
 
 
 
@@ -1361,7 +1410,7 @@ void Plotter::Plot_all_pseudo(TH1* pseudo1, TH1* pseudo1_truth_1, TH1* pseudo2, 
   // gr->GetXaxis()->SetLabelSize(0.04);
   // gr->GetYaxis()->SetLabelSize(0.04);
   gr->GetXaxis()->SetRangeUser(0, 1);
-  if(cs) gr->GetYaxis()->SetRangeUser(0, 400);
+  if(cs) gr->GetYaxis()->SetRangeUser(0, 1000);
   else gr->GetYaxis()->SetRangeUser(0, max_range);
   gr->GetXaxis()->SetTitle("#tau_{3/2}");
   // gr->GetYaxis()->SetTitle("#frac{Events}{Bin}");

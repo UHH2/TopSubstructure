@@ -20,8 +20,10 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
     }
   }
   else channel_ = none;
+
   // jets
   book<TH1D>("N_jets", "N_{Jets}", 17, -0.5, 16.5);
+  book<TH1D>("pt_jets_all", "p_{T}^{Jet}", 120, 0, 1200);
   book<TH1D>("eta_jet1", "#eta^{Jet 1}", 40, -2.5, 2.5);
   book<TH1D>("eta_jet2", "#eta^{Jet 2}", 40, -2.5, 2.5);
   book<TH1D>("eta_jet3", "#eta^{Jet 3}", 40, -2.5, 2.5);
@@ -251,15 +253,14 @@ TopSubstructureRecoHists::TopSubstructureRecoHists(Context & ctx, const string &
   //general
   book<TH1D>("E_Tmiss", "missing E_{T} [GeV]", 75, 0, 1500);
   book<TH1D>("sum_event_weights", "BinContent = sum(eventweights)", 1, 0.5, 1.5);
-  book<TH1D>("empty_pf_cand", "BinContent = sum(eventweights)", 1, 0.5, 1.5);
+  // book<TH1D>("event_number", "eventid", 100000000, -0.5, 99999999.5);
+  // book<TH1D>("empty_pf_cand", "BinContent = sum(eventweights)", 1, 0.5, 1.5);
 
 
   // 2-D plot
   TwoDCut = book<TH2F>("TwoDCut", "x=#Delta R y=p_{T}^{rel}", 50, 0, 2, 50, 0, 200);
-  if(channel_ == none){
-    TwoDCut_mu = book<TH2F>("TwoDCut_mu", "x=#Delta R y=p_{T}^{rel} (#mu)", 50, 0, 2, 50, 0, 200);
-    TwoDCut_ele = book<TH2F>("TwoDCut_ele", "x=#Delta R y=p_{T}^{rel} (electron)", 50, 0, 2, 50, 0, 200);
-  }
+  book<TH1D>("ptrel", "p_{T}^{rel}", 50, 0, 200);
+  book<TH1D>("drmin", "#Delta R", 50, 0, 2);
 
   // get handles
   h_weight = ctx.get_handle<double>("h_rec_weight");
@@ -328,6 +329,7 @@ void TopSubstructureRecoHists::fill(const Event & event){
   else if(event.is_valid(h_weight_kin))  weight = event.get(h_weight_kin);
   else weight = event.weight;
 
+
   double tau3_start = -100;
   double tau3_common = -100;
   double tau3_corrector = -100;
@@ -364,23 +366,20 @@ void TopSubstructureRecoHists::fill(const Event & event){
 
   //general
   hist("sum_event_weights")->Fill(1, weight);
+  // hist("event_number")->Fill(event.event, weight);
 
   double drmin, ptrel;
   if(channel_ == muon && event.muons->size() > 0){
     std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
     TwoDCut->Fill(drmin, ptrel, weight);
+    hist("ptrel")->Fill(ptrel, weight);
+    hist("drmin")->Fill(drmin, weight);
   }
   else if(channel_ == ele && event.electrons->size() > 0){
     std::tie(drmin, ptrel) = drmin_pTrel(event.electrons->at(0), *event.jets);
     TwoDCut->Fill(drmin, ptrel, weight);
-  }
-  if(channel_ == none && event.muons->size() > 0){
-    std::tie(drmin, ptrel) = drmin_pTrel(event.muons->at(0), *event.jets);
-    TwoDCut_mu->Fill(drmin, ptrel, weight);
-  }
-  if(channel_ == none && event.electrons->size() > 0){
-    std::tie(drmin, ptrel) = drmin_pTrel(event.electrons->at(0), *event.jets);
-    TwoDCut_ele->Fill(drmin, ptrel, weight);
+    hist("ptrel")->Fill(ptrel, weight);
+    hist("drmin")->Fill(drmin, weight);
   }
 
 
@@ -391,6 +390,9 @@ void TopSubstructureRecoHists::fill(const Event & event){
   int Njets = jets->size();
 
   hist("N_jets")->Fill(Njets, weight);
+  for(int i = 0; i < Njets; i++){
+    hist("pt_jets_all")->Fill(jets->at(i).pt(), weight);
+  }
   if(Njets>=1) hist("eta_jet1")->Fill(jets->at(0).eta(), weight);
   if(Njets>=2) hist("eta_jet2")->Fill(jets->at(1).eta(), weight);
   if(Njets>=3) hist("eta_jet3")->Fill(jets->at(2).eta(), weight);
@@ -602,7 +604,7 @@ void TopSubstructureRecoHists::fill(const Event & event){
     if(tau3_cleaner >= 0 && tau2_cleaner >= 0 ) hist("tau32_tj1_calc_cleaner_rebin1")->Fill(tau3_cleaner/tau2_cleaner, weight);
     if(tau3_cleaner >= 0 && tau2_cleaner >= 0 ) hist("tau32_tj1_calc_cleaner_rebin2")->Fill(tau3_cleaner/tau2_cleaner, weight);
 
-    if(tau3_start == -50 || tau3_common == -50 || tau3_corrector == -50 || tau3_lepcleaner == -50 || tau3_cleaner == -50 || tau2_start == -50 || tau2_common == -50 || tau2_corrector == -50 || tau2_lepcleaner == -50 || tau2_cleaner == -50) hist("empty_pf_cand")->Fill(1, weight);
+    // if(tau3_start == -50 || tau3_common == -50 || tau3_corrector == -50 || tau3_lepcleaner == -50 || tau3_cleaner == -50 || tau2_start == -50 || tau2_common == -50 || tau2_corrector == -50 || tau2_lepcleaner == -50 || tau2_cleaner == -50) hist("empty_pf_cand")->Fill(1, weight);
 
     hist("tau21_tj1")->Fill(topjet.at(0).tau2()/topjet.at(0).tau1(), weight);
     hist("tau21_tj1_groomed")->Fill(topjet.at(0).tau2_groomed()/topjet.at(0).tau1_groomed(), weight);

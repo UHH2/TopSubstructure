@@ -123,6 +123,8 @@ bool TopJetCorrections::process(uhh2::Event & event){
     tjet_corrector_data->process(event);
   }
 
-  if(is_mc) tjet_resolution_smearer->process(event);
+  if(is_mc){
+    tjet_resolution_smearer->process(event);
+  }
   return true;
 }
