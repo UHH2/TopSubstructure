@@ -8,3 +8,5 @@ jobTempOutput*
 
 #ignore obj
 obj
+
+*.o

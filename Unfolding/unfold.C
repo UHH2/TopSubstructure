@@ -3,108 +3,10 @@
 using namespace std;
 
 unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TUnfoldBinning* binning_gen, TUnfoldBinning* binning_rec, std::vector<std::vector<TH2*>> sys_matrix, std::vector<std::vector<TString>> sys_name, std::vector<TH1D*> background, std::vector<TString> background_names, int nscan, TString regmode_, TString density_flag, bool do_lcurve, bool subtract_background, double tau_value){
-  response_matrix = 0;
   response_matrix = response;
-  hist_truth = 0;
   hist_truth = h_truth;
-  hist_mc = 0;
   hist_mc = (TH1D*) h_mc->Clone("hist_mc");
-  lcurve = false;
   lcurve = do_lcurve;
-  cout << "unfold.c: hist_truth: " << hist_truth->GetName() << '\n';
-  cout << "unfold.c: response_matrix: " << response_matrix->GetName() << '\n';
-  cout << "unfold.c: hist_mc: " << hist_mc->GetName() << '\n';
-  if(h_data_output) cout << "unfold.c: h_data_output: " << h_data_output->GetName() << '\n';
-  h_check = 0;
-  h_check_meas = 0;
-  h_check_all = 0;
-  h_data_output = 0;
-  h_data_meas = 0;
-  h_data_output_all = 0;
-  rhoLogTau = 0;
-  rhoLogTau_check = 0;
-  bias = 0;
-  h_data_rho = 0;
-  h_data_rho_meas = 0;
-  h_data_rho_all = 0;
-  h_prob_matrix = 0;
-  h_covarianceinputstat = 0;
-  h_covarianceinputstat_meas = 0;
-  h_covarianceinputstat_all = 0;
-  h_covartiancematrixstat = 0;
-  h_covartiancematrixstat_meas = 0;
-  h_covartiancematrixstat_all = 0;
-  h_covariancetotal = 0;
-  h_covariancetotal_meas = 0;
-  h_covariancetotal_all = 0;
-  logTau.clear();
-  tau_result=0;
-
-    for(unsigned int i = 0; i < CovBgrStat.size(); i++){
-      CovBgrStat[i] = 0;
-    }
-    for(unsigned int i = 0; i < CovBgrStat_meas.size(); i++){
-      CovBgrStat_meas[i] = 0;
-    }
-    for(unsigned int i = 0; i < CovBgrStat_all.size(); i++){
-      CovBgrStat_all[i] = 0;
-    }
-
-    for(unsigned int i = 0; i < BgrDelta.size(); i++){
-      BgrDelta[i] = 0;
-    }
-    for(unsigned int i = 0; i < BgrDelta_meas.size(); i++){
-      BgrDelta_meas[i] = 0;
-    }
-    for(unsigned int i = 0; i < BgrDelta_all.size(); i++){
-      BgrDelta_all[i] = 0;
-    }
-
-    for(unsigned int i = 0; i < CovBgrScale.size(); i++){
-      CovBgrScale[i] = 0;
-    }
-    for(unsigned int i = 0; i < CovBgrScale_meas.size(); i++){
-      CovBgrScale_meas[i] = 0;
-    }
-    for(unsigned int i = 0; i < CovBgrScale_all.size(); i++){
-      CovBgrScale_all[i] = 0;
-    }
-
-      for(unsigned int i = 0; i < sys_delta.size(); i++){
-        for(unsigned int j = 0; j < sys_delta[i].size(); j++){
-          sys_delta[i][j] = 0;
-        }
-      }
-      for(unsigned int i = 0; i < sys_delta_meas.size(); i++){
-        for(unsigned int j = 0; j < sys_delta_meas[i].size(); j++){
-          sys_delta_meas[i][j] = 0;
-        }
-      }
-      for(unsigned int i = 0; i < sys_delta_all.size(); i++){
-        for(unsigned int j = 0; j < sys_delta_all[i].size(); j++){
-          sys_delta_all[i][j] = 0;
-        }
-      }
-        for(unsigned int i = 0; i < sys_covariance.size(); i++){
-          for(unsigned int j = 0; j < sys_covariance[i].size(); j++){
-            sys_covariance[i][j] = 0;
-          }
-        }
-        for(unsigned int i = 0; i < sys_covariance_meas.size(); i++){
-          for(unsigned int j = 0; j < sys_covariance_meas[i].size(); j++){
-            sys_covariance_meas[i][j] = 0;
-          }
-        }
-        for(unsigned int i = 0; i < sys_covariance_all.size(); i++){
-          for(unsigned int j = 0; j < sys_covariance_all[i].size(); j++){
-            sys_covariance_all[i][j] = 0;
-          }
-        }
-
-  x_value.Clear();
-  y_value.Clear();
-  tau.Clear();
-  cout << "send help!" << '\n';
 
   // preserve the area
   TUnfold::EConstraint constraintMode = TUnfold::kEConstraintNone;
@@ -186,7 +88,7 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
       TUnfoldDensity::EScanTauMode scanMode = TUnfoldDensity::kEScanTauRhoAvgSys;
       // TUnfoldDensity::EScanTauMode scanMode = TUnfoldDensity::kEScanTauRhoSquareAvg;
       // TUnfoldDensity::EScanTauMode scanMode = TUnfoldDensity::kEScanTauRhoSquareAvgSys;
-      unfold.ScanTau(nscan, 0.000001, 0.9, &rhoLogTau, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &l_curve, &logTauX, &logTauY);
+      unfold.ScanTau(nscan, 0.0000000000001, 0.9, &rhoLogTau, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING, &l_curve, &logTauX, &logTauY);
       // unfold_check.ScanTau(1, 0.000001, 0.9, &rhoLogTau_check, scanMode, SCAN_DISTRIBUTION, SCAN_AXISSTEERING);
       logTauX->SetName("Spline logTauX TauScan");
       logTauY->SetName("Spline logTauY TauScan");
@@ -455,7 +357,7 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
 void unfolding::get_output(){
   h_data_output->Write();
   h_data_output = 0;
-  // return ;
+  return ;
 }
 
 void unfolding::get_output_meas(){

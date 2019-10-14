@@ -4,6 +4,7 @@
 <BinningNode name="binning_rec" firstbin="1" factor="1">
  <BinningNode name="measurement_rec" firstbin="1" factor="1">
   <Axis name="#tau_{3/2}" lowEdge="0">
+   <Bin location="underflow" width="0.369" center="-0.1845" />
    <Bin width="0.369" center="0.1845" />
    <Bin width="0.046" center="0.392" />
    <Bin width="0.034" center="0.432" />
@@ -23,8 +24,9 @@
    </Axis>
   </Axis>
  </BinningNode>
- <BinningNode name="rec_pt_topjet_sideband" firstbin="43" factor="1">
+ <BinningNode name="rec_pt_topjet_sideband" firstbin="45" factor="1">
   <Axis name="#tau_{3/2}" lowEdge="0">
+   <Bin location="underflow" width="0.546" center="-0.273" />
    <Bin width="0.546" center="0.273" />
    <Bin width="0.117" center="0.6045" />
    <Bin width="0.073" center="0.6995" />
@@ -34,8 +36,9 @@
    <Bin width="0.116" center="0.942" />
   </Axis>
  </BinningNode>
- <BinningNode name="rec_mass_sideband" firstbin="50" factor="1">
+ <BinningNode name="rec_mass_sideband" firstbin="53" factor="1">
   <Axis name="#tau_{3/2}" lowEdge="0">
+   <Bin location="underflow" width="0.626" center="-0.313" />
    <Bin width="0.626" center="0.313" />
    <Bin width="0.074" center="0.663" />
    <Bin width="0.039" center="0.7195" />
@@ -55,34 +58,36 @@
 </BinningNode>
 <BinningNode name="binning_gen" firstbin="1" factor="1">
  <BinningNode name="measurement_gen" firstbin="1" factor="1">
-  <Axis name="#tau_{3/2}" lowEdge="0">
-   <Bin width="0.362" center="0.181" />
-   <Bin width="0.171" center="0.4475" />
-   <Bin width="0.199" center="0.6325" />
-   <Bin width="0.135" center="0.7995" />
-   <Bin width="0.133" center="0.9335" />
+  <Axis name="#tau_{3/2}" lowEdge="0.2">
+   <Bin location="underflow" width="0.22" center="0.09" />
+   <Bin width="0.22" center="0.31" />
+   <Bin width="0.11" center="0.475" />
+   <Bin width="0.2" center="0.63" />
+   <Bin width="0.14" center="0.8" />
+   <Bin width="0.13" center="0.935" />
    <Axis name="mass" lowEdge="0">
     <Bin width="155" center="77.5" />
     <Bin width="845" center="577.5" />
    </Axis>
   </Axis>
  </BinningNode>
- <BinningNode name="gen_pt_topjet_sideband" firstbin="11" factor="1">
-  <Axis name="#tau_{3/2}" lowEdge="0">
-   <Bin width="0.362" center="0.181" />
-   <Bin width="0.171" center="0.4475" />
-   <Bin width="0.199" center="0.6325" />
-   <Bin width="0.135" center="0.7995" />
-   <Bin width="0.133" center="0.9335" />
+ <BinningNode name="gen_pt_topjet_sideband" firstbin="13" factor="1">
+  <Axis name="#tau_{3/2}" lowEdge="0.2">
+   <Bin location="underflow" width="0.22" center="0.09" />
+   <Bin width="0.22" center="0.31" />
+   <Bin width="0.11" center="0.475" />
+   <Bin width="0.2" center="0.63" />
+   <Bin width="0.14" center="0.8" />
+   <Bin width="0.13" center="0.935" />
   </Axis>
  </BinningNode>
- <BinningNode name="gen_mass_sideband" firstbin="16" factor="1">
-  <Axis name="#tau_{3/2}" lowEdge="0">
-   <Bin width="0.362" center="0.181" />
-   <Bin width="0.171" center="0.4475" />
-   <Bin width="0.199" center="0.6325" />
-   <Bin width="0.135" center="0.7995" />
-   <Bin width="0.133" center="0.9335" />
+ <BinningNode name="gen_mass_sideband" firstbin="19" factor="1">
+  <Axis name="#tau_{3/2}" lowEdge="0.2">
+   <Bin width="0.22" center="0.31" />
+   <Bin width="0.11" center="0.475" />
+   <Bin width="0.2" center="0.63" />
+   <Bin width="0.14" center="0.8" />
+   <Bin width="0.13" center="0.935" />
   </Axis>
  </BinningNode>
 </BinningNode>

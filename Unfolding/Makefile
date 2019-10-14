@@ -57,7 +57,7 @@ MY_MACRO=$(shell ls unfold_code*.C) # include my macros
 OBJ_binning = binning.o
 OBJ_hist = hist_filler.o
 OBJ_do_unfolding = do_unfolding.o unfold.o
-OBJ_Plotter = TestPlotter.o Plots.o
+OBJ_Plotter = Plotter.o Plots.o normalise.o
 
 ## this is for changing the code version
 TUNFOLDNEWVERSION:=V17.6

@@ -25,7 +25,8 @@ int main(int argc, char* argv[])
 
   // 1. set-up binning in vectors
   // std::vector<Double_t> TAU32 = {0, 0.4333, 0.5744, 0.6899, 0.7922, 0.8733, 1};
-  std::vector<Double_t> TAU32 = {0, 0.362, 0.533, 0.732, 0.867, 1};
+  std::vector<Double_t> TAU32 = {0.2, 0.42, 0.53, 0.73, 0.87, 1};   //switch underflow off!
+  // std::vector<Double_t> TAU32 = {0.2, 0.42, 0.55, 0.67, 0.77, 0.87, 1};
   std::vector<Double_t> ECF21 = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5};
   std::vector<Double_t> ECF22 = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5};
   std::vector<Double_t> ECF31 = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5};
@@ -166,7 +167,7 @@ int main(int argc, char* argv[])
   // define measurement phase space distribution
   TUnfoldBinning *measurement_rec = binning_rec->AddBinning("measurement_rec");
   measurement_rec->AddAxis("#tau_{3/2}",N_BINS_REC_TAU32,BINS_REC_TAU32,
-                                    false, // underflow bin
+                                    true, // underflow bin
                                     false // overflow bin
                                   );
   measurement_rec->AddAxis("mass",N_BINS_REC_TAU32_MASS_SPLIT,BINS_REC_TAU32_MASS_SPLIT,
@@ -177,13 +178,13 @@ int main(int argc, char* argv[])
   // define sideband distributions
   TUnfoldBinning *rec_pt_topjet_sideband = binning_rec->AddBinning("rec_pt_topjet_sideband");
   rec_pt_topjet_sideband->AddAxis("#tau_{3/2}",N_BINS_REC_TAU32_PT_TOPJET,BINS_REC_TAU32_PT_TOPJET,
-                                    false, // underflow bin
+                                    true, // underflow bin
                                     false // overflow bin
                                   );
 
   TUnfoldBinning *rec_mass_sideband = binning_rec->AddBinning("rec_mass_sideband");
   rec_mass_sideband->AddAxis("#tau_{3/2}",N_BINS_REC_TAU32_MASS,BINS_REC_TAU32_MASS,
-                                    false, // underflow bin
+                                    true, // underflow bin
                                     false // overflow bin
                                   );
 
@@ -293,7 +294,7 @@ int main(int argc, char* argv[])
   // define measurement phase space distribution
   TUnfoldBinning *measurement_gen = binning_gen->AddBinning("measurement_gen");
   measurement_gen->AddAxis("#tau_{3/2}",N_BINS_GEN_TAU32,BINS_GEN_TAU32,
-                                    false, // no underflow bin
+                                    true, // no underflow bin
                                     false // overflow bin
                                   );
   measurement_gen->AddAxis("mass",N_BINS_GEN_TAU32_MASS_SPLIT,BINS_GEN_TAU32_MASS_SPLIT,
@@ -304,7 +305,7 @@ int main(int argc, char* argv[])
   // define sideband distributions
   TUnfoldBinning *gen_pt_topjet_sideband = binning_gen->AddBinning("gen_pt_topjet_sideband");
   gen_pt_topjet_sideband->AddAxis("#tau_{3/2}",N_BINS_GEN_TAU32_PT_TOPJET,BINS_GEN_TAU32_PT_TOPJET,
-                                    false, // no underflow bin
+                                    true, // no underflow bin
                                     false // overflow bin
                                   );
   TUnfoldBinning *gen_mass_sideband = binning_gen->AddBinning("gen_mass_sideband");

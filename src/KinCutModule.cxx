@@ -207,32 +207,35 @@ namespace uhh2examples {
     common->disable_mcpileupreweight();
     common->init(ctx); // always last!
 
-    MuonId muid  = AndId<Muon>(MuonID(Muon::Tight), PtEtaCut(55., 2.4));
+    // MuonId muid  = AndId<Muon>(MuonID(Muon::Tight), PtEtaCut(55., 2.4));
 
     // this is only used for cleaner and electron veto
-    ElectronId eleid_noiso55  = AndId<Electron>(ElectronID_Summer16_tight_noIso, PtEtaSCCut(55., 2.4));
+    // ElectronId eleid_noiso55  = AndId<Electron>(ElectronID_Summer16_tight_noIso, PtEtaSCCut(55., 2.4));
+    // ElectronId eleid_noiso55  = AndId<Electron>(ElectronID_Fall17_tight_noIso, PtEtaSCCut(55., 2.4));
     // this is used to decide which ele trigger is used
-    ElectronId eleid_noiso120 = AndId<Electron>(PtEtaSCCut(120., 2.4), ElectronID_Summer16_tight_noIso);
+    // ElectronId eleid_noiso120 = AndId<Electron>(PtEtaSCCut(120., 2.4), ElectronID_Summer16_tight_noIso);
+    // ElectronId eleid_noiso120 = AndId<Electron>(PtEtaSCCut(120., 2.4), ElectronID_Fall17_tight_noIso);
     // this is used in combination with iso trigger
-    ElectronId eleid_iso55    = AndId<Electron>(PtEtaSCCut(55., 2.4), ElectronID_Summer16_tight);
-    Btag_medium = CSVBTag(CSVBTag::WP_MEDIUM);
-    Btag_tight  = CSVBTag(CSVBTag::WP_TIGHT);
+    // ElectronId eleid_iso55    = AndId<Electron>(PtEtaSCCut(55., 2.4), ElectronID_Summer16_tight);
+    // ElectronId eleid_iso55    = AndId<Electron>(PtEtaSCCut(55., 2.4), ElectronID_Fall17_tight);
+    // Btag_medium = CSVBTag(CSVBTag::WP_MEDIUM);
+    // Btag_tight  = CSVBTag(CSVBTag::WP_TIGHT);
 
-    muoSR_cleaner.reset(new MuonCleaner(muid));
-    eleSR_cleaner.reset(new ElectronCleaner(eleid_noiso55));
-    jetcleaner_1.reset(new JetCleaner(ctx, 15., 3.0));
-    jetcleaner_2.reset(new JetCleaner(ctx, 30., 2.4));
+    // muoSR_cleaner.reset(new MuonCleaner(muid));
+    // eleSR_cleaner.reset(new ElectronCleaner(eleid_noiso55));
+    // jetcleaner_1.reset(new JetCleaner(ctx, 15., 3.0));
+    // jetcleaner_2.reset(new JetCleaner(ctx, 30., 2.4));
 
-    if(channel_ == muon){
-      rectopjetleptoncleaner.reset(new RecTopJetLeptonCleaner(0));
-      recpuppijetleptoncleaner.reset(new RecPuppiJetLeptonCleaner(ctx, 0));
-    }
-    else if(channel_ == ele){
-      rectopjetleptoncleaner.reset(new RecTopJetLeptonCleaner(1));
-      recpuppijetleptoncleaner.reset(new RecPuppiJetLeptonCleaner(ctx, 1));
-    }
-    topjetcleaner.reset(new TopJetCleaner(ctx, PtEtaCut(170., 2.5)));
-    puppijetcleaner.reset(new TopJetCleaner(ctx, PtEtaCut(170., 2.5), puppi_jet_col));
+    // if(channel_ == muon){
+    //   rectopjetleptoncleaner.reset(new RecTopJetLeptonCleaner(0));
+    //   recpuppijetleptoncleaner.reset(new RecPuppiJetLeptonCleaner(ctx, 0));
+    // }
+    // else if(channel_ == ele){
+    //   rectopjetleptoncleaner.reset(new RecTopJetLeptonCleaner(1));
+    //   recpuppijetleptoncleaner.reset(new RecPuppiJetLeptonCleaner(ctx, 1));
+    // }
+    // topjetcleaner.reset(new TopJetCleaner(ctx, PtEtaCut(170., 2.5)));
+    // puppijetcleaner.reset(new TopJetCleaner(ctx, PtEtaCut(170., 2.5), puppi_jet_col));
 
     // 2. set up selections
 
@@ -261,33 +264,33 @@ namespace uhh2examples {
     // rm_particle.reset(new ParticleRemover(isMC));
 
     //setup reconstruction selections
-    pv_sel.reset(new NPVSelection(1, -1, PrimaryVertexId(StandardPrimaryVertexId())));
+    // pv_sel.reset(new NPVSelection(1, -1, PrimaryVertexId(StandardPrimaryVertexId())));
+    //
+    // if(channel_ == ele){
+    //   nlep0_sel.reset(new NMuonSelection(0, 0, muid));
+    //   nlep1_sel.reset(new NElectronSelection(1, 1, eleid_noiso55));
+    //   pt_lep_sel.reset(new LeptonPtSelection(1, 55));
+    // }
+    // else if (channel_ == muon){
+    //   nlep1_sel.reset(new NMuonSelection(1, 1, muid));
+    //   nlep0_sel.reset(new NElectronSelection(0, 0, eleid_noiso55));
+    //   pt_lep_sel.reset(new LeptonPtSelection(0, 55));
+    // }
 
-    if(channel_ == ele){
-      nlep0_sel.reset(new NMuonSelection(0, 0, muid));
-      nlep1_sel.reset(new NElectronSelection(1, 1, eleid_noiso55));
-      pt_lep_sel.reset(new LeptonPtSelection(1, 55));
-    }
-    else if (channel_ == muon){
-      nlep1_sel.reset(new NMuonSelection(1, 1, muid));
-      nlep0_sel.reset(new NElectronSelection(0, 0, eleid_noiso55));
-      pt_lep_sel.reset(new LeptonPtSelection(0, 55));
-    }
+    // met_sel.reset(new METSelection(50,-1));
 
-    met_sel.reset(new METSelection(50,-1));
+    // trigger_mu_A = uhh2::make_unique<TriggerSelection>("HLT_Mu50_v*");
+    // trigger_mu_B = uhh2::make_unique<TriggerSelection>("HLT_TkMu50_v*");
+    // trigger_el_A = uhh2::make_unique<TriggerSelection>("HLT_Ele27_WPTight_Gsf_v*");
+    // trigger_el_B = uhh2::make_unique<TriggerSelection>("HLT_Ele115_CaloIdVT_GsfTrkIdT_v*");
+    // trigger_el_C = uhh2::make_unique<TriggerSelection>("HLT_Photon175_v*");
+    // elec_sel_triggerA.reset(new NElectronSelection(1, 1, eleid_iso55));
+    // elec_sel_120.reset(new NElectronSelection(1, 1, eleid_noiso120));
 
-    trigger_mu_A = uhh2::make_unique<TriggerSelection>("HLT_Mu50_v*");
-    trigger_mu_B = uhh2::make_unique<TriggerSelection>("HLT_TkMu50_v*");
-    trigger_el_A = uhh2::make_unique<TriggerSelection>("HLT_Ele27_WPTight_Gsf_v*");
-    trigger_el_B = uhh2::make_unique<TriggerSelection>("HLT_Ele115_CaloIdVT_GsfTrkIdT_v*");
-    trigger_el_C = uhh2::make_unique<TriggerSelection>("HLT_Photon175_v*");
-    elec_sel_triggerA.reset(new NElectronSelection(1, 1, eleid_iso55));
-    elec_sel_120.reset(new NElectronSelection(1, 1, eleid_noiso120));
-
-    if(channel_ == muon)     twodcut_sel.reset(new TwoDCut(0, 0.4, 40));
-    else if(channel_ == ele) twodcut_sel.reset(new TwoDCut(1, 0.4, 40));
-    nbtag_medium_sel.reset(new NJetSelection(1, -1, Btag_medium));
-    nbtag_tight_sel.reset(new NJetSelection(1, -1, Btag_tight));
+    // if(channel_ == muon)     twodcut_sel.reset(new TwoDCut(0, 0.4, 40));
+    // else if(channel_ == ele) twodcut_sel.reset(new TwoDCut(1, 0.4, 40));
+    // nbtag_medium_sel.reset(new NJetSelection(1, -1, Btag_medium));
+    // nbtag_tight_sel.reset(new NJetSelection(1, -1, Btag_tight));
 
 
     // 3. Set up Hists classes:
@@ -444,28 +447,28 @@ namespace uhh2examples {
     passed_mu_rec_tight   = false;  // passed full rec selection
     passed_ele_rec_tight  = false;  // passed full rec selection
 
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_test->fill(event);
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_test_puppi->fill(event);
-
-    muoSR_cleaner->process(event);
-    if(event.muons->size() > 0) sort_by_pt<Muon>(*event.muons);
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_muoncleaner->fill(event);
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_muoncleaner_puppi->fill(event);
-
-    eleSR_cleaner->process(event);
-    if(event.electrons->size() > 0) sort_by_pt<Electron>(*event.electrons);
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_elecleaner->fill(event);
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_elecleaner_puppi->fill(event);
-
-    bool common_passed = common->process(event);
-    if(!common_passed) return false;
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_common->fill(event);
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_common_puppi->fill(event);
-
-    jetcleaner_1->process(event);
-    sort_by_pt<Jet>(*event.jets);
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_jetcleaner->fill(event);
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_jetcleaner_puppi->fill(event);
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_test->fill(event);
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_test_puppi->fill(event);
+    //
+    // muoSR_cleaner->process(event);
+    // if(event.muons->size() > 0) sort_by_pt<Muon>(*event.muons);
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_muoncleaner->fill(event);
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_muoncleaner_puppi->fill(event);
+    //
+    // eleSR_cleaner->process(event);
+    // if(event.electrons->size() > 0) sort_by_pt<Electron>(*event.electrons);
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_elecleaner->fill(event);
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_elecleaner_puppi->fill(event);
+    //
+    // bool common_passed = common->process(event);
+    // if(!common_passed) return false;
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_common->fill(event);
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_common_puppi->fill(event);
+    //
+    // jetcleaner_1->process(event);
+    // sort_by_pt<Jet>(*event.jets);
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_jetcleaner->fill(event);
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_jetcleaner_puppi->fill(event);
     // event.set(h_pf_tau2_common, calculator_chs->PF_tau2(event));
     // event.set(h_pf_tau3_common, calculator_chs->PF_tau3(event));
     //
@@ -473,21 +476,21 @@ namespace uhh2examples {
     // event.set(h_pf_tau3_common_puppi, calculator_puppi->PF_tau3(event));
 
 
-    topjetCorr->process(event);
+    // topjetCorr->process(event);
 
     // event.set(h_pf_tau2_corrector, calculator_chs->PF_tau2(event));
     // event.set(h_pf_tau3_corrector, calculator_chs->PF_tau3(event));
 
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_topjetcorrections->fill(event);
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_topjetcorrections_puppi->fill(event);
-
-    puppijetCorr->process(event);
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_topjetcorrections->fill(event);
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_topjetcorrections_puppi->fill(event);
+    //
+    // puppijetCorr->process(event);
 
     // event.set(h_pf_tau2_corrector_puppi, calculator_puppi->PF_tau2(event));
     // event.set(h_pf_tau3_corrector_puppi, calculator_puppi->PF_tau3(event));
 
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_puppijetcorrections->fill(event);
-    if(passed_mu_rec_pre || passed_ele_rec_pre) h_puppijetcorrections_puppi->fill(event);
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_puppijetcorrections->fill(event);
+    // if(passed_mu_rec_pre || passed_ele_rec_pre) h_puppijetcorrections_puppi->fill(event);
 
 
 
@@ -498,125 +501,125 @@ namespace uhh2examples {
     // for MC and DATA from 274954 -> use "A || B"
     bool elec_is_isolated = false;
 
-    if(channel_ == muon){
-      if(!isMC && event.run < 274954) {
-        if(!trigger_mu_A->passes(event)) passed_trigger = false;
-        else passed_trigger = true;
-      }
-      else{
-        if( !(trigger_mu_A->passes(event) || trigger_mu_B->passes(event)) ) passed_trigger = false;
-        else passed_trigger = true;
-      }
-    }
-    else if(channel_ == ele){
-      // only use triggerA and isolation if elec pt < 120
-      // for pt > 120 use triggerB || triggerC
-      if(!elec_sel_120->passes(event)){
-        passed_trigger_1 = trigger_el_A->passes(event);
-        passed_trigger_2 = elec_sel_triggerA->passes(event);
-        if(passed_trigger_1 && passed_trigger_2){
-          elec_is_isolated = true;
-          passed_trigger = true;
-        }
-      }
-      else{
-        if( !(trigger_el_B->passes(event)) ) passed_trigger = false;
-        else passed_trigger = true;
-      }
-    }
+    // if(channel_ == muon){
+    //   if(!isMC && event.run < 274954) {
+    //     if(!trigger_mu_A->passes(event)) passed_trigger = false;
+    //     else passed_trigger = true;
+    //   }
+    //   else{
+    //     if( !(trigger_mu_A->passes(event) || trigger_mu_B->passes(event)) ) passed_trigger = false;
+    //     else passed_trigger = true;
+    //   }
+    // }
+    // else if(channel_ == ele){
+    //   // only use triggerA and isolation if elec pt < 120
+    //   // for pt > 120 use triggerB || triggerC
+    //   if(!elec_sel_120->passes(event)){
+    //     passed_trigger_1 = trigger_el_A->passes(event);
+    //     passed_trigger_2 = elec_sel_triggerA->passes(event);
+    //     if(passed_trigger_1 && passed_trigger_2){
+    //       elec_is_isolated = true;
+    //       passed_trigger = true;
+    //     }
+    //   }
+    //   else{
+    //     if( !(trigger_el_B->passes(event)) ) passed_trigger = false;
+    //     else passed_trigger = true;
+    //   }
+    // }
 
 
 
-    passed_pv = pv_sel->passes(event); //at least 1 good primary vertex
-
-    passed_nlep1 = nlep1_sel->passes(event); // exactly 1 electron/muon
-    rectopjetleptoncleaner->process(event); // remove lepton four-vector from topjet four-vector
+    // passed_pv = pv_sel->passes(event); //at least 1 good primary vertex
+    //
+    // passed_nlep1 = nlep1_sel->passes(event); // exactly 1 electron/muon
+    // rectopjetleptoncleaner->process(event); // remove lepton four-vector from topjet four-vector
 
     // event.set(h_pf_tau2_lepcleaner, calculator_chs->PF_tau2(event));
     // event.set(h_pf_tau3_lepcleaner, calculator_chs->PF_tau3(event));
 
-    recpuppijetleptoncleaner->process(event);       // remove lepton four-vector from puppi four-vector
+    // recpuppijetleptoncleaner->process(event);       // remove lepton four-vector from puppi four-vector
 
     // event.set(h_pf_tau2_lepcleaner_puppi, calculator_puppi->PF_tau2(event));
     // event.set(h_pf_tau3_lepcleaner_puppi, calculator_puppi->PF_tau3(event));
 
-    topjetcleaner->process(event);
+    // topjetcleaner->process(event);
 
 
     // event.set(h_pf_tau2_cleaner, calculator_chs->PF_tau2(event));
     // event.set(h_pf_tau3_cleaner, calculator_chs->PF_tau3(event));
 
-    puppijetcleaner->process(event);
+    // puppijetcleaner->process(event);
 
     // event.set(h_pf_tau2_cleaner_puppi, calculator_puppi->PF_tau2(event));
     // event.set(h_pf_tau3_cleaner_puppi, calculator_puppi->PF_tau3(event));
     event.set(h_rec_weight_kin, event.weight);
-    passed_nlep0 = nlep0_sel->passes(event); // exactly 0 muon/electron
+    // passed_nlep0 = nlep0_sel->passes(event); // exactly 0 muon/electron
 
 
-    passed_met    = met_sel->passes(event); // MET
-    passed_pt_lep = pt_lep_sel->passes(event); // pT(ele/muon)
+    // passed_met    = met_sel->passes(event); // MET
+    // passed_pt_lep = pt_lep_sel->passes(event); // pT(ele/muon)
 
 
-    if(channel_ == ele && elec_is_isolated)  passed_twodcut = true; // do not do 2D cut for isolated electrons
-    else passed_twodcut = twodcut_sel->passes(event); // TwoDCut
-    jetcleaner_2->process(event);
-    sort_by_pt<Jet>(*event.jets);
+    // if(channel_ == ele && elec_is_isolated)  passed_twodcut = true; // do not do 2D cut for isolated electrons
+    // else passed_twodcut = twodcut_sel->passes(event); // TwoDCut
+    // jetcleaner_2->process(event);
+    // sort_by_pt<Jet>(*event.jets);
 
-    passed_nbtag_medium = nbtag_medium_sel->passes(event); // at least one medium b-tag
-    passed_nbtag_tight  = nbtag_tight_sel->passes(event); // at least one medium b-tag
+    // passed_nbtag_medium = nbtag_medium_sel->passes(event); // at least one medium b-tag
+    // passed_nbtag_tight  = nbtag_tight_sel->passes(event); // at least one medium b-tag
 
-    if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger){
-      h_trigger->fill(event);
-      h_trigger_puppi->fill(event);
-    }
-    if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv){
-      h_pv->fill(event);
-      h_pv_puppi->fill(event);
-    }
-    if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1){
-      h_nlep_1->fill(event);
-      h_nlep_1_puppi->fill(event);
-    }
-    if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1 && passed_met){
-      h_met->fill(event);
-      h_met_puppi->fill(event);
-    }
-    if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1 && passed_met && passed_pt_lep){
-      h_pt_lep->fill(event);
-      h_pt_lep_puppi->fill(event);
-    }
-    if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1 && passed_met && passed_pt_lep && passed_nlep0){
-      h_nlep_0->fill(event);
-      h_nlep_0_puppi->fill(event);
-    }
-    if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1 && passed_met && passed_pt_lep && passed_nlep0 && passed_twodcut){
-      h_twodcut->fill(event);
-      h_twodcut_puppi->fill(event);
-      hists_btag_eff->fill(event);
-    }
-    if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1 && passed_met && passed_pt_lep && passed_nlep0 && passed_twodcut && passed_nbtag_medium){
-      h_nbtag_medium->fill(event);
-      h_nbtag_medium_puppi->fill(event);
-      if(channel_ == muon) passed_mu_rec = true;
-      else if(channel_ == ele) passed_ele_rec = true;
-      h_muon->fill(event);
-      h_electron->fill(event);
-      h_jets->fill(event);
-      h_lumi->fill(event);
-      h_event->fill(event);
-    }
-    if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1 && passed_met && passed_pt_lep && passed_nlep0 && passed_twodcut && passed_nbtag_tight){
-      h_nbtag_tight->fill(event);
-      h_nbtag_tight_puppi->fill(event);
-      if(channel_ == muon) passed_mu_rec_tight = true;
-      else if(channel_ == ele) passed_ele_rec_tight = true;
-      h_muon_tight->fill(event);
-      h_electron_tight->fill(event);
-      h_jets_tight->fill(event);
-      h_lumi_tight->fill(event);
-      h_event_tight->fill(event);
-    }
+    // if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger){
+    //   h_trigger->fill(event);
+    //   h_trigger_puppi->fill(event);
+    // }
+    // if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv){
+    //   h_pv->fill(event);
+    //   h_pv_puppi->fill(event);
+    // }
+    // if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1){
+    //   h_nlep_1->fill(event);
+    //   h_nlep_1_puppi->fill(event);
+    // }
+    // if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1 && passed_met){
+    //   h_met->fill(event);
+    //   h_met_puppi->fill(event);
+    // }
+    // if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1 && passed_met && passed_pt_lep){
+    //   h_pt_lep->fill(event);
+    //   h_pt_lep_puppi->fill(event);
+    // }
+    // if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1 && passed_met && passed_pt_lep && passed_nlep0){
+    //   h_nlep_0->fill(event);
+    //   h_nlep_0_puppi->fill(event);
+    // }
+    // if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1 && passed_met && passed_pt_lep && passed_nlep0 && passed_twodcut){
+    //   h_twodcut->fill(event);
+    //   h_twodcut_puppi->fill(event);
+    //   hists_btag_eff->fill(event);
+    // }
+    // if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1 && passed_met && passed_pt_lep && passed_nlep0 && passed_twodcut && passed_nbtag_medium){
+    //   h_nbtag_medium->fill(event);
+    //   h_nbtag_medium_puppi->fill(event);
+    //   if(channel_ == muon) passed_mu_rec = true;
+    //   else if(channel_ == ele) passed_ele_rec = true;
+    //   h_muon->fill(event);
+    //   h_electron->fill(event);
+    //   h_jets->fill(event);
+    //   h_lumi->fill(event);
+    //   h_event->fill(event);
+    // }
+    // if((passed_mu_rec_pre || passed_ele_rec_pre) && passed_trigger && passed_pv && passed_nlep1 && passed_met && passed_pt_lep && passed_nlep0 && passed_twodcut && passed_nbtag_tight){
+    //   h_nbtag_tight->fill(event);
+    //   h_nbtag_tight_puppi->fill(event);
+    //   if(channel_ == muon) passed_mu_rec_tight = true;
+    //   else if(channel_ == ele) passed_ele_rec_tight = true;
+    //   h_muon_tight->fill(event);
+    //   h_electron_tight->fill(event);
+    //   h_jets_tight->fill(event);
+    //   h_lumi_tight->fill(event);
+    //   h_event_tight->fill(event);
+    // }
 
     if((channel_ == muon && !passed_mu_rec && !passed_mu_rec_tight && !passed_mu_gen) || (channel_ == ele && !passed_ele_rec && !passed_ele_rec_tight && !passed_ele_gen)) return false;
 

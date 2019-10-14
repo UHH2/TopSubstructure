@@ -24,6 +24,7 @@
 #include "UHH2/TopSubstructure/include/TopSubstructureSelections.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureCombinedSelections.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureRecoHists.h"
+#include "UHH2/TopSubstructure/include/ResolutionHists.h"
 #include "UHH2/TopSubstructure/include/GenHists.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureGenSelections.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureUtils.h"
@@ -163,6 +164,7 @@ namespace uhh2examples {
     std::unique_ptr<Hists> h_rec_pt_lep_sideband_puppi,    h_rec_pt_topjet_sideband_puppi,    h_rec_dr_sideband_puppi,    h_rec_mass_sideband_puppi;
     std::unique_ptr<Hists> h_rec_pt_lep_sideband_puppi_sd, h_rec_pt_topjet_sideband_puppi_sd, h_rec_dr_sideband_puppi_sd, h_rec_mass_sideband_puppi_sd;
     std::unique_ptr<Hists> h_event;
+    std::unique_ptr<Hists> h_resolution;
 
     // declare Handles for KinCut weights
     uhh2::Event::Handle<double> h_rec_weight_kin;
@@ -594,6 +596,7 @@ namespace uhh2examples {
 
 
     h_event.reset(new EventHists(ctx, "Event_Hist"));
+    h_resolution.reset(new ResolutionHists(ctx, "Resolution_Hist"));
 
 
     // h_ttbar_hist.reset(new TTbarGenHists(ctx, "ttbar_hist"));
@@ -1261,6 +1264,8 @@ namespace uhh2examples {
       !passed_rec_mass_sideband &&   !passed_rec_mass_sideband_sd &&
       !passed_rec_mass_sideband_puppi && !passed_rec_mass_sideband_puppi_sd) return false;
 
+      
+      if(passed_rec_final && passed_gen_final) h_resolution->fill(event);
       // 3. decide whether or not to keep the current event in the output:
       return true;
     }

@@ -71,7 +71,7 @@ int main(int argc, char* argv[]){
 
   // fill data
   TFile *data_File;
-  data_File = new TFile(dir + "/Muon" + prefix + "DATA.2016v3_DATA.root");
+  data_File = new TFile(dir + "/Muon" + prefix + "DATA.DATA.root");
   fill_data((TTree *) data_File->Get("AnalysisTree"));
 
   // fill pseudo
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]){
   fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "mc");
 
   // fill other mass samples
-  vector<TString> diff_masses = {"mtop1695", "mtop1715", "mtop1735", "mtop1755", "madgraph", "isrup", "isrdown", "fsrup", "fsrdown", "hdampup", "hdampdown"};
+  vector<TString> diff_masses = {"mtop1715", "mtop1735", "madgraph", "isrup", "isrdown", "fsrup", "fsrdown", "hdampup", "hdampdown"};
   for(unsigned int i = 0; i < diff_masses.size(); i++){
     TFile *masses_File = new TFile(dir+"/Muon/"+prefix+"MC.TTbar_"+diff_masses.at(i)+".root");
     fill_ttbar((TTree *) masses_File->Get("AnalysisTree"), diff_masses.at(i));
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]){
   outputFile2->cd();
 
   TFile *data_File2;
-  data_File2 = new TFile(dir+"/Electron" + prefix + "DATA.2016v3_DATA.root");
+  data_File2 = new TFile(dir+"/Electron" + prefix + "DATA.DATA.root");
   fill_data((TTree *) data_File2->Get("AnalysisTree"));
 
   // fill pseudo
@@ -142,7 +142,7 @@ int main(int argc, char* argv[]){
   fill_ttbar((TTree *) mc_matrix_File2->Get("AnalysisTree"), "mc");
 
   // fill other mass samples
-  vector<TString> diff_masses2 = {"mtop1695", "mtop1715", "mtop1735", "mtop1755", "madgraph", "isrup", "isrdown", "fsrup", "fsrdown", "hdampup", "hdampdown"};
+  vector<TString> diff_masses2 = {"mtop1715", "mtop1735", "madgraph", "isrup", "isrdown", "fsrup", "fsrdown", "hdampup", "hdampdown"};
   for(unsigned int i = 0; i < diff_masses2.size(); i++){
     TFile *masses_File2 = new TFile(dir+"/Electron/"+prefix+"MC.TTbar_"+diff_masses2.at(i)+".root");
     fill_ttbar((TTree *) masses_File2->Get("AnalysisTree"), diff_masses2.at(i));
@@ -1074,8 +1074,8 @@ void fill_ttbar(TTree* tree, TString prefix){
       genBin_recInfo      = measurement_gen->GetGlobalBinNumber(tau32_rec,mass_gen);
       genBin_recInfo_mass = measurement_gen->GetGlobalBinNumber(tau32_rec,mass_rec);
 
-      h_purity_all->Fill(tau32_gen, w_gen);
-      h_stability_all->Fill(tau32_rec, w_gen);
+      h_purity_all->Fill(tau32_rec, w_gen);
+      h_stability_all->Fill(tau32_gen, w_gen);
       if(genBin_recInfo == gen_binNumber){
         h_purity_samebin->Fill(tau32_gen, w_gen);
         h_stability_samebin->Fill(tau32_rec, w_gen);

@@ -28,14 +28,10 @@ int main(int argc, char* argv[]){
   argv[1] != std::string("SCALEupup_puppi") && argv[1] != std::string("SCALEupup_puppi_sd") &&
   argv[1] != std::string("SCALEupnone") && argv[1] != std::string("SCALEupnone_sd") &&
   argv[1] != std::string("SCALEupnone_puppi") && argv[1] != std::string("SCALEupnone_puppi_sd") &&
-  argv[1] != std::string("mtop1695") && argv[1] != std::string("mtop1695_sd") &&
-  argv[1] != std::string("mtop1695_puppi") && argv[1] != std::string("mtop1695_puppi_sd") &&
   argv[1] != std::string("mtop1715") && argv[1] != std::string("mtop1715_sd") &&
   argv[1] != std::string("mtop1715_puppi") && argv[1] != std::string("mtop1715_puppi_sd") &&
   argv[1] != std::string("mtop1735") && argv[1] != std::string("mtop1735_sd") &&
   argv[1] != std::string("mtop1735_puppi") && argv[1] != std::string("mtop1735_puppi_sd") &&
-  argv[1] != std::string("mtop1755") && argv[1] != std::string("mtop1755_sd") &&
-  argv[1] != std::string("mtop1755_puppi") && argv[1] != std::string("mtop1755_puppi_sd") &&
   argv[1] != std::string("madgraph") && argv[1] != std::string("madgraph_sd") &&
   argv[1] != std::string("madgraph_puppi") && argv[1] != std::string("madgraph_puppi_sd") &&
   argv[1] != std::string("isrup") && argv[1] != std::string("isrup_sd") &&
@@ -62,8 +58,8 @@ string filename;
 TString suffix = "";
 TString pu = "";
 TString dataset = argv[1];
-TString data_file_name = argv[4];
-filename = "Unfoldings/Unfolding_" + dataset + "_" + data_file_name + ".root";
+TString channel = argv[4];
+filename = "Unfoldings/Unfolding_" + dataset + "_" + channel + ".root";
 TFile *outputFile = new TFile(filename.c_str(),"recreate");
 if(dataset.Contains("Pseudo_1"))      suffix = "_1";
 else if(dataset.Contains("Pseudo_2")) suffix = "_2";
@@ -91,16 +87,16 @@ binning_gen->Write();
 // define directory
 TString dir = "/nfs/dust/cms/user/skottkej/CMSSW_10_2_X_v1/CMSSW_10_2_10/src/UHH2/TopSubstructure/Unfolding/";
 TFile *data_File;
-if(data_file_name.Contains("mu")) data_File = new TFile(dir + "Histograms_Muon.root");
-else if(data_file_name.Contains("ele")) data_File = new TFile(dir + "Histograms_Electron.root");
-else if(data_file_name.Contains("comb")) data_File = new TFile(dir + "Histograms_Combined.root");
+if(channel.Contains("mu")) data_File = new TFile(dir + "Histograms_Muon.root");
+else if(channel.Contains("ele")) data_File = new TFile(dir + "Histograms_Electron.root");
+else if(channel.Contains("comb")) data_File = new TFile(dir + "Histograms_Combined.root");
 
 // fill background hists -- add further or remove unnecassary backgrounds in background_names
 // background_names = {"DYJets", "QCD", "ST", "WJets", "Diboson"};
 background_names = {"DYJets", "ST", "Diboson", "WJets_HT", "QCD"};
-if(data_file_name.Contains("mu")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"MUIDup", "MUIDdown"}, {"MUTriggerup", "MUTriggerdown"}};
-else if(data_file_name.Contains("ele")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"ELEIDup", "ELEIDdown"}, {"ELETriggerup", "ELETriggerdown"}, {"ELERecoup", "ELERecodown"}};
-else if(data_file_name.Contains("comb")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"MUIDup", "MUIDdown"}, {"MUTriggerup", "MUTriggerdown"}, {"ELEIDup", "ELEIDdown"}, {"ELETriggerup", "ELETriggerdown"}, {"ELERecoup", "ELERecodown"}};
+if(channel.Contains("mu")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"MUIDup", "MUIDdown"}, {"MUTriggerup", "MUTriggerdown"}};
+else if(channel.Contains("ele")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"ELEIDup", "ELEIDdown"}, {"ELETriggerup", "ELETriggerdown"}, {"ELERecoup", "ELERecodown"}};
+else if(channel.Contains("comb")) sys_name = {{"JECup", "JECdown"}, {"JERup", "JERdown"}, {"BTagup", "BTagdown"}, {"PUup", "PUdown"}, {"MUIDup", "MUIDdown"}, {"MUTriggerup", "MUTriggerdown"}, {"ELEIDup", "ELEIDdown"}, {"ELETriggerup", "ELETriggerdown"}, {"ELERecoup", "ELERecodown"}};
 
 // Setup everything for unfolding!
 data_File->GetObject("mc"+pu+"_matrix"+suffix, mat_response);          // fill response matrix
@@ -120,16 +116,16 @@ data_File->GetObject("mc"+pu+"_purity_samebin"+suffix, h_purity_samebin);
 data_File->GetObject("mc"+pu+"_stability_all"+suffix, h_stability_all);
 data_File->GetObject("mc"+pu+"_stability_samebin"+suffix, h_stability_samebin);
 
-  TH1D* h_background = (TH1D*) h_data->Clone();
-  h_background->Reset();
-  h_background->SetTitle("Background_rec");
-  TH1D* h_background_dist =(TH1D*) h_data_dist->Clone();
-  h_background_dist->Reset();
-  h_background_dist->SetTitle("Background_rec_dist");
-  if(dataset.Contains("Data")){
+TH1D* h_background = (TH1D*) h_data->Clone();
+h_background->Reset();
+h_background->SetTitle("Background_rec");
+TH1D* h_background_dist =(TH1D*) h_data_dist->Clone();
+h_background_dist->Reset();
+h_background_dist->SetTitle("Background_rec_dist");
+if(dataset.Contains("Data")){
   for(unsigned int i = 0; i < background_names.size(); i++){
-    h_background->Add((TH1D*) data_File->Get("Background_"+background_names[i]+"_rec"));
-    h_background_dist->Add((TH1D*) data_File->Get("Background_"+background_names[i]+"_rec_dist"));
+    h_background->Add((TH1D*) data_File->Get("Background_"+background_names[i]+pu+"_rec"));
+    h_background_dist->Add((TH1D*) data_File->Get("Background_"+background_names[i]+pu+"_rec_dist"));
   }
 }
 
