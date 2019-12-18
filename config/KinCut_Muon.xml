@@ -5,7 +5,7 @@
 <!ENTITY channel "muon">
 
 <!ENTITY INdir    "/nfs/dust/cms/user/skottkej/TopSubstructure/PreSelection/">
-<!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Test_Sel2/Muon_new">
+<!ENTITY OUTdir   "/nfs/dust/cms/user/skottkej/TopSubstructure/Selection/Selection_2/Muon">
 
 
 <!-- =============================================== DATA =========================================================================== -->
@@ -34,7 +34,7 @@
 <!ENTITY TTbar_2016v3_Mtt1000toInft_part2    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_Mtt1000toInft_part2.root">
 
 <!-- =============================================== other ttbar =========================================================================== -->
-<!ENTITY TTbar_2016v3_mtop1695          "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_mtop1695.root">
+<!-- <!ENTITY TTbar_2016v3_mtop1695          "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_mtop1695.root">
 <!ENTITY TTbar_2016v3_mtop1715          "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_mtop1715.root">
 <!ENTITY TTbar_2016v3_mtop1735          "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_mtop1735.root">
 <!ENTITY TTbar_2016v3_mtop1755_part1    "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_mtop1755_part1.root">
@@ -51,20 +51,20 @@
 <!ENTITY TTbar_2016v3_hdampup_part1     "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_hdampup_part1.root">
 <!ENTITY TTbar_2016v3_hdampup_part2     "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_hdampup_part2.root">
 <!ENTITY TTbar_2016v3_hdampdown_part1   "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_hdampdown_part1.root">
-<!ENTITY TTbar_2016v3_hdampdown_part2   "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_hdampdown_part2.root">
+<!ENTITY TTbar_2016v3_hdampdown_part2   "&INdir;/uhh2.AnalysisModuleRunner.MC.TTbar_2016v3_hdampdown_part2.root"> -->
 
 <!-- =============================================== DiBoson =========================================================================== -->
 <!ENTITY  Diboson_WW_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.Diboson_WW_2016v3.root">
 <!ENTITY  Diboson_WZ_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.Diboson_WZ_2016v3.root">
 <!ENTITY  Diboson_ZZ_2016v3    "&INdir;/uhh2.AnalysisModuleRunner.MC.Diboson_ZZ_2016v3.root">
 <!-- =============================================== W+jets =========================================================================== -->
-<!ENTITY  WJetsToLNu_2016v3_Pt0100to0250_part1   "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_2016v3_Pt0100to0250_part1.root">
+<!-- <!ENTITY  WJetsToLNu_2016v3_Pt0100to0250_part1   "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_2016v3_Pt0100to0250_part1.root">
 <!ENTITY  WJetsToLNu_2016v3_Pt0100to0250_part2   "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_2016v3_Pt0100to0250_part2.root">
 <!ENTITY  WJetsToLNu_2016v3_Pt0100to0250_part3   "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_2016v3_Pt0100to0250_part3.root">
 <!ENTITY  WJetsToLNu_2016v3_Pt0100to0250_part4   "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_2016v3_Pt0100to0250_part4.root">
 <!ENTITY  WJetsToLNu_2016v3_Pt0250to0400         "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_2016v3_Pt0250to0400.root">
 <!ENTITY  WJetsToLNu_2016v3_Pt0400to0600         "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_2016v3_Pt0400to0600.root">
-<!ENTITY  WJetsToLNu_2016v3_Pt0600toInft         "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_2016v3_Pt0600toInft.root">
+<!ENTITY  WJetsToLNu_2016v3_Pt0600toInft         "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_2016v3_Pt0600toInft.root"> -->
 
 <!ENTITY  WJetsToLNu_2016v3_HT_0070to0100       "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_2016v3_HT_0070to0100.root">
 <!ENTITY  WJetsToLNu_2016v3_HT_0100to0200       "&INdir;/uhh2.AnalysisModuleRunner.MC.WJetsToLNu_2016v3_HT_0100to0200.root">
@@ -109,7 +109,7 @@
 <!-- ================================================================================================================================== -->
 <!-- 63 -->
 <!--
-<ConfigParse NEventsBreak="300000" LastBreak="0" FileSplit="0" AutoResubmit="5"/>
+<ConfigParse NEventsBreak="150000" LastBreak="0" FileSplit="0" AutoResubmit="5"/>
 <ConfigSGE RAM ="4" DISK ="2" Mail="jan.skottke@desy.de" Notification="as" Workdir="workdir_Kincut_data_Muon"/>
 -->
 
@@ -187,7 +187,7 @@
 ██       ███ ███   █████  ███████    ██    ███████      ██
 -->
 
-<InputData Version="WJetsToLNu_2016v3_Pt0100to0250_part1" Lumi="258541518.6" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+<!-- <InputData Version="WJetsToLNu_2016v3_Pt0100to0250_part1" Lumi="258541518.6" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&WJetsToLNu_2016v3_Pt0100to0250_part1;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="WJetsToLNu_2016v3_Pt0100to0250_part2" Lumi="258541518.6" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
@@ -207,7 +207,7 @@
 </InputData>
 <InputData Version="WJetsToLNu_2016v3_Pt0600toInft" Lumi="3882671.043" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&WJetsToLNu_2016v3_Pt0600toInft;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-</InputData>
+</InputData> -->
 
 <InputData Version="WJetsToLNu_2016v3_HT_0070to0100" Lumi="7597.068234" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&WJetsToLNu_2016v3_HT_0070to0100;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
@@ -288,7 +288,7 @@
 ██         ██       ██        ██    ██    ██    ██   ██ ██      ██   ██     ██  ██  ██ ██   ██      ██      ██ ██           ██      ██
 ██         ██       ██         ██████     ██    ██   ██ ███████ ██   ██     ██      ██ ██   ██ ███████ ███████ ███████ ███████      ██
 -->
-<InputData Version="TTbar_2016v3_mtop1695" Lumi="35296.28739" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+<!-- <InputData Version="TTbar_2016v3_mtop1695" Lumi="35296.28739" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&TTbar_2016v3_mtop1695;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
 <InputData Version="TTbar_2016v3_mtop1715" Lumi="23573.50919" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
@@ -341,7 +341,7 @@
 </InputData>
 <InputData Version="TTbar_2016v3_hdampdown_part2" Lumi="70098.79412" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&TTbar_2016v3_hdampdown_part2;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
-</InputData>
+</InputData> -->
 
 
 <!--

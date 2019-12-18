@@ -49,9 +49,7 @@ datasets = [
             , 'hdampup'
             , 'hdampdown'
             ]
-
-# channel = ['_mu','_ele','_comb']
-channel = ['_comb']
+channel = ['_mu','_ele','_comb']
 for chan in channel:
     for i in range(len(datasets)):
         os.system('echo '+c_send+prefix+datasets[i]+chan+ending)

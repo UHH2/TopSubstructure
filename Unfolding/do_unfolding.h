@@ -35,7 +35,7 @@ std::vector<TSpline*> logTau_2;
 TString binning_xml;
 TDOMParser parser;
 TUnfoldBinning *binning_rec, *binning_gen;
-TH1D *h_data, *h_data_dist, *h_unfold, *h_truth, *h_truth_all, *h_mc, *h_mc_dist, *h_trutch_check, *h_trutch_check_all, *h_purity_all, *h_purity_samebin, *h_stability_all, *h_stability_samebin;
+TH1D *h_data, *h_data_dist, *h_unfold, *h_truth, *h_truth_all, *h_mc, *h_mc_dist, *h_truth_check, *h_truth_check_low, *h_truth_check_high, *h_truth_check_all, *h_purity_all, *h_purity_samebin, *h_stability_all, *h_stability_samebin, *h_truth_2017;
 TH2D *mat_response;
 TH2 *correlation_matrix, *correlation_matrix_2;
 

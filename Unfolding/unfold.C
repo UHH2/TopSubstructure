@@ -2,6 +2,9 @@
 
 using namespace std;
 
+//  TODO: Unfolding of the MC, which is used to fill the migration matrix, with itself does not in every case
+//        This can sometimes cause crashes during the unfolding process  ---> needs to be fixed
+
 unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TUnfoldBinning* binning_gen, TUnfoldBinning* binning_rec, std::vector<std::vector<TH2*>> sys_matrix, std::vector<std::vector<TString>> sys_name, std::vector<TH1D*> background, std::vector<TString> background_names, int nscan, TString regmode_, TString density_flag, bool do_lcurve, bool subtract_background, double tau_value){
   response_matrix = response;
   hist_truth = h_truth;
@@ -78,7 +81,7 @@ unfolding::unfolding(TH1D* h_data, TH1D* h_mc, TH2D* response, TH1D* h_truth, TU
     }
     else{
       rhoLogTau = 0;
-      rhoLogTau_check = 0;
+      // rhoLogTau_check = 0;
       const char *SCAN_DISTRIBUTION = 0;
       // const char *SCAN_AXISSTEERING = 0;
       // const char *SCAN_DISTRIBUTION = "measurement_gen";

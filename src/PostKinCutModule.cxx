@@ -4,32 +4,18 @@
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
 
-#include "UHH2/common/include/CommonModules.h"
-#include "UHH2/common/include/CleaningModules.h"
-#include "UHH2/common/include/ElectronHists.h"
-#include "UHH2/common/include/MuonHists.h"
-#include "UHH2/common/include/EventHists.h"
-#include "UHH2/common/include/NSelections.h"
-#include "UHH2/common/include/JetHists.h"
-#include "UHH2/common/include/TriggerSelection.h"
-#include "UHH2/common/include/MuonIds.h"
-#include "UHH2/common/include/ElectronIds.h"
-#include "UHH2/common/include/JetIds.h"
-#include "UHH2/common/include/TopJetIds.h"
 #include "UHH2/common/include/MCWeight.h"
-#include "UHH2/common/include/TTbarGen.h"
 #include "UHH2/common/include/TTbarGenHists.h"
+#include "UHH2/common/include/EventHists.h"
 
-#include "UHH2/TopSubstructure/include/ElecTriggerSF.h"
-#include "UHH2/TopSubstructure/include/TopSubstructureSelections.h"
-#include "UHH2/TopSubstructure/include/TopSubstructureCombinedSelections.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureRecoHists.h"
 #include "UHH2/TopSubstructure/include/ResolutionHists.h"
 #include "UHH2/TopSubstructure/include/GenHists.h"
+#include "UHH2/TopSubstructure/include/ElecTriggerSF.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureGenSelections.h"
-#include "UHH2/TopSubstructure/include/TopSubstructureUtils.h"
+#include "UHH2/TopSubstructure/include/TopSubstructureSelections.h"
+#include "UHH2/TopSubstructure/include/TopSubstructureCombinedSelections.h"
 #include "UHH2/TopSubstructure/include/PuppiJetUtils.h"
-#include "UHH2/TopSubstructure/include/PuppiJetCorrections.h"
 
 using namespace std;
 using namespace uhh2;
@@ -54,7 +40,7 @@ namespace uhh2examples {
     bool matched_gen_sd;
 
     // declare bools for final selection
-    bool passed_lep_gen_final,       passed_gen_final_sd;
+    bool passed_lep_gen_final,   passed_gen_final_sd;
     bool passed_rec_final,       passed_rec_final_sd;
     bool passed_rec_final_puppi, passed_rec_final_puppi_sd;
     bool passed_gen_final;
@@ -164,7 +150,7 @@ namespace uhh2examples {
     std::unique_ptr<Hists> h_rec_pt_lep_sideband_puppi,    h_rec_pt_topjet_sideband_puppi,    h_rec_dr_sideband_puppi,    h_rec_mass_sideband_puppi;
     std::unique_ptr<Hists> h_rec_pt_lep_sideband_puppi_sd, h_rec_pt_topjet_sideband_puppi_sd, h_rec_dr_sideband_puppi_sd, h_rec_mass_sideband_puppi_sd;
     std::unique_ptr<Hists> h_event;
-    std::unique_ptr<Hists> h_resolution;
+    std::unique_ptr<Hists> h_resolution, h_resolution_puppi, h_test, h_ttbar_hist;
 
     // declare Handles for KinCut weights
     uhh2::Event::Handle<double> h_rec_weight_kin;
@@ -200,7 +186,7 @@ namespace uhh2examples {
     uhh2::Event::Handle<double> h_mass_gen, h_mass_gen_sd;
     uhh2::Event::Handle<double> h_mass_rec, h_mass_rec_sd;
     uhh2::Event::Handle<double> h_mass_rec_puppi, h_mass_rec_puppi_sd;
-    uhh2::Event::Handle<double> h_tau1_rec, h_tau1_rec_sd, h_tau1_rec_puppi,h_tau1_rec_puppi_sd, h_tau1_gen, h_tau1_gen_sd, h_tau2_rec, h_tau2_rec_sd, h_tau2_rec_puppi, h_tau2_rec_puppi_sd, h_tau2_gen, h_tau2_gen_sd, h_tau3_rec,h_tau3_rec_sd, h_tau3_rec_puppi, h_tau3_rec_puppi_sd, h_tau3_gen, h_tau3_gen_sd, h_tau4_rec, h_tau4_rec_sd, h_tau4_rec_puppi, h_tau4_rec_puppi_sd, h_tau4_gen, h_tau4_gen_sd, h_ecfN2_beta1_rec, h_ecfN2_beta1_rec_sd, h_ecfN2_beta1_rec_puppi, h_ecfN2_beta1_rec_puppi_sd, h_ecfN2_beta1_gen, h_ecfN2_beta1_gen_sd, h_ecfN2_beta2_rec, h_ecfN2_beta2_rec_sd, h_ecfN2_beta2_rec_puppi, h_ecfN2_beta2_rec_puppi_sd, h_ecfN2_beta2_gen, h_ecfN2_beta2_gen_sd, h_ecfN3_beta1_rec, h_ecfN3_beta1_rec_sd, h_ecfN3_beta1_rec_puppi, h_ecfN3_beta1_rec_puppi_sd, h_ecfN3_beta1_gen, h_ecfN3_beta1_gen_sd, h_ecfN3_beta2_rec, h_ecfN3_beta2_rec_sd, h_ecfN3_beta2_rec_puppi, h_ecfN3_beta2_rec_puppi_sd, h_ecfN3_beta2_gen, h_ecfN3_beta2_gen_sd;
+    uhh2::Event::Handle<double> h_tau1_rec, h_tau1_rec_sd, h_tau1_rec_puppi,h_tau1_rec_puppi_sd, h_tau1_gen, h_tau1_gen_sd, h_tau2_rec, h_tau2_rec_sd, h_tau2_rec_puppi, h_tau2_rec_puppi_sd, h_tau2_gen, h_tau2_gen_sd, h_tau3_rec,h_tau3_rec_sd, h_tau3_rec_puppi, h_tau3_rec_puppi_sd, h_tau3_gen, h_tau3_gen_sd, h_tau4_rec, h_tau4_rec_sd, h_tau4_rec_puppi, h_tau4_rec_puppi_sd, h_tau4_gen, h_tau4_gen_sd;
 
     uhh2::Event::Handle<std::vector<TopJet>> h_puppi_jets;
     uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjet;
@@ -214,7 +200,6 @@ namespace uhh2examples {
     string EleID_variation      = "none";
     string EleReco_variation    = "none";
     string PU_variation         = "none";
-
 
     TString dataset_version_string = "";
   };
@@ -241,109 +226,86 @@ namespace uhh2examples {
     if(channel_ == muon)      h_passed_rec_kin = ctx.get_handle<bool>("h_passed_mu_rec");
     else if(channel_ == ele)  h_passed_rec_kin = ctx.get_handle<bool>("h_passed_ele_rec");
 
-    h_rec_weight_kin                      = ctx.get_handle<double>("h_rec_weight_kin");
-    h_gen_weight_kin                      = ctx.get_handle<double>("h_gen_weight_kin");
+    h_rec_weight_kin  = ctx.get_handle<double>("h_rec_weight_kin");
+    h_gen_weight_kin  = ctx.get_handle<double>("h_gen_weight_kin");
 
-    h_pt_rec                              = ctx.declare_event_output<double>("h_pt_rec");
-    h_pt_rec_puppi                        = ctx.declare_event_output<double>("h_pt_rec_puppi");
-    h_mass_rec                            = ctx.declare_event_output<double>("h_mass_rec");
-    h_mass_rec_sd                         = ctx.declare_event_output<double>("h_mass_rec_sd");
-    h_mass_rec_puppi                      = ctx.declare_event_output<double>("h_mass_rec_puppi");
-    h_mass_rec_puppi_sd                   = ctx.declare_event_output<double>("h_mass_rec_puppi_sd");
-    h_pt_gen                              = ctx.declare_event_output<double>("h_pt_gen");
-    h_pt_gen_sd                           = ctx.declare_event_output<double>("h_pt_gen_sd");
-    h_mass_gen                            = ctx.declare_event_output<double>("h_mass_gen");
-    h_mass_gen_sd                         = ctx.declare_event_output<double>("h_mass_gen_sd");
-    h_gen_weight                          = ctx.declare_event_output<double>("h_gen_weight");
-    h_rec_weight                          = ctx.declare_event_output<double>("h_rec_weight");
+    // set up handles for the unfolding
+    // handles for values of different variables such as N-subjettiness
+    h_pt_rec            = ctx.declare_event_output<double>("h_pt_rec");
+    h_pt_rec_puppi      = ctx.declare_event_output<double>("h_pt_rec_puppi");
+    h_mass_rec          = ctx.declare_event_output<double>("h_mass_rec");
+    h_mass_rec_sd       = ctx.declare_event_output<double>("h_mass_rec_sd");
+    h_mass_rec_puppi    = ctx.declare_event_output<double>("h_mass_rec_puppi");
+    h_mass_rec_puppi_sd = ctx.declare_event_output<double>("h_mass_rec_puppi_sd");
+    h_pt_gen            = ctx.declare_event_output<double>("h_pt_gen");
+    h_pt_gen_sd         = ctx.declare_event_output<double>("h_pt_gen_sd");
+    h_mass_gen          = ctx.declare_event_output<double>("h_mass_gen");
+    h_mass_gen_sd       = ctx.declare_event_output<double>("h_mass_gen_sd");
+    h_gen_weight        = ctx.declare_event_output<double>("h_gen_weight");
+    h_rec_weight        = ctx.declare_event_output<double>("h_rec_weight");
 
-    h_passed_gen_pt_lep_sideband          = ctx.declare_event_output<bool>("h_passed_gen_pt_lep_sideband");
-    h_passed_gen_dr_sideband              = ctx.declare_event_output<bool>("h_passed_gen_dr_sideband");
-    h_passed_gen_mass_sideband            = ctx.declare_event_output<bool>("h_passed_gen_mass_sideband");
-    h_passed_gen_pt_topjet_sideband       = ctx.declare_event_output<bool>("h_passed_gen_pt_topjet_sideband");
-    h_passed_gen_pt_lep_sideband_sd       = ctx.declare_event_output<bool>("h_passed_gen_pt_lep_sideband_sd");
-    h_passed_gen_dr_sideband_sd           = ctx.declare_event_output<bool>("h_passed_gen_dr_sideband_sd");
-    h_passed_gen_mass_sideband_sd         = ctx.declare_event_output<bool>("h_passed_gen_mass_sideband_sd");
-    h_passed_gen_pt_topjet_sideband_sd    = ctx.declare_event_output<bool>("h_passed_gen_pt_topjet_sideband_sd");
+    h_passed_gen_pt_lep_sideband        = ctx.declare_event_output<bool>("h_passed_gen_pt_lep_sideband");
+    h_passed_gen_dr_sideband            = ctx.declare_event_output<bool>("h_passed_gen_dr_sideband");
+    h_passed_gen_mass_sideband          = ctx.declare_event_output<bool>("h_passed_gen_mass_sideband");
+    h_passed_gen_pt_topjet_sideband     = ctx.declare_event_output<bool>("h_passed_gen_pt_topjet_sideband");
+    h_passed_gen_pt_lep_sideband_sd     = ctx.declare_event_output<bool>("h_passed_gen_pt_lep_sideband_sd");
+    h_passed_gen_dr_sideband_sd         = ctx.declare_event_output<bool>("h_passed_gen_dr_sideband_sd");
+    h_passed_gen_mass_sideband_sd       = ctx.declare_event_output<bool>("h_passed_gen_mass_sideband_sd");
+    h_passed_gen_pt_topjet_sideband_sd  = ctx.declare_event_output<bool>("h_passed_gen_pt_topjet_sideband_sd");
 
+    h_passed_rec_final                        = ctx.declare_event_output<bool>("h_passed_rec_final");
+    h_passed_rec_final_sd                     = ctx.declare_event_output<bool>("h_passed_rec_final_sd");
+    h_passed_rec_final_puppi                  = ctx.declare_event_output<bool>("h_passed_rec_final_puppi");
+    h_passed_rec_final_puppi_sd               = ctx.declare_event_output<bool>("h_passed_rec_final_puppi_sd");
+    h_passed_gen_final                        = ctx.declare_event_output<bool>("h_passed_gen_final");
+    h_passed_gen_final_sd                     = ctx.declare_event_output<bool>("h_passed_gen_final_sd");
+    h_passed_rec_pt_lep_sideband              = ctx.declare_event_output<bool>("h_passed_rec_pt_lep_sideband");
+    h_passed_rec_pt_lep_sideband_sd           = ctx.declare_event_output<bool>("h_passed_rec_pt_lep_sideband_sd");
+    h_passed_rec_pt_lep_sideband_puppi        = ctx.declare_event_output<bool>("h_passed_rec_pt_lep_sideband_puppi");
+    h_passed_rec_pt_lep_sideband_puppi_sd     = ctx.declare_event_output<bool>("h_passed_rec_pt_lep_sideband_puppi_sd");
+    h_passed_rec_dr_sideband                  = ctx.declare_event_output<bool>("h_passed_rec_dr_sideband");
+    h_passed_rec_dr_sideband_sd               = ctx.declare_event_output<bool>("h_passed_rec_dr_sideband_sd");
+    h_passed_rec_dr_sideband_puppi            = ctx.declare_event_output<bool>("h_passed_rec_dr_sideband_puppi");
+    h_passed_rec_dr_sideband_puppi_sd         = ctx.declare_event_output<bool>("h_passed_rec_dr_sideband_puppi_sd");
+    h_passed_rec_mass_sideband                = ctx.declare_event_output<bool>("h_passed_rec_mass_sideband");
+    h_passed_rec_mass_sideband_sd             = ctx.declare_event_output<bool>("h_passed_rec_mass_sideband_sd");
+    h_passed_rec_mass_sideband_puppi          = ctx.declare_event_output<bool>("h_passed_rec_mass_sideband_puppi");
+    h_passed_rec_mass_sideband_puppi_sd       = ctx.declare_event_output<bool>("h_passed_rec_mass_sideband_puppi_sd");
+    h_passed_rec_pt_topjet_sideband           = ctx.declare_event_output<bool>("h_passed_rec_pt_topjet_sideband");
+    h_passed_rec_pt_topjet_sideband_sd        = ctx.declare_event_output<bool>("h_passed_rec_pt_topjet_sideband_sd");
+    h_passed_rec_pt_topjet_sideband_puppi     = ctx.declare_event_output<bool>("h_passed_rec_pt_topjet_sideband_puppi");
+    h_passed_rec_pt_topjet_sideband_puppi_sd  = ctx.declare_event_output<bool>("h_passed_rec_pt_topjet_sideband_puppi_sd");
 
-    h_passed_rec_final                       = ctx.declare_event_output<bool>("h_passed_rec_final");
-    h_passed_rec_final_sd                    = ctx.declare_event_output<bool>("h_passed_rec_final_sd");
-    h_passed_rec_final_puppi                 = ctx.declare_event_output<bool>("h_passed_rec_final_puppi");
-    h_passed_rec_final_puppi_sd              = ctx.declare_event_output<bool>("h_passed_rec_final_puppi_sd");
-    h_passed_gen_final                       = ctx.declare_event_output<bool>("h_passed_gen_final");
-    h_passed_gen_final_sd                    = ctx.declare_event_output<bool>("h_passed_gen_final_sd");
-    h_passed_rec_pt_lep_sideband             = ctx.declare_event_output<bool>("h_passed_rec_pt_lep_sideband");
-    h_passed_rec_pt_lep_sideband_sd          = ctx.declare_event_output<bool>("h_passed_rec_pt_lep_sideband_sd");
-    h_passed_rec_pt_lep_sideband_puppi       = ctx.declare_event_output<bool>("h_passed_rec_pt_lep_sideband_puppi");
-    h_passed_rec_pt_lep_sideband_puppi_sd    = ctx.declare_event_output<bool>("h_passed_rec_pt_lep_sideband_puppi_sd");
-    h_passed_rec_dr_sideband                 = ctx.declare_event_output<bool>("h_passed_rec_dr_sideband");
-    h_passed_rec_dr_sideband_sd              = ctx.declare_event_output<bool>("h_passed_rec_dr_sideband_sd");
-    h_passed_rec_dr_sideband_puppi           = ctx.declare_event_output<bool>("h_passed_rec_dr_sideband_puppi");
-    h_passed_rec_dr_sideband_puppi_sd        = ctx.declare_event_output<bool>("h_passed_rec_dr_sideband_puppi_sd");
-    h_passed_rec_mass_sideband               = ctx.declare_event_output<bool>("h_passed_rec_mass_sideband");
-    h_passed_rec_mass_sideband_sd            = ctx.declare_event_output<bool>("h_passed_rec_mass_sideband_sd");
-    h_passed_rec_mass_sideband_puppi         = ctx.declare_event_output<bool>("h_passed_rec_mass_sideband_puppi");
-    h_passed_rec_mass_sideband_puppi_sd      = ctx.declare_event_output<bool>("h_passed_rec_mass_sideband_puppi_sd");
-    h_passed_rec_pt_topjet_sideband          = ctx.declare_event_output<bool>("h_passed_rec_pt_topjet_sideband");
-    h_passed_rec_pt_topjet_sideband_sd       = ctx.declare_event_output<bool>("h_passed_rec_pt_topjet_sideband_sd");
-    h_passed_rec_pt_topjet_sideband_puppi    = ctx.declare_event_output<bool>("h_passed_rec_pt_topjet_sideband_puppi");
-    h_passed_rec_pt_topjet_sideband_puppi_sd = ctx.declare_event_output<bool>("h_passed_rec_pt_topjet_sideband_puppi_sd");
-
-    h_tau32_rec                           = ctx.declare_event_output<double>("h_tau32_rec");
-    h_tau32_rec_sd                        = ctx.declare_event_output<double>("h_tau32_rec_sd");
-    h_tau32_rec_puppi                     = ctx.declare_event_output<double>("h_tau32_rec_puppi");
-    h_tau32_rec_puppi_sd                  = ctx.declare_event_output<double>("h_tau32_rec_puppi_sd");
-    h_tau32_gen                           = ctx.declare_event_output<double>("h_tau32_gen");
-    h_tau32_gen_sd                        = ctx.declare_event_output<double>("h_tau32_gen_sd");
-    h_tau1_rec                           = ctx.declare_event_output<double>("h_tau1_rec");
-    h_tau1_rec_sd                        = ctx.declare_event_output<double>("h_tau1_rec_sd");
-    h_tau1_rec_puppi                     = ctx.declare_event_output<double>("h_tau1_rec_puppi");
-    h_tau1_rec_puppi_sd                  = ctx.declare_event_output<double>("h_tau1_rec_puppi_sd");
-    h_tau1_gen                           = ctx.declare_event_output<double>("h_tau1_gen");
-    h_tau1_gen_sd                        = ctx.declare_event_output<double>("h_tau1_gen_sd");
-    h_tau2_rec                           = ctx.declare_event_output<double>("h_tau2_rec");
-    h_tau2_rec_sd                        = ctx.declare_event_output<double>("h_tau2_rec_sd");
-    h_tau2_rec_puppi                     = ctx.declare_event_output<double>("h_tau2_rec_puppi");
-    h_tau2_rec_puppi_sd                  = ctx.declare_event_output<double>("h_tau2_rec_puppi_sd");
-    h_tau2_gen                           = ctx.declare_event_output<double>("h_tau2_gen");
-    h_tau2_gen_sd                        = ctx.declare_event_output<double>("h_tau2_gen_sd");
-    h_tau3_rec                           = ctx.declare_event_output<double>("h_tau3_rec");
-    h_tau3_rec_sd                        = ctx.declare_event_output<double>("h_tau3_rec_sd");
-    h_tau3_rec_puppi                     = ctx.declare_event_output<double>("h_tau3_rec_puppi");
-    h_tau3_rec_puppi_sd                  = ctx.declare_event_output<double>("h_tau3_rec_puppi_sd");
-    h_tau3_gen                           = ctx.declare_event_output<double>("h_tau3_gen");
-    h_tau3_gen_sd                        = ctx.declare_event_output<double>("h_tau3_gen_sd");
-    h_tau4_rec                           = ctx.declare_event_output<double>("h_tau4_rec");
-    h_tau4_rec_sd                        = ctx.declare_event_output<double>("h_tau4_rec_sd");
-    h_tau4_rec_puppi                     = ctx.declare_event_output<double>("h_tau4_rec_puppi");
-    h_tau4_rec_puppi_sd                  = ctx.declare_event_output<double>("h_tau4_rec_puppi_sd");
-    h_tau4_gen                           = ctx.declare_event_output<double>("h_tau4_gen");
-    h_tau4_gen_sd                        = ctx.declare_event_output<double>("h_tau4_gen_sd");
-    h_ecfN2_beta1_rec                    = ctx.declare_event_output<double>("h_ecfN2_beta1_rec");
-    h_ecfN2_beta1_rec_sd                 = ctx.declare_event_output<double>("h_ecfN2_beta1_rec_sd");
-    h_ecfN2_beta1_rec_puppi              = ctx.declare_event_output<double>("h_ecfN2_beta1_rec_puppi");
-    h_ecfN2_beta1_rec_puppi_sd           = ctx.declare_event_output<double>("h_ecfN2_beta1_rec_puppi_sd");
-    h_ecfN2_beta1_gen                    = ctx.declare_event_output<double>("h_ecfN2_beta1_gen");
-    h_ecfN2_beta1_gen_sd                 = ctx.declare_event_output<double>("h_ecfN2_beta1_gen_sd");
-    h_ecfN2_beta2_rec                    = ctx.declare_event_output<double>("h_ecfN2_beta2_rec");
-    h_ecfN2_beta2_rec_sd                 = ctx.declare_event_output<double>("h_ecfN2_beta2_rec_sd");
-    h_ecfN2_beta2_rec_puppi              = ctx.declare_event_output<double>("h_ecfN2_beta2_rec_puppi");
-    h_ecfN2_beta2_rec_puppi_sd           = ctx.declare_event_output<double>("h_ecfN2_beta2_rec_puppi_sd");
-    h_ecfN2_beta2_gen                    = ctx.declare_event_output<double>("h_ecfN2_beta2_gen");
-    h_ecfN2_beta2_gen_sd                 = ctx.declare_event_output<double>("h_ecfN2_beta2_gen_sd");
-    h_ecfN3_beta1_rec                    = ctx.declare_event_output<double>("h_ecfN3_beta1_rec");
-    h_ecfN3_beta1_rec_sd                 = ctx.declare_event_output<double>("h_ecfN3_beta1_rec_sd");
-    h_ecfN3_beta1_rec_puppi              = ctx.declare_event_output<double>("h_ecfN3_beta1_rec_puppi");
-    h_ecfN3_beta1_rec_puppi_sd           = ctx.declare_event_output<double>("h_ecfN3_beta1_rec_puppi_sd");
-    h_ecfN3_beta1_gen                    = ctx.declare_event_output<double>("h_ecfN3_beta1_gen");
-    h_ecfN3_beta1_gen_sd                 = ctx.declare_event_output<double>("h_ecfN3_beta1_gen_sd");
-    h_ecfN3_beta2_rec                    = ctx.declare_event_output<double>("h_ecfN3_beta2_rec");
-    h_ecfN3_beta2_rec_sd                 = ctx.declare_event_output<double>("h_ecfN3_beta2_rec_sd");
-    h_ecfN3_beta2_rec_puppi              = ctx.declare_event_output<double>("h_ecfN3_beta2_rec_puppi");
-    h_ecfN3_beta2_rec_puppi_sd           = ctx.declare_event_output<double>("h_ecfN3_beta2_rec_puppi_sd");
-    h_ecfN3_beta2_gen                    = ctx.declare_event_output<double>("h_ecfN3_beta2_gen");
-    h_ecfN3_beta2_gen_sd                 = ctx.declare_event_output<double>("h_ecfN3_beta2_gen_sd");
+    h_tau32_rec           = ctx.declare_event_output<double>("h_tau32_rec");
+    h_tau32_rec_sd        = ctx.declare_event_output<double>("h_tau32_rec_sd");
+    h_tau32_rec_puppi     = ctx.declare_event_output<double>("h_tau32_rec_puppi");
+    h_tau32_rec_puppi_sd  = ctx.declare_event_output<double>("h_tau32_rec_puppi_sd");
+    h_tau32_gen           = ctx.declare_event_output<double>("h_tau32_gen");
+    h_tau32_gen_sd        = ctx.declare_event_output<double>("h_tau32_gen_sd");
+    h_tau1_rec            = ctx.declare_event_output<double>("h_tau1_rec");
+    h_tau1_rec_sd         = ctx.declare_event_output<double>("h_tau1_rec_sd");
+    h_tau1_rec_puppi      = ctx.declare_event_output<double>("h_tau1_rec_puppi");
+    h_tau1_rec_puppi_sd   = ctx.declare_event_output<double>("h_tau1_rec_puppi_sd");
+    h_tau1_gen            = ctx.declare_event_output<double>("h_tau1_gen");
+    h_tau1_gen_sd         = ctx.declare_event_output<double>("h_tau1_gen_sd");
+    h_tau2_rec            = ctx.declare_event_output<double>("h_tau2_rec");
+    h_tau2_rec_sd         = ctx.declare_event_output<double>("h_tau2_rec_sd");
+    h_tau2_rec_puppi      = ctx.declare_event_output<double>("h_tau2_rec_puppi");
+    h_tau2_rec_puppi_sd   = ctx.declare_event_output<double>("h_tau2_rec_puppi_sd");
+    h_tau2_gen            = ctx.declare_event_output<double>("h_tau2_gen");
+    h_tau2_gen_sd         = ctx.declare_event_output<double>("h_tau2_gen_sd");
+    h_tau3_rec            = ctx.declare_event_output<double>("h_tau3_rec");
+    h_tau3_rec_sd         = ctx.declare_event_output<double>("h_tau3_rec_sd");
+    h_tau3_rec_puppi      = ctx.declare_event_output<double>("h_tau3_rec_puppi");
+    h_tau3_rec_puppi_sd   = ctx.declare_event_output<double>("h_tau3_rec_puppi_sd");
+    h_tau3_gen            = ctx.declare_event_output<double>("h_tau3_gen");
+    h_tau3_gen_sd         = ctx.declare_event_output<double>("h_tau3_gen_sd");
+    h_tau4_rec            = ctx.declare_event_output<double>("h_tau4_rec");
+    h_tau4_rec_sd         = ctx.declare_event_output<double>("h_tau4_rec_sd");
+    h_tau4_rec_puppi      = ctx.declare_event_output<double>("h_tau4_rec_puppi");
+    h_tau4_rec_puppi_sd   = ctx.declare_event_output<double>("h_tau4_rec_puppi_sd");
+    h_tau4_gen            = ctx.declare_event_output<double>("h_tau4_gen");
+    h_tau4_gen_sd         = ctx.declare_event_output<double>("h_tau4_gen_sd");
 
 
     BTag::algo btag_algo = BTag::CSVV2;
@@ -357,14 +319,16 @@ namespace uhh2examples {
     EleTrigger_variation = ctx.get("EleTrigger_variation");
     EleReco_variation = ctx.get("EleReco_variation");
 
-    //scale variation
+    //set up scale variation
     scale_variation.reset(new MCScaleVariation(ctx));
 
+    //set up pileup reweighting
     PUreweight.reset(new MCPileupReweight(ctx, PU_variation));
 
+    //set up btag scalefactor
     sf_btag.reset(new MCBTagScaleFactor(ctx, btag_algo, btag_wp, "jets", BTag_variation));
     if(channel_ == muon){
-      muo_tight_noniso_SF.reset(new MCMuonScaleFactor(ctx,"/nfs/dust/cms/user/skottkej/CMSSW_10_2_X_v1/CMSSW_10_2_10/src/UHH2/common/data/2016/MuonID_EfficienciesAndSF_average_RunBtoH.root","MC_NUM_TightID_DEN_genTracks_PAR_pt_eta",1, "tightID", false, MuScale_variation));
+      muo_tight_noniso_SF.reset(new MCMuonScaleFactor(ctx,"/nfs/dust/cms/user/skottkej/CMSSW_10_2_X_v1/CMSSW_10_2_10/src/UHH2/common/data/2016/MuonID_EfficienciesAndSF_average_RunBtoH.root","NUM_TightID_DEN_genTracks_eta_pt",1, "tightID", false, MuScale_variation));
       muo_trigger_SF.reset(new MCMuonScaleFactor(ctx,"/nfs/dust/cms/user/skottkej/CMSSW_10_2_X_v1/CMSSW_10_2_10/src/UHH2/common/data/2016/MuonTrigger_EfficienciesAndSF_average_RunBtoH.root","IsoMu50_OR_IsoTkMu50_PtEtaBins",1, "muonTrigger", false, MuTrigger_variation));
       cout << "Muon Channel!" << '\n';
     }
@@ -426,7 +390,6 @@ namespace uhh2examples {
       genmatching.reset(new GenMatching(ctx, gentopjet_col));
       genmatching_sd.reset(new GenMatching(ctx));
     }
-    // calculator_tau.reset(new calc_Nsubjettiness());
     ntopjet2_sel.reset(new NTopJetSelection(2,2));
     ntopjet2_sel_puppi.reset(new NPuppiJet(ctx, 2,2));
 
@@ -482,6 +445,7 @@ namespace uhh2examples {
 
 
     // 3. Set up Hists classes:
+    h_test.reset(new GenHists(ctx, "test", gentopjet_col));
     h_gen_pt_lep.reset(new GenHists(ctx, "gen_pt_lep", gentopjet_col));
     h_gen_pt_lep_matched.reset(new GenHists(ctx, "gen_pt_lep_matched", gentopjet_col));
     h_gen_pt_lep_unmatched.reset(new GenHists(ctx, "gen_pt_lep_unmatched", gentopjet_col));
@@ -597,10 +561,10 @@ namespace uhh2examples {
 
     h_event.reset(new EventHists(ctx, "Event_Hist"));
     h_resolution.reset(new ResolutionHists(ctx, "Resolution_Hist"));
+    h_resolution_puppi.reset(new ResolutionHists(ctx, "ResolutionPuppi_Hist", "genjetsAk8Substructure", puppi_jet_col));
 
+    h_ttbar_hist.reset(new TTbarGenHists(ctx, "TTbarGen_Hist"));
 
-    // h_ttbar_hist.reset(new TTbarGenHists(ctx, "ttbar_hist"));
-    // h_ttbar_hist_sd.reset(new TTbarGenHists(ctx, "ttbar_hist_sd"));
   }
 
 
@@ -620,7 +584,6 @@ namespace uhh2examples {
 
 
     event.set(h_gen_weight, event.weight);
-    // if(event.is_valid(h_rec_weight_kin)) event.weight *= event.get(h_rec_weight_kin);
 
     // 1. run all modules other modules.
     if(event.is_valid(h_passed_gen_kin)) passed_gen_kin = event.get(h_passed_gen_kin);
@@ -706,6 +669,9 @@ namespace uhh2examples {
 
     if(isTTbar){
       ttgenprod->process(event);
+      if(passed_gen_kin){
+        h_test->fill(event);
+      }
       passed_gen_pt_lep = pt_lep_gen->passes(event);
       if(passed_gen_kin && passed_gen_pt_lep){
         h_gen_pt_lep->fill(event);
@@ -866,7 +832,6 @@ namespace uhh2examples {
     ██   ██ ███████  ██████  ██████
     */
 
-    // calculator_tau->tau_one(event);
     passed_rec_pt_lep = pt_lep_sel->passes(event);
     if(passed_rec_kin && passed_rec_pt_lep) h_pt_lep->fill(event);
 
@@ -909,14 +874,13 @@ namespace uhh2examples {
       h_mass->fill(event);
       passed_rec_final = true;
       if(isMC) h_passedrec_gen->fill(event);
-      // h_ttbar_hist->fill(event);
+      h_ttbar_hist->fill(event);
     }
     passed_rec_mass_sd = mass_sel_sd->passes(event);
     if(passed_rec_kin && passed_rec_pt_lep && passed_rec_pt_topjet_sd && passed_rec_ntopjet && passed_rec_dr_sd && passed_rec_mass_sd){
       h_mass_sd->fill(event);
       passed_rec_final_sd = true;
       if(isMC) h_passedrec_gen_sd->fill(event);
-      // h_ttbar_hist_sd->fill(event);
     }
 
     passed_rec_mass_puppi = mass_sel_puppi->passes(event);
@@ -933,13 +897,13 @@ namespace uhh2examples {
       if(isMC) h_passedrec_gen_puppi_sd->fill(event);
     }
 
-    /*
-    ███████ ██ ██████  ███████ ██████   █████  ███    ██ ██████  ███████
-    ██      ██ ██   ██ ██      ██   ██ ██   ██ ████   ██ ██   ██ ██
-    ███████ ██ ██   ██ █████   ██████  ███████ ██ ██  ██ ██   ██ ███████
-         ██ ██ ██   ██ ██      ██   ██ ██   ██ ██  ██ ██ ██   ██      ██
-    ███████ ██ ██████  ███████ ██████  ██   ██ ██   ████ ██████  ███████
-    */
+    // /*
+    // ███████ ██ ██████  ███████ ██████   █████  ███    ██ ██████  ███████
+    // ██      ██ ██   ██ ██      ██   ██ ██   ██ ████   ██ ██   ██ ██
+    // ███████ ██ ██   ██ █████   ██████  ███████ ██ ██  ██ ██   ██ ███████
+    //      ██ ██ ██   ██ ██      ██   ██ ██   ██ ██  ██ ██ ██   ██      ██
+    // ███████ ██ ██████  ███████ ██████  ██   ██ ██   ████ ██████  ███████
+    // */
     if(passed_rec_kin && !passed_rec_pt_lep && passed_rec_pt_topjet && passed_rec_ntopjet && passed_rec_dr && passed_rec_mass && pt_lep_rec_sideband->passes(event)){
       h_rec_pt_lep_sideband->fill(event);
       passed_rec_pt_lep_sideband = true;
@@ -1078,15 +1042,6 @@ namespace uhh2examples {
       event.set(h_tau4_rec, event.topjets->at(0).tau4());
       event.set(h_tau4_rec_sd, event.topjets->at(0).tau4_groomed());
 
-      event.set(h_ecfN2_beta1_rec, event.topjets->at(0).ecfN2_beta1());
-      event.set(h_ecfN2_beta1_rec_sd, event.topjets->at(0).ecfN2_beta1());
-      event.set(h_ecfN2_beta2_rec, event.topjets->at(0).ecfN2_beta2());
-      event.set(h_ecfN2_beta2_rec_sd, event.topjets->at(0).ecfN2_beta2());
-      event.set(h_ecfN3_beta1_rec, event.topjets->at(0).ecfN3_beta1());
-      event.set(h_ecfN3_beta1_rec_sd, event.topjets->at(0).ecfN3_beta1());
-      event.set(h_ecfN3_beta2_rec, event.topjets->at(0).ecfN3_beta2());
-      event.set(h_ecfN3_beta2_rec_sd, event.topjets->at(0).ecfN3_beta2());
-
       event.set(h_mass_rec, event.topjets->at(0).v4().M());
 
       LorentzVector subjet_sum1;
@@ -1110,15 +1065,6 @@ namespace uhh2examples {
       event.set(h_tau4_rec, -100);
       event.set(h_tau4_rec_sd, -100);
 
-      event.set(h_ecfN2_beta1_rec, -100);
-      event.set(h_ecfN2_beta1_rec_sd, -100);
-      event.set(h_ecfN2_beta2_rec, -100);
-      event.set(h_ecfN2_beta2_rec_sd, -100);
-      event.set(h_ecfN3_beta1_rec, -100);
-      event.set(h_ecfN3_beta1_rec_sd, -100);
-      event.set(h_ecfN3_beta2_rec, -100);
-      event.set(h_ecfN3_beta2_rec_sd, -100);
-
       event.set(h_mass_rec, -100);
       event.set(h_mass_rec_sd, -100);
     }
@@ -1138,15 +1084,6 @@ namespace uhh2examples {
       event.set(h_tau3_rec_puppi_sd, h_puppi.at(0).tau3_groomed());
       event.set(h_tau4_rec_puppi, h_puppi.at(0).tau4());
       event.set(h_tau4_rec_puppi_sd, h_puppi.at(0).tau4_groomed());
-
-      event.set(h_ecfN2_beta1_rec_puppi, h_puppi.at(0).ecfN2_beta1());
-      event.set(h_ecfN2_beta1_rec_puppi_sd, h_puppi.at(0).ecfN2_beta1());
-      event.set(h_ecfN2_beta2_rec_puppi, h_puppi.at(0).ecfN2_beta2());
-      event.set(h_ecfN2_beta2_rec_puppi_sd, h_puppi.at(0).ecfN2_beta2());
-      event.set(h_ecfN3_beta1_rec_puppi, h_puppi.at(0).ecfN3_beta1());
-      event.set(h_ecfN3_beta1_rec_puppi_sd, h_puppi.at(0).ecfN3_beta1());
-      event.set(h_ecfN3_beta2_rec_puppi, h_puppi.at(0).ecfN3_beta2());
-      event.set(h_ecfN3_beta2_rec_puppi_sd, h_puppi.at(0).ecfN3_beta2());
 
       event.set(h_mass_rec_puppi, h_puppi.at(0).v4().M());
 
@@ -1173,21 +1110,11 @@ namespace uhh2examples {
       event.set(h_tau4_rec_puppi, -100);
       event.set(h_tau4_rec_puppi_sd, -100);
 
-      event.set(h_ecfN2_beta1_rec_puppi, -100);
-      event.set(h_ecfN2_beta1_rec_puppi_sd, -100);
-      event.set(h_ecfN2_beta2_rec_puppi, -100);
-      event.set(h_ecfN2_beta2_rec_puppi_sd, -100);
-      event.set(h_ecfN3_beta1_rec_puppi, -100);
-      event.set(h_ecfN3_beta1_rec_puppi_sd, -100);
-      event.set(h_ecfN3_beta2_rec_puppi, -100);
-      event.set(h_ecfN3_beta2_rec_puppi_sd, -100);
-
       event.set(h_mass_rec_puppi, -100);
       event.set(h_mass_rec_puppi_sd, -100);
     }
 
     if(isMC && event.gentopjets->size() > 0){
-      // h_mass & h_mass_gen are the same! need to fix this later!
       event.set(h_pt_gen_sd, event.gentopjets->at(0).pt());
       double tau32_gen = event.gentopjets->at(0).tau3()/event.gentopjets->at(0).tau2();
       event.set(h_tau32_gen_sd, tau32_gen);
@@ -1196,11 +1123,6 @@ namespace uhh2examples {
       event.set(h_tau2_gen_sd, event.gentopjets->at(0).tau2());
       event.set(h_tau3_gen_sd, event.gentopjets->at(0).tau3());
       event.set(h_tau4_gen_sd, event.gentopjets->at(0).tau4());
-      event.set(h_ecfN2_beta1_gen_sd, event.gentopjets->at(0).ecfN2_beta1());
-      event.set(h_ecfN2_beta2_gen_sd, event.gentopjets->at(0).ecfN2_beta2());
-      event.set(h_ecfN3_beta1_gen_sd, event.gentopjets->at(0).ecfN3_beta1());
-      event.set(h_ecfN3_beta2_gen_sd, event.gentopjets->at(0).ecfN3_beta2());
-
 
       event.set(h_mass_gen_sd, event.gentopjets->at(0).v4().M());
     }
@@ -1212,15 +1134,10 @@ namespace uhh2examples {
       event.set(h_tau2_gen_sd, -100);
       event.set(h_tau3_gen_sd, -100);
       event.set(h_tau4_gen_sd, -100);
-      event.set(h_ecfN2_beta1_gen_sd, -100);
-      event.set(h_ecfN2_beta2_gen_sd, -100);
-      event.set(h_ecfN3_beta1_gen_sd, -100);
-      event.set(h_ecfN3_beta2_gen_sd, -100);
 
       event.set(h_mass_gen_sd, -100);
     }
     if(isMC && gentopjet.size() > 0){
-      // h_mass & h_mass_gen are the same! need to fix this later!
       event.set(h_pt_gen, gentopjet.at(0).pt());
       double tau32_gen = gentopjet.at(0).tau3()/gentopjet.at(0).tau2();
       event.set(h_tau32_gen, tau32_gen);
@@ -1228,10 +1145,6 @@ namespace uhh2examples {
       event.set(h_tau2_gen, gentopjet.at(0).tau2());
       event.set(h_tau3_gen, gentopjet.at(0).tau3());
       event.set(h_tau4_gen, gentopjet.at(0).tau4());
-      event.set(h_ecfN2_beta1_gen, gentopjet.at(0).ecfN2_beta1());
-      event.set(h_ecfN2_beta2_gen, gentopjet.at(0).ecfN2_beta2());
-      event.set(h_ecfN3_beta1_gen, gentopjet.at(0).ecfN3_beta1());
-      event.set(h_ecfN3_beta2_gen, gentopjet.at(0).ecfN3_beta2());
       event.set(h_mass_gen, gentopjet.at(0).v4().M());
     }
     else{
@@ -1241,10 +1154,6 @@ namespace uhh2examples {
       event.set(h_tau2_gen, -100);
       event.set(h_tau3_gen, -100);
       event.set(h_tau4_gen, -100);
-      event.set(h_ecfN2_beta1_gen, -100);
-      event.set(h_ecfN2_beta2_gen, -100);
-      event.set(h_ecfN3_beta1_gen, -100);
-      event.set(h_ecfN3_beta2_gen, -100);
       event.set(h_mass_gen, -100);
     }
     h_event->fill(event);
@@ -1264,8 +1173,8 @@ namespace uhh2examples {
       !passed_rec_mass_sideband &&   !passed_rec_mass_sideband_sd &&
       !passed_rec_mass_sideband_puppi && !passed_rec_mass_sideband_puppi_sd) return false;
 
-      
       if(passed_rec_final && passed_gen_final) h_resolution->fill(event);
+      if(passed_rec_final_puppi && passed_gen_final) h_resolution_puppi->fill(event);
       // 3. decide whether or not to keep the current event in the output:
       return true;
     }

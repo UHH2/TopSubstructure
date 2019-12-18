@@ -31,7 +31,11 @@ TH1D* ConvertToNewBinning_1D(TH1D*, vector<int>, const TUnfoldBinning*, TString)
 TH2D* ConvertToNewBinning_2D(TH2D*, vector<int>, const TUnfoldBinning*, TString);
 TH1D* ConvertToCrossSection(TH1D* hist);
 TH2D* ConvertToCrossSection(TH2D* cov);
+TH2D* CreateCorrelationMatrix(TH2D* cov);
 vector<double> TotalCrossSection(TH1D* hist, TH2D* cov);
+
+//  TODO: definitely needs an overhaul, because it gets rather complicated
+
 
 int main(int argc, char* argv[]){
 
@@ -59,14 +63,15 @@ int main(int argc, char* argv[]){
   TString data= "";
   TString sample_name = "";
   for(unsigned int i = 0; i < result.size(); i++){
-    if(result[i] != "mu" && result[i] != "ele" && result[i] != "comb" && result[i] != "WJets" && result[i] != "Pt" && result[i] != "HT" && i != 3){
+    cout << "result: " << result[i] << '\n';
+    if(result[i] != "mu" && result[i] != "ele" && result[i] != "comb" && i != 1){
       if(i > 0 && i < result.size()-1){
         directory += result[i];
-        if(i==4){
+        if(i==2){
           data = result[i];
           sample_name = result[i];
         }
-        if(i==5){
+        if(i==3){
           if(data.Contains("Pseudo")){
             data += "_"+result[i];
           }
@@ -130,11 +135,12 @@ int main(int argc, char* argv[]){
 
   TH1D* h_unfolded_tauscan = (TH1D*) file->Get("Unfolded data (meas region) TauScan");
   TH1D* h_unfolded_tauscan_part = (TH1D*) file->Get("Unfolded data (meas region, m>155) TauScan");
-  TH1D* h_data_truth;
+  TH1D* h_data_truth, *h_data_truth_2;
   if(isdata){
     TFile* blub;
     blub = new TFile("Unfoldings/Unfolding_madgraph"+jetcol2+channel+".root", "READ");
     h_data_truth = (TH1D*) blub->Get("Data Truth");
+    h_data_truth_2 = (TH1D*) file->Get("MC Truth 2017");
   }
   else h_data_truth = (TH1D*) file->Get("Data Truth");
   // if(File_name.Contains("data")) h_data_truth->SetName("POWHEG truth");
@@ -143,10 +149,15 @@ int main(int argc, char* argv[]){
   if(isdata) h_mc_truth = (TH1D*) file->Get("MC Truth");
   else h_mc_truth = (TH1D*) file->Get("Bias Truth TauScan");
   h_mc_truth->SetName("POWHEG");
+  // TH1D* check=(TH1D*) file->Get("Unfolded check (meas region) TauScan");
+  TH1D* h_mc_truth_low = (TH1D*) file->Get("MC Truth low");
+  TH1D* h_mc_truth_high = (TH1D*) file->Get("MC Truth high");
+
 
   TH1D* h_data_truth_all = (TH1D*) file->Get("Whole Data Truth");
 
   TH2D* h_covariance_input_tauscan = (TH2D*) file->Get("Covariance of input (meas region) TauScan");
+  plot->Plot_covariance(h_covariance_input_tauscan, directory+"Test_");
   TH2D* h_covariance_covmatrix_tauscan = (TH2D*) file->Get("Covariance of CovMatrix (meas region) TauScan");
   // create the unfolding histogram with only statistical error
   TH1D* data_unfolded_stat = SetSysError(h_unfolded_tauscan, h_covariance_input_tauscan);
@@ -194,6 +205,15 @@ int main(int argc, char* argv[]){
   error_model.push_back(stat_rel);
   error_name.push_back("stat");
   error_name_model.push_back("stat");
+
+  TH2D* CorrStat = CreateCorrelationMatrix(h_covariance_input_tauscan);
+  plot->Plot_covariance(CorrStat, directory+"CorrStat");
+
+  TH2D* h_covariance_input_tauscan_lcurve = (TH2D*) file->Get("Covariance of input (meas region) LCurve");
+  plot->Plot_covariance(h_covariance_input_tauscan_lcurve, directory+"Test_lcurve");
+
+  TH2D* CorrStat_lcurve = CreateCorrelationMatrix(h_covariance_input_tauscan_lcurve);
+  plot->Plot_covariance(CorrStat_lcurve, directory+"CorrStat_lcurve");
 
   // add stat covariance of input matrix
   TH2D* mc_error = (TH2D*) h_covariance_covmatrix_tauscan->Clone("mc error clone");
@@ -307,15 +327,54 @@ int main(int argc, char* argv[]){
     }
     model_rel.push_back(stat_rel);            // put in stat to get total
   }
+
+  TH2D* CovTheo = (TH2D*) h_covariance_input_tauscan->Clone();
+  CovTheo->Reset();
+  TH2D* CovTheo_mad = (TH2D*) h_covariance_input_tauscan->Clone();
+  CovTheo_mad->Reset();
+  TH2D* CovTheo_17 = (TH2D*) h_covariance_input_tauscan->Clone();
+  CovTheo_17->Reset();
+  vector<vector<TH1D*>> THEO_DELTA;
+  // get Delta between nominal truth and scale variation truth (for theo. uncert)
+  for(unsigned int i=0; i<model_truth.size(); i++){
+    vector<TH1D*> delta_temp, delta_temp_mad, delta_temp_17;
+    vector<TH1D*> truth_temp, truth_temp_mad, truth_temp_17;
+    vector<TH1D*> variation_temp;
+    for(unsigned int j=0; j<model_truth[i].size(); j++){
+      delta_temp.push_back(GetModelDelta(model_truth[i][j], h_mc_truth));
+      delta_temp_mad.push_back(GetModelDelta(model_truth[i][j], h_data_truth));
+      delta_temp_17.push_back(GetModelDelta(model_truth[i][j], h_data_truth_2));
+      variation_temp.push_back((TH1D*)model_truth[i][j]);
+      truth_temp.push_back((TH1D*) h_mc_truth); // always use central truth
+      truth_temp_mad.push_back((TH1D*) h_data_truth); // always use central truth
+      truth_temp_17.push_back((TH1D*) h_data_truth_2); // always use central truth
+    }
+    THEO_DELTA.push_back(delta_temp);
+    int index = FindLargestVariationByMean(truth_temp, variation_temp, false);
+    TH2* COV_temp = CreateCovFromDelta(delta_temp[index], h_covariance_input_tauscan);
+    int index_mad = FindLargestVariationByMean(truth_temp_mad, variation_temp, false);
+    TH2* COV_temp_mad = CreateCovFromDelta(delta_temp_mad[index_mad], h_covariance_input_tauscan);
+    int index_17 = FindLargestVariationByMean(truth_temp_17, variation_temp, false);
+    TH2* COV_temp_17 = CreateCovFromDelta(delta_temp_17[index_17], h_covariance_input_tauscan);
+    CovTheo->Add(COV_temp);
+    CovTheo_mad->Add(COV_temp_mad);
+    CovTheo_17->Add(COV_temp_17);
+  }
+
   TH2D* CovTotal = (TH2D*) total_cov->Clone("Total");
   CovTotal->Add(cov_model);
   TH1D* data_unfolded_sys = SetSysError(h_unfolded_tauscan, CovTotal);
   data_unfolded_sys->SetName("Unfolded Data with sys errors");
+  // TH1D* check_sys = SetSysError(check, CovTotal);
+  // check_sys->SetName("Unfolded Data with sys errors check");
   plot->Plot_covariance(CovTotal, directory+"Total_Covariance");
   TH1D* sys_tot_delta = CreateDeltaFromCov(total_cov);
 
   TH1D* sys_tot_rel = ConvertToRelative(sys_tot_delta, h_unfolded_tauscan);
 
+
+  TH2D *CorrTotal = CreateCorrelationMatrix(CovTotal);
+  plot->Plot_covariance(CorrTotal, directory+"CorrTotal");
   error.push_back(sys_tot_rel);
   error_name.push_back("stat #oplus exp sys");
 
@@ -335,7 +394,8 @@ int main(int argc, char* argv[]){
   plot->Plot_delta(sys_del, sys_name, directory);
   plot->Plot_uncertainty(error, error_name, directory+"EXP_");
 
-  plot->Plot_result_with_uncertainty(data_unfolded_stat, data_unfolded_sys, h_data_truth, h_mc_truth, false, sample_name, directory+"Event_");
+  if(isdata) plot->Plot_result_with_uncertainty(data_unfolded_stat, data_unfolded_sys, h_data_truth, h_data_truth_2, h_mc_truth, false, sample_name, directory+"Event_");
+  else plot->Plot_result_with_uncertainty(data_unfolded_stat, data_unfolded_sys, h_data_truth, h_mc_truth, false, sample_name, directory+"Event_");
 
   TH1D* data_unfolded_stat_cs = ConvertToCrossSection(data_unfolded_stat);
   TH2D* CovStat_cs = ConvertToCrossSection(h_covariance_input_tauscan);
@@ -344,25 +404,55 @@ int main(int argc, char* argv[]){
   TH2D* CovTotal_cs = ConvertToCrossSection(CovTotal);
   TH1D* data_unfolded_sys_cs = ConvertToCrossSection(data_unfolded_sys);
   TH1D* h_data_truth_cs = ConvertToCrossSection(h_data_truth);
+  TH1D* h_mc_truth_low_cs = ConvertToCrossSection(h_mc_truth_low);
+  TH1D* h_mc_truth_high_cs = ConvertToCrossSection(h_mc_truth_high);
+  TH1D* h_data_truth_2_cs;
+  if(isdata) h_data_truth_2_cs = ConvertToCrossSection(h_data_truth_2);
   TH1D* h_mc_truth_cs = ConvertToCrossSection(h_mc_truth);
+  // TH1D* check_cs = ConvertToCrossSection(check);
+  // TH1D* check_sys_cs = ConvertToCrossSection(check_sys);
 
   plot->Plot_uncertainty(error_model, error_name_model, directory+"Model_");
-  plot->Plot_result_with_uncertainty(data_unfolded_stat_cs, data_unfolded_sys_cs, h_data_truth_cs, h_mc_truth_cs, false, sample_name, directory+"CS_");
+  if(isdata) plot->Plot_result_with_uncertainty(data_unfolded_stat_cs, data_unfolded_sys_cs, h_data_truth_cs, h_data_truth_2_cs, h_mc_truth_cs, false, sample_name, directory+"CS_");
+  else{
+    plot->Plot_result_with_uncertainty(data_unfolded_stat_cs, data_unfolded_sys_cs, h_data_truth_cs, h_mc_truth_cs, false, sample_name, directory+"CS_");
+    // plot->Plot_result_with_uncertainty(check_cs, check_sys_cs, h_mc_truth_cs, h_mc_truth_cs, false, sample_name, directory+"CS_Check_");
+  }
+  plot->Plot_result_with_uncertainty(data_unfolded_stat_cs, data_unfolded_sys_cs, h_mc_truth_low_cs, h_mc_truth_cs, false, sample_name, directory+"CS_POWHEG_");
 
 
-  // vector<double> xsmc1 = GetTotalCrossSection(h_mc_truth_cs, CovTheo_xs);
   vector<double> xsdataStat = TotalCrossSection(data_unfolded_sys_cs, CovStat_cs);
   vector<double> xsdataModel = TotalCrossSection(data_unfolded_sys_cs, CovModel_cs);
   vector<double> xsdataSys = TotalCrossSection(data_unfolded_sys_cs, CovSys_cs);
   vector<double> xsdataTotal = TotalCrossSection(data_unfolded_sys_cs, CovTotal_cs);
 
 
-    cout << "DATA XS = " << xsdataStat[0] << " +- " << xsdataStat[1] << " (stat)";
-    cout <<                                  " +- " << xsdataSys[1] << " (sys)";
-    cout <<                                  " +- " << xsdataModel[1] << " (model)";
-    cout <<                                  " +- " << xsdataTotal[1] << " (tot)" << endl;
+  cout << '\n';
+  cout << "DATA XS = " << xsdataStat[0] << " +- " << xsdataStat[1] << " (stat)";
+  cout <<                                  " +- " << xsdataSys[1] << " (sys)";
+  cout <<                                  " +- " << xsdataModel[1] << " (model)";
+  cout <<                                  " +- " << xsdataTotal[1] << " (tot)" << endl;
+  cout << '\n';
 
-    // cout << "MC POWHEG XS = " << xsmc1[0] << " +- " << xsmc1[1] << endl;
+
+
+  vector<vector<TString>> model_name2;
+  if(isdata) model_name2 = {{"SCALEupup", "SCALEupnone", "SCALEnoneup", "SCALEnonedown", "SCALEdownnone", "SCALEdowndown"}, {"isrup", "isrdown"}, {"fsrup", "fsrdown"}, {"hdampup", "hdampdown"}};
+
+  // TH1D* h_mc_truth_error = (TH1D*) SetSysError(h_mc_truth, CovTheo);
+  TH2D* CovTheo_cs = ConvertToCrossSection(CovTheo);
+  vector<double> xsmc1 = TotalCrossSection(h_mc_truth_cs, CovTheo_cs);
+  cout << "MC POWHEG XS = " << xsmc1[0] << " +- " << xsmc1[1] << endl;
+
+  TH2D* CovTheo_mad_cs = ConvertToCrossSection(CovTheo_mad);
+  vector<double> xsmcmad1 = TotalCrossSection(h_data_truth_cs, CovTheo_mad_cs);
+  cout << "MC MADGRAP XS = " << xsmcmad1[0] << " +- " << xsmcmad1[1] << endl;
+
+  TH2D* CovTheo_17_cs = ConvertToCrossSection(CovTheo_17);
+  vector<double> xsmc171 = TotalCrossSection(h_data_truth_2_cs, CovTheo_17_cs);
+  cout << "MC POWHEG 17 XS = " << xsmc171[0] << " +- " << xsmc171[1] << endl;
+
+
 
 
 
@@ -380,10 +470,15 @@ int main(int argc, char* argv[]){
   Normalise *normdata_truth = new Normalise(h_data_truth, 0, 1, false);
   TH1D* data_truth_norm = normdata_truth->GetHist();
 
+  Normalise *normdata_truth_2;
+  if(isdata) normdata_truth_2 = new Normalise(h_data_truth_2, 0, 1, false);
+  TH1D* data_truth_norm_2;
+  if(isdata) data_truth_norm_2 = normdata_truth_2->GetHist();
+
   Normalise *normmc_truth = new Normalise(h_mc_truth, 0, 1, false);
   TH1D* mc_truth_norm = normmc_truth->GetHist();
-  plot->Plot_result_with_uncertainty(normed_stat, normed_tot, data_truth_norm, mc_truth_norm, true, sample_name, directory+"CS_normed_");
-
+  if(isdata) plot->Plot_result_with_uncertainty(normed_stat, normed_tot, data_truth_norm, data_truth_norm_2, mc_truth_norm, true, sample_name, directory+"CS_normed_");
+  else plot->Plot_result_with_uncertainty(normed_stat, normed_tot, data_truth_norm, mc_truth_norm, true, sample_name, directory+"CS_normed_");
 
   Normalise *norm_cs_stat_bin = new Normalise(h_unfolded_tauscan, h_covariance_input_tauscan, 0, 1, true);
   TH1D* data_cs_stat_norm_bin = norm_cs_stat_bin->GetHist();
@@ -398,9 +493,42 @@ int main(int argc, char* argv[]){
   Normalise *normdata_truth_bin = new Normalise(h_data_truth, 0, 1, true);
   TH1D* data_truth_norm_bin = normdata_truth_bin->GetHist();
 
+  Normalise *normdata_truth_bin_2;
+  if(isdata) normdata_truth_bin_2 = new Normalise(h_data_truth_2, 0, 1, true);
+  TH1D* data_truth_norm_bin_2;
+  if(isdata) data_truth_norm_bin_2 = normdata_truth_bin_2->GetHist();
+
   Normalise *normmc_truth_bin = new Normalise(h_mc_truth, 0, 1, true);
   TH1D* mc_truth_norm_bin = normmc_truth_bin->GetHist();
-  plot->Plot_result_with_uncertainty(normed_stat_bin, normed_tot_bin, data_truth_norm_bin, mc_truth_norm_bin, true, sample_name, directory+"CS_normed_bin");
+  if(isdata) plot->Plot_result_with_uncertainty(normed_stat_bin, normed_tot_bin, data_truth_norm_bin, data_truth_norm_bin_2, mc_truth_norm_bin, true, sample_name, directory+"CS_normed_bin_");
+  else plot->Plot_result_with_uncertainty(normed_stat_bin, normed_tot_bin, data_truth_norm_bin, mc_truth_norm_bin, true, sample_name, directory+"CS_normed_bin_");
+
+
+  if(isdata){
+    TFile* blub2, *blub3;
+    blub2 = new TFile("Unfoldings/Unfolding_fsrup"+jetcol2+channel+".root", "READ");
+    TH1D* h_data_truth_3 = (TH1D*) blub2->Get("Data Truth");
+    blub3 = new TFile("Unfoldings/Unfolding_fsrdown"+jetcol2+channel+".root", "READ");
+    TH1D* h_data_truth_4 = (TH1D*) blub3->Get("Data Truth");
+
+    TH1D* h_data_truth_3_cs = ConvertToCrossSection(h_data_truth_3);
+    TH1D* h_data_truth_4_cs = ConvertToCrossSection(h_data_truth_4);
+
+    Normalise *normdata_truth_3 = new Normalise(h_data_truth_3, 0, 1, false);
+    TH1D* data_truth_norm_3 = normdata_truth_3->GetHist();
+    Normalise *normdata_truth_4 = new Normalise(h_data_truth_4, 0, 1, false);
+    TH1D* data_truth_norm_4 = normdata_truth_4->GetHist();
+
+  Normalise *normdata_truth_bin_3 = new Normalise(h_data_truth_3, 0, 1, true);
+  TH1D* data_truth_norm_bin_3 = normdata_truth_bin_3->GetHist();
+  Normalise *normdata_truth_bin_4 = new Normalise(h_data_truth_4, 0, 1, true);
+  TH1D* data_truth_norm_bin_4 = normdata_truth_bin_4->GetHist();
+
+    plot->Plot_result_with_uncertainty(data_unfolded_stat, data_unfolded_sys, h_data_truth_3, h_data_truth_4, h_mc_truth, false, sample_name, directory+"Event_FSR_");
+    plot->Plot_result_with_uncertainty(data_unfolded_stat_cs, data_unfolded_sys_cs, h_data_truth_3_cs, h_data_truth_4_cs, h_mc_truth_cs, false, sample_name, directory+"CS_FSR_");
+    plot->Plot_result_with_uncertainty(normed_stat, normed_tot, data_truth_norm_3, data_truth_norm_4, mc_truth_norm, true, sample_name, directory+"CS_FSR_normed_");
+    plot->Plot_result_with_uncertainty(normed_stat_bin, normed_tot_bin, data_truth_norm_bin_3, data_truth_norm_bin_4, mc_truth_norm_bin, true, sample_name, directory+"CS_FSR_normed_bin_");
+  }
 
 
 
@@ -468,6 +596,7 @@ int main(int argc, char* argv[]){
     TFile *file_pseudo2 = new TFile("Unfoldings/Unfolding_Pseudo_2"+jetcol+".root", "READ");
     TFile *file_pseudo3 = new TFile("Unfoldings/Unfolding_Pseudo_3"+jetcol+".root", "READ");
 
+    cout << "file: " << "Unfoldings/Unfolding_Pseudo_3"<<jetcol<<".root" << '\n';
     TH1D* h_pseudo1 = (TH1D*) file_pseudo1->Get("Unfolded data (meas region) TauScan");
     TH1D* pseudo1_unfolded_stat = SetSysError(h_pseudo1, h_covariance_input_tauscan);
     TH1D* pseudo1_unfolded_sys = SetSysError(h_pseudo1, CovTotal);
@@ -495,6 +624,9 @@ int main(int argc, char* argv[]){
 
     plot->Plot_all_pseudo(pseudo1_unfolded_sys, h_pseudo1_truth, pseudo2_unfolded_sys, h_pseudo2_truth, pseudo3_unfolded_sys, h_pseudo3_truth, false, directory+"All_uncer_");
     plot->Plot_all_pseudo(h_pseudo1_cs, h_pseudo1_truth_cs, h_pseudo2_cs, h_pseudo2_truth_cs, h_pseudo3_cs, h_pseudo3_truth_cs, true, directory+"CS_All_uncer_");
+    file_pseudo1->Close();
+    file_pseudo2->Close();
+    file_pseudo3->Close();
 
   }
 
@@ -627,8 +759,10 @@ int main(int argc, char* argv[]){
 
     plot->Plot_compatibility(data_unfolded_stat_mu, data_unfolded_sys_mu, data_unfolded_stat_ele, data_unfolded_sys_ele, directory);
     plot->Plot_compatibility(data_unfolded_stat_mu_cs, data_unfolded_sys_mu_cs, data_unfolded_stat_ele_cs, data_unfolded_sys_ele_cs, directory+"CS_");
+    file_mu->Close();
+    file_ele->Close();
   }
-
+  file->Close();
   return 0;
 }
 
@@ -952,4 +1086,23 @@ vector<double> TotalCrossSection(TH1D* hist, TH2D* cov){
   total_xs.push_back(xs_content);
   total_xs.push_back(xs_error);
   return total_xs;
+}
+
+TH2D* CreateCorrelationMatrix(TH2D* cov){
+  TH2D *cov_clone = (TH2D*) cov->Clone();
+  TH2D *corr = (TH2D*) cov->Clone();
+  corr->Reset();
+  int entries_x = cov_clone->GetNbinsX();
+  int entries_y = cov_clone->GetNbinsY();
+
+  for(int i=1; i <= entries_x; i++){
+    for(int j=1; j <= entries_y; j++){
+      double cov_value = cov_clone->GetBinContent(i,j);
+      double cov_ii = cov_clone->GetBinContent(i,i);
+      double cov_jj = cov_clone->GetBinContent(j,j);
+      double entry = cov_value/(sqrt(cov_ii)*sqrt(cov_jj));
+      corr->SetBinContent(i,j,entry);
+    }
+  }
+  return corr;
 }

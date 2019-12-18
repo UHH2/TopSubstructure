@@ -3,34 +3,10 @@
 
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
-
-#include "UHH2/common/include/CommonModules.h"
-#include "UHH2/common/include/CleaningModules.h"
-#include "UHH2/common/include/ElectronHists.h"
-#include "UHH2/common/include/MuonHists.h"
-#include "UHH2/common/include/NSelections.h"
-#include "UHH2/common/include/JetHists.h"
-#include "UHH2/common/include/TriggerSelection.h"
-#include "UHH2/common/include/MuonIds.h"
-#include "UHH2/common/include/ElectronIds.h"
-#include "UHH2/common/include/JetIds.h"
-#include "UHH2/common/include/TopJetIds.h"
-#include "UHH2/common/include/MCWeight.h"
 #include "UHH2/common/include/TTbarGen.h"
-#include <UHH2/core/include/AnalysisModule.h>
-#include <UHH2/core/include/Selection.h>
-#include <UHH2/common/include/LumiSelection.h>
-#include <UHH2/common/include/JetCorrections.h>
-#include <UHH2/common/include/ObjectIdUtils.h>
-#include <UHH2/common/include/Utils.h>
 #include <UHH2/common/include/AdditionalSelections.h>
-
 #include "UHH2/TopSubstructure/include/TopSubstructureSelections.h"
-#include "UHH2/TopSubstructure/include/TopSubstructureCombinedSelections.h"
-#include "UHH2/TopSubstructure/include/TopSubstructureRecoHists.h"
-#include "UHH2/TopSubstructure/include/GenHists.h"
 #include "UHH2/TopSubstructure/include/TopSubstructureGenSelections.h"
-#include "UHH2/TopSubstructure/include/TopSubstructureUtils.h"
 
 using namespace std;
 using namespace uhh2;
@@ -42,20 +18,15 @@ namespace uhh2examples {
     virtual bool process(Event & event) override;
 
   private:
-
-    bool isMC, isTTbar, isEle, isMu;
     TString dataset_version_string;
-    bool passed_nmu_gen, passed_nele_gen, passed_mu_pt_gen, passed_ele_pt_gen, passed_topjet_pt_gen, passed_mu_gen, passed_ele_gen, passed_mu_rec, passed_ele_rec;
-    bool passed_njet_rec, passed_nmu_rec, passed_nele_rec, passed_met_rec;
-
-    // declare the Selections to use. Use unique_ptr to ensure automatic call of delete in the destructor, to avoid memory leaks.
-    std::unique_ptr<Selection> genmttbar_sel;
-    std::unique_ptr<Selection> met_sel, nmu_sel, nele_sel, njet_sel;
-    std::unique_ptr<Selection> nmu_gen, nele_gen, pt_mu_gen, pt_ele_gen, pt_topjet_gen;
+    bool isMC, isTTbar, isEle, isMu;
+    bool passed_nmu_gen, passed_nele_gen, passed_mu_pt_gen, passed_ele_pt_gen, passed_topjet_pt_gen, passed_mu_gen, passed_ele_gen, passed_mu_rec, passed_ele_rec, passed_njet_rec, passed_nmu_rec, passed_nele_rec, passed_met_rec;
 
     std::unique_ptr<AnalysisModule> ttgenprod;
 
-    // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
+    // declare the Selections to use. Use unique_ptr to ensure automatic call of delete in the destructor, to avoid memory leaks.
+    std::unique_ptr<Selection> genmttbar_sel;
+    std::unique_ptr<Selection> met_sel, nmu_sel, nele_sel, njet_sel, nmu_gen, nele_gen, pt_mu_gen, pt_ele_gen, pt_topjet_gen;
 
     uhh2::Event::Handle<bool>   h_passed_mu_gen_pre, h_passed_ele_gen_pre;
     uhh2::Event::Handle<bool>   h_passed_mu_rec_pre, h_passed_ele_rec_pre;
@@ -76,12 +47,7 @@ namespace uhh2examples {
     isTTbar = dataset_version_string.Contains("TTbar");
     isMC = (ctx.get("dataset_type") == "MC");
 
-    // cout << "isEle: " << isEle << '\n';
-    // cout << "isMu: " << isMu << '\n';
-    // cout << "isTTbar: " << isTTbar << '\n';
-    // cout << "isMC: " << isMC << '\n';
-
-    if(ctx.get("dataset_version") == "TTbar_2016v3_Mtt0000to0700") genmttbar_sel.reset(new MttbarGenSelection(0., 700.));
+    if(dataset_version_string.Contains("Mtt0000to0700")) genmttbar_sel.reset(new MttbarGenSelection(0., 700.));
     else genmttbar_sel.reset(new uhh2::AndSelection(ctx));
 
     // 2. set up selections
@@ -103,8 +69,6 @@ namespace uhh2examples {
 
 
   bool PreSelectionModule::process(Event & event) {
-    // cout << "PreSelectionModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
-
     // 1. run all modules other modules.
     passed_mu_gen = false;
     passed_ele_gen = false;
@@ -126,36 +90,34 @@ namespace uhh2examples {
       ttgenprod->process(event);
       if(!genmttbar_sel->passes(event)) return false;
 
-      passed_nmu_gen = nmu_gen->passes(event);
+      passed_nmu_gen  = nmu_gen->passes(event);
       passed_nele_gen = nele_gen->passes(event);
 
-      passed_mu_pt_gen = pt_mu_gen->passes(event);
+      passed_mu_pt_gen  = pt_mu_gen->passes(event);
       passed_ele_pt_gen = pt_ele_gen->passes(event);
 
       passed_topjet_pt_gen = pt_topjet_gen->passes(event);
 
-      passed_mu_gen = (passed_nmu_gen && passed_mu_pt_gen && passed_topjet_pt_gen);
+      passed_mu_gen  = (passed_nmu_gen  && passed_mu_pt_gen  && passed_topjet_pt_gen);
       passed_ele_gen = (passed_nele_gen && passed_ele_pt_gen && passed_topjet_pt_gen);
     }
 
     passed_njet_rec = njet_sel->passes(event);
 
-    if(isMu || isMC) passed_nmu_rec = nmu_sel->passes(event);
+    if(isMu  || isMC) passed_nmu_rec  = nmu_sel->passes(event);
     if(isEle || isMC) passed_nele_rec = nele_sel->passes(event);
 
     passed_met_rec = met_sel->passes(event);
 
-    passed_mu_rec = (isMu || isMC) && passed_njet_rec && passed_nmu_rec && passed_met_rec;
+    passed_mu_rec  = (isMu  || isMC) && passed_njet_rec && passed_nmu_rec  && passed_met_rec;
     passed_ele_rec = (isEle || isMC) && passed_njet_rec && passed_nele_rec && passed_met_rec;
 
     if(!passed_mu_rec && !passed_ele_rec && !passed_mu_gen && !passed_ele_gen) return false;
 
     // 3. decide whether or not to keep the current event in the output:
-    // cout << "passed_mu_gen: " << passed_mu_gen <<'\n';
-    // cout << "passed_mu_rec: " << passed_mu_rec <<'\n';
-    event.set(h_passed_mu_rec_pre, passed_mu_rec);
+    event.set(h_passed_mu_rec_pre,  passed_mu_rec);
     event.set(h_passed_ele_rec_pre, passed_ele_rec);
-    event.set(h_passed_mu_gen_pre, passed_mu_gen);
+    event.set(h_passed_mu_gen_pre,  passed_mu_gen);
     event.set(h_passed_ele_gen_pre, passed_ele_gen);
     return true;
   }

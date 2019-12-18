@@ -29,6 +29,7 @@ GenHists::GenHists(Context & ctx, const string & dirname, std::string const & la
   book<TH1D>("top1_pt", "p_{T} top-quark (first) [GeV]", 120, 0, 1200);
   book<TH1D>("top2_pt", "p_{T} top-quark (second) [GeV]", 120, 0, 1200);
   book<TH1D>("M_ttbar", "M_{tt} [GeV^{2}]", 200, 0, 2000);
+  book<TH1D>("M_ttbar_22", "M_{tt} [GeV^{2}]", 200, 0, 2000);
 
 
   // first candidate
@@ -406,7 +407,7 @@ void GenHists::fill(const Event & event){
         wlep = ttbargen.WLep();
 
 
-        std::vector<GenParticle> top;
+        std::vector<GenParticle> top, topdummy, top22;
         if(tophad.pt() > toplep.pt()){
           top.push_back(tophad);
           top.push_back(toplep);
@@ -415,10 +416,29 @@ void GenHists::fill(const Event & event){
           top.push_back(toplep);
           top.push_back(tophad);
         }
+
+        for(unsigned int i = 0; i < event.genparticles->size(); i++){
+          if(abs(event.genparticles->at(i).pdgId()) == 6 && event.genparticles->at(i).status() == 22){
+            topdummy.push_back(event.genparticles->at(i));
+          }
+        }
+        if(topdummy.size() != 2) cout << "Found more than 2 tops with status 22!" << '\n';
+        if(topdummy.size() < 2) cout << "Found less than 2 tops with status 22!" << '\n';
+        if(topdummy.at(0).pt() > topdummy.at(1).pt()){
+          top22.push_back(topdummy.at(0));
+          top22.push_back(topdummy.at(1));
+        }
+        else{
+          top22.push_back(topdummy.at(1));
+          top22.push_back(topdummy.at(0));
+        }
+
+
         for(unsigned int i=0; i < top.size(); i++) hist("top_pt")->Fill(top.at(i).pt(), weight);
         hist("top1_pt")->Fill(top.at(0).pt(), weight);
         hist("top2_pt")->Fill(top.at(1).pt(), weight);
         hist("M_ttbar")->Fill((top.at(0).v4()+top.at(1).v4()).M(), weight);
+        hist("M_ttbar_22")->Fill((top22.at(0).v4()+top22.at(1).v4()).M(), weight);
 
         if(isMu){
                 hist("pt_mu")->Fill(lep.pt(), weight);

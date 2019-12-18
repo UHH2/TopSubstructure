@@ -1,8 +1,6 @@
 #include "hist_filler.h"
 
 int main(int argc, char* argv[]){
-
-
   // switch on histogram errors
   TH1::SetDefaultSumw2();
 
@@ -17,7 +15,6 @@ int main(int argc, char* argv[]){
   std::string filename, filename2;
   filename = "Histograms_Muon.root";
   filename2 = "Histograms_Electron.root";
-
 
   outputFile=new TFile(filename.c_str(),"recreate");
   outputFile->cd();
@@ -82,6 +79,9 @@ int main(int argc, char* argv[]){
   TFile *mc_matrix_File = new TFile(dir+"/Muon"+prefix+"MC.2016v3_TTbar.root");
   fill_ttbar((TTree *) mc_matrix_File->Get("AnalysisTree"), "mc");
 
+  TFile *mc_matrix_File_17 = new TFile(dir+"/Muon"+prefix+"MC.2017v2_TTbar.root");
+  fill_ttbar((TTree *) mc_matrix_File_17->Get("AnalysisTree"), "2017_TTbar");
+
   // fill other mass samples
   vector<TString> diff_masses = {"mtop1715", "mtop1735", "madgraph", "isrup", "isrdown", "fsrup", "fsrdown", "hdampup", "hdampdown"};
   for(unsigned int i = 0; i < diff_masses.size(); i++){
@@ -140,6 +140,9 @@ int main(int argc, char* argv[]){
   // fill ttbar
   TFile *mc_matrix_File2 = new TFile(dir+"/Electron"+prefix+"MC.2016v3_TTbar.root");
   fill_ttbar((TTree *) mc_matrix_File2->Get("AnalysisTree"), "mc");
+
+  TFile *mc_matrix_File2_17 = new TFile(dir+"/Electron"+prefix+"MC.2017v2_TTbar.root");
+  fill_ttbar((TTree *) mc_matrix_File2_17->Get("AnalysisTree"), "2017_TTbar");
 
   // fill other mass samples
   vector<TString> diff_masses2 = {"mtop1715", "mtop1735", "madgraph", "isrup", "isrdown", "fsrup", "fsrdown", "hdampup", "hdampdown"};
@@ -748,6 +751,8 @@ void fill_ttbar(TTree* tree, TString prefix){
   TH1* h_truth_sd                         = measurement_gen->CreateHistogram(prefix+"_sd_truth",kTRUE,0,0, "mass[C]");
   TH1* h_truth_puppi                      = measurement_gen->CreateHistogram(prefix+"_puppi_truth",kTRUE,0,0, "mass[C]");
   TH1* h_truth_puppi_sd                   = measurement_gen->CreateHistogram(prefix+"_puppi_sd_truth",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_high                       = measurement_gen->CreateHistogram(prefix+"_truth_high",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_low                        = measurement_gen->CreateHistogram(prefix+"_truth_low",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all                       = measurement_gen->CreateHistogram(prefix+"_purity_all",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_sd                    = measurement_gen->CreateHistogram(prefix+"_sd_purity_all",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_puppi                 = measurement_gen->CreateHistogram(prefix+"_puppi_purity_all",kTRUE,0,0, "mass[C]");
@@ -793,6 +798,8 @@ void fill_ttbar(TTree* tree, TString prefix){
   TH1* h_truth_sd_1                       = measurement_gen->CreateHistogram(prefix+"_sd_truth_1",kTRUE,0,0, "mass[C]");
   TH1* h_truth_puppi_1                    = measurement_gen->CreateHistogram(prefix+"_puppi_truth_1",kTRUE,0,0, "mass[C]");
   TH1* h_truth_puppi_sd_1                 = measurement_gen->CreateHistogram(prefix+"_puppi_sd_truth_1",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_high_1                     = measurement_gen->CreateHistogram(prefix+"_truth_high_1",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_low_1                      = measurement_gen->CreateHistogram(prefix+"_truth_low_1",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_1                     = measurement_gen->CreateHistogram(prefix+"_purity_all_1",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_sd_1                  = measurement_gen->CreateHistogram(prefix+"_sd_purity_all_1",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_puppi_1               = measurement_gen->CreateHistogram(prefix+"_puppi_purity_all_1",kTRUE,0,0, "mass[C]");
@@ -834,6 +841,8 @@ void fill_ttbar(TTree* tree, TString prefix){
   TH1* h_truth_sd_2                       = measurement_gen->CreateHistogram(prefix+"_sd_truth_2",kTRUE,0,0, "mass[C]");
   TH1* h_truth_puppi_2                    = measurement_gen->CreateHistogram(prefix+"_puppi_truth_2",kTRUE,0,0, "mass[C]");
   TH1* h_truth_puppi_sd_2                 = measurement_gen->CreateHistogram(prefix+"_puppi_sd_truth_2",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_high_2                     = measurement_gen->CreateHistogram(prefix+"_truth_high_2",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_low_2                      = measurement_gen->CreateHistogram(prefix+"_truth_low_2",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_2                     = measurement_gen->CreateHistogram(prefix+"_purity_all_2",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_sd_2                  = measurement_gen->CreateHistogram(prefix+"_sd_purity_all_2",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_puppi_2               = measurement_gen->CreateHistogram(prefix+"_puppi_purity_all_2",kTRUE,0,0, "mass[C]");
@@ -875,6 +884,8 @@ void fill_ttbar(TTree* tree, TString prefix){
   TH1* h_truth_sd_3                       = measurement_gen->CreateHistogram(prefix+"_sd_truth_3",kTRUE,0,0, "mass[C]");
   TH1* h_truth_puppi_3                    = measurement_gen->CreateHistogram(prefix+"_puppi_truth_3",kTRUE,0,0, "mass[C]");
   TH1* h_truth_puppi_sd_3                 = measurement_gen->CreateHistogram(prefix+"_puppi_sd_truth_3",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_high_3                     = measurement_gen->CreateHistogram(prefix+"_truth_high_3",kTRUE,0,0, "mass[C]");
+  TH1* h_truth_low_3                      = measurement_gen->CreateHistogram(prefix+"_truth_low_3",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_3                     = measurement_gen->CreateHistogram(prefix+"_purity_all_3",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_sd_3                  = measurement_gen->CreateHistogram(prefix+"_sd_purity_all_3",kTRUE,0,0, "mass[C]");
   TH1* h_purity_all_puppi_3               = measurement_gen->CreateHistogram(prefix+"_puppi_purity_all_3",kTRUE,0,0, "mass[C]");
@@ -1008,10 +1019,24 @@ void fill_ttbar(TTree* tree, TString prefix){
     }
     if(passed_gen_final){
       h_truth->Fill(tau32_gen, w_gen);
+      if(mass_gen>152) h_truth_high->Fill(tau32_gen, w_gen);
+      else             h_truth_low->Fill(tau32_gen, w_gen);
       if(pseudo){
-        if(counter != 1 || counter != 2)  h_truth_1->Fill(tau32_gen, w_gen_scaled);
-        if(counter != 3 || counter != 4)  h_truth_2->Fill(tau32_gen, w_gen_scaled);
-        if(counter != 5 || counter != 6) h_truth_3->Fill(tau32_gen, w_gen_scaled);
+        if(counter != 1 || counter != 2){
+          h_truth_1->Fill(tau32_gen, w_gen_scaled);
+          if(mass_gen>152) h_truth_high_1->Fill(tau32_gen, w_gen);
+          else             h_truth_low_1->Fill(tau32_gen, w_gen);
+        }
+        if(counter != 3 || counter != 4){
+          h_truth_2->Fill(tau32_gen, w_gen_scaled);
+          if(mass_gen>152) h_truth_high_2->Fill(tau32_gen, w_gen);
+          else             h_truth_low_2->Fill(tau32_gen, w_gen);
+        }
+        if(counter != 5 || counter != 6){
+          h_truth_3->Fill(tau32_gen, w_gen_scaled);
+          if(mass_gen>152) h_truth_high_3->Fill(tau32_gen, w_gen);
+          else             h_truth_low_3->Fill(tau32_gen, w_gen);
+        }
       }
     }
     if(gen_info){
@@ -1561,6 +1586,8 @@ void fill_ttbar(TTree* tree, TString prefix){
   h_truth_sd->Write();
   h_truth_puppi->Write();
   h_truth_puppi_sd->Write();
+  h_truth_high->Write();
+  h_truth_low->Write();
   h_mc_matrix->Write();
   h_mc_matrix_sd->Write();
   h_mc_matrix_puppi->Write();
@@ -1606,6 +1633,8 @@ void fill_ttbar(TTree* tree, TString prefix){
   delete h_truth_sd;
   delete h_truth_puppi;
   delete h_truth_puppi_sd;
+  delete h_truth_high;
+  delete h_truth_low;
   delete h_mc_matrix;
   delete h_mc_matrix_sd;
   delete h_mc_matrix_puppi;
@@ -1652,6 +1681,8 @@ void fill_ttbar(TTree* tree, TString prefix){
     h_truth_sd_1->Write();
     h_truth_puppi_1->Write();
     h_truth_puppi_sd_1->Write();
+    h_truth_high_1->Write();
+    h_truth_low_1->Write();
     h_mc_matrix_1->Write();
     h_mc_matrix_sd_1->Write();
     h_mc_matrix_puppi_1->Write();
@@ -1697,6 +1728,8 @@ void fill_ttbar(TTree* tree, TString prefix){
     h_truth_sd_2->Write();
     h_truth_puppi_2->Write();
     h_truth_puppi_sd_2->Write();
+    h_truth_high_2->Write();
+    h_truth_low_2->Write();
     h_mc_matrix_2->Write();
     h_mc_matrix_sd_2->Write();
     h_mc_matrix_puppi_2->Write();
@@ -1742,6 +1775,8 @@ void fill_ttbar(TTree* tree, TString prefix){
     h_truth_sd_3->Write();
     h_truth_puppi_3->Write();
     h_truth_puppi_sd_3->Write();
+    h_truth_high_3->Write();
+    h_truth_low_3->Write();
     h_mc_matrix_3->Write();
     h_mc_matrix_sd_3->Write();
     h_mc_matrix_puppi_3->Write();
@@ -1787,6 +1822,8 @@ void fill_ttbar(TTree* tree, TString prefix){
     delete h_truth_sd_1;
     delete h_truth_puppi_1;
     delete h_truth_puppi_sd_1;
+    delete h_truth_high_1;
+    delete h_truth_low_1;
     delete h_mc_matrix_1;
     delete h_mc_matrix_sd_1;
     delete h_mc_matrix_puppi_1;
@@ -1832,6 +1869,8 @@ void fill_ttbar(TTree* tree, TString prefix){
     delete h_truth_sd_2;
     delete h_truth_puppi_2;
     delete h_truth_puppi_sd_2;
+    delete h_truth_high_2;
+    delete h_truth_low_2;
     delete h_mc_matrix_2;
     delete h_mc_matrix_sd_2;
     delete h_mc_matrix_puppi_2;
@@ -1877,6 +1916,8 @@ void fill_ttbar(TTree* tree, TString prefix){
     delete h_truth_sd_3;
     delete h_truth_puppi_3;
     delete h_truth_puppi_sd_3;
+    delete h_truth_high_3;
+    delete h_truth_low_3;
     delete h_mc_matrix_3;
     delete h_mc_matrix_sd_3;
     delete h_mc_matrix_puppi_3;

@@ -109,12 +109,15 @@ else data_File->GetObject("mc"+pu+"_truth_all", h_truth_all);
 data_File->GetObject("mc"+pu+"_gen"+suffix, h_unfold);                 // fill histogram with what data should be unfolded
 data_File->GetObject("mc"+pu+"_rec"+suffix, h_mc);                     // fill histogram to check if ratio between data and mc is appropiate
 data_File->GetObject("mc"+pu+"_rec_dist"+suffix, h_mc_dist);
-data_File->GetObject("mc"+pu+"_truth"+suffix, h_trutch_check);          // fill histogram to check if ratio between data and mc is appropiate
-data_File->GetObject("mc"+pu+"_truth_all"+suffix, h_trutch_check_all);  // fill histogram to check if ratio between data and mc is appropiate
+data_File->GetObject("mc"+pu+"_truth"+suffix, h_truth_check);          // fill histogram to check if ratio between data and mc is appropiate
+data_File->GetObject("mc"+pu+"_truth_low"+suffix, h_truth_check_low);          // fill histogram to check if ratio between data and mc is appropiate
+data_File->GetObject("mc"+pu+"_truth_high"+suffix, h_truth_check_high);          // fill histogram to check if ratio between data and mc is appropiate
+data_File->GetObject("mc"+pu+"_truth_all"+suffix, h_truth_check_all);  // fill histogram to check if ratio between data and mc is appropiate
 data_File->GetObject("mc"+pu+"_purity_all"+suffix, h_purity_all);
 data_File->GetObject("mc"+pu+"_purity_samebin"+suffix, h_purity_samebin);
 data_File->GetObject("mc"+pu+"_stability_all"+suffix, h_stability_all);
 data_File->GetObject("mc"+pu+"_stability_samebin"+suffix, h_stability_samebin);
+if(dataset.Contains("Data")) data_File->GetObject("2017_TTbar"+pu+"_truth"+suffix, h_truth_2017);
 
 TH1D* h_background = (TH1D*) h_data->Clone();
 h_background->Reset();
@@ -151,7 +154,7 @@ for(unsigned int i = 0; i < sys_name.size(); i++){
 }
 
 // cout << "subtract_background: " << subtract_background << '\n';
-TString regmode = "derivative";
+TString regmode = "size";
 TString density_flag = "none";
 TString nscan_word = argv[2];
 int nscan = atoi(argv[2]);
@@ -281,8 +284,11 @@ if(dataset.Contains("Data")){
 }
 h_truth->Write("Data Truth");
 h_truth_all->Write("Whole Data Truth");
-h_trutch_check->Write("MC Truth");
-h_trutch_check_all->Write("Whole MC Truth");
+h_truth_check->Write("MC Truth");
+h_truth_check_low->Write("MC Truth low");
+h_truth_check_high->Write("MC Truth high");
+if(dataset.Contains("Data")) h_truth_2017->Write("MC Truth 2017");
+h_truth_check_all->Write("Whole MC Truth");
 h_unfold->Write("MC gen Distribution");
 mat_response->Write("response matrix");
 h_purity_all->Write("Purity total");

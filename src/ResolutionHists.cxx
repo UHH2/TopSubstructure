@@ -15,6 +15,14 @@ ResolutionHists::ResolutionHists(Context & ctx, const string & dirname, std::str
   book<TH1D>("Resolution_3_rebin", "#tau_{32, rec}/#tau_{32, gen}", 30, 0, 3);
   book<TH1D>("Resolution_4", "#tau_{32, rec}/#tau_{32, gen}", 24, 0.4, 1.6);
   book<TH1D>("Resolution_4_rebin", "#tau_{32, rec}/#tau_{32, gen}", 30, 0, 3);
+  book<TH1D>("Resolution_1_pu_20", "#tau_{32, rec}/#tau_{32, gen}", 30, 0, 3);
+  book<TH1D>("Resolution_1_pu_inft", "#tau_{32, rec}/#tau_{32, gen}", 30, 0, 3);
+  book<TH1D>("Resolution_2_pu_20", "#tau_{32, rec}/#tau_{32, gen}", 30, 0, 3);
+  book<TH1D>("Resolution_2_pu_inft", "#tau_{32, rec}/#tau_{32, gen}", 30, 0, 3);
+  book<TH1D>("Resolution_3_pu_20", "#tau_{32, rec}/#tau_{32, gen}", 30, 0, 3);
+  book<TH1D>("Resolution_3_pu_inft", "#tau_{32, rec}/#tau_{32, gen}", 30, 0, 3);
+  book<TH1D>("Resolution_4_pu_20", "#tau_{32, rec}/#tau_{32, gen}", 30, 0, 3);
+  book<TH1D>("Resolution_4_pu_inft", "#tau_{32, rec}/#tau_{32, gen}", 30, 0, 3);
   h_rec_weight = ctx.get_handle<double>("h_rec_weight");
   h_gen_weight = ctx.get_handle<double>("h_gen_weight");
 }
@@ -42,6 +50,7 @@ void ResolutionHists::fill(const Event & event){
     gen_tau32 = gentopjet.at(0).tau3()/gentopjet.at(0).tau2();
     rec_tau32 = topjet.at(0).tau3()/topjet.at(0).tau2();
   }
+
   if(0.2 <= gen_tau32 && gen_tau32 <= 0.4){
     hist("Resolution_1")->Fill(rec_tau32/gen_tau32,rec_weight);
     hist("Resolution_1_rebin")->Fill(rec_tau32/gen_tau32,rec_weight);
@@ -57,5 +66,34 @@ void ResolutionHists::fill(const Event & event){
   else if(0.8 < gen_tau32 && gen_tau32 <= 1.0){
     hist("Resolution_4")->Fill(rec_tau32/gen_tau32,rec_weight);
     hist("Resolution_4_rebin")->Fill(rec_tau32/gen_tau32,rec_weight);
+  }
+
+  if(event.genInfo->pileup_TrueNumInteractions() <= 20){
+    if(0.2 <= gen_tau32 && gen_tau32 <= 0.4){
+      hist("Resolution_1_pu_20")->Fill(rec_tau32/gen_tau32,rec_weight);
+    }
+    else if(0.4 < gen_tau32 && gen_tau32 <= 0.6){
+      hist("Resolution_2_pu_20")->Fill(rec_tau32/gen_tau32,rec_weight);
+    }
+    else if(0.6 < gen_tau32 && gen_tau32 <= 0.8){
+      hist("Resolution_3_pu_20")->Fill(rec_tau32/gen_tau32,rec_weight);
+    }
+    else if(0.8 < gen_tau32 && gen_tau32 <= 1.0){
+      hist("Resolution_4_pu_20")->Fill(rec_tau32/gen_tau32,rec_weight);
+    }
+  }
+  else{
+    if(0.2 <= gen_tau32 && gen_tau32 <= 0.4){
+      hist("Resolution_1_pu_inft")->Fill(rec_tau32/gen_tau32,rec_weight);
+    }
+    else if(0.4 < gen_tau32 && gen_tau32 <= 0.6){
+      hist("Resolution_2_pu_inft")->Fill(rec_tau32/gen_tau32,rec_weight);
+    }
+    else if(0.6 < gen_tau32 && gen_tau32 <= 0.8){
+      hist("Resolution_3_pu_inft")->Fill(rec_tau32/gen_tau32,rec_weight);
+    }
+    else if(0.8 < gen_tau32 && gen_tau32 <= 1.0){
+      hist("Resolution_4_pu_inft")->Fill(rec_tau32/gen_tau32,rec_weight);
+    }
   }
 }

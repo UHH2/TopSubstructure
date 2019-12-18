@@ -267,19 +267,18 @@
 <InputData Version="TTbar_2017v2_Mtt0000to0700_part2" Lumi="35279949.78" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&TTbar_2017v2_Mtt0000to0700_part2;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
-<InputData Version="TTbar_2017v2_Mtt0700to1000_part1" Lumi="31694648.64" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+<InputData Version="TTbar_2017v2_Mtt0700to1000_part1" Lumi="344133424.1" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&TTbar_2017v2_Mtt0700to1000_part1;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
-<InputData Version="TTbar_2017v2_Mtt0700to1000_part2" Lumi="31694648.64" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+<InputData Version="TTbar_2017v2_Mtt0700to1000_part2" Lumi="344133424.1" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&TTbar_2017v2_Mtt0700to1000_part2;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
-<InputData Version="TTbar_2017v2_Mtt1000toInft_part1" Lumi="16206372.01" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+<InputData Version="TTbar_2017v2_Mtt1000toInft_part1" Lumi="655059383" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&TTbar_2017v2_Mtt1000toInft_part1;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
-<InputData Version="TTbar_2017v2_Mtt1000toInft_part2" Lumi="16206372.01" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+<InputData Version="TTbar_2017v2_Mtt1000toInft_part2" Lumi="655059383" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
   <In FileName="&TTbar_2017v2_Mtt1000toInft_part2;" Lumi="0.0"/> <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/>
 </InputData>
-
 
 <!--
 ██      ████████ ████████      ██████  ████████ ██   ██ ███████ ██████      ███    ███  █████  ███████ ███████ ███████ ███████      ██

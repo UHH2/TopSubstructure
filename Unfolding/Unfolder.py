@@ -29,14 +29,6 @@ tau_value = ' -1 '
 #             , 'hdampdown','hdampdown_sd','hdampdown_puppi','hdampdown_puppi_sd'
 #             ]
 
-# channel = ['mu','ele','comb']
-channel = ['comb']
-# datasets = [
-#               # 'Data_sd'
-#              'Pseudo_1_sd'
-#             , 'Pseudo_2_sd'
-#             , 'Pseudo_3_sd'
-#             ]
 datasets = [
               'Data'
             , 'Pseudo_1'
@@ -58,32 +50,11 @@ datasets = [
             , 'hdampup'
             , 'hdampdown'
             ]
-# datasets = [
-#               'Data_sd'
-#             , 'Pseudo_1_sd'
-#             , 'Pseudo_2_sd'
-#             , 'Pseudo_3_sd'
-#             , 'SCALEupup_sd'
-#             , 'SCALEupnone_sd'
-#             , 'SCALEnoneup_sd'
-#             , 'SCALEnonedown_sd'
-#             , 'SCALEdownnone_sd'
-#             , 'SCALEdowndown_sd'
-#             , 'mtop1695_sd'
-#             , 'mtop1715_sd'
-#             , 'mtop1735_sd'
-#             , 'mtop1755_sd'
-#             , 'madgraph_sd'
-#             , 'isrup_sd'
-#             , 'isrdown_sd'
-#             , 'fsrup_sd'
-#             , 'fsrdown_sd'
-#             , 'hdampup_sd'
-#             , 'hdampdown_sd'
-#             ]
+            
+channel = ['mu','ele','comb']
 
 for chan in channel:
     for i in range(len(datasets)):
-        os.system(c_send+datasets[i]+nscans+tau_value+chan)
         os.system('echo '+c_send+datasets[i]+nscans+tau_value+chan);
+        os.system(c_send+datasets[i]+nscans+tau_value+chan)
         os.system('\n')

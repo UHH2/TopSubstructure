@@ -30,6 +30,7 @@ public:
   void Plot_ResponseMatrix(TH2D* resp_matrix_, TString directory);
   void Plot_uncertainty(std::vector<TH1D*> error, std::vector<TString> error_name, TString directory);
   void Plot_result_with_uncertainty(TH1D* h_unfolded, TH1D* h_unfolded_uncertainty, TH1D* h_data_truth, TH1D* h_mc_truth, bool normalise, TString sample, TString directory);
+  void Plot_result_with_uncertainty(TH1D* h_unfolded, TH1D* h_unfolded_uncertainty, TH1D* h_data_truth, TH1D* h_data_truth_2, TH1D* h_mc_truth, bool normalise, TString sample, TString directory);
   void Plot_correlation_matrix(TH2D* h_corr_matrix, TString save);
   void Plot_LogTau(TSpline* logTau_, double tau, double coordinate, TString save);
   void Plot_LCurve(TGraph* lcurve, std::vector<double> coordinates, std::vector<double> coordinates_2, TString save);
